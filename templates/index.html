@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Market AI Analyst</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                             bg: '#121212',
+                             card: '#1E1E1E',
+                             text: '#E0E0E0',
+                             border: '#333333'
+                        },
+                        accent: {
+                            primary: '#00C853',
+                            secondary: '#2979FF',
+                            danger: '#FF1744'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #121212; color: #E0E0E0; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1E1E1E; border: 1px solid #333; border-radius: 0.75rem; padding: 1.5rem; }
+        .tab-active { border-bottom: 2px solid #00C853; color: #00C853; }
+        .tab-inactive { color: #888; }
+        .score-badge { padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+        .score-high { background-color: rgba(0, 200, 83, 0.2); color: #00C853; }
+        .score-mid { background-color: rgba(255, 193, 7, 0.2); color: #FFC107; }
+        .score-low { background-color: rgba(255, 23, 68, 0.2); color: #FF1744; }
+    </style>
+</head>
+<body class="min-h-screen p-6">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
+                US Market AI Analyst
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">Smart Money Tracking & AI Analysis</p>
+        </div>
+        <div class="flex gap-4">
+            <div id="market-status" class="flex gap-4 text-sm font-mono">
+                <!-- Realtime Tickers -->
+                <span id="spy-ticker">SPY: Loading...</span>
+                <span id="qqq-ticker">QQQ: Loading...</span>
+                <span id="nvda-ticker">NVDA: Loading...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-12 gap-6">
+        
+        <!-- Left Column: Macro & AI (Col 4) -->
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+            <!-- Macro Analysis Card -->
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-globe text-blue-400"></i> AI Macro Outlook
+                </h2>
+                <div id="macro-content" class="space-y-4">
+                    <div class="animate-pulse h-20 bg-gray-800 rounded"></div>
+                </div>
+            </div>
+
+            <!-- Economic Calendar -->
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-yellow-400"></i> Economic Calendar
+                </h2>
+                <div id="calendar-content">
+                    <div class="animate-pulse h-20 bg-gray-800 rounded"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Screener & Charts (Col 8) -->
+        <div class="col-span-12 lg:col-span-8 space-y-6">
+            
+            <!-- Smart Money Screener -->
+            <div class="card">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-filter text-green-400"></i> Smart Money Screener
+                    </h2>
+                    <span class="text-xs text-gray-500">Top picks by Institutional & Volume Analysis</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-gray-400 border-b border-gray-700 text-sm">
+                                <th class="p-2">Rank</th>
+                                <th class="p-2">Ticker</th>
+                                <th class="p-2">Grade</th>
+                                <th class="p-2">Score</th>
+                                <th class="p-2">Inst. Score</th>
+                                <th class="p-2">Vol. Score</th>
+                                <th class="p-2">AI Summary</th>
+                            </tr>
+                        </thead>
+                        <tbody id="screener-body" class="text-sm">
+                            <tr><td colspan="7" class="p-4 text-center">Loading data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sector Heatmap (Placeholder for visualization) -->
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-th text-purple-400"></i> Sector Performance
+                </h2>
+                <div id="sector-heatmap" class="h-64 flex items-center justify-center border border-dashed border-gray-700 rounded">
+                    <p class="text-gray-500">Heatmap Visualization Loading...</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Fetch Macro Analysis
+        async function loadMacro() {
+            try {
+                const res = await fetch('/api/us/macro-analysis');
+                const data = await res.json();
+                
+                const moodColor = data.mood_score >= 70 ? 'text-green-500' : (data.mood_score <= 30 ? 'text-red-500' : 'text-yellow-500');
+                
+                document.getElementById('macro-content').innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-400">Market Mood</span>
+                        <span class="font-bold text-lg ${moodColor}">${data.market_mood} (${data.mood_score})</span>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm font-semibold text-blue-300">Key Takeaways:</p>
+                        <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+                            ${data.key_takeaways.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                        <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
+                            <span class="text-purple-400 font-bold">Sector Outlook:</span> ${data.sector_outlook}
+                        </div>
+                    </div>
+                `;
+            } catch (e) { console.error(e); }
+        }
+
+        // Fetch Screener Data
+        async function loadScreener() {
+            try {
+                const res = await fetch('/api/us/smart-money');
+                const data = await res.json();
+                
+                const tbody = document.getElementById('screener-body');
+                tbody.innerHTML = data.slice(0, 10).map(row => `
+                    <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer" onclick="showSummary('${row.ticker}')">
+                        <td class="p-3 font-mono text-gray-400">#${row.rank}</td>
+                        <td class="p-3 font-bold text-green-400">${row.ticker}</td>
+                        <td class="p-3">${row.grade}</td>
+                        <td class="p-3"><span class="score-badge ${getScoreClass(row.composite_score)}">${row.composite_score}</span></td>
+                        <td class="p-3 text-gray-400">${row.inst_score}</td>
+                        <td class="p-3 text-gray-400">${row.sd_score}</td>
+                        <td class="p-3 text-xs text-gray-500">Click for AI Summary</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                document.getElementById('screener-body').innerHTML = '<tr><td colspan="7" class="text-center p-4">Failed to load data. Run python scripts first.</td></tr>';
+            }
+        }
+
+        // Fetch Calendar
+        async function loadCalendar() {
+            try {
+                const res = await fetch('/api/us/economic-calendar');
+                const data = await res.json();
+                
+                document.getElementById('calendar-content').innerHTML = data.events.map(ev => `
+                    <div class="flex justify-between items-center border-b border-gray-800 py-2 last:border-0">
+                        <div>
+                            <div class="font-bold text-sm">${ev.event}</div>
+                            <div class="text-xs text-gray-500">${ev.date} ${ev.time}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-mono text-yellow-500">Imp: ${ev.impact}</div>
+                            <div class="text-xs text-gray-400">Fcst: ${ev.forecast}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+        
+        // Fetch Realtime Prices
+        async function loadPrices() {
+            try {
+                const res = await fetch('/api/us/realtime-prices');
+                const data = await res.json();
+                ['SPY', 'QQQ', 'NVDA'].forEach(t => {
+                    if (data[t]) {
+                        const color = data[t].change >= 0 ? 'text-green-500' : 'text-red-500';
+                        document.getElementById(`${t.toLowerCase()}-ticker`).innerHTML = 
+                            `${t}: <span class="${color}">$${data[t].price} (${data[t].change}%)</span>`;
+                    }
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function getScoreClass(score) {
+            if (score >= 70) return 'score-high';
+            if (score >= 50) return 'score-mid';
+            return 'score-low';
+        }
+        
+        async function showSummary(ticker) {
+            alert(`Fetching AI summary for ${ticker}... (Feature pending backend generation)`);
+            // Implementation: Fetch /api/us/ai-summary/ticker and show modal
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMacro();
+            loadScreener();
+            loadCalendar();
+            loadPrices();
+            setInterval(loadPrices, 10000); // Poll prices every 10s
+        });
+    </script>
+</body>
+</html>

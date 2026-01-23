@@ -1,0 +1,88 @@
+from flask import Flask, render_template, jsonify, request
+import pandas as pd
+import json
+import os
+import yfinance as yf
+from datetime import datetime
+
+app = Flask(__name__)
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'us_market')
+
+def load_json(filename):
+    path = os.path.join(DATA_DIR, filename)
+    if os.path.exists(path):
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {}
+
+def load_csv(filename):
+    path = os.path.join(DATA_DIR, filename)
+    if os.path.exists(path):
+        return pd.read_csv(path).to_dict(orient='records')
+    return []
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/api/us/smart-money')
+def get_smart_money():
+    data = load_csv('smart_money_picks_v2.csv')
+    return jsonify(data)
+
+@app.route('/api/us/macro-analysis')
+def get_macro_analysis():
+    data = load_json('us_macro_analysis.json')
+    return jsonify(data)
+
+@app.route('/api/us/sector-heatmap')
+def get_sector_heatmap():
+    data = load_json('sector_heatmap.json')
+    return jsonify(data)
+
+@app.route('/api/us/options-flow')
+def get_options_flow():
+    data = load_json('options_flow.json')
+    return jsonify(data)
+
+@app.route('/api/us/economic-calendar')
+def get_calendar():
+    data = load_json('economic_calendar.json')
+    return jsonify(data)
+
+@app.route('/api/us/ai-summary/<ticker>')
+def get_ai_summary(ticker):
+    summaries = load_json('ai_stock_summaries.json')
+    summary = summaries.get(ticker, "No summary available.")
+    return jsonify({'ticker': ticker, 'summary': summary})
+
+@app.route('/api/us/realtime-prices')
+def get_realtime_prices():
+    """Fetch realtime prices for watched tickers (limited)"""
+    tickers = request.args.get('tickers', 'SPY,QQQ,NVDA,AAPL,TSLA').split(',')
+    try:
+        data = yf.download(tickers, period='1d', interval='1m', progress=False)
+        prices = {}
+        if not data.empty:
+             for t in tickers:
+                 try:
+                     # Access using iloc for last row if MultiIndex
+                     if isinstance(data.columns, pd.MultiIndex):
+                         current = data['Close'][t].iloc[-1]
+                         prev = data['Open'][t].iloc[0] # Approx change from open
+                     else:
+                         current = data['Close'].iloc[-1]
+                         prev = data['Open'].iloc[0]
+                     
+                     change = ((current - prev) / prev) * 100
+                     prices[t] = {
+                         'price': round(current, 2),
+                         'change': round(change, 2)
+                     }
+                 except: pass
+        return jsonify(prices)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)

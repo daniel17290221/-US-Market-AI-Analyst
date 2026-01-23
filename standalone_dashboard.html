@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Market AI Analyst - Standalone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#121212',
+                            card: '#1E1E1E',
+                            text: '#E0E0E0',
+                            border: '#333333'
+                        },
+                        accent: {
+                            primary: '#00C853',
+                            secondary: '#2979FF',
+                            danger: '#FF1744'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .card {
+            background-color: #1E1E1E;
+            border: 1px solid #333;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid #00C853;
+            color: #00C853;
+        }
+
+        .tab-inactive {
+            color: #888;
+        }
+
+        .score-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .score-high {
+            background-color: rgba(0, 200, 83, 0.2);
+            color: #00C853;
+        }
+
+        .score-mid {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+        }
+
+        .score-low {
+            background-color: rgba(255, 23, 68, 0.2);
+            color: #FF1744;
+        }
+
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen p-6">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
+                US Market AI Analyst
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">Smart Money Tracking & AI Analysis (Standalone Demo)</p>
+        </div>
+        <div class="flex gap-4">
+            <div id="market-status" class="flex gap-4 text-sm font-mono">
+                <span class="text-green-500">SPY: $580.25 (+0.45%)</span>
+                <span class="text-green-500">QQQ: $512.80 (+0.82%)</span>
+                <span class="text-red-500">NVDA: $145.30 (-1.23%)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-12 gap-6">
+
+        <!-- Left Column: Macro & AI (Col 4) -->
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+            <!-- Macro Analysis Card -->
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-globe text-blue-400"></i> AI Macro Outlook
+                </h2>
+                <div id="macro-content" class="space-y-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-400">Market Mood</span>
+                        <span class="font-bold text-lg text-green-500">Greed (75)</span>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm font-semibold text-blue-300">Key Takeaways:</p>
+                        <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+                            <li>AI 주도 기술주 랠리가 시장 상승 견인</li>
+                            <li>금리 인하 불확실성에도 소비자 심리 견고</li>
+                            <li>지정학적 리스크가 유가에 미치는 영향 제한적</li>
+                        </ul>
+                        <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
+                            <span class="text-purple-400 font-bold">Sector Outlook:</span> 기술(Tech) 및
+                            임의소비재(Discretionary) 강세 예상
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Economic Calendar -->
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-yellow-400"></i> Economic Calendar
+                </h2>
+                <div id="calendar-content">
+                    <div class="flex justify-between items-center border-b border-gray-800 py-2">
+                        <div>
+                            <div class="font-bold text-sm">CPI (Consumer Price Index)</div>
+                            <div class="text-xs text-gray-500">2026-01-22 21:30</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-mono text-yellow-500">Imp: High</div>
+                            <div class="text-xs text-gray-400">Fcst: 3.1%</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-gray-800 py-2">
+                        <div>
+                            <div class="font-bold text-sm">FOMC Meeting Minutes</div>
+                            <div class="text-xs text-gray-500">2026-01-23 03:00</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-mono text-yellow-500">Imp: High</div>
+                            <div class="text-xs text-gray-400">Fcst: -</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <div>
+                            <div class="font-bold text-sm">Non-Farm Payrolls</div>
+                            <div class="text-xs text-gray-500">2026-01-24 21:30</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-mono text-yellow-500">Imp: High</div>
+                            <div class="text-xs text-gray-400">Fcst: 180K</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Screener & Charts (Col 8) -->
+        <div class="col-span-12 lg:col-span-8 space-y-6">
+
+            <!-- Smart Money Screener -->
+            <div class="card">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-filter text-green-400"></i> Smart Money Screener
+                    </h2>
+                    <span class="text-xs text-gray-500">Top picks by Institutional & Volume Analysis</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-gray-400 border-b border-gray-700 text-sm">
+                                <th class="p-2">Rank</th>
+                                <th class="p-2">Ticker</th>
+                                <th class="p-2">Grade</th>
+                                <th class="p-2">Score</th>
+                                <th class="p-2">Inst. Score</th>
+                                <th class="p-2">Vol. Score</th>
+                                <th class="p-2">AI Summary</th>
+                            </tr>
+                        </thead>
+                        <tbody id="screener-body" class="text-sm">
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#1</td>
+                                <td class="p-3 font-bold text-green-400">NVDA</td>
+                                <td class="p-3">🔥 S급 (즉시 매수)</td>
+                                <td class="p-3"><span class="score-badge score-high">85.3</span></td>
+                                <td class="p-3 text-gray-400">88.5</td>
+                                <td class="p-3 text-gray-400">82.1</td>
+                                <td class="p-3 text-xs text-gray-500">강력한 기관 수급과 거래량 급증</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#2</td>
+                                <td class="p-3 font-bold text-green-400">AAPL</td>
+                                <td class="p-3">🔥 S급 (즉시 매수)</td>
+                                <td class="p-3"><span class="score-badge score-high">82.7</span></td>
+                                <td class="p-3 text-gray-400">85.2</td>
+                                <td class="p-3 text-gray-400">80.2</td>
+                                <td class="p-3 text-xs text-gray-500">기관 매수세 지속적 유입</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#3</td>
+                                <td class="p-3 font-bold text-green-400">MSFT</td>
+                                <td class="p-3">🔥 S급 (즉시 매수)</td>
+                                <td class="p-3"><span class="score-badge score-high">81.5</span></td>
+                                <td class="p-3 text-gray-400">83.8</td>
+                                <td class="p-3 text-gray-400">79.2</td>
+                                <td class="p-3 text-xs text-gray-500">AI 모멘텀 강세 지속</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#4</td>
+                                <td class="p-3 font-bold text-green-400">META</td>
+                                <td class="p-3">🌟 A급 (적극 매수)</td>
+                                <td class="p-3"><span class="score-badge score-high">76.8</span></td>
+                                <td class="p-3 text-gray-400">78.5</td>
+                                <td class="p-3 text-gray-400">75.1</td>
+                                <td class="p-3 text-xs text-gray-500">광고 수익 개선 기대</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#5</td>
+                                <td class="p-3 font-bold text-green-400">GOOGL</td>
+                                <td class="p-3">🌟 A급 (적극 매수)</td>
+                                <td class="p-3"><span class="score-badge score-high">74.2</span></td>
+                                <td class="p-3 text-gray-400">76.8</td>
+                                <td class="p-3 text-gray-400">71.6</td>
+                                <td class="p-3 text-xs text-gray-500">클라우드 성장 가속화</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#6</td>
+                                <td class="p-3 font-bold text-green-400">TSLA</td>
+                                <td class="p-3">🌟 A급 (적극 매수)</td>
+                                <td class="p-3"><span class="score-badge score-high">72.5</span></td>
+                                <td class="p-3 text-gray-400">70.2</td>
+                                <td class="p-3 text-gray-400">74.8</td>
+                                <td class="p-3 text-xs text-gray-500">거래량 급증, 변동성 주의</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#7</td>
+                                <td class="p-3 font-bold text-green-400">AMZN</td>
+                                <td class="p-3">🌟 A급 (적극 매수)</td>
+                                <td class="p-3"><span class="score-badge score-high">71.3</span></td>
+                                <td class="p-3 text-gray-400">73.5</td>
+                                <td class="p-3 text-gray-400">69.1</td>
+                                <td class="p-3 text-xs text-gray-500">AWS 성장 견조</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#8</td>
+                                <td class="p-3 font-bold text-green-400">AMD</td>
+                                <td class="p-3">📈 B급 (매수 고려)</td>
+                                <td class="p-3"><span class="score-badge score-mid">68.9</span></td>
+                                <td class="p-3 text-gray-400">65.8</td>
+                                <td class="p-3 text-gray-400">72.0</td>
+                                <td class="p-3 text-xs text-gray-500">AI 칩 경쟁 심화</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#9</td>
+                                <td class="p-3 font-bold text-green-400">CRM</td>
+                                <td class="p-3">📈 B급 (매수 고려)</td>
+                                <td class="p-3"><span class="score-badge score-mid">65.7</span></td>
+                                <td class="p-3 text-gray-400">68.2</td>
+                                <td class="p-3 text-gray-400">63.2</td>
+                                <td class="p-3 text-xs text-gray-500">엔터프라이즈 수요 안정</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 hover:bg-gray-800 transition cursor-pointer">
+                                <td class="p-3 font-mono text-gray-400">#10</td>
+                                <td class="p-3 font-bold text-green-400">AVGO</td>
+                                <td class="p-3">📈 B급 (매수 고려)</td>
+                                <td class="p-3"><span class="score-badge score-mid">63.4</span></td>
+                                <td class="p-3 text-gray-400">66.5</td>
+                                <td class="p-3 text-gray-400">60.3</td>
+                                <td class="p-3 text-xs text-gray-500">반도체 사이클 회복 기대</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sector Heatmap -->
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-th text-purple-400"></i> Sector Performance
+                </h2>
+                <div id="sector-heatmap" class="grid grid-cols-4 gap-3">
+                    <div class="p-4 rounded text-center" style="background-color: rgba(0, 200, 83, 0.3);">
+                        <div class="text-xs text-gray-400">Technology</div>
+                        <div class="text-lg font-bold text-green-400">+2.8%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(0, 200, 83, 0.2);">
+                        <div class="text-xs text-gray-400">Comm. Services</div>
+                        <div class="text-lg font-bold text-green-400">+1.9%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(0, 200, 83, 0.15);">
+                        <div class="text-xs text-gray-400">Consumer Disc.</div>
+                        <div class="text-lg font-bold text-green-400">+1.2%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(0, 200, 83, 0.1);">
+                        <div class="text-xs text-gray-400">Financials</div>
+                        <div class="text-lg font-bold text-green-300">+0.8%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(100, 100, 100, 0.2);">
+                        <div class="text-xs text-gray-400">Healthcare</div>
+                        <div class="text-lg font-bold text-gray-400">+0.3%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(100, 100, 100, 0.2);">
+                        <div class="text-xs text-gray-400">Industrials</div>
+                        <div class="text-lg font-bold text-gray-400">+0.1%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(255, 23, 68, 0.15);">
+                        <div class="text-xs text-gray-400">Energy</div>
+                        <div class="text-lg font-bold text-red-400">-0.5%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(255, 23, 68, 0.2);">
+                        <div class="text-xs text-gray-400">Utilities</div>
+                        <div class="text-lg font-bold text-red-400">-1.1%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(255, 23, 68, 0.25);">
+                        <div class="text-xs text-gray-400">Real Estate</div>
+                        <div class="text-lg font-bold text-red-500">-1.8%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(100, 100, 100, 0.2);">
+                        <div class="text-xs text-gray-400">Materials</div>
+                        <div class="text-lg font-bold text-gray-400">-0.2%</div>
+                    </div>
+                    <div class="p-4 rounded text-center" style="background-color: rgba(0, 200, 83, 0.1);">
+                        <div class="text-xs text-gray-400">Consumer Staples</div>
+                        <div class="text-lg font-bold text-green-300">+0.6%</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-gray-500 text-sm">
+        <p>📊 US Market AI Analyst - Standalone Demo Version</p>
+        <p class="mt-2">실제 데이터를 보려면 <code class="bg-gray-800 px-2 py-1 rounded">python flask_app.py</code>를 실행하세요</p>
+    </footer>
+
+    <script>
+        // Simulate real-time price updates
+        function updatePrices() {
+            const tickers = ['SPY', 'QQQ', 'NVDA'];
+            const changes = [
+                (Math.random() - 0.5) * 2,
+                (Math.random() - 0.5) * 2,
+                (Math.random() - 0.5) * 2
+            ];
+
+            // This is just a demo - in real version, this would fetch from API
+            console.log('Demo mode - prices are simulated');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('✅ Standalone Dashboard Loaded');
+            console.log('💡 This is a demo with sample data');
+            console.log('🚀 Run "python flask_app.py" for real data');
+
+            // Simulate updates every 10 seconds
+            setInterval(updatePrices, 10000);
+        });
+    </script>
+</body>
+
+</html>
