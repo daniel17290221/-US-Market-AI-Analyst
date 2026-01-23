@@ -533,26 +533,23 @@
                     <!-- Economic Calendar -->
                     <div class="glass-card p-6">
                         <h2 class="text-sm font-bold uppercase text-gray-400 tracking-wider mb-4">주요 경제 일정</h2>
-                        <div id="calendar-mini-list" class="space-y-4">
-                            <!-- Calendar items -->
-                            <div
-                                class="flex justify-between items-start group cursor-pointer p-2 hover:bg-white/5 rounded-lg transition">
-                                <div>
-                                    <h4 class="text-sm font-bold group-hover:text-brand-primary">CPI (Consumer
-                                        Price
-                                        Index)</h4>
-                                    <p class="text-[10px] text-gray-500 font-mono">2026-01-22 21:30</p>
-                                </div>
-                                <div class="text-right">
-                                    <span
-                                        class="bg-brand-danger/10 text-brand-danger text-[10px] font-bold px-2 py-0.5 rounded border border-brand-danger/30">High</span>
-                                    <p class="text-[10px] text-gray-500 mt-1 font-mono">Fcst: 3.1%</p>
-                                </div>
-                            </div>
+                        <!-- TradingView Widget BEGIN -->
+                        <div class="tradingview-widget-container">
+                            <div class="tradingview-widget-container__widget"></div>
+                            <script type="text/javascript"
+                                src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                                    {
+                                        "colorTheme": "dark",
+                                            "isTransparent": true,
+                                                "width": "100%",
+                                                    "height": "400",
+                                                        "locale": "kr",
+                                                            "importanceFilter": "0,1",
+                                                                "countryFilter": "us"
+                                    }
+                                </script>
                         </div>
-                        <button onclick="switchTab('calendar')"
-                            class="w-full mt-6 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 text-xs font-bold rounded-lg transition">View
-                            Full Calendar</button>
+                        <!-- TradingView Widget END -->
                     </div>
 
                     <!-- ETF Money Flow -->
