@@ -706,15 +706,24 @@
         </div>
 
         <!-- Placeholder Tabs (Calendar, Historical, etc.) -->
-        <div id="tab-calendar"
-            class="tab-content hidden h-[600px] glass-card p-12 flex flex-col items-center justify-center text-center">
-            <i class="fas fa-calendar-alt text-6xl text-brand-primary mb-6 animate-bounce"></i>
-            <h2 class="text-3xl font-bold mb-4">Economic Calendar Detailed View</h2>
-            <p class="text-gray-400 mb-8 max-w-md">이 화면은 파이썬 분석 데이터(`economic_calendar.json`)가 업로드되면 자동으로 상세
-                데이터를
-                시각화합니다.</p>
-            <button onclick="switchTab('market')"
-                class="px-6 py-2 bg-brand-primary text-black font-bold rounded-lg">Back to Dashboard</button>
+        <div id="tab-calendar" class="tab-content hidden glass-card p-4">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript"
+                    src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                        {
+                            "width": "100%",
+                                "height": "800",
+                                    "colorTheme": "dark",
+                                        "isTransparent": true,
+                                            "locale": "kr",
+                                                "importanceFilter": "0,1",
+                                                    "countryFilter": "us,eu,gb,jp,cn,kr"
+                        }
+                    </script>
+            </div>
+            <!-- TradingView Widget END -->
         </div>
 
         <div id="tab-historical"
