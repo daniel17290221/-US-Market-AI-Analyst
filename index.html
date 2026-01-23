@@ -150,35 +150,56 @@
                 class="tab-inactive py-1 text-sm font-semibold hover:text-gray-300 transition">경제 캘린더</a>
         </div>
 
-        <div class="flex items-center gap-4">
-            <!-- TradingView Ticker Widget BEGIN -->
-            <div class="tradingview-widget-container" style="width: 450px;">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript"
-                    src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
-                        {
-                            "symbols": [
-                                { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
-                                { "proName": "FOREXCOM:DJI", "title": "Dow Jones" },
-                                { "proName": "FOREXCOM:NSXUSD", "title": "Nasdaq 100" },
-                                { "proName": "NASDAQ:QQQ", "title": "QQQ" },
-                                { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" }
-                            ],
-                                "colorTheme": "dark",
-                                    "isTransparent": true,
-                                        "showSymbolLogo": true,
-                                            "displayMode": "adaptive",
-                                                "locale": "kr"
-                        }
-                    </script>
-            </div>
-            <!-- TradingView Ticker Widget END -->
-            <button
-                class="bg-gray-800 hover:bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center transition">
-                <i class="fas fa-cog text-gray-400"></i>
-            </button>
+        <!-- Settings Button -->
+        <button
+            class="bg-gray-800 hover:bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center transition">
+            <i class="fas fa-cog text-gray-400"></i>
+        </button>
         </div>
     </nav>
+
+    <!-- Ticker Tape Widget (New Location) -->
+    <div class="px-6 mb-6">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                        "symbols": [
+                            {
+                                "proName": "FOREXCOM:SPXUSD",
+                                "title": "S&P 500"
+                            },
+                            {
+                                "proName": "FOREXCOM:NSXUSD",
+                                "title": "Nasdaq 100"
+                            },
+                            {
+                                "proName": "FOREXCOM:DJI",
+                                "title": "Dow Jones"
+                            },
+                            {
+                                "description": "Gold",
+                                "proName": "TvC:GOLD"
+                            },
+                            {
+                                "description": "Crude Oil",
+                                "proName": "TVC:USOIL"
+                            },
+                            {
+                                "description": "Bitcoin",
+                                "proName": "BINANCE:BTCUSDT"
+                            }
+                        ],
+                            "showSymbolLogo": true,
+                                "isTransparent": true,
+                                    "displayMode": "adaptive",
+                                        "colorTheme": "dark",
+                                            "locale": "kr"
+                    }
+                </script>
+        </div>
+    </div>
 
     <main class="px-6 pb-12">
         <!-- SPA Tab Content: US Market (Default) -->
