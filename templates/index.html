@@ -142,7 +142,10 @@
                             <div class="flex items-center gap-5">
                                 <div
                                     class="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center border border-white/10">
-                                    <i class="fas fa-microchip text-3xl text-brand-primary animate-pulse-soft"></i>
+                                    <img id="main-ticker-logo"
+                                        src="https://assets.parqet.com/logos/symbols/NVDA?format=svg"
+                                        class="w-10 h-10 object-contain filter drop-shadow-[0_0_8px_rgba(0,240,255,0.3)]"
+                                        onerror="this.src='https://ui-avatars.com/api/?name='+this.alt+'&background=random'">
                                 </div>
                                 <div>
                                     <h2 class="text-4xl font-bold flex items-center gap-4">
@@ -522,6 +525,12 @@
                 'swot-s': data.swot_s, 'swot-w': data.swot_w, 'swot-o': data.swot_o, 'swot-t': data.swot_t,
                 'dcf-target': data.dcf_target, 'dcf-bear': data.dcf_bear, 'dcf-bull': data.dcf_bull
             };
+
+            const logoEl = document.getElementById('main-ticker-logo');
+            if (logoEl) {
+                logoEl.src = `https://assets.parqet.com/logos/symbols/${data.ticker}?format=svg`;
+                logoEl.alt = data.ticker;
+            }
 
             for (const [id, val] of Object.entries(fields)) {
                 const el = document.getElementById(id);
