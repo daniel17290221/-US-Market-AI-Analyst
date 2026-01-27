@@ -68,16 +68,18 @@ def load_csv(filename):
                 "risk": "중국 수출 규제 영향 및 경쟁사 AMD MI300 대항 전략.",
                 "upside": "+18.2%", "mkt_cap": "$3.5T", "vol_ratio": "3.2x ↑", "rsi": "72.4",
                 "swot_s": "AI 시장 80%+ 점유율 및 CUDA 생태계", "swot_w": "빅테크 고객 집중도 및 높은 의존도",
-                "swot_o": "자율주행 및 엣지 AI 시장 확대", "swot_t": "중국 수출 규제 및 경쟁 심화"
+                "swot_o": "자율주행 및 엣지 AI 시장 확대", "swot_t": "중국 수출 규제 및 경쟁 심화",
+                "dcf_target": "$165.00", "dcf_bear": "$125.00", "dcf_bull": "$190.00"
             },
             {
                 "rank": "02", "ticker": "TSLA", "name": "Tesla, Inc.", "sector": "Automotive", 
                 "composite_score": "91.2", "grade": "🌟 A급 (적극 매수)", "price": "258.45", "change": "3.1",
-                "insight": "FVD v12 및 로보택시 기대감이 강력한 모멘텀을 형성하고 있으며, 비용 절감 노력이 마진을 방어 중입니다.",
+                "insight": "FSD v12 및 로보택시 기대감이 강력한 모멘텀을 형성하고 있으며, 비용 절감 노력이 마진을 방어 중입니다.",
                 "risk": "전기차 시장의 경쟁 심화와 중국 시장 점유율 둔화 가능성.",
                 "upside": "+25.5%", "mkt_cap": "$825B", "vol_ratio": "2.4x ↑", "rsi": "64.5",
                 "swot_s": "자율주행 데이터 우위 및 브랜드 파워", "swot_w": "CEO 리스크 및 생산 효율화 과제",
-                "swot_o": "옵티머스 로봇 및 에너지 저장 사업", "swot_t": "중국산 저가 전기차 공세"
+                "swot_o": "옵티머스 로봇 및 에너지 저장 사업", "swot_t": "중국산 저가 전기차 공세",
+                "dcf_target": "$320.00", "dcf_bear": "$210.00", "dcf_bull": "$410.00"
             },
             {
                 "rank": "03", "ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", 
@@ -86,15 +88,79 @@ def load_csv(filename):
                 "risk": "앱스토어 반독점 규제 및 중국 내 판매 둔화 리스크.",
                 "upside": "+12.1%", "mkt_cap": "$3.4T", "vol_ratio": "1.2x ↑", "rsi": "55.4",
                 "swot_s": "충성도 높은 생태계 및 강력한 현금흐름", "swot_w": "하드웨어 혁신 속도 둔화",
-                "swot_o": "AI 기반 서비스 부문 매출 확대", "swot_t": "글로벌 규제 당국의 반독점 조사"
+                "swot_o": "AI 기반 서비스 부문 매출 확대", "swot_t": "글로벌 규제 당국의 반독점 조사",
+                "dcf_target": "$255.00", "dcf_bear": "$205.00", "dcf_bull": "$285.00"
             },
-            {"rank": "04", "ticker": "MSFT", "name": "Microsoft Corp", "sector": "Software", "composite_score": "82.5", "grade": "🌟 A급 (적극 매수)", "price": "425.30", "change": "0.9"},
-            {"rank": "05", "ticker": "AMZN", "name": "Amazon.com", "sector": "Commerce", "composite_score": "78.5", "grade": "📈 B급 (매수 고려)", "price": "188.30", "change": "0.5"},
-            {"rank": "06", "ticker": "META", "name": "Meta Platforms", "sector": "Technology", "composite_score": "77.2", "grade": "📈 B급 (매수 고려)", "price": "585.20", "change": "1.4"},
-            {"rank": "07", "ticker": "GOOGL", "name": "Alphabet Inc", "sector": "Technology", "composite_score": "76.5", "grade": "📈 B급 (매수 고려)", "price": "165.20", "change": "0.0"},
-            {"rank": "08", "ticker": "AVGO", "name": "Broadcom Inc", "sector": "Semiconductors", "composite_score": "75.8", "grade": "📈 B급 (매수 고려)", "price": "172.50", "change": "2.1"},
-            {"rank": "09", "ticker": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors", "composite_score": "74.2", "grade": "📈 B급 (매수 고려)", "price": "155.10", "change": "-2.3"},
-            {"rank": "10", "ticker": "COST", "name": "Costco Wholesale", "sector": "Retail", "composite_score": "73.5", "grade": "📊 C급 (관망)", "price": "912.45", "change": "0.8"}
+            {
+                "rank": "04", "ticker": "MSFT", "name": "Microsoft Corp", "sector": "Software", 
+                "composite_score": "82.5", "grade": "🌟 A급 (적극 매수)", "price": "425.30", "change": "0.9",
+                "insight": "Azure 클라우드와 OpenAI 파트너십을 통한 기업용 AI 시장 지배력이 수익성 개선을 견인하고 있습니다.",
+                "risk": "성장 둔화 우려 및 클라우드 부문 마진 압박 가능성.",
+                "upside": "+10.1%", "mkt_cap": "$3.1T", "vol_ratio": "1.1x", "rsi": "52.3",
+                "swot_s": "클라우드 및 기업용 소프트웨어 독점력", "swot_w": "높은 밸류에이션 부담",
+                "swot_o": "생성형 AI 서비스의 전사적 통합", "swot_t": "AWS와 구글의 클라우드 추격",
+                "dcf_target": "$470.00", "dcf_bear": "$390.00", "dcf_bull": "$530.00"
+            },
+            {
+                "rank": "05", "ticker": "AMZN", "name": "Amazon.com", "sector": "Commerce", 
+                "composite_score": "78.5", "grade": "📈 B급 (매수 고려)", "price": "188.30", "change": "0.5",
+                "insight": "물류 효율화와 AWS 수익성 개선이 성장의 핵심입니다. 마진율이 점진적으로 상승하고 있습니다.",
+                "risk": "소비 심리 위축 및 반독점 규제 강화.",
+                "upside": "+15.3%", "mkt_cap": "$1.9T", "vol_ratio": "1.5x", "rsi": "58.7",
+                "swot_s": "이커머스 압도적 점유율 및 AWS", "swot_w": "인건비 등 비용 관리 부담",
+                "swot_o": "광업 부문 고성장 및 AI 클라우드", "swot_t": "중국계 쇼핑앱과의 경쟁 심화",
+                "dcf_target": "$215.00", "dcf_bear": "$165.00", "dcf_bull": "$250.00"
+            },
+            {
+                "rank": "06", "ticker": "META", "name": "Meta Platforms", "sector": "Technology", 
+                "composite_score": "77.2", "grade": "📈 B급 (매수 고려)", "price": "585.20", "change": "1.4",
+                "insight": "광고 매출 회복세가 뚜렷하며, Llama AI 모델 기반 서비스 최적화가 긍정적입니다.",
+                "risk": "리얼리티 랩스의 막대한 적자 및 규제 리스크.",
+                "upside": "+8.4%", "mkt_cap": "$1.4T", "vol_ratio": "1.8x", "rsi": "61.2",
+                "swot_s": "페이스북/인스타그램 거대한 사용자 층", "swot_w": "메타버스 사업부문의 지속적 손실",
+                "swot_o": "AI 타겟팅 광고를 통한 수익성 제고", "swot_t": "틱톡과의 사용자 점유율 경쟁",
+                "dcf_target": "$630.00", "dcf_bear": "$540.00", "dcf_bull": "$710.00"
+            },
+            {
+                "rank": "07", "ticker": "GOOGL", "name": "Alphabet Inc", "sector": "Technology", 
+                "composite_score": "76.5", "grade": "📈 B급 (매수 고려)", "price": "165.20", "change": "0.0",
+                "insight": "검색 광고 시장의 견고함과 구글 클라우드 흑자 전환이 긍정적이나 AI 검색 경쟁이 변수입니다.",
+                "risk": "반독점 소송 리스크 및 AI 검색 시장의 경쟁 심화.",
+                "upside": "+14.2%", "mkt_cap": "$2.1T", "vol_ratio": "0.9x", "rsi": "49.5",
+                "swot_s": "글로벌 검색 시장 점유율 1위", "swot_w": "AI 대응 속도에 대한 시장 우려",
+                "swot_o": "유튜브 쇼츠 수익화 및 제미나이 AI", "swot_t": "오픈AI 등 생성형 검색의 침공",
+                "dcf_target": "$190.00", "dcf_bear": "$150.00", "dcf_bull": "$220.00"
+            },
+            {
+                "rank": "08", "ticker": "AVGO", "name": "Broadcom Inc", "sector": "Semiconductors", 
+                "composite_score": "75.8", "grade": "📈 B급 (매수 고려)", "price": "172.50", "change": "2.1",
+                "insight": "커스텀 AI 가속기 및 네트워킹 장비 수요가 폭발적입니다. VMware 인수를 통한 소프트웨어 성장도 기대됩니다.",
+                "risk": "하이엔드 네트워킹 시장의 경쟁 증가.",
+                "upside": "+9.1%", "mkt_cap": "$800B", "vol_ratio": "2.1x", "rsi": "67.8",
+                "swot_s": "네트워킹 칩 및 무선 통신 기술력", "swot_w": "VMware 통합 과정의 불확실성",
+                "swot_o": "빅테크향 커스텀 AI 가속기 시장 확대", "swot_t": "반도체 사이클의 하강 가능성",
+                "dcf_target": "$185.00", "dcf_bear": "$155.00", "dcf_bull": "$210.00"
+            },
+            {
+                "rank": "09", "ticker": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors", 
+                "composite_score": "74.2", "grade": "📈 B급 (매수 고려)", "price": "155.10", "change": "-2.3",
+                "insight": "MI300 AI 가속기 출시를 통해 시장 점유율을 확대 중입니다. PC 및 데이터센터 수요 회복 수혜가 예상됩니다.",
+                "risk": "NVIDIA와의 시장 점유율 경쟁 및 마진 압박.",
+                "upside": "+22.5%", "mkt_cap": "$250B", "vol_ratio": "1.4x", "rsi": "45.2",
+                "swot_s": "CPU 및 GPU 라인업의 강력한 경쟁력", "swot_w": "엔비디아 대비 낮은 AI 생태계 영향력",
+                "swot_o": "AI 가속기 시장의 2순위 공급자 지위", "swot_t": "시장 성장이 공급 증가를 못 따라갈 리스크",
+                "dcf_target": "$190.00", "dcf_bear": "$135.00", "dcf_bull": "$240.00"
+            },
+            {
+                "rank": "10", "ticker": "COST", "name": "Costco Wholesale", "sector": "Retail", 
+                "composite_score": "73.5", "grade": "📊 C급 (관망)", "price": "912.45", "change": "0.8",
+                "insight": "멤버십 기반의 강력한 고객 충성도와 이커머스 성장이 안정적인 수익을 창출하고 있습니다.",
+                "risk": "높은 PER 밸류에이션 수준 및 경쟁 심화.",
+                "upside": "+5.2%", "mkt_cap": "$400B", "vol_ratio": "0.8x", "rsi": "51.1",
+                "swot_s": "멤버십 모델을 통한 현금 흐름 안정성", "swot_w": "저성장 산업군의 특성",
+                "swot_o": "글로벌 매장 확대 및 온라인 채널 강화", "swot_t": "월마트 등 대형 할인점의 멤버십 강화",
+                "dcf_target": "$960.00", "dcf_bear": "$850.00", "dcf_bull": "$1050.00"
+            }
         ]
     # Provide default ETF flow data if missing
     if not data and filename == 'us_etf_flows.csv':
