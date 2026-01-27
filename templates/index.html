@@ -63,14 +63,14 @@
         </div>
 
         <div class="hidden lg:flex items-center gap-10">
-            <a onclick="switchTab('market')" id="nav-market" class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">Market Analysis</a>
-            <a onclick="switchTab('calendar')" id="nav-calendar" class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">Calendar</a>
-            <a onclick="switchTab('historical')" id="nav-hist" class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">Historical</a>
+            <a onclick="switchTab('market')" id="nav-market" class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">시장 분석</a>
+            <a onclick="switchTab('calendar')" id="nav-calendar" class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">경제 일정</a>
+            <a onclick="switchTab('historical')" id="nav-hist" class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">과거 패턴</a>
         </div>
 
         <div class="flex items-center gap-3">
             <button class="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition border border-white/5"><i class="fas fa-bell text-gray-400"></i></button>
-            <button class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-xs hover:brightness-110 transition">MJANG CONNECT</button>
+            <button class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-xs hover:brightness-110 transition">실시간 데이터 연결됨</button>
         </div>
     </nav>
 
@@ -96,7 +96,7 @@
                                         <span id="main-full-name" class="text-gray-500 text-xl font-medium tracking-tight">NVIDIA Corporation</span>
                                     </h2>
                                     <div class="flex gap-4 mt-3">
-                                        <span id="ai-score-pill" class="score-pill score-high px-4 py-1">점수: 96 / 100</span>
+                                        <span id="ai-score-pill" class="score-pill score-high px-4 py-1">AI AI AI 점수: 96 / 100</span>
                                         <span id="ai-signal-pill" class="score-pill bg-white/5 text-gray-300 border-white/10 px-4 py-1">AI 적극 매수</span>
                                     </div>
                                 </div>
@@ -119,11 +119,11 @@
                         <div class="space-y-8 relative z-10">
                             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                                 <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
-                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">Market Cap</p>
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">시가 총액</p>
                                     <p id="detail-mkt-cap" class="font-mono font-bold text-lg">--</p>
                                 </div>
                                 <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
-                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">Vol Ratio</p>
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">거래량 비율</p>
                                     <p id="detail-vol-ratio" class="font-mono font-bold text-lg text-brand-success">--</p>
                                 </div>
                                 <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
@@ -135,7 +135,7 @@
                                     <p id="detail-score" class="font-mono font-bold text-lg text-brand-primary">--</p>
                                 </div>
                                 <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
-                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">Strength</p>
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">신호 강도</p>
                                     <p id="detail-signal-strength" class="font-mono font-bold text-lg text-brand-success">--</p>
                                 </div>
                             </div>
@@ -144,21 +144,21 @@
                                 <div class="space-y-6">
                                     <div class="p-6 bg-brand-secondary/10 rounded-2xl border border-brand-secondary/20 relative overflow-hidden">
                                         <div class="absolute -top-10 -right-10 opacity-5"><i class="fas fa-brain text-8xl"></i></div>
-                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i class="fas fa-bolt text-brand-secondary"></i> AI Investment Insight</h4>
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i class="fas fa-bolt text-brand-secondary"></i> AI 투자 분석 인사이트</h4>
                                         <p id="ai-insight" class="text-sm leading-relaxed text-gray-300 italic">데이터 동기화 중...</p>
                                     </div>
                                     <div class="p-6 bg-brand-danger/10 rounded-2xl border border-brand-danger/20">
-                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i class="fas fa-shield-alt text-brand-danger"></i> Risk Factors</h4>
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i class="fas fa-shield-alt text-brand-danger"></i> 핵심 리스크 요인</h4>
                                         <p id="ai-risk" class="text-sm leading-relaxed text-gray-400">데이터 동기화 중...</p>
-                                        <p id="ai-upside" class="mt-4 text-xs font-bold text-brand-success uppercase tracking-widest">+0% Potential Upside</p>
+                                        <p id="ai-upside" class="mt-4 text-xs font-bold text-brand-success uppercase tracking-widest">+0% 예상 상승 여력</p>
                                     </div>
                                 </div>
 
                                 <div class="space-y-6">
                                     <div class="p-6 bg-gray-900/60 rounded-2xl border border-white/10">
                                         <h4 class="text-sm font-bold mb-6 flex justify-between items-center">
-                                            <span>Valuation Spectrum</span>
-                                            <span class="text-[10px] font-mono text-gray-500 uppercase">DCF Target Model</span>
+                                            <span>적정 주가 분석 (DCF)</span>
+                                            <span class="text-[10px] font-mono text-gray-500 uppercase">AI 적정가 모델</span>
                                         </h4>
                                         <div class="h-1.5 w-full bg-gray-800 rounded-full mb-10 relative">
                                             <div class="absolute inset-0 flex rounded-full overflow-hidden">
@@ -179,16 +179,16 @@
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-primary/30 transition">
-                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Strength</p><p id="swot-s" class="text-xs font-medium">--</p>
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT 신호 강도</p><p id="swot-s" class="text-xs font-medium">--</p>
                                         </div>
                                         <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-danger/30 transition">
-                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Weakness</p><p id="swot-w" class="text-xs font-medium">--</p>
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">약점 (W)</p><p id="swot-w" class="text-xs font-medium">--</p>
                                         </div>
                                         <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-success/30 transition">
-                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Opportunity</p><p id="swot-o" class="text-xs font-medium">--</p>
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">기회 (O)</p><p id="swot-o" class="text-xs font-medium">--</p>
                                         </div>
                                         <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-warning/30 transition">
-                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Threats</p><p id="swot-t" class="text-xs font-medium">--</p>
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">위협 (T)</p><p id="swot-t" class="text-xs font-medium">--</p>
                                         </div>
                                     </div>
                                 </div>
@@ -202,7 +202,7 @@
                         <div class="flex justify-between items-center mb-8 relative z-10">
                             <h2 class="text-2xl font-bold flex items-center gap-3">
                                 <i class="fas fa-bolt text-brand-primary"></i> 
-                                Real-time Smart Money <span class="text-gray-500 font-medium">Top 10 Picks</span>
+                                실시간 스마트 머니 <span class="text-gray-500 font-medium">Top 10 추천주</span>
                             </h2>
                             <span class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">DEEP-ANALYSIS v4.0 ACTIVE</span>
                         </div>
@@ -210,13 +210,13 @@
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="text-[10px] text-gray-500 font-black uppercase tracking-widest border-b border-white/10">
-                                        <th class="px-6 py-4">RANK</th>
-                                        <th class="px-6 py-4">TICKER</th>
-                                        <th class="px-6 py-4">SECTOR</th>
-                                        <th class="px-6 py-4 text-center">AI SCORE</th>
-                                        <th class="px-6 py-4">STATUS</th>
-                                        <th class="px-6 py-4 text-right">PRICE</th>
-                                        <th class="px-6 py-4 text-right">CHANGE</th>
+                                        <th class="px-6 py-4">순위</th>
+                                        <th class="px-6 py-4">티커</th>
+                                        <th class="px-6 py-4">섹터</th>
+                                        <th class="px-6 py-4 text-center">AI 점수</th>
+                                        <th class="px-6 py-4">분석 상태</th>
+                                        <th class="px-6 py-4 text-right">현재가</th>
+                                        <th class="px-6 py-4 text-right">등락율</th>
                                     </tr>
                                 </thead>
                                 <tbody id="smart-money-tbody" class="text-sm font-medium">
@@ -232,17 +232,31 @@
                     <!-- Technical Heatmap (TV Widget) -->
                     <div class="glass-card p-6 h-[320px] overflow-hidden flex flex-col">
                         <h2 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4 flex items-center gap-2">
-                             <i class="fas fa-layer-group text-brand-success"></i> Market Sector Flow
+                             <i class="fas fa-layer-group text-brand-success"></i> 시장 섹터 맵 (S&P 500)
                         </h2>
                         <div class="flex-1 rounded-xl overflow-hidden grayscale-[0.3] hover:grayscale-0 transition">
                             <!-- TradingView Widget BEGIN -->
                             <div class="tradingview-widget-container h-full">
                                 <div class="tradingview-widget-container__widget h-full"></div>
-                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js" async>
+                                
+                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
                                 {
-                                    "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "kr", "showSymbolLogo": true
+                                  "exchanges": [],
+                                  "dataSource": "S&P500",
+                                  "grouping": "sector",
+                                  "blockSize": "market_cap_basic",
+                                  "blockColor": "change",
+                                  "locale": "kr",
+                                  "symbolUrl": "",
+                                  "colorTheme": "dark",
+                                  "hasTopBar": false,
+                                  "isTransparent": true,
+                                  "hasSymbolTooltip": true,
+                                  "width": "100%",
+                                  "height": "100%"
                                 }
                                 </script>
+    
                             </div>
                         </div>
                     </div>
@@ -250,18 +264,18 @@
                     <!-- Macro Analysis Panel -->
                     <div class="glass-card p-7 bg-accent-gradient/5 border-brand-primary/10">
                         <h2 class="text-base font-bold mb-6 flex items-center gap-3">
-                            <i class="fas fa-robot text-brand-primary"></i> AI Macro Outlook
+                            <i class="fas fa-robot text-brand-primary"></i> AI 거시 경제 전망
                         </h2>
                         <div class="space-y-6">
                             <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[9px] text-gray-500 font-bold uppercase">Sentiment Index</span>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase">시장 심리 지수</span>
                                     <span id="macro-sentiment" class="text-xs font-mono text-brand-primary font-bold">GREED (78)</span>
                                 </div>
                                 <p id="macro-summary" class="text-sm font-bold leading-relaxed">시장 흐름을 분석 중입니다...</p>
                             </div>
                             <div class="space-y-3">
-                                <p class="text-[10px] font-black text-brand-primary uppercase tracking-widest">Key Findings</p>
+                                <p class="text-[10px] font-black text-brand-primary uppercase tracking-widest">핵심 분석 결과</p>
                                 <ul id="macro-takeaways" class="space-y-2 text-xs text-gray-400">
                                     <li class="flex items-center gap-3"><div class="w-1 h-1 rounded-full bg-brand-primary"></div>데이터 로딩 중...</li>
                                 </ul>
@@ -273,25 +287,25 @@
                         </div>
                     </div>
 
-                    <!-- Mini Calendar -->
+                    <!-- Mini 경제 일정 -->
                     <div class="glass-card p-6">
-                         <h2 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">Market Events</h2>
+                         <h2 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">주요 경제 일정</h2>
                          <div id="calendar-mini-list" class="space-y-3">
-                             <div class="flex justify-center py-6"><span class="animate-pulse text-gray-600 text-xs">Fetching Events...</span></div>
+                             <div class="flex justify-center py-6"><span class="animate-pulse text-gray-600 text-xs">일정 수집 중...</span></div>
                          </div>
                     </div>
 
-                    <!-- ETF Flow Monitor (Restored) -->
+                    <!-- ETF 자금 흐름 모니터 (Restored) -->
                     <div class="glass-card p-7">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-[11px] font-black uppercase text-gray-500 tracking-widest">ETF Flow Monitor</h2>
+                            <h2 class="text-[11px] font-black uppercase text-gray-500 tracking-widest">ETF 자금 흐름 모니터</h2>
                             <div class="flex gap-1 bg-black/30 p-0.5 rounded-lg border border-white/5" id="etf-toggle-buttons">
-                                <button onclick="setETFFlowType('inflow')" id="etf-btn-inflow" class="px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter">Inflow</button>
-                                <button onclick="setETFFlowType('outflow')" id="etf-btn-outflow" class="px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter">Outflow</button>
+                                <button onclick="setETFFlowType('inflow')" id="etf-btn-inflow" class="px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter">유입</button>
+                                <button onclick="setETFFlowType('outflow')" id="etf-btn-outflow" class="px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter">유출</button>
                             </div>
                         </div>
                         <div class="space-y-2" id="etf-flow-container">
-                            <p class="text-[10px] text-center text-gray-600 py-6 italic">Synchronizing Flows...</p>
+                            <p class="text-[10px] text-center text-gray-600 py-6 italic">데이터 동기화 중...</p>
                         </div>
                     </div>
                 </div>
@@ -311,7 +325,7 @@
         </div>
         <div id="tab-historical" class="tab-content hidden glass-card p-20 flex flex-col items-center justify-center text-center">
              <i class="fas fa-history text-6xl text-brand-secondary mb-8 opacity-20"></i>
-             <h2 class="text-3xl font-bold mb-4">Historical Patterns Engine</h2>
+             <h2 class="text-3xl font-bold mb-4">과거 패턴 Patterns Engine</h2>
              <p class="text-gray-500 max-w-md mx-auto leading-relaxed uppercase tracking-tighter text-sm">과거의 승리 패턴을 현재로 불러오는 High-Performance 엔진이 백엔드 연동 중입니다.</p>
         </div>
     </main>
@@ -377,7 +391,7 @@
                 'detail-mkt-cap': data.mkt_cap, 'detail-vol-ratio': data.vol_ratio,
                 'detail-rsi': data.rsi, 'detail-score': data.score,
                 'detail-signal-strength': data.signal_strength, 'ai-insight': data.insight,
-                'ai-risk': data.risk, 'ai-upside': `${data.upside} UP Potential`,
+                'ai-risk': data.risk, 'ai-upside': `${data.upside} 상승 여력`,
                 'swot-s': data.swot_s, 'swot-w': data.swot_w, 'swot-o': data.swot_o, 'swot-t': data.swot_t,
                 'dcf-target': data.dcf_target, 'dcf-bear': data.dcf_bear, 'dcf-bull': data.dcf_bull
             };
@@ -389,7 +403,7 @@
 
             const scorePill = document.getElementById('ai-score-pill');
             if (scorePill) {
-                scorePill.innerText = `점수: ${data.score} / 100`;
+                scorePill.innerText = `AI 점수: ${data.score} / 100`;
                 scorePill.className = `score-pill ${data.score > 80 ? 'score-high' : 'score-mid'}`;
             }
             
@@ -414,7 +428,7 @@
             const tbody = document.getElementById('smart-money-tbody');
             if (!tbody) return;
             if (smartMoneyData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-20 text-center text-gray-600 font-mono italic">NO DATA FLOW DETECTED</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-20 text-center text-gray-600 font-mono italic">데이터를 불러오는 중입니다...</td></tr>';
                 return;
             }
             tbody.innerHTML = smartMoneyData.map((item, index) => `
@@ -476,7 +490,7 @@
                             sector: item.sector || 'Etc', score: score,
                             signal: item.grade ? item.grade.split(' ')[1] : (score > 80 ? '적극 매수' : '매수'),
                             price: price, change: parseFloat(item.change) || 0,
-                            insight: item.insight || 'Analysis Ready.', risk: item.risk || 'No significant alerts.',
+                            insight: item.insight || '분석 완료.', risk: item.risk || '특이사항 없습니다.',
                             upside: item.upside || '+0%'
                         });
                     });
@@ -491,7 +505,7 @@
         function applyFallback() {
             const fallback = [{ ticker: "NVDA", rank: "01", name: "NVIDIA", sector: "Tech", score: 96, signal: "적극 매수", price: 143.0, change: 8.5 }];
             smartMoneyData.length = 0;
-            fallback.forEach(f => smartMoneyData.push({...f, insight: "Market Sync Mode.", risk: "Normal.", upside: "+15%"}));
+            fallback.forEach(f => smartMoneyData.push({...f, insight: "시장 데이터 동기화 모드입니다.", risk: "정상 범위입니다.", upside: "+15%"}));
             injectSmartMoney();
         }
 
@@ -525,7 +539,7 @@
             const filtered = etfData.filter(d => etfType === 'inflow' ? parseFloat(d.flow_score) >= 55 : parseFloat(d.flow_score) < 55)
                                     .sort((a,b) => etfType === 'inflow' ? b.flow_score - a.flow_score : a.flow_score - b.flow_score);
             
-            if (filtered.length === 0) { cont.innerHTML = '<p class="text-[10px] text-center text-gray-700 py-6 font-mono">NO FLOW DATA</p>'; return; }
+            if (filtered.length === 0) { cont.innerHTML = '<p class="text-[10px] text-center text-gray-700 py-6 font-mono">동기화된 데이터 없음</p>'; return; }
             cont.innerHTML = filtered.slice(0, 10).map(item => `
                 <div class="flex items-center justify-between p-3 hover:bg-white/[0.03] rounded-xl transition border-b border-white/[0.02]">
                     <div class="flex-1">
@@ -550,10 +564,10 @@
                 if (res.ok) {
                     const data = await res.json();
                     document.getElementById('macro-sentiment').innerText = `${data.market_mood} (${data.mood_score})`;
-                    document.getElementById('macro-summary').innerText = `시장 심리 지수는 현재 ${data.market_mood} 단계입니다.`;
+                    document.getElementById('macro-summary').innerText = `현재 시장 심리는 ${data.market_mood}  단계입니다.`;
                     document.getElementById('macro-takeaways').innerHTML = (data.key_takeaways || []).map(t => `<li class="flex items-center gap-3"><div class="w-1 h-1 rounded-full bg-brand-primary"></div>${t}</li>`).join('');
-                    document.getElementById('macro-outlook').innerText = `Outlook: ${data.sector_outlook}`;
-                    document.getElementById('macro-risk').innerText = `Risks: ${data.risk_factors}`;
+                    document.getElementById('macro-outlook').innerText = `전망: ${data.sector_outlook}`;
+                    document.getElementById('macro-risk').innerText = `리스크: ${data.risk_factors}`;
                 }
             } catch (e) {}
         }
