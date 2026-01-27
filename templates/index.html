@@ -551,7 +551,12 @@
             if (tabId === 'report') {
                 const reportFrame = document.getElementById('report-iframe');
                 if (reportFrame && !reportFrame.src) {
-                    reportFrame.src = '/daily-report';
+                    // Check if running in standalone (file://) or server mode
+                    if (window.location.protocol === 'file:') {
+                        reportFrame.src = 'us_market/us_market_morning_report.html';
+                    } else {
+                        reportFrame.src = '/daily-report';
+                    }
                 }
             }
         }

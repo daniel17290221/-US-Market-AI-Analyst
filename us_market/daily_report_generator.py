@@ -108,6 +108,7 @@ class USDailyReportGenerator:
             return json.loads(text)
         except Exception as e:
             logger.error(f"AI Generation Error: {e}")
+            # Ensure we return a structured mock content even on exception
             return self.get_mock_ai_content()
 
     def get_mock_ai_content(self):
@@ -319,11 +320,16 @@ class USDailyReportGenerator:
         """
         
         try:
+            # Ensure output directory exists
+            output_dir = os.path.dirname(self.output_file)
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+                
             with open(self.output_file, 'w', encoding='utf-8') as f:
                 f.write(html_template)
-            logger.info(f"✅ Premium report generated: {self.output_file}")
+            logger.info(f"✅ Premium report saved to: {self.output_file}")
         except Exception as e:
-            logger.warning(f"Could not save report: {e}")
+            logger.error(f"❌ Error saving report to {self.output_file}: {e}")
             
         return html_template
 

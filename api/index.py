@@ -260,6 +260,17 @@ def get_ai_summary(ticker):
 @app.route('/api/us/daily-report')
 @app.route('/daily-report')
 def get_daily_report():
+    report_path = os.path.join(DATA_DIR, 'us_market_morning_report.html')
+    
+    # 1. First, check if the pre-generated file exists
+    if os.path.exists(report_path):
+        try:
+            with open(report_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception as e:
+            print(f"DEBUG: Error reading existing report: {e}")
+
+    # 2. Fallback to live generation if file doesn't exist or failed to read
     try:
         generator = USDailyReportGenerator(data_dir=DATA_DIR)
         return generator.run()
