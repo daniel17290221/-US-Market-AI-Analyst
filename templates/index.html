@@ -943,7 +943,8 @@
 
                 const remoteData = await response.json();
 
-                if (remoteData && remoteData.length > 0) {
+                // STICKY STATE PROTECTION: Only update if we received valid items
+                if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
                     smartMoneyData.length = 0;
                     remoteData.forEach((item, i) => {
                         const price = parseFloat(item.current_price) || 0;
@@ -981,12 +982,13 @@
                         });
                     });
                     console.log("✅ Live Data Synchronized from API");
+                    injectSmartMoney();
+                    loadSymbol(0); // Load Top 1 immediately after data is ready
                 }
             } catch (e) {
-                console.warn("⚠️ API fetch failed, using fallback:", e.message);
-            } finally {
-                injectSmartMoney();
-                if (smartMoneyData.length > 0) loadSymbol(0); // Load Top 1
+                console.warn("⚠️ API fetch failed:", e.message);
+                // If it fails, we keep whatever was last in smartMoneyData (Likely nothing yet)
+                // but we don't clear it.
             }
         }
 
