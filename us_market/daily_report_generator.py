@@ -818,15 +818,20 @@ class USDailyReportGenerator:
 </html>
         """
         
-        with open(self.output_file, 'w', encoding='utf-8') as f:
-            f.write(html_template)
-        logger.info(f"✅ Premium report generated: {self.output_file}")
+        try:
+            with open(self.output_file, 'w', encoding='utf-8') as f:
+                f.write(html_template)
+            logger.info(f"✅ Premium report generated: {self.output_file}")
+        except Exception as e:
+            logger.warning(f"Could not save report to file: {e}")
+            
+        return html_template
 
     def run(self):
         logger.info("🚀 Generating Daily US Market Report...")
         raw_data = self.load_data()
         ai_content = self.generate_ai_content(raw_data)
-        self.generate_html(raw_data, ai_content)
+        return self.generate_html(raw_data, ai_content)
 
 if __name__ == "__main__":
     USDailyReportGenerator(data_dir='us_market').run()

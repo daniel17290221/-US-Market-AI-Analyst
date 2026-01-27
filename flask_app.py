@@ -4,6 +4,7 @@ import json
 import os
 import yfinance as yf
 from datetime import datetime
+from us_market.daily_report_generator import USDailyReportGenerator
 
 app = Flask(__name__)
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'us_market')
@@ -55,6 +56,17 @@ def get_ai_summary(ticker):
     summaries = load_json('ai_stock_summaries.json')
     summary = summaries.get(ticker, "No summary available.")
     return jsonify({'ticker': ticker, 'summary': summary})
+
+@app.route('/api/us/daily-report')
+@app.route('/daily-report')
+def get_daily_report():
+    """Dynamically generate the daily report"""
+    try:
+        generator = USDailyReportGenerator(data_dir=DATA_DIR)
+        html_content = generator.run()
+        return html_content
+    except Exception as e:
+        return f"<h1>Error generating report</h1><p>{str(e)}</p>", 500
 
 @app.route('/api/us/realtime-prices')
 def get_realtime_prices():
