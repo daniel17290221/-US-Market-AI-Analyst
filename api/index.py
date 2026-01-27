@@ -24,15 +24,16 @@ print(f"DEBUG: DATA_DIR={DATA_DIR}")
 
 def load_json(filename):
     path = os.path.join(DATA_DIR, filename)
+    data = {}
     if os.path.exists(path):
         try:
             with open(path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except:
-            pass
+                data = json.load(f)
+        except Exception as e:
+            print(f"DEBUG: Error reading {filename}: {e}")
     
-    # Provide default macro data if missing
-    if filename == 'us_macro_analysis.json':
+    # Provide default macro data if missing or empty
+    if not data and filename == 'us_macro_analysis.json':
         return {
             "market_mood": "Greed",
             "mood_score": 78,
@@ -44,20 +45,21 @@ def load_json(filename):
             "sector_outlook": "반도체 및 기술 섹터 비중 확대 권고",
             "risk_factors": "인플레이션 재점화 가능성 및 지정학적 리스크"
         }
-    return {}
+    return data or {}
 
 def load_csv(filename):
     path = os.path.join(DATA_DIR, filename)
+    data = []
     if os.path.exists(path):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
-                return list(reader)
+                data = list(reader)
         except Exception as e:
-            print(f"Error loading CSV {filename}: {e}")
+            print(f"DEBUG: Error loading CSV {filename}: {e}")
     
-    # Provide default smart money data if missing
-    if filename == 'smart_money_picks_v2.csv':
+    # Provide default smart money data if missing OR empty
+    if not data and filename == 'smart_money_picks_v2.csv':
         return [
             {
                 "rank": "01", "ticker": "NVDA", "name": "NVIDIA Corporation", "sector": "Technology", 
@@ -94,7 +96,7 @@ def load_csv(filename):
             {"rank": "09", "ticker": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors", "composite_score": "74.2", "grade": "📈 B급 (매수 고려)", "price": "155.10", "change": "-2.3"},
             {"rank": "10", "ticker": "COST", "name": "Costco Wholesale", "sector": "Retail", "composite_score": "73.5", "grade": "📊 C급 (관망)", "price": "912.45", "change": "0.8"}
         ]
-    return []
+    return data or []
 
 def fetch_realtime_data(tickers):
     """Manual fetch for Yahoo Finance (Lightweight replacement for yfinance)"""

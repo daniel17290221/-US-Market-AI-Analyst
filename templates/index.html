@@ -1083,6 +1083,13 @@
             fetchData();
             fetchMacroData();
             fetchCalendarData();
+
+            // Set up periodic updates (Every 5 minutes)
+            setInterval(() => {
+                console.log("⏰ Periodic refresh triggered...");
+                fetchData();
+            }, 5 * 60 * 1000);
+
             console.log("🚀 Premium Dashboard Fully Functionalized");
         });
     </script>
