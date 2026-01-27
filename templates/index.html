@@ -88,6 +88,31 @@
 </head>
 
 <body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Ticker Tape Widget -->
+    <div class="bg-[#08080A] border-b border-white/5">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                        "symbols": [
+                            { "proName": "FOREXCOM:SPX500", "title": "S&P 500" },
+                            { "proName": "FOREXCOM:NSXUSD", "title": "Nasdaq 100" },
+                            { "proName": "CME_MINI:ES1!", "title": "S&P 500 Futures" },
+                            { "proName": "COMEX:GC1!", "title": "Gold" },
+                            { "proName": "NYMEX:CL1!", "title": "Crude Oil" },
+                            { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" },
+                            { "proName": "BINANCE:ETHUSDT", "title": "Ethereum" }
+                        ],
+                            "showSymbolLogo": true,
+                                "colorTheme": "dark",
+                                    "isTransparent": true,
+                                        "displayMode": "adaptive",
+                                            "locale": "kr"
+                    }
+                </script>
+        </div>
+    </div>
     <!-- Header -->
     <nav
         class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-6 py-3 flex justify-between items-center rounded-2xl border-white/5">
