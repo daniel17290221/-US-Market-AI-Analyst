@@ -125,17 +125,17 @@ def index():
 def get_smart_money():
     data = load_csv('smart_money_picks_v2.csv')
     
-    # Update top 5 with realtime prices
+    # Update top 10 with realtime prices (expanded from 5)
     try:
-        top_tickers = [d['ticker'] for d in data[:5]]
+        top_tickers = [d['ticker'] for d in data[:10]]
         current_prices = fetch_realtime_data(top_tickers)
-        for d in data[:5]:
+        for d in data[:10]:
             t = d['ticker']
             if t in current_prices:
-                d['current_price'] = current_prices[t]['price']
+                d['price'] = current_prices[t]['price']
                 d['change'] = current_prices[t]['change']
-    except:
-        pass
+    except Exception as e:
+        print(f"DEBUG: Price update error: {e}")
         
     response = jsonify(data)
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'

@@ -945,14 +945,22 @@
                 const remoteData = await response.json();
                 console.log("📦 Received Remote Data:", remoteData);
 
-                // STICKY STATE PROTECTION: Only update if we received valid items
+                // Update "Last Updated" time in UI
+                const now = new Date();
+                const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+                const updateEl = document.querySelector('.text-[10px].text-gray-500.font-mono');
+                if (updateEl) {
+                    updateEl.innerHTML = `<span class="inline-block w-2 h-2 bg-brand-success rounded-full animate-pulse"></span> VERCEL LIVE API v2.5 (Last Sync: ${timeStr})`;
+                }
+
                 if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
                     smartMoneyData.length = 0;
                     remoteData.forEach((item, i) => {
-                        const price = parseFloat(item.current_price || item.price) || 0;
+                        const price = parseFloat(item.price || item.current_price) || 0;
                         const score = parseFloat(item.composite_score || item.score) || 0;
 
-                        console.log(`  - Processing ${item.ticker}: Price=${price}, Score=${score}`);
+                        console.log(`  - Processing ${item.ticker}: Price=${price}`);
 
                         smartMoneyData.push({
                             rank: (i + 1).toString().padStart(2, '0'),
@@ -987,8 +995,12 @@
                     });
                     console.log("✅ State Synchronized. Items count:", smartMoneyData.length);
                     injectSmartMoney();
-                    loadSymbol(0); // Load Top 1 immediately after data is ready
-                } else {
+                    if (!window.initialLoadDone) {
+                        loadSymbol(0);
+                        window.initialLoadDone = true;
+                    }
+                }
+                else {
                     console.error("❌ Received empty or invalid data from API");
                 }
             } catch (e) {
