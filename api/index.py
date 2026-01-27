@@ -13,7 +13,7 @@ if BASE_DIR not in sys.path:
 
 from us_market.daily_report_generator import USDailyReportGenerator
 
-app = Flask(__name__, template_folder='../templates')
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'))
 DATA_DIR = os.path.join(BASE_DIR, 'us_market')
 
 def load_json(filename):
@@ -36,7 +36,28 @@ def index():
 @app.route('/api/us/smart-money')
 def get_smart_money():
     data = load_csv('smart_money_picks_v2.csv')
-    return jsonify(data)
+    
+    # Try to update top 10 with realtime prices
+    try:
+        top_tickers = [d['ticker'] for d in data[:10]]
+        prices = yf.download(top_tickers, period='1d', interval='1m', progress=False)
+        if not prices.empty:
+            for d in data[:10]:
+                ticker = d['ticker']
+                try:
+                    if isinstance(prices.columns, pd.MultiIndex):
+                        current = prices['Close'][ticker].iloc[-1]
+                    else:
+                        current = prices['Close'].iloc[-1]
+                    d['current_price'] = round(current, 2)
+                except:
+                    pass
+    except Exception as e:
+        print(f"Warning: Failed to update top prices: {e}")
+        
+    response = jsonify(data)
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
 
 @app.route('/api/us/macro-analysis')
 def get_macro_analysis():
