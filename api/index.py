@@ -96,6 +96,14 @@ def load_csv(filename):
             {"rank": "09", "ticker": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors", "composite_score": "74.2", "grade": "📈 B급 (매수 고려)", "price": "155.10", "change": "-2.3"},
             {"rank": "10", "ticker": "COST", "name": "Costco Wholesale", "sector": "Retail", "composite_score": "73.5", "grade": "📊 C급 (관망)", "price": "912.45", "change": "0.8"}
         ]
+    # Provide default ETF flow data if missing
+    if not data and filename == 'us_etf_flows.csv':
+        return [
+            {"ticker": "SPY", "name": "SPDR S&P 500", "flow_score": "82.5", "price_change_20d": "2.1"},
+            {"ticker": "QQQ", "name": "Invesco QQQ", "flow_score": "78.4", "price_change_20d": "3.2"},
+            {"ticker": "XLK", "name": "Technology", "flow_score": "91.2", "price_change_20d": "5.5"},
+            {"ticker": "XLU", "name": "Utilities", "flow_score": "32.5", "price_change_20d": "-2.1"}
+        ]
     return data or []
 
 def fetch_realtime_data(tickers):
@@ -164,6 +172,10 @@ def get_macro_analysis():
 @app.route('/api/us/sector-heatmap')
 def get_sector_heatmap():
     return jsonify(load_json('sector_heatmap.json'))
+
+@app.route('/api/us/etf-flows')
+def get_etf_flows():
+    return jsonify(load_csv('us_etf_flows.csv'))
 
 @app.route('/api/us/options-flow')
 def get_options_flow():
