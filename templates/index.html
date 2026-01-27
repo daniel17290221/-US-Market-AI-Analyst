@@ -791,145 +791,25 @@
         }
 
         // --- UI Injections ---
-        const smartMoneyData = [
-            {
-                rank: '01', ticker: 'NVDA', name: 'NVIDIA Corporation', sector: '반도체', score: 95.8, signal: '적극 매수', price: 142.87, change: 8.4,
-                insight: 'NVIDIA는 AI 가속기 시장에서 독보적 지위를 유지하고 있으며, Blackwell 아키텍처 출시로 매출 성장이 가속화될 전망입니다.',
-                risk: '중국 수출 규제 영향, 경쟁사 AMD MI300 점유율 추이.',
-                upside: '+18.2%',
-                mkt_cap: '$3.5T', vol_ratio: '3.2x ↑', rsi: '72.4', signal_strength: '매우 강력',
-                swot_s: 'AI 시장 80%+ 점유율 및 CUDA 생태계', swot_w: '빅테크 고객 집중도 및 높은 의존도',
-                swot_o: '자율주행 및 엣지 AI 시장 확대', swot_t: '중국 수출 규제 및 경쟁 심화',
-                dcf_target: '$168.50', dcf_bear: '$95', dcf_bull: '$210',
-                sce_bear_val: '$95', sce_bear_pct: '-33%',
-                sce_base_val: '$165', sce_base_pct: '+15%',
-                sce_bull_val: '$210', sce_bull_pct: '+47%'
-            },
-            {
-                rank: '02', ticker: 'TSLA', name: 'Tesla, Inc.', sector: '자동차', score: 91.2, signal: '적극 매수', price: 258.45, change: 3.1,
-                insight: 'FVD v12 및 로보택시 기대감이 강력한 모멘텀을 형성하고 있으며, 비용 절감 노력이 마진을 방어 중입니다.',
-                risk: '전기차 시장의 경쟁 심화와 중국 시장 점유율 둔화가 주요 우려 사항입니다.',
-                upside: '+25.5%',
-                mkt_cap: '$825B', vol_ratio: '2.4x ↑', rsi: '64.5', signal_strength: '강함',
-                swot_s: '자율주행 데이터 우위 및 브랜드 파워', swot_w: 'CEO 리스크 및 생산 효율화 과제',
-                swot_o: '옵티머스 로봇 및 에너지 저장 사업', swot_t: '중국산 저가 전기차 공세',
-                dcf_target: '$325.00', dcf_bear: '$180', dcf_bull: '$410',
-                sce_bear_val: '$180', sce_bear_pct: '-30%',
-                sce_base_val: '$320', sce_base_pct: '+24%',
-                sce_bull_val: '$410', sce_bull_pct: '+58%'
-            },
-            {
-                rank: '03', ticker: 'AAPL', name: 'Apple Inc.', sector: '반도체/IT', score: 88.5, signal: '매수', price: 228.12, change: 1.2,
-                insight: '애플 인텔리전스(AI)가 차기 아이폰 교체 수요의 핵심 동력으로 작용할 것으로 분석됩니다.',
-                risk: '앱스토어 반독점 규제 및 중국 내 판매 둔화 리스크가 존재합니다.',
-                upside: '+12.1%',
-                mkt_cap: '$3.4T', vol_ratio: '1.2x ↑', rsi: '55.4', signal_strength: '보통',
-                swot_s: '충성도 높은 생태계 및 강력한 현금흐름', swot_w: '하드웨어 혁신 속도 둔화',
-                swot_o: 'AI 기반 서비스 부문 매출 확대', swot_t: '글로벌 규제 당국의 반독점 조사',
-                dcf_target: '$255.00', dcf_bear: '$190', dcf_bull: '$285',
-                sce_bear_val: '$190', sce_bear_pct: '-16%',
-                sce_base_val: '$250', sce_base_pct: '+9%',
-                sce_bull_val: '$285', sce_bull_pct: '+25%'
-            },
-            {
-                rank: '04', ticker: 'GEHC', name: 'GE HealthCare Technologies Inc.', sector: '의료기기', score: 82.5, signal: '적극 매수', price: 82.25, change: 0.8,
-                insight: '영상 장비 수요가 견조하며, AI 통합 의료 기기 시장에서의 선점 효과가 실적에 반영되기 시작했습니다.',
-                risk: '고금리 장기화에 따른 병원의 자본 지출 감소 가능성이 리스크 요인입니다.',
-                upside: '+18.2%',
-                mkt_cap: '$42B', vol_ratio: '1.5x ↑', rsi: '58.2', signal_strength: '강함',
-                swot_s: '글로벌 영상 장비 시장 지배력', swot_w: '높은 부채 비율 및 이자 부담',
-                swot_o: 'AI 기반 정밀 의료 시장 개척', swot_t: '헬스케어 예산 감축 및 경쟁사 추격',
-                dcf_target: '$98.00', dcf_bear: '$72', dcf_bull: '$115',
-                sce_bear_val: '$72', sce_bear_pct: '-12%',
-                sce_base_val: '$92', sce_base_pct: '+12%',
-                sce_bull_val: '$115', sce_bull_pct: '+40%'
-            },
-            {
-                rank: '05', ticker: 'MSFT', name: 'Microsoft Corporation', sector: '소프트웨어', score: 78.5, signal: '매수', price: 425.3, change: 0.9,
-                insight: 'Azure 클라우드 성장이 AI 수요에 기인하고 있으며, 코파일럿 유료 구독화가 가속화됩니다.',
-                risk: '오픈AI와의 파트너십에 대한 반독점 조사 가능성이 중장기 리스크입니다.',
-                upside: '+14.8%',
-                mkt_cap: '$3.1T', vol_ratio: '1.4x ↑', rsi: '61.2', signal_strength: '보통',
-                swot_s: '기업용 소프트웨어 시장 독점 및 AI 선점', swot_w: '클라우드 인프라 투자 비용 증가',
-                swot_o: 'AI 기반 생산성 도구 매출 확대', swot_t: '구글/아마존의 AI 추격 및 규제',
-                dcf_target: '$485.00', dcf_bear: '$380', dcf_bull: '$540',
-                sce_bear_val: '$380', sce_bear_pct: '-10%',
-                sce_base_val: '$480', sce_base_pct: '+13%',
-                sce_bull_val: '$540', sce_bull_pct: '+27%'
-            },
-            {
-                rank: '06', ticker: 'AVGO', name: 'Broadcom Inc.', sector: '반도체', score: 77.2, signal: '매수', price: 172.5, change: 2.1,
-                insight: '커스텀 AI 칩(ASIC) 수요가 폭발적이며, VMware 통합 작업이 예상보다 빠르게 진행되고 있습니다.',
-                risk: '엔터프라이즈 네트워킹 부문의 완만한 수요 회복세가 성장의 발목을 잡을 수 있습니다.',
-                upside: '+13.5%',
-                mkt_cap: '$812B', vol_ratio: '1.8x ↑', rsi: '66.8', signal_strength: '보통',
-                swot_s: 'AI 통신 칩 시장 독점 및 수익성', swot_w: '높은 기업용 네트워킹 비중',
-                swot_o: 'AI 전용 가속기(XPU) 시장 확대', swot_t: '모바일 칩 고객사의 내재화 시도',
-                dcf_target: '$195.00', dcf_bear: '$145', dcf_bull: '$230',
-                sce_bear_val: '$145', sce_bear_pct: '-16%',
-                sce_base_val: '$190', sce_base_pct: '+10%',
-                sce_bull_val: '$230', sce_bull_pct: '+33%'
-            },
-            {
-                rank: '07', ticker: 'META', name: 'Meta Platforms, Inc.', sector: 'IT/광고', score: 76.8, signal: '매수', price: 585.2, change: 1.4,
-                insight: '광고 효율 개선과 릴스(Reels) 수익화 성공으로 강력한 현금 흐름 창출 능력을 보여주고 있습니다.',
-                risk: '대규모 메타버스 투자 비용 증가와 개인정보 규제 강화가 잠재적 위협입니다.',
-                upside: '+11.2%',
-                mkt_cap: '$1.4T', vol_ratio: '1.6x ↑', rsi: '59.2', signal_strength: '보통',
-                swot_s: '글로벌 SNS 사용자 기반 및 광고 엔진', swot_w: '리얼리티 랩스 부문의 대규모 손실',
-                swot_o: '라마(Llama) AI 생태계 및 비즈니스 채팅', swot_t: '틱톡 경쟁 및 젊은층 이탈',
-                dcf_target: '$650.00', dcf_bear: '$510', dcf_bull: '$720',
-                sce_bear_val: '$510', sce_bear_pct: '-12%',
-                sce_base_val: '$640', sce_base_pct: '+9%',
-                sce_bull_val: '$720', sce_bull_pct: '+23%'
-            },
-            {
-                rank: '08', ticker: 'AMZN', name: 'Amazon.com, Inc.', sector: '커머스', score: 75.4, signal: '매수', price: 188.3, change: 0.5,
-                insight: 'AWS의 안정적 성장과 유통 부문의 물류 비용 효율화 덕분에 마진이 지속적으로 개선되고 있습니다.',
-                risk: '미 정부의 반독점 소송 결과에 따른 사업 분할 가능성이 최대 리스크입니다.',
-                upside: '+10.5%',
-                mkt_cap: '$1.9T', vol_ratio: '1.2x ↑', rsi: '52.1', signal_strength: '보통',
-                swot_s: '이커머스 및 클라우드(AWS) 1위', swot_w: '낮은 리테일 부문 이익률',
-                swot_o: '광고 및 물류 대행 사업의 성장', swot_t: '반독점 소송 및 노동 비용 상승',
-                dcf_target: '$208.00', dcf_bear: '$165', dcf_bull: '$240',
-                sce_bear_val: '$165', sce_bear_pct: '-12%',
-                sce_base_val: '$205', sce_base_pct: '+8%',
-                sce_bull_val: '$240', sce_bull_pct: '+27%'
-            },
-            {
-                rank: '09', ticker: 'GOOGL', name: 'Alphabet Inc.', sector: 'IT/광고', score: 73.2, signal: '관망', price: 165.2, change: 0.0,
-                insight: '검색 광고 시장의 지배력은 여전하지만, 생성형 AI 검색 경쟁에서 주도권을 지켜야 하는 과제가 있습니다.',
-                risk: '유튜브 프리미엄 성장 정체와 AI 투자 비용 확대가 부담으로 작용합니다.',
-                upside: '+8.2%',
-                mkt_cap: '$2.0T', vol_ratio: '1.0x', rsi: '48.5', signal_strength: '관망',
-                swot_s: '구글 검색 엔진의 강력한 해자', swot_w: 'AI 전환에서의 검색 광고 잠식 우려',
-                swot_o: '클라우드 부문 흑자 규모 확대', swot_t: 'Perplexity 등 AI 검색 엔진의 부상',
-                dcf_target: '$178.00', dcf_bear: '$140', dcf_bull: '$205',
-                sce_bear_val: '$140', sce_bear_pct: '-15%',
-                sce_base_val: '$175', sce_base_pct: '+6%',
-                sce_bull_val: '$205', sce_bull_pct: '+24%'
-            },
-            {
-                rank: '10', ticker: 'AMD', name: 'Advanced Micro Devices, Inc.', sector: '반도체', score: 72.5, signal: '관망', price: 155.1, change: -2.3,
-                insight: 'MI300 시리즈의 출하량 증가가 예상되나, 시장 지배자의 아성이 견고하여 성장에 한계가 존재합니다.',
-                risk: 'PC 시장의 더딘 회복과 데이터센터용 CPU 시장 경쟁 심화가 리스크입니다.',
-                upside: '+12.5%',
-                mkt_cap: '$251B', vol_ratio: '1.4x ↑', rsi: '42.2', signal_strength: '약함',
-                swot_s: '데이터센터용 CPU 시장 점유율 상승', swot_w: 'AI 가속기 시장의 2위 전략 한계',
-                swot_o: 'AMD 인스팅트 가속기 채택 확대', swot_t: '엔비디아의 기술 압도 및 인텔 반등',
-                dcf_target: '$175.00', dcf_bear: '$130', dcf_bull: '$210',
-                sce_bear_val: '$130', sce_bear_pct: '-16%',
-                sce_base_val: '$170', sce_base_pct: '+10%',
-                sce_bull_val: '$210', sce_bull_pct: '+35%'
-            }
-        ];
+        const smartMoneyData = [];
 
-        function loadSymbol(index) {
+        async function loadSymbol(index) {
             const data = smartMoneyData[index];
             if (!data) return;
 
             // Update Chart
             updateTradingView('D', data.ticker);
+
+            // Fetch Real-time Price
+            try {
+                const priceRes = await fetch(`/api/us/realtime-prices?tickers=${data.ticker}`);
+                const priceData = await priceRes.json();
+                if (priceData[data.ticker]) {
+                    data.price = priceData[data.ticker].price;
+                }
+            } catch (e) {
+                console.warn("Failed to fetch real-time price, using cached value.");
+            }
 
             // Update Headers
             document.querySelector('h2.text-3xl').innerHTML = `${data.ticker} <span class="text-gray-400 text-lg font-normal">${data.name}</span>`;
@@ -976,8 +856,8 @@
 
             // Update Price Marker Position (Approximate)
             if (data.dcf_bear && data.dcf_bull) {
-                const bear = parseFloat(data.dcf_bear.replace('$', ''));
-                const bull = parseFloat(data.dcf_bull.replace('$', ''));
+                const bear = parseFloat(data.dcf_bear.toString().replace('$', ''));
+                const bull = parseFloat(data.dcf_bull.toString().replace('$', ''));
                 const pos = ((data.price - bear) / (bull - bear)) * 100;
                 document.getElementById('price-marker').style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
             }

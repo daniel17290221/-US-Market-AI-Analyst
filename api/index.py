@@ -3,11 +3,18 @@ import pandas as pd
 import json
 import os
 import yfinance as yf
+import sys
 from datetime import datetime
+
+# Adjust path for Vercel subdirectory deployment
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
+
 from us_market.daily_report_generator import USDailyReportGenerator
 
-app = Flask(__name__)
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'us_market')
+app = Flask(__name__, template_folder='../templates')
+DATA_DIR = os.path.join(BASE_DIR, 'us_market')
 
 def load_json(filename):
     path = os.path.join(DATA_DIR, filename)
