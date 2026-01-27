@@ -1,4 +1,9 @@
-<!DOCTYPE html>
+
+import os
+
+path = r'c:\Users\mjang\Downloads\미국 종목 분석\templates\index.html'
+
+html_ultimate = """<!DOCTYPE html>
 <html lang="ko" class="dark">
 
 <head>
@@ -587,3 +592,9 @@
     </script>
 </body>
 </html>
+"""
+
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(html_ultimate)
+
+print("SUCCESS: Ultimate Premium Recovery completed.")
