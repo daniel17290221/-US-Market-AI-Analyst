@@ -7,7 +7,7 @@ Generates a premium HTML report after US market close for Korean investors.
 
 import os
 import json
-import pandas as pd
+import csv
 import logging
 from datetime import datetime
 from dotenv import load_dotenv
@@ -65,8 +65,12 @@ class USDailyReportGenerator:
         # 3. Top Stocks (Smart Money Picks)
         screener_path = os.path.join(self.data_dir, 'smart_money_picks_v2.csv')
         if os.path.exists(screener_path):
-            df = pd.read_csv(screener_path)
-            data['top_stocks'] = df.head(10).to_dict('records')
+            try:
+                with open(screener_path, 'r', encoding='utf-8') as f:
+                    reader = csv.DictReader(f)
+                    data['top_stocks'] = list(reader)[:10]
+            except Exception as e:
+                logger.error(f"Error loading screener CSV: {e}")
             
         # 4. Economic Calendar
         calendar_path = os.path.join(self.data_dir, 'economic_calendar.json')
