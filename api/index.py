@@ -63,7 +63,12 @@ def load_csv(filename):
             {"rank": "02", "ticker": "TSLA", "sector": "Automotive", "composite_score": "91.2", "grade": "🌟 A급 (적극 매수)"},
             {"rank": "03", "ticker": "AAPL", "sector": "Technology", "composite_score": "88.5", "grade": "🌟 A급 (적극 매수)"},
             {"rank": "04", "ticker": "MSFT", "sector": "Software", "composite_score": "82.5", "grade": "🌟 A급 (적극 매수)"},
-            {"rank": "05", "ticker": "AMZN", "sector": "Commerce", "composite_score": "78.5", "grade": "📈 B급 (매수 고려)"}
+            {"rank": "05", "ticker": "AMZN", "sector": "Commerce", "composite_score": "78.5", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "06", "ticker": "META", "sector": "Technology", "composite_score": "77.2", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "07", "ticker": "GOOGL", "sector": "Technology", "composite_score": "76.5", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "08", "ticker": "AVGO", "sector": "Semiconductors", "composite_score": "75.8", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "09", "ticker": "AMD", "sector": "Semiconductors", "composite_score": "74.2", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "10", "ticker": "COST", "sector": "Retail", "composite_score": "73.5", "grade": "📊 C급 (관망)"}
         ]
     return []
 
