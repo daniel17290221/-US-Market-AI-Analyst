@@ -141,6 +141,7 @@ class USDailyReportGenerator:
     def generate_html(self, raw_data, ai_content):
         """Generate final premium HTML matching the user's blog style"""
         today_date = datetime.now().strftime("%Y.%m.%d")
+        gen_time = datetime.now().strftime("%H:%M:%S")
         
         # Build Index Cards
         indices_html = ""
@@ -179,7 +180,7 @@ class USDailyReportGenerator:
             </div>"""
 
         # Build Hashtags
-        tags_html = " ".join([f'<span class="hashtag">{t}</span>' for t in ai_content.get('hashtags', [])])
+        hashtags_html = " ".join([f'<span class="hashtag">{t}</span>' for t in ai_content.get('hashtags', [])])
 
         html_template = f"""
 <!DOCTYPE html>
@@ -275,10 +276,21 @@ class USDailyReportGenerator:
         .hashtag {{ color: var(--text-sub); font-size: 14px; margin-right: 15px; }}
 
         .footer {{ margin-top: 60px; text-align: center; font-size: 12px; color: var(--text-sub); }}
+
+        @keyframes pulse {{
+            0% {{ transform: scale(1); opacity: 1; }}
+            50% {{ transform: scale(1.05); opacity: 0.8; }}
+            100% {{ transform: scale(1); opacity: 1; }}
+        }}
     </style>
 </head>
 <body>
     <div class="container">
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span style="background: #f44336; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; animation: pulse 2s infinite;">
+                🔴 LIVE UPDATED: {gen_time}
+            </span>
+        </div>
         <div class="category">Daily Morning Report</div>
         <h1>{ai_content['catchy_title']}</h1>
         <div class="date">{today_date} • Premium AI Analysis</div>
