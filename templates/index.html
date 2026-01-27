@@ -449,21 +449,36 @@
                         </div>
                     </div>
 
-                    <!-- ETF 자금 흐름 모니터 (Restored) -->
-                    <div class="glass-card p-7">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-[11px] font-black uppercase text-gray-500 tracking-widest">ETF 자금 흐름 모니터
-                            </h2>
-                            <div class="flex gap-1 bg-black/30 p-0.5 rounded-lg border border-white/5"
-                                id="etf-toggle-buttons">
-                                <button onclick="setETFFlowType('inflow')" id="etf-btn-inflow"
-                                    class="px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter">유입</button>
-                                <button onclick="setETFFlowType('outflow')" id="etf-btn-outflow"
-                                    class="px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter">유출</button>
+                    <!-- ETF 실시간 히트맵 (TradingView Heatmap) -->
+                    <div class="glass-card p-6 h-[600px] flex flex-col">
+                        <h2
+                            class="text-xs font-black uppercase text-gray-500 tracking-widest mb-4 flex items-center gap-2">
+                            <i class="fas fa-th-large text-brand-success"></i> ETF 실시간 히트맵
+                        </h2>
+                        <div class="flex-1 rounded-xl overflow-hidden relative">
+                            <div class="tradingview-widget-container h-full">
+                                <div class="tradingview-widget-container__widget h-full"></div>
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
+                                    async>
+                                        {
+                                            "exchanges": [],
+                                                "dataSource": "All_US_ETFs",
+                                                    "grouping": "sector",
+                                                        "blockSize": "market_cap",
+                                                            "blockColor": "change",
+                                                                "locale": "kr",
+                                                                    "symbolUrl": "",
+                                                                        "colorTheme": "dark",
+                                                                            "hasTopBar": false,
+                                                                                "isDatasetEnabled": false,
+                                                                                    "isTransparent": true,
+                                                                                        "hasSymbolTooltip": true,
+                                                                                            "width": "100%",
+                                                                                                "height": "100%"
+                                        }
+                                    </script>
                             </div>
-                        </div>
-                        <div class="space-y-2" id="etf-flow-container">
-                            <p class="text-[10px] text-center text-gray-600 py-6 italic">데이터 동기화 중...</p>
                         </div>
                     </div>
                 </div>
