@@ -403,11 +403,24 @@
                     </div>
 
                     <!-- Mini 경제 일정 -->
-                    <div class="glass-card p-6">
+                    <div class="glass-card p-6 h-[400px] flex flex-col">
                         <h2 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">주요 경제 일정</h2>
-                        <div id="calendar-mini-list" class="space-y-3">
-                            <div class="flex justify-center py-6"><span class="animate-pulse text-gray-600 text-xs">일정
-                                    수집 중...</span></div>
+                        <div class="flex-1 rounded-xl overflow-hidden relative">
+                            <div class="tradingview-widget-container h-full">
+                                <div class="tradingview-widget-container__widget h-full"></div>
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                                        {
+                                            "colorTheme": "dark",
+                                                "isTransparent": true,
+                                                    "width": "100%",
+                                                        "height": "100%",
+                                                            "locale": "kr",
+                                                                "importanceFilter": "-1,0,1",
+                                                                    "countryFilter": "us"
+                                        }
+                                    </script>
+                            </div>
                         </div>
                     </div>
 
@@ -737,24 +750,7 @@
         }
 
         async function fetchCal() {
-            try {
-                const res = await fetch(`/api/us/economic-calendar?t=${Date.now()}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.events && data.events.length > 0) {
-                        const cont = document.getElementById('calendar-mini-list');
-                        cont.innerHTML = data.events.slice(0, 4).map(ev => `
-                            <div class="p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition">
-                                <h4 class="text-xs font-bold text-gray-200">${ev.event}</h4>
-                                <div class="flex justify-between items-center mt-2 text-[9px] font-mono text-gray-500">
-                                    <span>${ev.date} ${ev.time}</span>
-                                    <span class="text-brand-primary font-bold">Fcst: ${ev.forecast}</span>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
-                }
-            } catch (e) { }
+            // Replaced with dynamic TradingView sidebar widget for better reliability
         }
 
         document.addEventListener('DOMContentLoaded', () => {
