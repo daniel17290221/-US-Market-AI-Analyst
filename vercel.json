@@ -1,20 +1,8 @@
 {
     "version": 2,
-    "builds": [
+    "rewrites": [
         {
-            "src": "api/index.py",
-            "use": "@vercel/python",
-            "config": {
-                "includeFiles": [
-                    "templates/**",
-                    "us_market/**"
-                ]
-            }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
+            "source": "/(.*)",
             "dest": "api/index.py"
         }
     ]
