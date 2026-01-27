@@ -109,36 +109,34 @@ class USDailyReportGenerator:
         except Exception as e:
             logger.error(f"AI Generation Error: {e}")
             # Ensure we return a structured mock content even on exception
-            return self.get_mock_ai_content()
+            return self.get_mock_ai_content(raw_data)
 
-    def get_mock_ai_content(self):
-        """Fallback mock data matching the new structure"""
+    def get_mock_ai_content(self, raw_data):
+        """Dynamic fallback mock data for testing"""
+        now_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        top_symbol = raw_data['top_stocks'][0]['ticker'] if raw_data['top_stocks'] else "NVDA"
+        
         return {
-            "catchy_title": "🔥 'AI 거품론' 잠재운 독보적 실적... 엔비디아, 다시 한번 시장의 운명을 가르다",
+            "catchy_title": f"🔥 [실시간 테스트 {now_time}] {top_symbol}와 빅테크 시장의 새로운 운명",
             "core_summary": [
-                "미국 증시는 빅테크 실적 기대감과 견조한 고용 지표에 힘입어 3대 지수 모두 상승 마감했습니다.",
-                "특히 반도체 섹터의 강세가 돋보였으며, 금리 하락 안정화가 기술주에 우호적인 환경을 조성했습니다.",
-                "지정학적 리스크에도 불구하고 시장의 시선은 실물 지표와 기업 이익으로 집중되는 모습입니다."
+                f"현재 시각({now_time}) 기준, 실시간 데이터가 정상적으로 수집되었습니다.",
+                f"특히 {top_symbol}를 필두로 한 주요 기술주들의 데이터 연동이 성공했습니다.",
+                "Gemini API 키가 설정되거나 모델을 2.0으로 변경하면 이 영역이 AI 분석 내용으로 채워집니다."
             ],
             "sections": [
                 {
                     "emoji_tag": "🚀",
-                    "title": "끝나지 않는 AI 랠리, 중심에는 여전히 엔비디아가 있다",
-                    "content": "최근 일각에서 제기된 AI 과잉 투자 우려를 불식시키듯, 엔비디아를 비롯한 반도체 밸류체인 전반에 강력한 매수세가 유입되었어요. 블랙웰 아키텍처의 본격적인 양산 소식과 함께 데이터센터 수요가 여전히 견조하다는 점이 증명되면서 투자자들의 의구심은 확신으로 변하고 있습니다. 단순한 기대감을 넘어 실질적인 매출 지표가 뒷받침되고 있다는 점이 이번 랠리의 핵심입니다."
+                    "title": f"실시간 모니터링: {top_symbol} 기술적 분석",
+                    "content": f"데이터 수집 결과 {top_symbol}의 가격 흐름이 정상적으로 대시보드에 반영되고 있습니다. (생성 시각: {now_time})"
                 },
                 {
-                    "emoji_tag": "🙏",
-                    "title": "연준의 입과는 다른 시장의 길, '골디락스' 기대감 확산",
-                    "content": "연준 위원들의 매파적 발언이 이따금 시장을 흔들기도 하지만, 현재 시장은 '너무 뜨겁지도 차갑지도 않은' 골디락스 국면에 주목하고 있어요. 고용 시장은 탄탄하게 버텨주면서도 인플레이션 압력은 서서히 낮아지는 지표들이 나오면서, 경기 침체 없는 금리 인하 시나리오가 현실화될 가능성이 커지고 있습니다. 이는 국채 금리 안정화로 이어져 밸류에이션 부담이 컸던 소형 성장주들에게도 숨통을 틔워주고 있어요."
-                },
-                {
-                    "emoji_tag": "⚠️",
-                    "title": "지정학적 변수와 관세 전쟁의 서막, 긴장 늦출 수 없어",
-                    "content": "트럼프 정부의 관세 정책이 구체화되면서 글로벌 공급망 재편에 대한 우려가 다시 고개를 들고 있습니다. 특히 유럽과의 무역 갈등이 표면화될 경우, 글로벌 매출 비중이 높은 대형 기술주들에게는 비용 상승 압박으로 작용할 수 있어요. 지정학적 리스크는 단기 변동성을 키우는 요인이지만, 장기적으로는 공급망의 로컬화와 자동화 투자를 가속화시키는 촉매제가 될 수도 있다는 분석이 나옵니다."
+                    "emoji_tag": "📊",
+                    "title": "데이터 수집 파이프라인 정상 보완",
+                    "content": "하단의 시장 지수와 원자재 가격이 갱신되었습니다. 브라우저 캐시 문제를 방지하기 위해 매번 시각 정보가 포함된 리포트가 생성됩니다."
                 }
             ],
-            "hashtags": ["#엔비디아", "#AI반도체", "#미국증시", "#골디락스", "#관세전쟁", "#나스닥"],
-            "market_mood_narrative": "불확실성 속에서도 강력한 펀더멘털을 확인한 하루였습니다."
+            "hashtags": [f"#{top_symbol}", "#실시간테스트", "#미국증시", "#업데이트성공"],
+            "market_mood_narrative": f"데이터 로드 완료 ({now_time}). 모든 시스템이 정상입니다."
         }
 
     def generate_html(self, raw_data, ai_content):

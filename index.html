@@ -508,7 +508,8 @@
             <div class="p-4 bg-white/5 border-b border-white/5 flex flex-col gap-2">
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
-                    <button onclick="document.getElementById('report-iframe').src += ''"
+                    <button
+                        onclick="const frame = document.getElementById('report-iframe'); const url = new URL(frame.src, window.location.href); url.searchParams.set('t', Date.now()); frame.src = url.href;"
                         class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
                         <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
                     </button>
