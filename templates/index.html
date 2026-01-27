@@ -449,7 +449,7 @@
                         </div>
                     </div>
 
-                    <!-- ETF 실시간 히트맵 (TradingView Heatmap) -->
+                    <!-- ETF 실시간 히트맵 (TradingView ETF Heatmap) -->
                     <div class="glass-card p-6 h-[600px] flex flex-col">
                         <h2
                             class="text-xs font-black uppercase text-gray-500 tracking-widest mb-4 flex items-center gap-2">
@@ -459,21 +459,21 @@
                             <div class="tradingview-widget-container h-full">
                                 <div class="tradingview-widget-container__widget h-full"></div>
                                 <script type="text/javascript"
-                                    src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-etf-heatmap.js"
                                     async>
                                         {
-                                            "exchanges": [],
-                                                "dataSource": "US_ETFS",
-                                                    "grouping": "asset_class",
-                                                        "blockSize": "market_cap_basic",
-                                                            "blockColor": "change",
-                                                                "locale": "kr",
-                                                                    "symbolUrl": "",
-                                                                        "colorTheme": "dark",
-                                                                            "hasTopBar": false,
-                                                                                "isDatasetEnabled": false,
-                                                                                    "isTransparent": true,
-                                                                                        "hasSymbolTooltip": true,
+                                            "dataSource": "AllUSEtf",
+                                                "blockSize": "volume",
+                                                    "blockColor": "change",
+                                                        "grouping": "asset_class",
+                                                            "locale": "kr",
+                                                                "symbolUrl": "",
+                                                                    "colorTheme": "dark",
+                                                                        "hasTopBar": false,
+                                                                            "isDataSetEnabled": false,
+                                                                                "isZoomEnabled": true,
+                                                                                    "hasSymbolTooltip": true,
+                                                                                        "isMonoSize": false,
                                                                                             "width": "100%",
                                                                                                 "height": "100%"
                                         }
