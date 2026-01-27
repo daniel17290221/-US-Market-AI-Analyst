@@ -109,9 +109,9 @@
             <a onclick="switchTab('calendar')" id="nav-calendar"
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">경제
                 일정</a>
-            <a onclick="switchTab('historical')" id="nav-hist"
-                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">과거
-                패턴</a>
+            <a onclick="switchTab('report')" id="nav-report"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">데일리
+                리포트</a>
         </div>
 
         <div class="flex items-center gap-3">
@@ -457,12 +457,8 @@
                 </div>
             </div>
         </div>
-        <div id="tab-historical"
-            class="tab-content hidden glass-card p-20 flex flex-col items-center justify-center text-center">
-            <i class="fas fa-history text-6xl text-brand-secondary mb-8 opacity-20"></i>
-            <h2 class="text-3xl font-bold mb-4">과거 패턴 Patterns Engine</h2>
-            <p class="text-gray-500 max-w-md mx-auto leading-relaxed uppercase tracking-tighter text-sm">과거의 승리 패턴을 현재로
-                불러오는 High-Performance 엔진이 백엔드 연동 중입니다.</p>
+        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden" style="height: 1200px;">
+            <iframe id="report-iframe" src="" class="w-full h-full border-none" loading="lazy"></iframe>
         </div>
     </main>
 
@@ -498,11 +494,18 @@
                 a.classList.remove('tab-active');
                 a.classList.add('tab-inactive');
             });
-            const navId = tabId === 'market' ? 'nav-market' : (tabId === 'calendar' ? 'nav-calendar' : 'nav-hist');
+            const navId = tabId === 'market' ? 'nav-market' : (tabId === 'calendar' ? 'nav-calendar' : 'nav-report');
             const activeNav = document.getElementById(navId);
             if (activeNav) {
                 activeNav.classList.remove('tab-inactive');
                 activeNav.classList.add('tab-active');
+            }
+
+            if (tabId === 'report') {
+                const reportFrame = document.getElementById('report-iframe');
+                if (reportFrame && !reportFrame.src) {
+                    reportFrame.src = '/daily-report';
+                }
             }
         }
 
