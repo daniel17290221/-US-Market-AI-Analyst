@@ -335,9 +335,16 @@
                                 <i class="fas fa-bolt text-brand-primary"></i>
                                 실시간 스마트 머니 <span class="text-gray-500 font-medium">Top 10 추천주</span>
                             </h2>
-                            <span
-                                class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">DEEP-ANALYSIS
-                                v4.0 ACTIVE</span>
+                            <div class="flex flex-col items-end gap-1">
+                                <span
+                                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                    DEEP-ANALYSIS v4.0 ACTIVE
+                                </span>
+                                <span id="data-update-time"
+                                    class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
+                                    데이터 동기화 중...
+                                </span>
+                            </div>
                         </div>
                         <div class="overflow-x-auto scrollbar-hide relative z-10">
                             <table class="w-full text-left border-collapse">
@@ -714,6 +721,12 @@
                             dcf_bull: item.dcf_bull || `$${(price * 1.3).toFixed(2)}`
                         });
                     });
+
+                    // Update timestamp
+                    const now = new Date();
+                    const timestamp = `${now.getMonth() + 1}/${now.getDate()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    const timeEl = document.getElementById('data-update-time');
+                    if (timeEl) timeEl.innerText = `Last Updated: ${timestamp}`;
                 }
             } catch (e) { applyFallback(); }
             finally {
