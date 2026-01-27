@@ -504,7 +504,17 @@
                 </div>
             </div>
         </div>
-        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden" style="height: 1200px;">
+        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden" style="min-height: 1400px;">
+            <div class="p-4 bg-white/5 border-b border-white/5 flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
+                    <button onclick="document.getElementById('report-iframe').src += ''"
+                        class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
+                        <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
+                    </button>
+                </div>
+                <div id="report-debug-info" class="text-[9px] text-gray-600 font-mono"></div>
+            </div>
             <iframe id="report-iframe" src="" class="w-full h-full border-none" loading="lazy"></iframe>
         </div>
     </main>
@@ -550,18 +560,26 @@
 
             if (tabId === 'report') {
                 const reportFrame = document.getElementById('report-iframe');
-                if (reportFrame && !reportFrame.src) {
-                    // Check if running in standalone (file://) or server mode
-                    if (window.location.protocol === 'file:') {
-                        // Smart path detection: check if we are in 'templates' folder
-                        const path = window.location.pathname;
-                        if (path.includes('/templates/')) {
-                            reportFrame.src = '../us_market/us_market_morning_report.html';
+                if (reportFrame) {
+                    const currentSrc = reportFrame.getAttribute('src');
+                    // Aggressive check: if src is empty, current URL, or null
+                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc === "#") {
+                        if (window.location.protocol === 'file:') {
+                            const path = window.location.pathname;
+                            const isTemplate = path.includes('/templates/');
+                            const reportPath = isTemplate
+                                ? '../us_market/us_market_morning_report.html'
+                                : 'us_market/us_market_morning_report.html';
+
+                            console.warn("Attempting to load report from:", reportPath);
+                            reportFrame.src = reportPath;
+
+                            // Visual debug feedback
+                            const debugEl = document.getElementById('report-debug-info');
+                            if (debugEl) debugEl.innerText = "로드 시도 경로: " + reportPath;
                         } else {
-                            reportFrame.src = 'us_market/us_market_morning_report.html';
+                            reportFrame.src = '/daily-report';
                         }
-                    } else {
-                        reportFrame.src = '/daily-report';
                     }
                 }
             }
