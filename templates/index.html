@@ -143,9 +143,9 @@
                                 <div
                                     class="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center border border-white/10">
                                     <img id="main-ticker-logo"
-                                        src="https://assets.parqet.com/logos/symbols/NVDA?format=svg"
-                                        class="w-10 h-10 object-contain filter drop-shadow-[0_0_8px_rgba(0,240,255,0.3)]"
-                                        onerror="this.src='https://ui-avatars.com/api/?name='+this.alt+'&background=random'">
+                                        src="https://s3-symbol-logo.tradingview.com/nvidia--big.svg"
+                                        class="w-11 h-11 object-contain filter drop-shadow-[0_0_12px_rgba(0,240,255,0.4)]"
+                                        onerror="this.src='https://assets.parqet.com/logos/symbols/'+this.alt+'?format=svg'">
                                 </div>
                                 <div>
                                     <h2 class="text-4xl font-bold flex items-center gap-4">
@@ -528,7 +528,15 @@
 
             const logoEl = document.getElementById('main-ticker-logo');
             if (logoEl) {
-                logoEl.src = `https://assets.parqet.com/logos/symbols/${data.ticker}?format=svg`;
+                // TradingView uses lower-case names for these logos usually. 
+                // We'll use a mapping for common ones and a fallback pattern.
+                const logoMap = {
+                    'NVDA': 'nvidia', 'TSLA': 'tesla', 'AAPL': 'apple', 'MSFT': 'microsoft',
+                    'AMZN': 'amazon', 'META': 'meta-platforms', 'GOOGL': 'alphabet',
+                    'AVGO': 'broadcom', 'AMD': 'advanced-micro-devices', 'COST': 'costco-wholesale'
+                };
+                const logoName = logoMap[data.ticker] || data.ticker.toLowerCase();
+                logoEl.src = `https://s3-symbol-logo.tradingview.com/${logoName}--big.svg`;
                 logoEl.alt = data.ticker;
             }
 
