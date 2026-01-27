@@ -99,27 +99,35 @@ def load_csv(filename):
     return data or []
 
 def fetch_realtime_data(tickers):
-    """Manual fetch for Yahoo Finance (Simplified for stability)"""
+    """Manual fetch for Yahoo Finance v8 (Stable for server-side)"""
     prices = {}
     print(f"DEBUG: Fetching prices for {len(tickers)} tickers")
     
     # Limit to top 10 for speed if list is long (increased from 5)
     target_tickers = tickers[:10] if len(tickers) > 10 else tickers
     
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+    }
+    
     for ticker in target_tickers:
         if not ticker: continue
         try:
-            url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={ticker}"
-            headers = {'User-Agent': 'Mozilla/5.0'}
-            resp = requests.get(url, headers=headers, timeout=2) # 2s timeout
-            data = resp.json()
+            # Use v8 finance/chart for stability
+            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1m&range=1d"
+            resp = requests.get(url, headers=headers, timeout=3)
             
-            if 'quoteResponse' in data and data['quoteResponse']['result']:
-                quote = data['quoteResponse']['result'][0]
-                prices[ticker] = {
-                    'price': round(quote.get('regularMarketPrice', 0), 2),
-                    'change': round(quote.get('regularMarketChangePercent', 0), 2)
-                }
+            if resp.status_code == 200:
+                data = resp.json()
+                meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
+                price = meta.get('regularMarketPrice')
+                prev_close = meta.get('previousClose')
+                
+                if price is not None:
+                    prices[ticker] = {
+                        'price': round(price, 2),
+                        'change': round(((price - prev_close) / prev_close) * 100, 2) if prev_close else 0
+                    }
         except Exception as e:
             print(f"DEBUG: Failed to fetch {ticker}: {e}")
             pass
