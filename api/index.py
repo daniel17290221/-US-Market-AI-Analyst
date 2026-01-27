@@ -103,8 +103,8 @@ def fetch_realtime_data(tickers):
     prices = {}
     print(f"DEBUG: Fetching prices for {len(tickers)} tickers")
     
-    # Limit to top 5 for speed if list is long
-    target_tickers = tickers[:5] if len(tickers) > 5 else tickers
+    # Limit to top 10 for speed if list is long (increased from 5)
+    target_tickers = tickers[:10] if len(tickers) > 10 else tickers
     
     for ticker in target_tickers:
         if not ticker: continue
