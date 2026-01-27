@@ -947,7 +947,7 @@
                     smartMoneyData.length = 0;
                     remoteData.forEach((item, i) => {
                         const price = parseFloat(item.current_price) || 0;
-                        const score = parseFloat(item.composite_score) || 0;
+                        const score = parseFloat(item.composite_score || item.score) || 0;
 
                         smartMoneyData.push({
                             rank: (i + 1).toString().padStart(2, '0'),
@@ -986,7 +986,7 @@
                 console.warn("⚠️ API fetch failed, using fallback:", e.message);
             } finally {
                 injectSmartMoney();
-                loadSymbol(0); // Load Top 1
+                if (smartMoneyData.length > 0) loadSymbol(0); // Load Top 1
             }
         }
 
