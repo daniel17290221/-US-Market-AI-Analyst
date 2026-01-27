@@ -6,5 +6,4 @@ python-dotenv>=1.0.0
 flask>=3.0.0
 google-generativeai>=0.3.0
 openai>=1.10.0
-tqdm>=4.66.0
-# ta-lib removed for Vercel compatibility
+# tqdm and ta-lib removed for size/compatibility

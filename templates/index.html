@@ -136,7 +136,7 @@
                         Analyst</span></h1>
                 <div class="flex items-center gap-2 text-[10px] text-gray-500 font-mono">
                     <span class="inline-block w-2 h-2 bg-brand-success rounded-full animate-pulse"></span>
-                    VERCEL CLOUD DEPLOYMENT READY
+                    VERCEL LIVE API v2.0 READY
                 </div>
             </div>
         </div>
@@ -214,15 +214,15 @@
                                 </div>
                                 <div>
                                     <h2 class="text-3xl font-bold flex items-center gap-3">
-                                        GEHC <span class="text-gray-400 text-lg font-normal">GE HealthCare Technologies
-                                            Inc.</span>
+                                        <span id="main-ticker-name">Loading...</span> <span id="main-full-name"
+                                            class="text-gray-400 text-lg font-normal">Please wait...</span>
                                     </h2>
                                     <div class="flex gap-3 mt-2">
-                                        <span id="ai-score-pill" class="score-pill score-high text-base py-1.5 px-4">점수:
-                                            82.5 / 100</span>
+                                        <span id="ai-score-pill"
+                                            class="score-pill score-mid text-base py-1.5 px-4">Score: --</span>
                                         <span id="ai-signal-pill"
-                                            class="score-pill bg-brand-primary/10 text-brand-primary border border-brand-primary/30 text-base py-1.5 px-4 font-bold">AI
-                                            적극 매수</span>
+                                            class="score-pill bg-gray-800 text-gray-400 border border-white/10 text-base py-1.5 px-4 font-bold">Signal:
+                                            --</span>
                                     </div>
                                 </div>
                             </div>
@@ -811,8 +811,9 @@
                 console.warn("Failed to fetch real-time price, using cached value.");
             }
 
-            // Update Headers
-            document.querySelector('h2.text-3xl').innerHTML = `${data.ticker} <span class="text-gray-400 text-lg font-normal">${data.name}</span>`;
+            // Update Headers using IDs
+            document.getElementById('main-ticker-name').innerText = data.ticker;
+            document.getElementById('main-full-name').innerText = data.name;
 
             // Update Score & Signal using IDs
             const scorePill = document.getElementById('ai-score-pill');
@@ -937,7 +938,7 @@
         // --- Data Loading (Dynamic CSV for Vercel) ---
         async function fetchData() {
             try {
-                const response = await fetch('/api/us/smart-money');
+                const response = await fetch(`/api/us/smart-money?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Data file not found');
 
                 const remoteData = await response.json();
@@ -1006,7 +1007,7 @@
         // --- Macro & Calendar Data (Dynamic for Vercel) ---
         async function fetchMacroData() {
             try {
-                const response = await fetch('/api/us/macro-analysis');
+                const response = await fetch(`/api/us/macro-analysis?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Macro file missing');
                 const data = await response.json();
 
@@ -1027,7 +1028,7 @@
 
         async function fetchCalendarData() {
             try {
-                const response = await fetch('/api/us/economic-calendar');
+                const response = await fetch(`/api/us/economic-calendar?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Calendar file missing');
                 const data = await response.json();
 
