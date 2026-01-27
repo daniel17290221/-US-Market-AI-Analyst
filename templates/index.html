@@ -939,16 +939,16 @@
         // --- Data Loading (Dynamic CSV for Vercel) ---
         async function fetchData() {
             const backupData = [
-                { rank: "01", ticker: "NVDA", name: "NVIDIA Corporation", sector: "Technology", score: 95.8, grade: "🔥 S급 (즉시 매수)", price: 142.87, change: 8.4, insight: "AI 가속기 시장 독점적 지위 지속 및 Blackwell 수요 폭발.", risk: "중국 수출 규제 강화 가능성.", upside: "+18.2%", mkt_cap: ".5T", vol_ratio: "3.2x ↑", rsi: "72.4" },
-                { rank: "02", ticker: "TSLA", name: "Tesla, Inc.", sector: "Automotive", score: 91.2, grade: "🌟 A급 (적극 매수)", price: 258.45, change: 3.1, insight: "FSD v12 출시 및 로보택시 기대감 반영.", risk: "전기차 가격 경쟁 심화.", upside: "+25.5%", mkt_cap: "", vol_ratio: "2.4x ↑", rsi: "64.5" },
-                { rank: "03", ticker: "AAPL", name: "Apple Inc.", sector: "Technology", score: 88.5, grade: "🌟 A급 (적극 매수)", price: 228.12, change: 1.2, insight: "온디바이스 AI 모멘텀 및 아이폰 교체 주기 도래.", risk: "중국 시장 점유율 하락.", upside: "+12.1%", mkt_cap: ".4T", vol_ratio: "1.2x ↑", rsi: "55.4" },
-                { rank: "04", ticker: "MSFT", name: "Microsoft Corp", sector: "Software", score: 82.5, grade: "🌟 A급 (적극 매수)", price: 425.30, change: 0.9, insight: "클라우드 및 코파일럿 매출 성장 지속.", risk: "AI 투자 비용 증가.", upside: "+10.5%", mkt_cap: ".1T", vol_ratio: "1.1x", rsi: "58.2" },
-                { rank: "05", ticker: "AMZN", name: "Amazon.com", sector: "Commerce", score: 78.5, grade: "📈 B급 (매수 고려)", price: 188.30, change: 0.5, insight: "AWS 수익성 개선 및 물류 효율화.", risk: "소비 심리 위축 가능성.", upside: "+15.2%", mkt_cap: ".9T", vol_ratio: "1.0x", rsi: "52.1" },
-                { rank: "06", ticker: "META", name: "Meta Platforms", sector: "Technology", score: 77.2, grade: "📈 B급 (매수 고려)", price: 585.20, change: 1.4, insight: "광고 매출 회복 및 AI 모델 경쟁력.", risk: "규제 리스크 및 메타버스 손실.", upside: "+8.4%", mkt_cap: ".5T", vol_ratio: "1.3x", rsi: "60.5" },
-                { rank: "07", ticker: "GOOGL", name: "Alphabet Inc", sector: "Technology", score: 76.5, grade: "📈 B급 (매수 고려)", price: 165.20, change: 0.0, insight: "검색 광고 견조 및 Gemini 모델 고도화.", risk: "반독점 소송 리스크.", upside: "+14.1%", mkt_cap: ".0T", vol_ratio: "0.9x", rsi: "48.2" },
-                { rank: "08", ticker: "AVGO", name: "Broadcom Inc", sector: "Semiconductors", score: 75.8, grade: "📈 B급 (매수 고려)", price: 172.50, change: 2.1, insight: "AI 네트워크 칩 수요 증가 및 VMware 시너지.", risk: "고객사 칩 내재화.", upside: "+9.2%", mkt_cap: "", vol_ratio: "1.5x", rsi: "66.8" },
-                { rank: "09", ticker: "AMD", "name": "Advanced Micro Devices", sector: "Semiconductors", score: 74.2, grade: "📈 B급 (매수 고려)", price: 155.10, change: -2.3, insight: "MI300 칩 판매 확대 및 점유율 상승.", risk: "엔비디아와의 기술 격차.", upside: "+22.5%", mkt_cap: "", vol_ratio: "1.8x", rsi: "42.5" },
-                { rank: "10", ticker: "COST", name: "Costco Wholesale", sector: "Retail", score: 73.5, grade: "📊 C급 (관망)", price: 912.45, change: 0.8, insight: "회원비 인상 효과 및 견고한 소비.", risk: "높은 밸류에이션 부담.", upside: "+5.1%", mkt_cap: "", vol_ratio: "0.8x", rsi: "75.1" }
+                { rank: "01", ticker: "NVDA", name: "NVIDIA Corporation", sector: "Technology", score: 95.8, grade: "🔥 S급 (즉시 매수)", price: 142.87, change: 8.4, insight: "AI 가속기 시장 독점적 지위 지속 및 Blackwell 수요 폭발.", risk: "중국 수출 규제 강화 가능성.", upside: "+18.2%", mkt_cap: "$3.5T", vol_ratio: "3.2x ↑", rsi: "72.4" },
+                { rank: "02", ticker: "TSLA", name: "Tesla, Inc.", sector: "Automotive", score: 91.2, grade: "🌟 A급 (적극 매수)", price: 258.45, change: 3.1, insight: "FSD v12 출시 및 로보택시 기대감 반영.", risk: "전기차 가격 경쟁 심화.", upside: "+25.5%", mkt_cap: "$825B", vol_ratio: "2.4x ↑", rsi: "64.5" },
+                { rank: "03", ticker: "AAPL", name: "Apple Inc.", sector: "Technology", score: 88.5, grade: "🌟 A급 (적극 매수)", price: 228.12, change: 1.2, insight: "온디바이스 AI 모멘텀 및 아이폰 교체 주기 도래.", risk: "중국 시장 점유율 하락.", upside: "+12.1%", mkt_cap: "$3.4T", vol_ratio: "1.2x ↑", rsi: "55.4" },
+                { rank: "04", ticker: "MSFT", name: "Microsoft Corp", sector: "Software", score: 82.5, grade: "🌟 A급 (적극 매수)", price: 425.30, change: 0.9, insight: "클라우드 및 코파일럿 매출 성장 지속.", risk: "AI 투자 비용 증가.", upside: "+10.5%", mkt_cap: "$3.1T", vol_ratio: "1.1x", rsi: "58.2" },
+                { rank: "05", ticker: "AMZN", name: "Amazon.com", sector: "Commerce", score: 78.5, grade: "📈 B급 (매수 고려)", price: 188.30, change: 0.5, insight: "AWS 수익성 개선 및 물류 효율화.", risk: "소비 심리 위축 가능성.", upside: "+15.2%", mkt_cap: "$1.9T", vol_ratio: "1.0x", rsi: "52.1" },
+                { rank: "06", ticker: "META", name: "Meta Platforms", sector: "Technology", score: 77.2, grade: "📈 B급 (매수 고려)", price: 585.20, change: 1.4, insight: "광고 매출 회복 및 AI 모델 경쟁력.", risk: "규제 리스크 및 메타버스 손실.", upside: "+8.4%", mkt_cap: "$1.5T", vol_ratio: "1.3x", rsi: "60.5" },
+                { rank: "07", ticker: "GOOGL", name: "Alphabet Inc", sector: "Technology", score: 76.5, grade: "📈 B급 (매수 고려)", price: 165.20, change: 0.0, insight: "검색 광고 견조 및 Gemini 모델 고도화.", risk: "반독점 소송 리스크.", upside: "+14.1%", mkt_cap: "$2.0T", vol_ratio: "0.9x", rsi: "48.2" },
+                { rank: "08", ticker: "AVGO", name: "Broadcom Inc", sector: "Semiconductors", score: 75.8, grade: "📈 B급 (매수 고려)", price: 172.50, change: 2.1, insight: "AI 네트워크 칩 수요 증가 및 VMware 시너지.", risk: "고객사 칩 내재화.", upside: "+9.2%", mkt_cap: "$800B", vol_ratio: "1.5x", rsi: "66.8" },
+                { rank: "09", ticker: "AMD", "name": "Advanced Micro Devices", sector: "Semiconductors", score: 74.2, grade: "📈 B급 (매수 고려)", price: 155.10, change: -2.3, insight: "MI300 칩 판매 확대 및 점유율 상승.", risk: "엔비디아와의 기술 격차.", upside: "+22.5%", mkt_cap: "$250B", vol_ratio: "1.8x", rsi: "42.5" },
+                { rank: "10", ticker: "COST", name: "Costco Wholesale", sector: "Retail", score: 73.5, grade: "📊 C급 (관망)", price: 912.45, change: 0.8, insight: "회원비 인상 효과 및 견고한 소비.", risk: "높은 밸류에이션 부담.", upside: "+5.1%", mkt_cap: "$400B", vol_ratio: "0.8x", rsi: "75.1" }
             ];
 
             let dataToUse = [];
@@ -1001,7 +1001,6 @@
                 if (!window.initialLoadDone && smartMoneyData.length > 0) { loadSymbol(0); window.initialLoadDone = true; }
             } catch (e) { console.error("❌ Render Error", e); }
         }
-
         function parseCSV(text) {
             const lines = text.split('\n').filter(l => l.trim() !== '');
             if (lines.length < 2) return null;
