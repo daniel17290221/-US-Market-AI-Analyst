@@ -59,16 +59,40 @@ def load_csv(filename):
     # Provide default smart money data if missing
     if filename == 'smart_money_picks_v2.csv':
         return [
-            {"rank": "01", "ticker": "NVDA", "sector": "Technology", "composite_score": "95.8", "grade": "🔥 S급 (즉시 매수)"},
-            {"rank": "02", "ticker": "TSLA", "sector": "Automotive", "composite_score": "91.2", "grade": "🌟 A급 (적극 매수)"},
-            {"rank": "03", "ticker": "AAPL", "sector": "Technology", "composite_score": "88.5", "grade": "🌟 A급 (적극 매수)"},
-            {"rank": "04", "ticker": "MSFT", "sector": "Software", "composite_score": "82.5", "grade": "🌟 A급 (적극 매수)"},
-            {"rank": "05", "ticker": "AMZN", "sector": "Commerce", "composite_score": "78.5", "grade": "📈 B급 (매수 고려)"},
-            {"rank": "06", "ticker": "META", "sector": "Technology", "composite_score": "77.2", "grade": "📈 B급 (매수 고려)"},
-            {"rank": "07", "ticker": "GOOGL", "sector": "Technology", "composite_score": "76.5", "grade": "📈 B급 (매수 고려)"},
-            {"rank": "08", "ticker": "AVGO", "sector": "Semiconductors", "composite_score": "75.8", "grade": "📈 B급 (매수 고려)"},
-            {"rank": "09", "ticker": "AMD", "sector": "Semiconductors", "composite_score": "74.2", "grade": "📈 B급 (매수 고려)"},
-            {"rank": "10", "ticker": "COST", "sector": "Retail", "composite_score": "73.5", "grade": "📊 C급 (관망)"}
+            {
+                "rank": "01", "ticker": "NVDA", "name": "NVIDIA Corporation", "sector": "Technology", 
+                "composite_score": "95.8", "grade": "🔥 S급 (즉시 매수)",
+                "insight": "NVIDIA는 AI 가속기 시장에서 독보적 지위를 유지하고 있으며, Blackwell 아키텍처 출시로 매출 성장이 가속화될 전망입니다.",
+                "risk": "중국 수출 규제 영향 및 경쟁사 AMD MI300 대항 전략.",
+                "upside": "+18.2%", "mkt_cap": "$3.5T", "vol_ratio": "3.2x ↑", "rsi": "72.4",
+                "swot_s": "AI 시장 80%+ 점유율 및 CUDA 생태계", "swot_w": "빅테크 고객 집중도 및 높은 의존도",
+                "swot_o": "자율주행 및 엣지 AI 시장 확대", "swot_t": "중국 수출 규제 및 경쟁 심화"
+            },
+            {
+                "rank": "02", "ticker": "TSLA", "name": "Tesla, Inc.", "sector": "Automotive", 
+                "composite_score": "91.2", "grade": "🌟 A급 (적극 매수)",
+                "insight": "FVD v12 및 로보택시 기대감이 강력한 모멘텀을 형성하고 있으며, 비용 절감 노력이 마진을 방어 중입니다.",
+                "risk": "전기차 시장의 경쟁 심화와 중국 시장 점유율 둔화 가능성.",
+                "upside": "+25.5%", "mkt_cap": "$825B", "vol_ratio": "2.4x ↑", "rsi": "64.5",
+                "swot_s": "자율주행 데이터 우위 및 브랜드 파워", "swot_w": "CEO 리스크 및 생산 효율화 과제",
+                "swot_o": "옵티머스 로봇 및 에너지 저장 사업", "swot_t": "중국산 저가 전기차 공세"
+            },
+            {
+                "rank": "03", "ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", 
+                "composite_score": "88.5", "grade": "🌟 A급 (적극 매수)",
+                "insight": "애플 인텔리전스(AI)가 차기 아이폰 교체 수요의 핵심 동력으로 작용할 것으로 분석됩니다.",
+                "risk": "앱스토어 반독점 규제 및 중국 내 판매 둔화 리스크.",
+                "upside": "+12.1%", "mkt_cap": "$3.4T", "vol_ratio": "1.2x ↑", "rsi": "55.4",
+                "swot_s": "충성도 높은 생태계 및 강력한 현금흐름", "swot_w": "하드웨어 혁신 속도 둔화",
+                "swot_o": "AI 기반 서비스 부문 매출 확대", "swot_t": "글로벌 규제 당국의 반독점 조사"
+            },
+            {"rank": "04", "ticker": "MSFT", "name": "Microsoft Corp", "sector": "Software", "composite_score": "82.5", "grade": "🌟 A급 (적극 매수)"},
+            {"rank": "05", "ticker": "AMZN", "name": "Amazon.com", "sector": "Commerce", "composite_score": "78.5", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "06", "ticker": "META", "name": "Meta Platforms", "sector": "Technology", "composite_score": "77.2", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "07", "ticker": "GOOGL", "name": "Alphabet Inc", "sector": "Technology", "composite_score": "76.5", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "08", "ticker": "AVGO", "name": "Broadcom Inc", "sector": "Semiconductors", "composite_score": "75.8", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "09", "ticker": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors", "composite_score": "74.2", "grade": "📈 B급 (매수 고려)"},
+            {"rank": "10", "ticker": "COST", "name": "Costco Wholesale", "sector": "Retail", "composite_score": "73.5", "grade": "📊 C급 (관망)"}
         ]
     return []
 
