@@ -74,7 +74,7 @@ class USDailyReportGenerator:
     def generate_ai_content(self, raw_data):
         """Synthesize article content via Gemini"""
         if not self.model:
-            return self.get_mock_ai_content()
+            return self.get_mock_ai_content(raw_data)
             
         prompt = f"""
         당신은 미국 금융 시장 전문 뉴스 에디터입니다. 아래 제공된 시장 데이터(JSON)와 현재의 지정학적/경제적 상황을 결합하여, 
@@ -108,7 +108,6 @@ class USDailyReportGenerator:
             return json.loads(text)
         except Exception as e:
             logger.error(f"AI Generation Error: {e}")
-            # Ensure we return a structured mock content even on exception
             return self.get_mock_ai_content(raw_data)
 
     def get_mock_ai_content(self, raw_data):
@@ -305,16 +304,18 @@ class USDailyReportGenerator:
             {comm_items}
         </div>
 
-        <div class="hashtags">
-            {tags_html}
-        </div>
+            <div class="hashtags">
+                {hashtags_html}
+            </div>
 
-        <div class="footer">
-            <p>© 2026 US Market AI Analyst • Powered by Gemini 1.5 Flash</p>
+            <div class="footer">
+                🚀 본 리포트는 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
+                <b>생성 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</b> (갱신 완료)<br>
+                © 2026 US Market AI High-End Report
+            </div>
         </div>
-    </div>
-</body>
-</html>
+    </body>
+    </html>
         """
         
         try:
