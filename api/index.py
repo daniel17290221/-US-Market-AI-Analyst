@@ -98,36 +98,31 @@ def load_csv(filename):
         ]
     return data or []
 
-import concurrent.futures
-
-def fetch_single_ticker(ticker):
-    try:
-        url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={ticker}"
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        # Strict timeout to prevent Vercel execution limit (10s total)
-        resp = requests.get(url, headers=headers, timeout=1.0)
-        data = resp.json()
-        
-        if 'quoteResponse' in data and data['quoteResponse']['result']:
-            quote = data['quoteResponse']['result'][0]
-            return ticker, {
-                'price': round(quote.get('regularMarketPrice', 0), 2),
-                'change': round(quote.get('regularMarketChangePercent', 0), 2)
-            }
-    except:
-        pass
-    return ticker, None
-
 def fetch_realtime_data(tickers):
-    """Parallel fetch for Yahoo Finance (Optimized for Vercel timeouts)"""
+    """Manual fetch for Yahoo Finance (Simplified for stability)"""
     prices = {}
-    # Use threading to fetch all tickers simultaneously
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        future_to_ticker = {executor.submit(fetch_single_ticker, ticker): ticker for ticker in tickers if ticker}
-        for future in concurrent.futures.as_completed(future_to_ticker):
-            ticker, result = future.result()
-            if result:
-                prices[ticker] = result
+    print(f"DEBUG: Fetching prices for {len(tickers)} tickers")
+    
+    # Limit to top 5 for speed if list is long
+    target_tickers = tickers[:5] if len(tickers) > 5 else tickers
+    
+    for ticker in target_tickers:
+        if not ticker: continue
+        try:
+            url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={ticker}"
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            resp = requests.get(url, headers=headers, timeout=2) # 2s timeout
+            data = resp.json()
+            
+            if 'quoteResponse' in data and data['quoteResponse']['result']:
+                quote = data['quoteResponse']['result'][0]
+                prices[ticker] = {
+                    'price': round(quote.get('regularMarketPrice', 0), 2),
+                    'change': round(quote.get('regularMarketChangePercent', 0), 2)
+                }
+        except Exception as e:
+            print(f"DEBUG: Failed to fetch {ticker}: {e}")
+            pass
     return prices
 
 @app.route('/')
