@@ -7,6 +7,8 @@ import sys
 from datetime import datetime
 
 # Adjust path for Vercel subdirectory deployment
+# BASE_DIR should be the root of the project (where templates and us_market are)
+# In Vercel, this is usually the parent of 'api/'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
@@ -15,6 +17,10 @@ from us_market.daily_report_generator import USDailyReportGenerator
 
 app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'))
 DATA_DIR = os.path.join(BASE_DIR, 'us_market')
+
+# Ensure we log the actual paths for debugging in Vercel logs
+print(f"DEBUG: BASE_DIR={BASE_DIR}")
+print(f"DEBUG: DATA_DIR={DATA_DIR}")
 
 def load_json(filename):
     path = os.path.join(DATA_DIR, filename)
