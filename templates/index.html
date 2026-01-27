@@ -936,6 +936,7 @@
         }
 
         // --- Data Loading (Dynamic CSV for Vercel) ---
+        // --- Data Loading (Dynamic CSV for Vercel) ---
         async function fetchData() {
             try {
                 console.log("🔍 Fetching Smart Money data...");
@@ -960,8 +961,6 @@
                         const price = parseFloat(item.price || item.current_price) || 0;
                         const score = parseFloat(item.composite_score || item.score) || 0;
 
-                        console.log(`  - Processing ${item.ticker}: Price=${price}`);
-
                         smartMoneyData.push({
                             rank: (i + 1).toString().padStart(2, '0'),
                             ticker: item.ticker || 'N/A',
@@ -971,17 +970,17 @@
                             signal: item.grade ? item.grade.split(' ')[1] : (score > 80 ? '적극 매수' : '매수'),
                             price: price,
                             change: parseFloat(item.change) || 0.0,
-                            insight: item.insight || 'AI 분석 결과가 동기화되었습니다. 상세 보고서를 확인하세요.',
+                            insight: item.insight || 'AI 분석 결과가 동기화되었습니다.',
                             risk: item.risk || '일반적인 시장 리스크에 유의하시기 바랍니다.',
                             upside: item.upside || '+15.2%',
                             mkt_cap: item.mkt_cap || 'N/A',
                             vol_ratio: item.vol_ratio || '1.0x',
                             rsi: item.rsi || '50.0',
                             signal_strength: score > 90 ? '매우 강력' : (score > 80 ? '강력' : '보통'),
-                            swot_s: item.swot_s || '시장 경쟁력 확보 및 기술적 우위',
-                            swot_w: item.swot_w || '거시 경제 변동성 및 인플레이션 영향',
-                            swot_o: item.swot_o || '신규 서비스 출시 및 시장 점유율 확대',
-                            swot_t: item.swot_t || '글로벌 경쟁 심화 및 규제 리스크',
+                            swot_s: item.swot_s || '시장 경쟁력 확보',
+                            swot_w: item.swot_w || '변동성 영향',
+                            swot_o: item.swot_o || '시장 확대',
+                            swot_t: item.swot_t || '경쟁 심화',
                             dcf_target: item.dcf_target || `$${(price * 1.18).toFixed(2)}`,
                             dcf_bear: item.dcf_bear || `$${(price * 0.82).toFixed(2)}`,
                             dcf_bull: item.dcf_bull || `$${(price * 1.45).toFixed(2)}`,
@@ -993,86 +992,49 @@
                             sce_bull_pct: item.sce_bull_pct || '+45%'
                         });
                     });
-                    console.log("✅ State Synchronized. Items count:", smartMoneyData.length);
-                    injectSmartMoney();
-                    if (!window.initialLoadDone) {
-                        loadSymbol(0);
-                        window.initialLoadDone = true;
-                    }
-                }
-                else {
-                    console.error("❌ Received empty or invalid data from API");
+                } else {
+                    console.warn("⚠️ API returned empty data, triggering fallback.");
+                    applyFallbackData();
                 }
             } catch (e) {
-                console.error("❌ API fetch failed chain-wide:", e);
-                // Last ditch: provide a very basic hardcoded list if even API fails
-                if (smartMoneyData.length === 0) {
-                    console.warn("⚠️ Using emergency frontend hardcoded backup!");
-                    const backupData = [
-                        { rank: "01", ticker: "NVDA", name: "NVIDIA Corporation", sector: "Technology", score: 95.8, grade: "🔥 S급 (즉시 매수)", price: 142.87, change: 8.4, insight: "AI 가속기 시장 독점적 지위 지속 및 Blackwell 수요 폭발.", risk: "중국 수출 규제 강화 가능성.", upside: "+18.2%", mkt_cap: "$3.5T", vol_ratio: "3.2x ↑", rsi: "72.4" },
-                        { rank: "02", ticker: "TSLA", name: "Tesla, Inc.", sector: "Automotive", score: 91.2, grade: "🌟 A급 (적극 매수)", price: 258.45, change: 3.1, insight: "FSD v12 출시 및 로보택시 기대감 반영.", risk: "전기차 가격 경쟁 심화.", upside: "+25.5%", mkt_cap: "$825B", vol_ratio: "2.4x ↑", rsi: "64.5" },
-                        { rank: "03", ticker: "AAPL", name: "Apple Inc.", sector: "Technology", score: 88.5, grade: "🌟 A급 (적극 매수)", price: 228.12, change: 1.2, insight: "온디바이스 AI 모멘텀 및 아이폰 교체 주기 도래.", risk: "중국 시장 점유율 하락.", upside: "+12.1%", mkt_cap: "$3.4T", vol_ratio: "1.2x ↑", rsi: "55.4" },
-                        { rank: "04", ticker: "MSFT", name: "Microsoft Corp", sector: "Software", score: 82.5, grade: "🌟 A급 (적극 매수)", price: 425.30, change: 0.9, insight: "클라우드 및 코파일럿 매출 성장 지속.", risk: "AI 투자 비용 증가.", upside: "+10.5%", mkt_cap: "$3.1T", vol_ratio: "1.1x", rsi: "58.2" },
-                        { rank: "05", ticker: "AMZN", name: "Amazon.com", sector: "Commerce", score: 78.5, grade: "📈 B급 (매수 고려)", price: 188.30, change: 0.5, insight: "AWS 수익성 개선 및 물류 효율화.", risk: "소비 심리 위축 가능성.", upside: "+15.2%", mkt_cap: "$1.9T", vol_ratio: "1.0x", rsi: "52.1" },
-                        { rank: "06", ticker: "META", name: "Meta Platforms", sector: "Technology", score: 77.2, grade: "📈 B급 (매수 고려)", price: 585.20, change: 1.4, insight: "광고 매출 회복 및 AI 모델 경쟁력.", risk: "규제 리스크 및 메타버스 손실.", upside: "+8.4%", mkt_cap: "$1.5T", vol_ratio: "1.3x", rsi: "60.5" },
-                        { rank: "07", ticker: "GOOGL", name: "Alphabet Inc", sector: "Technology", score: 76.5, grade: "📈 B급 (매수 고려)", price: 165.20, change: 0.0, insight: "검색 광고 견조 및 Gemini 모델 고도화.", risk: "반독점 소송 리스크.", upside: "+14.1%", mkt_cap: "$2.0T", vol_ratio: "0.9x", rsi: "48.2" },
-                        { rank: "08", ticker: "AVGO", name: "Broadcom Inc", sector: "Semiconductors", score: 75.8, grade: "📈 B급 (매수 고려)", price: 172.50, change: 2.1, insight: "AI 네트워크 칩 수요 증가 및 VMware 시너지.", risk: "고객사 칩 내재화.", upside: "+9.2%", mkt_cap: "$800B", vol_ratio: "1.5x", rsi: "66.8" },
-                        { rank: "09", ticker: "AMD", "name": "Advanced Micro Devices", sector: "Semiconductors", score: 74.2, grade: "📈 B급 (매수 고려)", price: 155.10, change: -2.3, insight: "MI300 칩 판매 확대 및 점유율 상승.", risk: "엔비디아와의 기술 격차.", upside: "+22.5%", mkt_cap: "$250B", vol_ratio: "1.8x", rsi: "42.5" },
-                        { rank: "10", ticker: "COST", name": "Costco Wholesale", sector: "Retail", score: 73.5, grade: "📊 C급(관망)", price: 912.45, change: 0.8, insight: "회원비 인상 효과 및 견고한 소비.", risk: "높은 밸류에이션 부담.", upside: "+5.1 % ", mkt_cap: "$400B", vol_ratio: "0.8x", rsi: "75.1"}
-                    ];
-
-                    remoteData = backupData; // Assign backup to remoteData to reuse parsing logic
-
-                    // Manually trigger the parsing/injection loop with backup data
-                    smartMoneyData.length = 0;
-                    backupData.forEach((item, i) => {
-                        smartMoneyData.push({
-                            rank: (i + 1).toString().padStart(2, '0'),
-                            ticker: item.ticker,
-                            name: item.name,
-                            sector: item.sector,
-                            score: item.score,
-                            signal: item.grade.split(' ')[1],
-                            price: item.price,
-                            change: item.change,
-                            insight: item.insight,
-                            risk: item.risk,
-                            upside: item.upside,
-                            mkt_cap: item.mkt_cap,
-                            vol_ratio: item.vol_ratio,
-                            rsi: item.rsi,
-                            signal_strength: item.score > 90 ? '매우 강력' : (item.score > 80 ? '강력' : '보통'),
-                            swot_s: "데이터 연결 대기 중...", swot_w: "데이터 연결 대기 중...", swot_o: "데이터 연결 대기 중...", swot_t: "데이터 연결 대기 중...",
-                            dcf_target: `$${(item.price * 1.1).toFixed(2)}`,
-                            dcf_bear: `$${(item.price * 0.9).toFixed(2)}`,
-                            dcf_bull: `$${(item.price * 1.3).toFixed(2)}`,
-                            sce_bear_val: `$${(item.price * 0.9).toFixed(2)}`, sce_bear_pct: '-10%',
-                            sce_base_val: `$${(item.price * 1.1).toFixed(2)}`, sce_base_pct: '+10%',
-                            sce_bull_val: `$${(item.price * 1.3).toFixed(2)}`, sce_bull_pct: '+30%'
-                        });
-                    });
-                    injectSmartMoney();
-                    if (!window.initialLoadDone) {
-                        loadSymbol(0);
-                        window.initialLoadDone = true;
-                    }
+                console.error("❌ API fetch failed:", e);
+                if (smartMoneyData.length === 0) applyFallbackData();
+            } finally {
+                injectSmartMoney();
+                // Load first item if not already done
+                if (!window.initialLoadDone && smartMoneyData.length > 0) {
+                    loadSymbol(0);
+                    window.initialLoadDone = true;
                 }
             }
         }
 
-        function parseCSV(text) {
-            const lines = text.split('\n').filter(l => l.trim() !== '');
-            if (lines.length < 2) return null;
-
-            const headers = lines[0].split(',');
-            return lines.slice(1).map(line => {
-                const values = line.split(',');
-                return headers.reduce((obj, header, i) => {
-                    obj[header.trim()] = values[i] ? values[i].trim() : '';
-                    return obj;
-                }, {});
+        function applyFallbackData() {
+            console.warn("🚀 Applying emergency hardcoded fallback data.");
+            const backupData = [
+                { rank: "01", ticker: "NVDA", name: "NVIDIA Corporation", sector: "Technology", score: 95.8, signal: "적극 매수", price: 142.87, change: 8.4, insight: "AI 시장 지배력 지속", risk: "수출 규제", upside: "+18.2%", mkt_cap: "$3.5T", vol_ratio: "3.2x", rsi: "72.4", signal_strength: "매우 강력", swot_s: "AI 기술력", swot_w: "높은 밸류", swot_o: "서버 수요", swot_t: "경쟁 심화" },
+                { rank: "02", ticker: "TSLA", name: "Tesla, Inc.", sector: "Automotive", score: 91.2, signal: "적극 매수", price: 258.45, change: 3.1, insight: "로보택시 기대감 반영", risk: "가격 전쟁", upside: "+25.5%", mkt_cap: "$825B", vol_ratio: "2.4x", rsi: "64.5", signal_strength: "매우 강력", swot_s: "FSD 선두", swot_w: "마진 압박", swot_o: "로봇 사업", swot_t: "후발 주자" },
+                { rank: "03", ticker: "AAPL", name: "Apple Inc.", sector: "Technology", score: 88.5, signal: "적극 매수", price: 228.12, change: 1.2, insight: "교체 수요 기대", risk: "규제 강화", upside: "+12.1%", mkt_cap: "$3.4T", vol_ratio: "1.2x", rsi: "55.4", signal_strength: "강력", swot_s: "생태계", swot_w: "성장 정체", swot_o: "AI 폰", swot_t: "중국 리스크" }
+            ];
+            
+            smartMoneyData.length = 0;
+            backupData.forEach(item => {
+                const price = item.price;
+                smartMoneyData.push({
+                    ...item,
+                    dcf_target: `$${(price * 1.15).toFixed(2)}`,
+                    dcf_bear: `$${(price * 0.85).toFixed(2)}`,
+                    dcf_bull: `$${(price * 1.40).toFixed(2)}`,
+                    sce_bear_val: `$${(price * 0.85).toFixed(2)}`,
+                    sce_bear_pct: '-15%',
+                    sce_base_val: `$${(price * 1.15).toFixed(2)}`,
+                    sce_base_pct: '+15%',
+                    sce_bull_val: `$${(price * 1.40).toFixed(2)}`,
+                    sce_bull_pct: '+40%'
+                });
             });
         }
+
 
         // --- Macro & Calendar Data (Dynamic for Vercel) ---
         async function fetchMacroData() {
