@@ -28,8 +28,8 @@ class USDailyReportGenerator:
         api_key = os.getenv('GOOGLE_API_KEY')
         if api_key and api_key != "your_gemini_api_key_here":
             genai.configure(api_key=api_key)
-            # Use gemini-1.5-flash for speed and reliability in formatting
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            # Use gemini-2.0-flash as requested by user
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
             logger.info("✅ Gemini AI Backend Initialized")
         else:
             self.model = None

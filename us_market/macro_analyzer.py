@@ -66,7 +66,7 @@ class MacroAnalyzer:
         
         try:
             if self.model == 'gemini' and self.gemini_key:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-2.0-flash')
                 response = model.generate_content(prompt)
                 return self._parse_response(response.text)
             

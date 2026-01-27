@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List
 from tqdm import tqdm
 
@@ -33,9 +33,9 @@ class USStockDailyPricesCreator:
         self.prices_file = os.path.join(self.output_dir, 'us_daily_prices.csv')
         self.stocks_list_file = os.path.join(self.output_dir, 'us_stocks_list.csv')
         
-        # Start date for historical data
-        self.start_date = datetime(2020, 1, 1)
-        self.end_date = datetime.now()
+        # Start date for historical data (UTC)
+        self.start_date = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        self.end_date = datetime.now(timezone.utc)
         
     def get_sp500_tickers(self) -> List[Dict]:
         """Get full S&P 500 tickers list"""
@@ -142,7 +142,7 @@ class USStockDailyPricesCreator:
         if os.path.exists(self.prices_file):
             logger.info(f"📂 Loading existing prices: {self.prices_file}")
             df = pd.read_csv(self.prices_file)
-            df['date'] = pd.to_datetime(df['date'])
+            df['date'] = pd.to_datetime(df['date'], utc=True)
             return df
         return pd.DataFrame()
     
@@ -203,8 +203,8 @@ class USStockDailyPricesCreator:
             existing_df = pd.DataFrame() if full_refresh else self.load_existing_prices()
             latest_dates = self.get_latest_dates(existing_df)
             
-            # 3. Determine target end date
-            now = datetime.now()
+            # 3. Determine target end date (UTC)
+            now = datetime.now(timezone.utc)
             target_end_date = now
             
             # 4. Collect data
