@@ -240,11 +240,11 @@
                                         </h4>
                                         <div class="h-1.5 w-full bg-gray-800 rounded-full mb-6 relative mt-10">
                                             <div class="absolute inset-0 flex rounded-full overflow-hidden">
-                                                <div class="h-full bg-brand-danger/40 w-1/3 border-r border-black/20">
-                                                </div>
                                                 <div class="h-full bg-brand-success/40 w-1/3 border-r border-black/20">
                                                 </div>
-                                                <div class="h-full bg-brand-primary/40 w-1/3"></div>
+                                                <div class="h-full bg-brand-primary/40 w-1/3 border-r border-black/20">
+                                                </div>
+                                                <div class="h-full bg-brand-danger/40 w-1/3"></div>
                                             </div>
                                             <div id="price-marker"
                                                 class="absolute bottom-1 left-[50%] flex flex-col items-center transition-all duration-700">
@@ -259,7 +259,7 @@
                                                 <p id="dcf-bear" class="text-white font-bold">--</p>
                                             </div>
                                             <div class="text-center">
-                                                <p class="text-brand-primary mb-1">TARGET</p>
+                                                <p class="text-brand-primary mb-1">FAIR VALUE</p>
                                                 <p id="dcf-target" class="text-brand-primary font-black text-sm">--</p>
                                             </div>
                                             <div class="text-center">
@@ -527,6 +527,20 @@
                 const el = document.getElementById(id);
                 if (el) el.innerText = val || '--';
             }
+            // Dynamic Upside Calculation
+            const targetPrice = parseFloat(data.dcf_target.toString().replace('$', ''));
+            const currentPrice = parseFloat(data.price);
+            if (!isNaN(targetPrice) && !isNaN(currentPrice) && currentPrice > 0) {
+                const calculatedUpside = ((targetPrice - currentPrice) / currentPrice * 100).toFixed(1);
+                const upsideEl = document.getElementById('ai-upside');
+                if (upsideEl) {
+                    upsideEl.innerText = `${calculatedUpside > 0 ? '+' : ''}${calculatedUpside}% 예상 상승 여력`;
+                    upsideEl.className = `mt-4 text-xs font-bold ${calculatedUpside > 0 ? 'text-brand-success' : 'text-brand-danger'} uppercase tracking-widest`;
+                }
+            } else {
+                document.getElementById('ai-upside').innerText = `${data.upside} 상승 여력`;
+            }
+
 
             const scorePill = document.getElementById('ai-score-pill');
             if (scorePill) {
