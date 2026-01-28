@@ -353,4 +353,5 @@ class USDailyReportGenerator:
         return self.generate_html(raw_data, ai_content)
 
 if __name__ == "__main__":
-    USDailyReportGenerator(data_dir='us_market').run()
+    # If run directly as a script, default to current directory
+    USDailyReportGenerator(data_dir='.').run()

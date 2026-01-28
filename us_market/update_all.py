@@ -46,7 +46,8 @@ def run_all():
             
         logger.info(f"▶️ Running {script}...")
         try:
-            subprocess.run(['python', script_path], check=True)
+            # Run the script with its directory as CWD
+            subprocess.run([sys.executable, script_path], check=True, cwd=base_dir)
         except subprocess.CalledProcessError as e:
             logger.error(f"❌ Error running {script}: {e}")
             
