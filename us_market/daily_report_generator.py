@@ -10,7 +10,7 @@ import json
 import csv
 import logging
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import google.generativeai as genai
 
@@ -85,7 +85,7 @@ class USDailyReportGenerator:
 
         요청 사항 (JSON 형식으로 출력):
         1. catchy_title: 시장의 핵심 이슈를 관통하는 충격적이고 매력적인 헤드라인. (예: "그린란드 관세 100% 실행"... 미국-유럽 동맹 깨지나)
-        2. core_summary: 오늘 꼭 알아야 할 핵심 내용 3문장.
+        2. core_summary: 오늘 꼭 알아야 할 핵심 내용 3문장을 반드시 JSON 리스트 형식으로 출력 (예: ["내용1", "내용2", "내용3"]).
         3. sections: 최소 3개의 심층 분석 섹션. 각 섹션은 다음을 포함:
            - emoji_tag: 섹션 성격에 맞는 이모지 (예: 🔥, 🚀, ⚠️, 🙏)
            - title: 흥미로운 섹션 제목
@@ -140,8 +140,10 @@ class USDailyReportGenerator:
 
     def generate_html(self, raw_data, ai_content):
         """Generate final premium HTML matching the user's blog style"""
-        today_date = datetime.now().strftime("%Y.%m.%d")
-        gen_time = datetime.now().strftime("%H:%M:%S")
+        # Set timezone to KST (UTC+9)
+        kst_now = datetime.utcnow() + timedelta(hours=9)
+        today_date = kst_now.strftime("%Y.%m.%d")
+        gen_time = kst_now.strftime("%Y-%m-%d %H:%M:%S")
         
         # Build Index Cards
         indices_html = ""
@@ -298,7 +300,7 @@ class USDailyReportGenerator:
         <div class="box-summary">
             <h3>핵심 요약</h3>
             <ul>
-                { "".join([f'<li>{line}</li>' for line in ai_content['core_summary']]) }
+                { "".join([f'<li>{line}</li>' for line in (ai_content['core_summary'] if isinstance(ai_content['core_summary'], list) else [ai_content['core_summary']])]) }
             </ul>
         </div>
 
@@ -322,7 +324,7 @@ class USDailyReportGenerator:
 
             <div class="footer">
                 🚀 본 리포트는 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
-                <b>생성 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</b> (갱신 완료)<br>
+                <b>생성 시각: {gen_time}</b> (KST 갱신 완료)<br>
                 © 2026 US Market AI High-End Report
             </div>
         </div>
