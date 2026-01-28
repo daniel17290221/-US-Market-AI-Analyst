@@ -346,12 +346,14 @@ class USDailyReportGenerator:
         <!-- Left Sidebar for Ads -->
         <aside class="ad-sidebar">
             <div class="ad-unit">
-                <!-- 쿠팡 파트너스 좌측 광고 스크립트 위치 -->
+                <!-- 쿠팡 파트너스 좌측 광고 (고객 관심기반 추천) -->
                 <script src="https://ads-partners.coupang.com/g.js"></script>
                 <script>
-                    new PartnersCoupang.G({{ "id": 834566, "template": "carousel", "trackingCode": "AF1234567", "width": "180", "height": "600" }});
+                    new PartnersCoupang.G({{ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
                 </script>
-                <div style="font-size: 10px; margin-top: 5px;">"이 포스팅은 쿠팡 파트너스 활동의 일환으로, <br>이에 따른 일정액의 수수료를 제공받습니다."</div>
+                <div style="font-size: 10px; margin-top: 5px; color: var(--text-sub); line-height: 1.2;">
+                    "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+                </div>
             </div>
         </aside>
 
@@ -400,22 +402,24 @@ class USDailyReportGenerator:
         <!-- Right Sidebar for Ads -->
         <aside class="ad-sidebar">
             <div class="ad-unit">
-                <!-- 쿠팡 파트너스 우측 광고 스크립트 위치 -->
+                <!-- 쿠팡 파트너스 우측 광고 (재테크 관련 서적 추천) -->
                 <script src="https://ads-partners.coupang.com/g.js"></script>
                 <script>
-                    new PartnersCoupang.G({{ "id": 834567, "template": "carousel", "trackingCode": "AF1234567", "width": "180", "height": "600" }});
+                    new PartnersCoupang.G({{ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
                 </script>
-                <div style="font-size: 10px; margin-top: 5px;">"이 포스팅은 쿠팡 파트너스 활동의 일환으로, <br>이에 따른 일정액의 수수료를 제공받습니다."</div>
+                <div style="font-size: 10px; margin-top: 5px; color: var(--text-sub); line-height: 1.2;">
+                    "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+                </div>
             </div>
         </aside>
     </div>
 
     <!-- Mobile Sticky Ad Banner -->
     <div class="mobile-ad-banner">
-        <!-- 쿠팡 파트너스 모바일 하단 광고 스크립트 위치 -->
+        <!-- 쿠팡 파트너스 모바일 하단 광고 (카테고리 베스트) -->
         <script src="https://ads-partners.coupang.com/g.js"></script>
         <script>
-            new PartnersCoupang.G({{ "id": 834568, "template": "banner", "trackingCode": "AF1234567", "width": "100%", "height": "80" }});
+            new PartnersCoupang.G({{ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"320","height":"100","tsource":"" }});
         </script>
     </div>
 </body>
