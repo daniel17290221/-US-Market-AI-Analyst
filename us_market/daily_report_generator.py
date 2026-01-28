@@ -349,7 +349,7 @@ class USDailyReportGenerator:
                 <!-- 쿠팡 파트너스 좌측 광고 (고객 관심기반 추천) -->
                 <script src="https://ads-partners.coupang.com/g.js"></script>
                 <script>
-                    new PartnersCoupang.G({{ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
+                    new PartnersCoupang.G({{ "id":961293,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
                 </script>
             </div>
         </aside>
@@ -405,7 +405,7 @@ class USDailyReportGenerator:
                 <!-- 쿠팡 파트너스 우측 광고 (재테크 관련 서적 추천) -->
                 <script src="https://ads-partners.coupang.com/g.js"></script>
                 <script>
-                    new PartnersCoupang.G({{ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
+                    new PartnersCoupang.G({{ "id":961294,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
                 </script>
             </div>
         </aside>
