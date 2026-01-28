@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 랠리, 멈추지 않는 질주! 연준의 경고에도 '탐욕'에 베팅하는 월가</title>
+    <title>탐욕 지수 75! AI 랠리 지속될까? 연준의 엇갈린 시그널 속 투자 전략은?</title>
     <style>
         :root {
             --bg-color: #f7f9fb;
@@ -36,24 +36,57 @@
             padding: 20px;
         }
         
+        /* Layout Structure */
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .ad-sidebar {
+            width: 180px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .ad-unit {
+            background: var(--card-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: bold;
+            padding: 20px;
+        }
+
         .container { 
-            max-width: 800px; 
-            margin: 0 auto; 
+            max-width: 1000px; 
+            width: 100%;
             background: var(--card-bg); 
-            padding: 40px; 
+            padding: 50px; 
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .category { color: var(--brand-blue); font-weight: 800; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
-        h1 { font-size: 28px; line-height: 1.3; margin-bottom: 15px; letter-spacing: -0.5px; }
+        h1 { font-size: 32px; line-height: 1.3; margin-bottom: 15px; letter-spacing: -1px; }
         .date { color: var(--text-sub); font-size: 14px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
 
         .box-summary { 
             background: rgba(0, 112, 243, 0.05); 
             border-radius: 12px; 
-            padding: 24px; 
-            margin-bottom: 40px; 
+            padding: 28px; 
+            margin-bottom: 45px; 
             border: 1px solid rgba(0, 112, 243, 0.1); 
         }
         .box-summary h3 { font-size: 18px; margin-bottom: 12px; color: var(--brand-blue); }
@@ -74,54 +107,68 @@
         .index-change.up { color: var(--brand-red); }
         .index-change.down { color: var(--brand-blue); }
 
-        .article-section { margin-bottom: 50px; }
-        .section-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px; }
-        .emoji { font-size: 24px; }
-        .section-header h2 { font-size: 20px; font-weight: 800; line-height: 1.4; }
-        .section-content p { font-size: 16px; color: var(--text-main); margin-bottom: 15px; line-height: 1.8; text-align: justify; }
+        .article-section { margin-bottom: 60px; }
+        .section-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+        .emoji { font-size: 28px; }
+        .section-header h2 { font-size: 22px; font-weight: 800; line-height: 1.4; }
+        .section-content p { font-size: 17px; color: var(--text-main); margin-bottom: 20px; line-height: 1.9; text-align: justify; }
 
-        .market-brief { border-top: 2px solid var(--border-color); padding-top: 30px; margin-bottom: 40px; }
-        .brief-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
-        .market-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-size: 15px; }
+        .market-brief { border-top: 2px solid var(--border-color); padding-top: 30px; margin-bottom: 45px; }
+        .brief-title { font-size: 19px; font-weight: 800; margin-bottom: 25px; }
+        .market-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; }
         .market-row .label { font-weight: 600; }
-        .market-row .val { font-family: 'JetBrains Mono', monospace; }
+        .market-row .val { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
         .market-row .chg.up { color: var(--brand-red); }
         .market-row .chg.down { color: var(--brand-blue); }
 
-        .hashtags { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); }
-        .hashtag { color: var(--text-sub); font-size: 14px; margin-right: 15px; }
+        .hashtags { margin-top: 50px; padding-top: 25px; border-top: 1px solid var(--border-color); }
+        .hashtag { color: var(--text-sub); font-size: 15px; margin-right: 20px; font-weight: 600; }
 
-        .footer { margin-top: 60px; text-align: center; font-size: 12px; color: var(--text-sub); }
+        .footer { margin-top: 70px; text-align: center; font-size: 13px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 30px; }
 
         @keyframes pulse {
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.05); opacity: 0.8; }
             100% { transform: scale(1); opacity: 1; }
         }
+
+        @media (max-width: 1200px) {
+            .ad-sidebar { display: none; }
+            .container { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div style="text-align: right; margin-bottom: 20px;">
-            <span style="background: #f44336; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; animation: pulse 2s infinite;">
-                🔴 LIVE UPDATED: 2026-01-28 13:55:22
-            </span>
-        </div>
-        <div class="category">Daily Morning Report</div>
-        <h1>AI 랠리, 멈추지 않는 질주! 연준의 경고에도 '탐욕'에 베팅하는 월가</h1>
-        <div class="date">2026.01.28 • Premium AI Analysis</div>
+    <div class="wrapper">
+        <!-- Left Sidebar for Ads -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                AD SPACE<br>
+                (180 x 600)
+            </div>
+        </aside>
 
-        <div class="box-summary">
-            <h3>핵심 요약</h3>
-            <ul>
-                <li>기술주 중심의 랠리가 연준의 금리 인하 보류 가능성에도 불구하고 지속되면서, 시장 심리는 극도의 '탐욕' 단계에 진입했습니다. 투자자들은 인플레이션 지표와 연준의 추가적인 발언에 촉각을 곤두세워야 합니다.</li><li>견조한 소비 지출은 미국 경제의 버팀목 역할을 하고 있지만, 고금리 환경과 중동 지정학적 리스크는 여전히 잠재적인 위협 요인으로 남아있습니다. 변동성 확대를 염두에 둔 리스크 관리가 중요합니다.</li><li>미국 국채 금리 상승은 투자 자산 배분 전략에 중요한 영향을 미치고 있습니다. 성장 섹터에 대한 비중 확대와 동시에, 금리 변동성에 대비한 채권 포트폴리오 조정 및 현금 확보 전략이 필요합니다.</li>
-            </ul>
-        </div>
+        <div class="container">
+            <div style="text-align: right; margin-bottom: 25px;">
+                <span style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
+                    🔴 LIVE UPDATED: 2026-01-28 16:43:24
+                </span>
+            </div>
+            <div class="category">Daily Morning Report</div>
+            <h1>탐욕 지수 75! AI 랠리 지속될까? 연준의 엇갈린 시그널 속 투자 전략은?</h1>
+            <div class="date">2026.01.28 • Premium AI Analysis</div>
 
-        <div class="market-brief">
-            <div class="brief-title">미국 증시는 어땠어? 01.28 장마감</div>
-            <div class="market-indices">
-                
+            <div class="box-summary">
+                <h3>핵심 요약</h3>
+                <ul>
+                    <li>미국 연준, 인플레이션 2% 이상 유지에 금리 인하 신중론 유지. 추가 경제 지표 발표에 촉각을 곤두세워야 합니다.</li><li>AI 반도체 수요 폭발, 엔비디아 신고가 경신! 기술주 랠리 지속 가능성은 여전히 뜨겁습니다.</li><li>10년물 국채 수익률 4.2% 돌파! 금리 변동성에 대비한 포트폴리오 다각화가 필수적입니다.</li>
+                </ul>
+            </div>
+
+            <div class="market-brief">
+                <div class="brief-title">미국 증시 브리핑: 01.28 장마감 기준</div>
+                <div class="market-indices">
+                    
             <div class="index-card">
                 <div class="index-name">📈 S&P 500</div>
                 <div class="index-value">6,940.01</div>
@@ -137,41 +184,41 @@
                 <div class="index-value">49,359.33</div>
                 <div class="index-change up">+0.00%</div>
             </div>
+                </div>
             </div>
-        </div>
 
-        
+            
             <div class="article-section">
                 <div class="section-header">
-                    <span class="emoji">🚀</span>
-                    <h2>AI, 엔진을 켜다: 반도체 슈퍼사이클, 어디까지?</h2>
+                    <span class="emoji">🔥</span>
+                    <h2>AI 칩 황제, 엔비디아의 질주! 어디까지 갈까?</h2>
                 </div>
                 <div class="section-content">
-                    <p>인공지능(AI) 칩에 대한 폭발적인 수요가 반도체 섹터를 🚀 로켓처럼 쏘아 올리고 있습니다. 데이터에서 보시다시피 시장 심리는 '탐욕' 그 자체입니다. 75점이라는 높은 점수는 투자자들이 리스크를 감수하려는 의지가 매우 강하다는 것을 보여줍니다. 특히 기술주, 그중에서도 반도체 섹터는 앞으로도 강력한 상승세를 이어갈 것으로 예상됩니다. 엔비디아를 필두로 한 AI 반도체 기업들의 실적 발표에 따라 시장의 방향성이 결정될 가능성이 높습니다. 하지만, 과열된 시장에는 항상 조정의 그림자가 드리워져 있다는 점을 명심해야 합니다. 투자자들은 펀더멘털을 기반으로 한 신중한 접근 방식을 유지해야 하며, AI 랠리에 대한 지나친 낙관론은 경계해야 합니다. 옥석 가리기가 더욱 중요해지는 시점입니다. 장기적인 관점에서 성장 가능성이 높은 기업을 선별하고, 분산 투자를 통해 리스크를 관리하는 전략이 필요합니다. '묻지마 투자'는 절대 금물입니다! 데이터 센터 확장 경쟁과 AI 기술 발전 속도를 고려할 때, 반도체 슈퍼사이클은 쉽게 끝나지 않을 것으로 보입니다. 하지만, 공급망 문제, 경쟁 심화 등 잠재적인 리스크 요인도 간과해서는 안 됩니다.</p>
+                    <p>엔비디아, 정말 무섭게 올라가고 있습니다. AI 칩 수요가 폭발적으로 증가하면서 연일 신고가를 경신하고 있죠. 데이터에 따르면, 시장 심리는 '탐욕' 단계에 진입했고, 특히 AI 반도체 섹터에 대한 기대감이 최고조에 달한 상황입니다. 하지만 냉정하게 봐야 합니다. 지금의 랠리가 과도한 기대심리에 기반한 것은 아닌지, 실적 뒷받침 없이 거품만 쌓이고 있는 것은 아닌지 꼼꼼히 따져봐야 해요. 물론 AI 기술 혁신은 거스를 수 없는 흐름이지만, 투자에는 항상 리스크가 따릅니다. 엔비디아 외에도 AMD, 퀄컴 등 AI 반도체 관련 기업들의 펀더멘털을 비교 분석하고, 장기적인 성장 가능성을 신중하게 평가해야 합니다. 만약 이미 엔비디아 주식을 보유하고 있다면, 일부 차익 실현을 통해 포트폴리오 리밸런싱을 고려하는 것도 좋은 전략일 수 있습니다. 지금은 '묻지마 투자' 보다는 '똑똑한 투자'가 필요한 시점입니다. 잊지 마세요, 탐욕은 항상 위험을 동반합니다! 현재 S&P500, 나스닥, 다우존스 모두 보합세를 유지하고 있지만, 개별 종목 장세가 더욱 심화될 가능성이 높습니다. 개인 투자자분들은 더욱 신중한 접근이 필요합니다.</p>
                 </div>
             </div>
             <div class="article-section">
                 <div class="section-header">
                     <span class="emoji">⚠️</span>
-                    <h2>중동 리스크, 다시 고개 드나? 유가 급등 가능성은?</h2>
+                    <h2>연준의 경고? 금리 인하, 아직은 '글쎄'…</h2>
                 </div>
                 <div class="section-content">
-                    <p>중동 지역의 지정학적 긴장이 다시 고조되면서 에너지 시장에 ⚠️ 경고등이 켜졌습니다. WTI 원유 가격이 소폭 상승(+0.44%)했지만, 이는 시작에 불과할 수 있습니다. 만약 중동 지역에서 추가적인 지정학적 사건이 발생한다면, 유가 급등은 불가피할 것입니다. 이는 인플레이션을 더욱 심화시키고, 연준의 금리 인상 압력을 가중시킬 수 있습니다. 에너지 섹터는 단기적으로 변동성이 커질 수 있지만, 장기적인 관점에서는 안정적인 수익을 제공할 수 있습니다. 지정학적 리스크는 예측하기 어렵지만, 리스크 관리 차원에서 에너지 관련 투자 비중을 조절하는 것을 고려해볼 필요가 있습니다. 또한, 대체 에너지 섹터에 대한 관심도 높여야 합니다. 장기적으로는 친환경 에너지로의 전환이 불가피하며, 이는 새로운 투자 기회를 제공할 수 있습니다. 중동 리스크는 단순히 에너지 가격에만 영향을 미치는 것이 아닙니다. 글로벌 공급망, 투자 심리 등 다양한 경로를 통해 금융 시장 전반에 걸쳐 부정적인 영향을 미칠 수 있다는 점을 기억해야 합니다. 투자자들은 지정학적 리스크에 대한 지속적인 모니터링과 함께, 리스크 회피 전략을 마련해야 합니다.</p>
+                    <p>미국 연준이 금리 인하에 대해 매우 신중한 입장을 보이고 있습니다. 인플레이션이 2% 이상으로 유지되면서, 성급한 금리 인하가 오히려 시장에 혼란을 초래할 수 있다는 우려 때문이죠. 10년물 국채 수익률이 4.2%까지 상승한 것도 이러한 분위기를 반영하고 있습니다. 앞으로 발표될 경제 지표들이 매우 중요해졌습니다. 특히 고용 지표와 소비자 물가 지수를 주의 깊게 살펴봐야 합니다. 만약 인플레이션이 예상보다 높게 유지된다면, 연준은 추가 금리 인상을 단행할 가능성도 배제할 수 없습니다. 금리 인상은 주식 시장에 하방 압력으로 작용할 수 있으므로, 투자자들은 포트폴리오를 재점검하고, 금리 변동성에 대비해야 합니다. 고금리 환경에서는 성장주보다는 가치주에 투자하는 것이 유리할 수 있으며, 변동성 장세에 대비하여 현금 비중을 확보하는 것도 좋은 전략입니다. 하지만 그렇다고 해서 무조건적으로 주식 시장을 떠날 필요는 없습니다. 금리 인상 가능성을 염두에 두되, 장기적인 관점에서 우량주를 선별하여 투자하는 전략이 여전히 유효합니다. 중요한 것은 '균형'입니다. 과도한 위험을 감수하지 않으면서, 안정적인 수익을 추구하는 투자 전략을 수립해야 합니다.</p>
                 </div>
             </div>
             <div class="article-section">
                 <div class="section-header">
                     <span class="emoji">🙏</span>
-                    <h2>고금리 시대, 현명한 투자 전략은? 헬스케어 섹터 주목해야 할 이유</h2>
+                    <h2>지정학적 리스크, 또다시 고개를 들다… 유가 급등 주의보!</h2>
                 </div>
                 <div class="section-content">
-                    <p>미국 국채 금리 상승은 기업의 자금 조달 비용을 증가시키고, 이는 기업의 수익성에 부정적인 영향을 미칠 수 있습니다. 고금리 환경에서는 🙏 안정적인 수익을 제공하는 섹터에 대한 투자가 중요합니다. 헬스케어 섹터는 경기 방어적인 특성을 가지고 있어, 경제 상황에 크게 영향을 받지 않는다는 장점이 있습니다. 인구 고령화 추세와 함께 의료 서비스에 대한 수요는 꾸준히 증가할 것으로 예상됩니다. 따라서, 헬스케어 섹터는 장기적인 관점에서 안정적인 수익을 제공할 수 있는 매력적인 투자 대상입니다. 또한, 분산 투자를 통해 리스크를 관리하는 것이 중요합니다. AI 관련 기술주와 같은 성장 섹터에 대한 비중을 늘리는 것을 고려하면서도, 금리 인상에 대비하여 채권 투자 비중을 조절하고, 변동성에 대비한 현금 보유량을 확보하는 것이 현명한 투자 전략입니다. TDY, WM, NEE, CTVA와 같은 S급 종목은 기관 투자자들의 높은 관심을 받고 있으며, 투자 매력도가 높다고 판단됩니다. 하지만, 투자 결정은 개인의 투자 성향과 목표에 따라 신중하게 이루어져야 합니다. '묻지마 투자'는 절대 금물입니다! 투자 전문가와 상담하거나, 충분한 정보를 수집한 후에 투자 결정을 내리는 것이 중요합니다.</p>
+                    <p>중동 지역의 긴장이 다시 고조되고 있습니다. 지정학적 리스크가 확대되면서 유가 변동성이 심화될 가능성이 커지고 있습니다. WTI 원유 가격은 현재 배럴당 59.34달러로, 소폭 상승했습니다. 만약 중동 지역의 갈등이 더욱 격화된다면, 유가는 급등할 수 있으며, 이는 글로벌 경제에 부정적인 영향을 미칠 수 있습니다. 유가 상승은 인플레이션을 자극하고, 기업들의 생산 비용을 증가시켜 수익성을 악화시킬 수 있습니다. 또한, 소비자들의 구매력을 감소시켜 경제 성장을 둔화시킬 수 있습니다. 따라서 투자자들은 지정학적 리스크를 예의주시하고, 유가 변동성에 대비해야 합니다. 에너지 관련 주식에 투자하고 있다면, 포트폴리오 비중을 조절하는 것을 고려해야 하며, 유가 상승 수혜주에 대한 투자도 고려해볼 수 있습니다. 하지만 지나친 투자는 위험할 수 있으므로, 분산 투자를 통해 리스크를 관리하는 것이 중요합니다. 또한, 지정학적 리스크는 예측하기 어렵기 때문에, 항상 최악의 시나리오를 염두에 두고 투자 결정을 내려야 합니다. 금 선물 가격이 하락세를 보이고 있지만, 안전 자산으로서의 금의 역할은 여전히 유효합니다. 포트폴리오에 금을 편입하여 리스크를 분산하는 것도 좋은 전략입니다.</p>
                 </div>
             </div>
 
-        <div class="market-brief">
-            <div class="brief-title">원자재 및 가상자산 현황</div>
-            
+            <div class="market-brief">
+                <div class="brief-title">주요 원자재 및 암호화폐 시황</div>
+                
             <div class="market-row">
                 <span class="label">WTI 원유</span>
                 <span class="val">59.34</span>
@@ -187,18 +234,27 @@
                 <span class="val">129,446,000</span>
                 <span class="chg down">-0.02%</span>
             </div>
-        </div>
+            </div>
 
             <div class="hashtags">
-                <span class="hashtag">#미국증시</span> <span class="hashtag">#AI랠리</span> <span class="hashtag">#금리인상</span> <span class="hashtag">#중동리스크</span> <span class="hashtag">#헬스케어투자</span> <span class="hashtag">#분산투자</span> <span class="hashtag">#변동성주의</span>
+                <span class="hashtag">#미국증시</span> <span class="hashtag">#금리인상</span> <span class="hashtag">#인플레이션</span> <span class="hashtag">#AI반도체</span> <span class="hashtag">#지정학적리스크</span> <span class="hashtag">#엔비디아</span> <span class="hashtag">#투자전략</span>
             </div>
 
             <div class="footer">
                 🚀 본 리포트는 VibeCodingLab 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
-                <b>생성 시각: 2026-01-28 13:55:22</b> (KST 갱신 완료)<br>
+                <b>생성 시각: 2026-01-28 16:43:24</b> (KST 한국 시각 반영 완료)<br>
                 © 2026 VibeCodingLab. All Rights Reserved.
             </div>
         </div>
-    </body>
-    </html>
+
+        <!-- Right Sidebar for Ads -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                AD SPACE<br>
+                (180 x 600)
+            </div>
+        </aside>
+    </div>
+</body>
+</html>
         
