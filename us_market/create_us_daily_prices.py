@@ -34,7 +34,7 @@ class USStockDailyPricesCreator:
         self.stocks_list_file = os.path.join(self.output_dir, 'us_stocks_list.csv')
         
         # Start date for historical data (UTC)
-        self.start_date = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        self.start_date = datetime(2024, 1, 1, tzinfo=timezone.utc)
         self.end_date = datetime.now(timezone.utc)
         
     def get_sp500_tickers(self) -> List[Dict]:
