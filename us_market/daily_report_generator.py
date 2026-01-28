@@ -222,24 +222,57 @@ class USDailyReportGenerator:
             padding: 20px;
         }}
         
+        /* Layout Structure */
+        .wrapper {{
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }}
+
+        .ad-sidebar {{
+            width: 180px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }}
+
+        .ad-unit {{
+            background: var(--card-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: bold;
+            padding: 20px;
+        }}
+
         .container {{ 
-            max-width: 800px; 
-            margin: 0 auto; 
+            max-width: 1000px; 
+            width: 100%;
             background: var(--card-bg); 
-            padding: 40px; 
+            padding: 50px; 
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
         }}
 
         .category {{ color: var(--brand-blue); font-weight: 800; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }}
-        h1 {{ font-size: 28px; line-height: 1.3; margin-bottom: 15px; letter-spacing: -0.5px; }}
+        h1 {{ font-size: 32px; line-height: 1.3; margin-bottom: 15px; letter-spacing: -1px; }}
         .date {{ color: var(--text-sub); font-size: 14px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }}
 
         .box-summary {{ 
             background: rgba(0, 112, 243, 0.05); 
             border-radius: 12px; 
-            padding: 24px; 
-            margin-bottom: 40px; 
+            padding: 28px; 
+            margin-bottom: 45px; 
             border: 1px solid rgba(0, 112, 243, 0.1); 
         }}
         .box-summary h3 {{ font-size: 18px; margin-bottom: 12px; color: var(--brand-blue); }}
@@ -260,63 +293,77 @@ class USDailyReportGenerator:
         .index-change.up {{ color: var(--brand-red); }}
         .index-change.down {{ color: var(--brand-blue); }}
 
-        .article-section {{ margin-bottom: 50px; }}
-        .section-header {{ display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px; }}
-        .emoji {{ font-size: 24px; }}
-        .section-header h2 {{ font-size: 20px; font-weight: 800; line-height: 1.4; }}
-        .section-content p {{ font-size: 16px; color: var(--text-main); margin-bottom: 15px; line-height: 1.8; text-align: justify; }}
+        .article-section {{ margin-bottom: 60px; }}
+        .section-header {{ display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }}
+        .emoji {{ font-size: 28px; }}
+        .section-header h2 {{ font-size: 22px; font-weight: 800; line-height: 1.4; }}
+        .section-content p {{ font-size: 17px; color: var(--text-main); margin-bottom: 20px; line-height: 1.9; text-align: justify; }}
 
-        .market-brief {{ border-top: 2px solid var(--border-color); padding-top: 30px; margin-bottom: 40px; }}
-        .brief-title {{ font-size: 18px; font-weight: 800; margin-bottom: 20px; }}
-        .market-row {{ display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-size: 15px; }}
+        .market-brief {{ border-top: 2px solid var(--border-color); padding-top: 30px; margin-bottom: 45px; }}
+        .brief-title {{ font-size: 19px; font-weight: 800; margin-bottom: 25px; }}
+        .market-row {{ display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; }}
         .market-row .label {{ font-weight: 600; }}
-        .market-row .val {{ font-family: 'JetBrains Mono', monospace; }}
+        .market-row .val {{ font-family: 'JetBrains Mono', monospace; font-weight: 700; }}
         .market-row .chg.up {{ color: var(--brand-red); }}
         .market-row .chg.down {{ color: var(--brand-blue); }}
 
-        .hashtags {{ margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); }}
-        .hashtag {{ color: var(--text-sub); font-size: 14px; margin-right: 15px; }}
+        .hashtags {{ margin-top: 50px; padding-top: 25px; border-top: 1px solid var(--border-color); }}
+        .hashtag {{ color: var(--text-sub); font-size: 15px; margin-right: 20px; font-weight: 600; }}
 
-        .footer {{ margin-top: 60px; text-align: center; font-size: 12px; color: var(--text-sub); }}
+        .footer {{ margin-top: 70px; text-align: center; font-size: 13px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 30px; }}
 
         @keyframes pulse {{
             0% {{ transform: scale(1); opacity: 1; }}
             50% {{ transform: scale(1.05); opacity: 0.8; }}
             100% {{ transform: scale(1); opacity: 1; }}
         }}
+
+        @media (max-width: 1200px) {{
+            .ad-sidebar {{ display: none; }}
+            .container {{ max-width: 100%; }}
+        }}
     </style>
 </head>
 <body>
-    <div class="container">
-        <div style="text-align: right; margin-bottom: 20px;">
-            <span style="background: #f44336; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; animation: pulse 2s infinite;">
-                🔴 LIVE UPDATED: {gen_time}
-            </span>
-        </div>
-        <div class="category">Daily Morning Report</div>
-        <h1>{ai_content['catchy_title']}</h1>
-        <div class="date">{today_date} • Premium AI Analysis</div>
-
-        <div class="box-summary">
-            <h3>핵심 요약</h3>
-            <ul>
-                { "".join([f'<li>{line}</li>' for line in (ai_content['core_summary'] if isinstance(ai_content['core_summary'], list) else [ai_content['core_summary']])]) }
-            </ul>
-        </div>
-
-        <div class="market-brief">
-            <div class="brief-title">미국 증시는 어땠어? {raw_data['date']} 장마감</div>
-            <div class="market-indices">
-                {indices_html}
+    <div class="wrapper">
+        <!-- Left Sidebar for Ads -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                AD SPACE<br>
+                (180 x 600)
             </div>
-        </div>
+        </aside>
 
-        {sections_html}
+        <div class="container">
+            <div style="text-align: right; margin-bottom: 25px;">
+                <span style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
+                    🔴 LIVE UPDATED: {gen_time}
+                </span>
+            </div>
+            <div class="category">Daily Morning Report</div>
+            <h1>{ai_content['catchy_title']}</h1>
+            <div class="date">{today_date} • Premium AI Analysis</div>
 
-        <div class="market-brief">
-            <div class="brief-title">원자재 및 가상자산 현황</div>
-            {comm_items}
-        </div>
+            <div class="box-summary">
+                <h3>핵심 요약</h3>
+                <ul>
+                    { "".join([f'<li>{line}</li>' for line in (ai_content['core_summary'] if isinstance(ai_content['core_summary'], list) else [ai_content['core_summary']])]) }
+                </ul>
+            </div>
+
+            <div class="market-brief">
+                <div class="brief-title">미국 증시 브리핑: {raw_data['date']} 장마감 기준</div>
+                <div class="market-indices">
+                    {indices_html}
+                </div>
+            </div>
+
+            {sections_html}
+
+            <div class="market-brief">
+                <div class="brief-title">주요 원자재 및 암호화폐 시황</div>
+                {comm_items}
+            </div>
 
             <div class="hashtags">
                 {hashtags_html}
@@ -324,12 +371,21 @@ class USDailyReportGenerator:
 
             <div class="footer">
                 🚀 본 리포트는 VibeCodingLab 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
-                <b>생성 시각: {gen_time}</b> (KST 갱신 완료)<br>
+                <b>생성 시각: {gen_time}</b> (KST 한국 시각 반영 완료)<br>
                 © 2026 VibeCodingLab. All Rights Reserved.
             </div>
         </div>
-    </body>
-    </html>
+
+        <!-- Right Sidebar for Ads -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                AD SPACE<br>
+                (180 x 600)
+            </div>
+        </aside>
+    </div>
+</body>
+</html>
         """
         
         try:
