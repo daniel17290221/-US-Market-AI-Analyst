@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,6 +39,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add us_market/*.json us_market/*.csv us_market/*.html
           if git commit -m "auto: daily market report update $(date +'%Y-%m-%d')"; then
+            # Latest changes from remote (like Branding updates) are pulled first
             git pull --rebase origin master
             git push origin master
           else
