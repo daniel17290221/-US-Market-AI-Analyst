@@ -351,9 +351,6 @@ class USDailyReportGenerator:
                 <script>
                     new PartnersCoupang.G({{ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
                 </script>
-                <div style="font-size: 10px; margin-top: 5px; color: var(--text-sub); line-height: 1.2;">
-                    "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
-                </div>
             </div>
         </aside>
 
@@ -393,6 +390,9 @@ class USDailyReportGenerator:
             </div>
 
             <div class="footer">
+                <div style="font-size: 11px; margin-bottom: 15px; color: var(--text-sub); font-weight: 600;">
+                    "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+                </div>
                 🚀 본 리포트는 VibeCodingLab 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
                 <b>생성 시각: {gen_time}</b> (KST 한국 시각 반영 완료)<br>
                 © 2026 VibeCodingLab. All Rights Reserved.
@@ -407,9 +407,6 @@ class USDailyReportGenerator:
                 <script>
                     new PartnersCoupang.G({{ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" }});
                 </script>
-                <div style="font-size: 10px; margin-top: 5px; color: var(--text-sub); line-height: 1.2;">
-                    "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
-                </div>
             </div>
         </aside>
     </div>
