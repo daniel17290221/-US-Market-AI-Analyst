@@ -15,7 +15,10 @@ if BASE_DIR not in sys.path:
 
 from us_market.daily_report_generator import USDailyReportGenerator
 
-app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'))
+app = Flask(__name__, 
+            template_folder=os.path.join(BASE_DIR, 'templates'),
+            static_folder=os.path.join(BASE_DIR, 'assets'),
+            static_url_path='/assets')
 DATA_DIR = os.path.join(BASE_DIR, 'us_market')
 
 # Ensure we log the actual paths for debugging in Vercel logs
