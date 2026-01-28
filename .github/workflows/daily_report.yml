@@ -37,11 +37,19 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          
+          # Only add files that the AI generated
           git add us_market/*.json us_market/*.csv us_market/*.html
+          
+          # Commit only if there are changes
           if git commit -m "auto: daily market report update $(date +'%Y-%m-%d')"; then
-            # Latest changes from remote (like Branding updates) are pulled first
+            echo "Successfully committed changes. Now pulling latest changes from master..."
+            
+            # Pull latest changes (like user's branding) and rebase our auto-commit on top
             git pull --rebase origin master
+            
+            echo "Pushing merged changes to origin master..."
             git push origin master
           else
-            echo "No changes to commit"
+            echo "No changes to commit (market data is already up to date)."
           fi
