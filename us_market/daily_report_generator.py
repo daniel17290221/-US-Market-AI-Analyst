@@ -323,9 +323,9 @@ class USDailyReportGenerator:
             </div>
 
             <div class="footer">
-                🚀 본 리포트는 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
+                🚀 본 리포트는 VibeCodingLab 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
                 <b>생성 시각: {gen_time}</b> (KST 갱신 완료)<br>
-                © 2026 US Market AI High-End Report
+                © 2026 VibeCodingLab. All Rights Reserved.
             </div>
         </div>
     </body>
