@@ -1,4 +1,3 @@
-<!-- VibeCodingLab Sync Check: 2026-01-28_11:40 -->
 <!DOCTYPE html>
 <html lang="ko" class="dark">
 
@@ -505,7 +504,18 @@
                 </div>
             </div>
         </div>
-        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden" style="height: 1200px;">
+        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden" style="min-height: 1400px;">
+            <div class="p-4 bg-white/5 border-b border-white/5 flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
+                    <button
+                        onclick="const frame = document.getElementById('report-iframe'); const url = new URL(frame.src, window.location.href); url.searchParams.set('t', Date.now()); frame.src = url.href;"
+                        class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
+                        <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
+                    </button>
+                </div>
+                <div id="report-debug-info" class="text-[9px] text-gray-600 font-mono"></div>
+            </div>
             <iframe id="report-iframe" src="" class="w-full h-full border-none" loading="lazy"></iframe>
         </div>
     </main>
@@ -576,8 +586,11 @@
                                 : 'us_market/us_market_morning_report.html';
 
                             console.warn("Attempting to load report from:", reportPath);
-                            // Add a random param to bust cache
-                            reportFrame.src = reportPath + "?t=" + Date.now();
+                            reportFrame.src = reportPath;
+
+                            // Visual debug feedback
+                            const debugEl = document.getElementById('report-debug-info');
+                            if (debugEl) debugEl.innerText = "로드 시도 경로: " + reportPath;
                         } else {
                             reportFrame.src = '/daily-report';
                         }
@@ -590,7 +603,21 @@
             const data = smartMoneyData[index];
             if (!data) return;
 
-            updateTradingView('D', data.ticker);
+            // Debug alert for user confirmation (temporary)
+            if (data.ticker === 'STX') {
+                alert(`DEBUG: Loading STX. \nExchange from data: ${data.exchange}\nTicker: ${data.ticker}`);
+            }
+            console.log("DEBUG: Loading symbol", data.ticker, "Exchange:", data.exchange);
+
+            let finalExchange = data.exchange || 'NYSE';
+            // Force NASDAQ for known tickers if data is missing or default
+            const nasdaqTickers = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD', 'STX', 'KLAC', 'BKR'];
+            if (nasdaqTickers.includes(data.ticker)) {
+                finalExchange = 'NASDAQ';
+            }
+
+            const fullSymbol = `${finalExchange}:${data.ticker}`;
+            updateTradingView('D', null, fullSymbol);
 
             try {
                 const res = await fetch(`/api/us/realtime-prices?tickers=${data.ticker}`);
@@ -690,9 +717,12 @@
         }
 
         let currentTicker = "NASDAQ:NVDA";
-        function updateTradingView(res = 'D', ticker = null) {
-            if (ticker) {
-                const nasdaq = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD'].includes(ticker);
+        function updateTradingView(res = 'D', ticker = null, fullSymbol = null) {
+            console.log("DEBUG: updateTradingView called with symbol:", fullSymbol, "ticker:", ticker);
+            if (fullSymbol) {
+                currentTicker = fullSymbol;
+            } else if (ticker) {
+                const nasdaq = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD', 'STX', 'KLAC', 'BKR'].includes(ticker);
                 currentTicker = (nasdaq ? 'NASDAQ:' : 'NYSE:') + ticker;
             }
             const container = document.getElementById('tradingview_main');
@@ -720,10 +750,12 @@
         }
 
         async function fetchData() {
+            console.log("🔍 Fetching Smart Money data...");
             try {
                 const res = await fetch(`/api/us/smart-money?t=${Date.now()}`);
-                if (!res.ok) throw new Error();
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
+                console.log("DEBUG: Raw data from API:", data);
                 if (data && data.length > 0) {
                     smartMoneyData.length = 0;
                     data.forEach((item, i) => {
@@ -732,7 +764,8 @@
                         smartMoneyData.push({
                             ...item, rank: (i + 1).toString().padStart(2, '0'),
                             ticker: item.ticker || 'N/A', name: item.name || item.ticker,
-                            sector: item.sector || '기타', score: score,
+                            sector: item.sector || '기타', exchange: item.exchange || 'NYSE',
+                            score: score,
                             signal: item.grade ? item.grade.split(' ')[1] : (score > 80 ? '적극 매수' : '매수'),
                             price: price, change: parseFloat(item.change) || 0,
                             insight: item.insight || '분석 완료.',

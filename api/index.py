@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, make_response
 import csv
 import json
 import os
@@ -265,7 +265,11 @@ def fetch_realtime_data(tickers):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    resp = make_response(render_template('index.html'))
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
 
 @app.route('/api/us/smart-money')
 def get_smart_money():
@@ -343,13 +347,16 @@ def get_realtime_prices():
 
 @app.route('/api/debug')
 def debug_server():
+    smart_money_data = load_csv('smart_money_picks_v2.csv')
     debug_info = {
         "BASE_DIR": BASE_DIR,
         "DATA_DIR": DATA_DIR,
         "CWD": os.getcwd(),
-        "sys.path": sys.path,
-        "files_in_data_dir": os.listdir(DATA_DIR) if os.path.exists(DATA_DIR) else "DIR_NOT_FOUND",
-        "csv_exists": os.path.exists(os.path.join(DATA_DIR, 'smart_money_picks_v2.csv'))
+        "csv_exists": os.path.exists(os.path.join(DATA_DIR, 'smart_money_picks_v2.csv')),
+        "smart_money_keys": list(smart_money_data[0].keys()) if smart_money_data else [],
+        "smart_money_count": len(smart_money_data),
+        "first_ticker": smart_money_data[0].get('ticker') if smart_money_data else None,
+        "first_exchange": smart_money_data[0].get('exchange') if smart_money_data else None
     }
     return jsonify(debug_info)
 

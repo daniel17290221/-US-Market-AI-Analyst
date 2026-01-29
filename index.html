@@ -603,7 +603,20 @@
             const data = smartMoneyData[index];
             if (!data) return;
 
-            const fullSymbol = data.exchange ? `${data.exchange}:${data.ticker}` : data.ticker;
+            // Debug alert for user confirmation (temporary)
+            if (data.ticker === 'STX') {
+                alert(`DEBUG: Loading STX. \nExchange from data: ${data.exchange}\nTicker: ${data.ticker}`);
+            }
+            console.log("DEBUG: Loading symbol", data.ticker, "Exchange:", data.exchange);
+
+            let finalExchange = data.exchange || 'NYSE';
+            // Force NASDAQ for known tickers if data is missing or default
+            const nasdaqTickers = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD', 'STX', 'KLAC', 'BKR'];
+            if (nasdaqTickers.includes(data.ticker)) {
+                finalExchange = 'NASDAQ';
+            }
+
+            const fullSymbol = `${finalExchange}:${data.ticker}`;
             updateTradingView('D', null, fullSymbol);
 
             try {
@@ -627,18 +640,50 @@
                 'dcf-target': data.dcf_target, 'dcf-bear': data.dcf_bear, 'dcf-bull': data.dcf_bull
             };
 
+            // Debug alert removed
+
             const logoEl = document.getElementById('main-ticker-logo');
             if (logoEl) {
-                // TradingView uses lower-case names for these logos usually. 
-                // We'll use a mapping for common ones and a fallback pattern.
+                // Reset to avoid showing previous logo while loading
+                logoEl.src = '';
+
+                const base = "https://s3-symbol-logo.tradingview.com/";
+                const ticker = data.ticker.toLowerCase();
+                const nameSlug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+                // Strategy: Try Ticker -> Try mapped Ticker -> Try Name Slug -> Fallback
                 const logoMap = {
-                    'NVDA': 'nvidia', 'TSLA': 'tesla', 'AAPL': 'apple', 'MSFT': 'microsoft',
-                    'AMZN': 'amazon', 'META': 'meta-platforms', 'GOOGL': 'alphabet',
-                    'AVGO': 'broadcom', 'AMD': 'advanced-micro-devices', 'COST': 'costco-wholesale'
+                    'nvda': 'nvidia', 'tsla': 'tesla', 'aapl': 'apple', 'msft': 'microsoft',
+                    'amzn': 'amazon', 'meta': 'meta-platforms', 'googl': 'alphabet',
+                    'avgo': 'broadcom', 'amd': 'advanced-micro-devices', 'cost': 'costco-wholesale',
+                    'nflx': 'netflix', 'adbe': 'adobe', 'crm': 'salesforce', 'intc': 'intel',
+                    'qcom': 'qualcomm', 'txn': 'texas-instruments', 'pypl': 'paypal',
+                    'nee': 'nextera-energy', 'cvs': 'cvs-health', 'elv': 'elevance-health',
+                    'bkr': 'baker-hughes', 'syy': 'sysco', 'ppg': 'ppg-industries',
+                    'tsn': 'tyson-foods', 'pnr': 'pentair', 'klac': 'kla'
                 };
-                const logoName = logoMap[data.ticker] || data.ticker.toLowerCase();
-                logoEl.src = `https://s3-symbol-logo.tradingview.com/${logoName}--big.svg`;
-                logoEl.alt = data.ticker;
+
+                const primaryUrl = `${base}${logoMap[ticker] || ticker}--big.svg`;
+                const fallbackUrl = `${base}${nameSlug}--big.svg`;
+                const fallbackUrl2 = `${base}${ticker}.svg`; // Try without --big
+
+                logoEl.onerror = function () {
+                    if (this.src === primaryUrl) {
+                        this.src = fallbackUrl;
+                    } else if (this.src === fallbackUrl) {
+                        this.src = fallbackUrl2;
+                    } else {
+                        // Final fallback: Use a generic placeholder or hide
+                        this.style.display = 'none';
+                        const parent = this.parentElement;
+                        if (parent) {
+                            // potential fallback icon injection if needed
+                        }
+                    }
+                };
+                logoEl.style.display = 'block';
+                logoEl.src = primaryUrl;
+                logoEl.alt = data.name;
             }
 
             for (const [id, val] of Object.entries(fields)) {
@@ -705,10 +750,11 @@
 
         let currentTicker = "NASDAQ:NVDA";
         function updateTradingView(res = 'D', ticker = null, fullSymbol = null) {
+            console.log("DEBUG: updateTradingView called with symbol:", fullSymbol, "ticker:", ticker);
             if (fullSymbol) {
                 currentTicker = fullSymbol;
             } else if (ticker) {
-                const nasdaq = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD'].includes(ticker);
+                const nasdaq = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD', 'STX', 'KLAC', 'BKR'].includes(ticker);
                 currentTicker = (nasdaq ? 'NASDAQ:' : 'NYSE:') + ticker;
             }
             const container = document.getElementById('tradingview_main');
@@ -741,7 +787,7 @@
                 const res = await fetch(`/api/us/smart-money?t=${Date.now()}`);
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
-                console.log("📦 Data received:", data);
+                console.log("DEBUG: Raw data from API:", data);
                 if (data && data.length > 0) {
                     smartMoneyData.length = 0;
                     data.forEach((item, i) => {
