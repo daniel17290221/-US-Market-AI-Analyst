@@ -110,18 +110,21 @@
         <div class="hidden lg:flex items-center gap-10">
             <a href="https://land.vibe-coding-lab.com/"
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">홈</a>
-            <a onclick="switchTab('report')" id="nav-report"
-                class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">일일 리포트</a>
             <a onclick="switchTab('market')" id="nav-market"
-                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">시장
-                분석</a>
+                class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">시장 분석</a>
+            <a onclick="switchTab('subscription')" id="nav-subscription"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">청약
+                정보/뉴스</a>
+            <a onclick="switchTab('report')" id="nav-report"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">데일리
+                리포트</a>
         </div>
 
         <div class="flex items-center gap-4">
             <div class="flex flex-col items-end gap-1">
                 <span
                     class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                    KOREA MARKET v1.0
+                    KOREA MARKET v1.1
                 </span>
                 <span id="clock" class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
                     --:-- KST
@@ -133,51 +136,146 @@
     <!-- Main Content -->
     <main class="max-w-[1600px] mx-auto px-4 pb-20">
 
-        <!-- Tab: Daily Report (Active by Default) -->
-        <div id="tab-report" class="space-y-6 animate-fade-in">
-            <div class="glass-card p-1 h-[85vh] overflow-hidden relative">
-                <div class="absolute top-4 right-4 flex gap-2 z-10">
-                    <button onclick="document.getElementById('reportFrame').contentWindow.location.reload();"
-                        class="bg-black/50 hover:bg-brand-primary hover:text-black text-white px-3 py-1 rounded-lg text-xs transition border border-white/10 backdrop-blur-md">
-                        <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
-                    </button>
-                    <a href="/api/kr/report" target="_blank"
-                        class="bg-black/50 hover:bg-brand-primary hover:text-black text-white px-3 py-1 rounded-lg text-xs transition border border-white/10 backdrop-blur-md">
-                        <i class="fas fa-external-link-alt mr-1"></i> 새 창으로 보기
-                    </a>
+        <!-- Tab: Market Analyst (Active by Default) -->
+        <div id="tab-market" class="space-y-6 animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Main Chart (8 cols) -->
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="glass-card p-6 h-[600px]">
+                        <div class="tradingview-widget-container h-full w-full">
+                            <div class="tradingview-widget-container__widget h-full w-full"></div>
+                            <script type="text/javascript"
+                                src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                                async>
+                                    {
+                                        "autosize": true,
+                                            "symbol": "KRX:KOSPI",
+                                                "interval": "D",
+                                                    "timezone": "Asia/Seoul",
+                                                        "theme": "dark",
+                                                            "style": "1",
+                                                                "locale": "kr",
+                                                                    "enable_publishing": false,
+                                                                        "backgroundColor": "rgba(17, 17, 20, 1)",
+                                                                            "gridColor": "rgba(255, 255, 255, 0.05)",
+                                                                                "hide_top_toolbar": false,
+                                                                                    "save_image": false,
+                                                                                        "calendar": false,
+                                                                                            "hide_volume": true,
+                                                                                                "support_host": "https://www.tradingview.com"
+                                    }
+                                </script>
+                        </div>
+                    </div>
                 </div>
-                <iframe id="reportFrame" src="/api/kr/report" class="w-full h-full rounded-xl bg-white/5"
-                    frameborder="0"></iframe>
+
+                <!-- Sidebar (4 cols) -->
+                <div class="lg:col-span-4 space-y-6">
+                    <!-- Smart Money KR (Placeholder) -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-microchip text-brand-primary"></i> 주도주 분석 (KR)
+                        </h3>
+                        <div class="space-y-3">
+                            <div
+                                class="p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center">
+                                <span class="text-xs font-bold">삼성전자</span>
+                                <span class="text-[10px] text-brand-success">+1.2%</span>
+                            </div>
+                            <div
+                                class="p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center">
+                                <span class="text-xs font-bold">SK하이닉스</span>
+                                <span class="text-[10px] text-brand-danger">-0.5%</span>
+                            </div>
+                            <div
+                                class="p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center">
+                                <span class="text-xs font-bold">LG에너지솔루션</span>
+                                <span class="text-[10px] text-brand-success">+2.1%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Market Sentiment -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-sm font-bold text-white mb-4">시장 심리</h3>
+                        <div class="text-center py-4">
+                            <div class="text-4xl font-black text-brand-primary mb-2">68</div>
+                            <div class="text-[10px] text-gray-500 uppercase tracking-widest">Neutral-Greed</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Tab: Market Analyst (Hidden by Default) -->
-        <div id="tab-market" class="hidden space-y-6 animate-fade-in">
-            <!-- Market Overview Chart (KOSPI) -->
-            <div class="glass-card p-6 h-[600px]">
-                <div class="tradingview-widget-container h-full w-full">
-                    <div class="tradingview-widget-container__widget h-full w-full"></div>
-                    <script type="text/javascript"
-                        src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-                            {
-                                "autosize": true,
-                                    "symbol": "KRX:KOSPI",
-                                        "interval": "D",
-                                            "timezone": "Asia/Seoul",
-                                                "theme": "dark",
-                                                    "style": "1",
-                                                        "locale": "kr",
-                                                            "enable_publishing": false,
-                                                                "backgroundColor": "rgba(17, 17, 20, 1)",
-                                                                    "gridColor": "rgba(255, 255, 255, 0.05)",
-                                                                        "hide_top_toolbar": false,
-                                                                            "save_image": false,
-                                                                                "calendar": false,
-                                                                                    "hide_volume": true,
-                                                                                        "support_host": "https://www.tradingview.com"
-                            }
-                        </script>
+        <!-- Tab: Subscription & News (Hidden by Default) -->
+        <div id="tab-subscription" class="hidden space-y-6 animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- IPO Subscription -->
+                <div class="glass-card p-6 min-h-[500px]">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-calendar-check text-brand-primary"></i> 주요 공무주 청약 일정
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-sm font-bold text-brand-primary">샘플 소프트웨어</span>
+                                <span
+                                    class="text-[10px] bg-brand-primary/20 text-brand-primary px-2 py-0.5 rounded">청약중</span>
+                            </div>
+                            <p class="text-[11px] text-gray-400">주관사: 한국투자증권 | 공모가: 12,000원</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-sm font-bold text-white">바이브코딩 테크</span>
+                                <span class="text-[10px] bg-gray-500/20 text-gray-400 px-2 py-0.5 rounded">D-3</span>
+                            </div>
+                            <p class="text-[11px] text-gray-400">주관사: 미래에셋증권 | 공모가: 25,000원</p>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- KR Market News -->
+                <div class="glass-card p-6 min-h-[500px]">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-newspaper text-brand-secondary"></i> 실시간 국내 증시 뉴스
+                    </h3>
+                    <div class="tradingview-widget-container h-[400px]">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript"
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+                                {
+                                    "feedMode": "market",
+                                        "market": "stock",
+                                            "isTransparent": true,
+                                                "displayMode": "regular",
+                                                    "width": "100%",
+                                                        "height": "100%",
+                                                            "colorTheme": "dark",
+                                                                "locale": "kr"
+                                }
+                            </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Daily Report (Hidden by Default) -->
+        <div id="tab-report" class="hidden space-y-6 animate-fade-in">
+            <div class="glass-card p-0 flex flex-col h-[85vh] overflow-hidden relative">
+                <div class="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center flex-shrink-0">
+                    <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
+                    <div class="flex gap-2">
+                        <button onclick="document.getElementById('reportFrame').contentWindow.location.reload();"
+                            class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
+                            <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
+                        </button>
+                        <a href="/api/kr/report" target="_blank"
+                            class="text-[10px] bg-white/10 text-white px-3 py-1 rounded hover:bg-white/20 transition">
+                            <i class="fas fa-external-link-alt mr-1"></i> 새 창
+                        </a>
+                    </div>
+                </div>
+                <iframe id="reportFrame" src="/api/kr/report" class="w-full flex-1 bg-white/5" frameborder="0"></iframe>
             </div>
         </div>
 
@@ -186,9 +284,12 @@
     <script>
         // Tab Switch Logic
         function switchTab(tabName) {
+            const tabs = ['market', 'subscription', 'report'];
+
             // Update Nav Styles
-            ['market', 'report'].forEach(t => {
+            tabs.forEach(t => {
                 const el = document.getElementById(`nav-${t}`);
+                if (!el) return;
                 if (t === tabName) {
                     el.classList.remove('tab-inactive', 'hover:text-white');
                     el.classList.add('tab-active');
@@ -199,14 +300,18 @@
             });
 
             // Update Content Visibility
-            ['market', 'report'].forEach(t => {
+            tabs.forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
+                if (!el) return;
                 if (t === tabName) {
                     el.classList.remove('hidden');
                 } else {
                     el.classList.add('hidden');
                 }
             });
+
+            // Re-trigger layout for TV widgets
+            window.dispatchEvent(new Event('resize'));
         }
 
         // Clock
