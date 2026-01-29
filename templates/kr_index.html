@@ -679,6 +679,20 @@
                 }
             }
 
+            function updateClock() {
+                const options = {
+                    timeZone: 'Asia/Seoul',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                };
+                const timeString = new Intl.DateTimeFormat('ko-KR', options).format(new Date());
+                const clockEl = document.getElementById('clock');
+                if (clockEl) clockEl.textContent = timeString + " KST";
+            }
+            setInterval(updateClock, 60000);
+            updateClock();
+
             fetchData();
     </script>
 </body>

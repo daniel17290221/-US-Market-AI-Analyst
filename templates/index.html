@@ -144,9 +144,18 @@
             </a>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
+            <div class="flex flex-col items-end gap-1">
+                <span
+                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                    US MARKET v1.5
+                </span>
+                <span id="clock" class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
+                    --:-- EST
+                </span>
+            </div>
             <button
-                class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-xs hover:brightness-110 transition flex items-center gap-2">
+                class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-[10px] hover:brightness-110 transition flex items-center gap-2">
                 <span class="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>
                 실시간 데이터 연결됨</button>
         </div>
@@ -901,6 +910,20 @@
                 }
             } catch (e) { }
         }
+
+        function updateClock() {
+            const options = {
+                timeZone: 'America/New_York',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+            const timeString = new Intl.DateTimeFormat('en-US', options).format(new Date());
+            const clockEl = document.getElementById('clock');
+            if (clockEl) clockEl.textContent = timeString + " EST";
+        }
+        setInterval(updateClock, 60000);
+        updateClock();
 
         async function fetchCal() {
             // Replaced with dynamic TradingView sidebar widget for better reliability
