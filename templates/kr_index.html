@@ -362,11 +362,25 @@
                         <h3 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">국내 주식 실시간 맵</h3>
                         <div class="flex-1 rounded-xl overflow-hidden">
                             <div class="tradingview-widget-container h-full w-full">
-                                <div class="tradingview-widget-container__widget h-full w-full"></div>
                                 <script type="text/javascript"
                                     src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
                                     async>
-                                        { "exchanges": ["KRX"], "dataSource": "AllRepublicOfKorea", "grouping": "sector", "blockSize": "market_cap", "blockColor": "change", "locale": "kr", "colorTheme": "dark", "hasTopBar": false, "isTransparent": true, "width": "100%", "height": "100%" }
+                                        {
+                                            "exchanges": [],
+                                                "dataSource": "KRX",
+                                                    "grouping": "sector",
+                                                        "blockSize": "market_cap",
+                                                            "blockColor": "change",
+                                                                "locale": "kr",
+                                                                    "symbolUrl": "",
+                                                                        "colorTheme": "dark",
+                                                                            "hasTopBar": false,
+                                                                                "isDatasetEnabled": false,
+                                                                                    "isTransparent": true,
+                                                                                        "hasSymbolTooltip": true,
+                                                                                            "width": "100%",
+                                                                                                "height": "100%"
+                                        }
                                     </script>
                             </div>
                         </div>
@@ -505,11 +519,11 @@
         // Clock
         function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('clock').textContent = timeString + " KST";
+            const options = { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const timeString = new Intl.DateTimeFormat('ko-KR', options).format(now);
+            const el = document.getElementById('clock');
+            if (el) el.textContent = timeString + " KST";
         }
-        setInterval(updateClock, 1000);
-        updateClock();
 
         // --- Data Handling ---
         async function fetchData() {
@@ -705,17 +719,19 @@
                 console.error("Failed to fetch news:", e);
                 container.innerHTML = '<p class="text-[10px] text-brand-danger text-center py-10">뉴스 로드 실패</p>';
             }
-            async function fetchIPO() {
-                const container = document.getElementById('kr-ipo-container');
-                try {
-                    const res = await fetch('/api/kr/ipo');
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.length === 0) {
-                            container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-4">최근 일정이 없습니다.</p>';
-                            return;
-                        }
-                        container.innerHTML = data.map(item => `
+        }
+
+        async function fetchIPO() {
+            const container = document.getElementById('kr-ipo-container');
+            try {
+                const res = await fetch('/api/kr/ipo');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.length === 0) {
+                        container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-4">최근 일정을 불러올 수 없습니다.</p>';
+                        return;
+                    }
+                    container.innerHTML = data.map(item => `
                         <div class="p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center transition hover:border-brand-primary/30 group cursor-pointer">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
@@ -727,28 +743,21 @@
                             <span class="text-[10px] font-mono font-black text-gray-600">${item.date}</span>
                         </div>
                     `).join('');
-                    }
-                } catch (e) {
-                    console.error("Failed to fetch IPO:", e);
-                    container.innerHTML = '<p class="text-[10px] text-brand-danger text-center">정보 로드 실패</p>';
                 }
+            } catch (e) {
+                console.error("Failed to fetch IPO:", e);
+                container.innerHTML = '<p class="text-[10px] text-brand-danger text-center">정보 로드 실패</p>';
             }
+        }
 
-            function updateClock() {
-                const options = {
-                    timeZone: 'Asia/Seoul',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                };
-                const timeString = new Intl.DateTimeFormat('ko-KR', options).format(new Date());
-                const clockEl = document.getElementById('clock');
-                if (clockEl) clockEl.textContent = timeString + " KST";
-            }
-            setInterval(updateClock, 60000);
+        // Initialize Everything
+        document.addEventListener('DOMContentLoaded', () => {
             updateClock();
-
             fetchData();
+            setInterval(updateClock, 1000);
+            setInterval(fetchData, 5 * 60 * 1000);
+            console.log("🚀 KR Market Dashboard Online");
+        });
     </script>
 </body>
 
