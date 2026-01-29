@@ -11,4 +11,4 @@ echo.
 echo Press Ctrl+C to stop the server
 echo.
 
-python flask_app.py
+python app.py

@@ -73,9 +73,10 @@ def load_csv(filename):
     
     for path in possible_paths:
         print(f"DEBUG: Checking path: {path}")
-        if os.path.exists(path) and os.path.getsize(path) > 100:
+        if os.path.exists(path):
             path_to_use = path
-            print(f"DEBUG: Found valid file at {path}")
+            print(f"DEBUG: Found file at {path}, size={os.path.getsize(path)}")
+            # Even if size is small, we try to load it (removed > 100 check)
             break
             
     if path_to_use:
@@ -319,6 +320,18 @@ def get_realtime_prices():
         return jsonify(fetch_realtime_data(tickers))
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.route('/api/debug')
+def debug_server():
+    debug_info = {
+        "BASE_DIR": BASE_DIR,
+        "DATA_DIR": DATA_DIR,
+        "CWD": os.getcwd(),
+        "sys.path": sys.path,
+        "files_in_data_dir": os.listdir(DATA_DIR) if os.path.exists(DATA_DIR) else "DIR_NOT_FOUND",
+        "csv_exists": os.path.exists(os.path.join(DATA_DIR, 'smart_money_picks_v2.csv'))
+    }
+    return jsonify(debug_info)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
