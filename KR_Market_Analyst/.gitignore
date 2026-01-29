@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+venv/
+ENV/
+env/
+kr_market/*.json
+kr_market/*.html
+!kr_market/kr_data_manager.py
+!kr_market/kr_report_generator.py

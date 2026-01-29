@@ -50,9 +50,9 @@ class EnhancedSmartMoneyScreener:
             return False
     
     def calculate_composite_score(self, volume_score, inst_score) -> float:
-        """Simplified scoring - expand based on Part 2 document"""
-        # Basic weighting: 50% volume + 50% institutional
-        composite = (volume_score * 0.5) + (inst_score * 0.5)
+        """Enhanced scoring - prioritize daily volume over quarterly inst data"""
+        # Weighting: 70% volume (dynamic) + 30% institutional (static)
+        composite = (volume_score * 0.7) + (inst_score * 0.3)
         return round(composite, 1)
     
     def run_screening(self, top_n: int = 50) -> pd.DataFrame:
@@ -67,6 +67,7 @@ class EnhancedSmartMoneyScreener:
         )
         
         results = []
+        import random
         
         for idx, row in tqdm(merged_df.iterrows(), total=len(merged_df), desc="Screening"):
             ticker = row['ticker']
@@ -74,7 +75,10 @@ class EnhancedSmartMoneyScreener:
             # Calculate composite
             vol_score = row.get('supply_demand_score', 50)
             inst_score = row.get('institutional_score', 50)
-            composite = self.calculate_composite_score(vol_score, inst_score)
+            
+            # Add a tiny random jitter (0.01-0.09) to break ties randomly each run
+            jitter = random.random() * 0.1
+            composite = self.calculate_composite_score(vol_score, inst_score) + jitter
             
             # Determine grade
             if composite >= 80: grade = "🔥 S급 (즉시 매수)"
@@ -85,7 +89,7 @@ class EnhancedSmartMoneyScreener:
             result = {
                 'ticker': ticker,
                 'name': row.get('name_vol', ticker),
-                'composite_score': composite,
+                'composite_score': round(composite, 2),
                 'grade': grade,
                 'sd_score': vol_score,
                 'inst_score': inst_score,
@@ -94,7 +98,9 @@ class EnhancedSmartMoneyScreener:
             results.append(result)
         
         results_df = pd.DataFrame(results)
-        results_df = results_df.sort_values('composite_score', ascending=False)
+        
+        # Sort by composite score (desc) then by sd_score (desc) to break ties meaningfully
+        results_df = results_df.sort_values(['composite_score', 'sd_score'], ascending=[False, False])
         results_df['rank'] = range(1, len(results_df) + 1)
         
         return results_df
@@ -125,7 +131,7 @@ def main():
     results = screener.run(top_n=args.top)
     
     if not results.empty:
-        print(f"\n🔥 TOP {args.top} ENHANCED SMART MONEY PICKS")
+        print(f"\nTOP {args.top} ENHANCED SMART MONEY PICKS")
         print(results[['rank', 'ticker', 'grade', 'composite_score']].head(args.top).to_string())
 
 if __name__ == "__main__":

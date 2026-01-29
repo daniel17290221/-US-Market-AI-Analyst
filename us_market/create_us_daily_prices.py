@@ -282,10 +282,10 @@ def main():
     success = creator.run(full_refresh=args.full)
     
     if success:
-        print("\n🎉 US Stock Daily Prices collection completed!")
-        print(f"📁 File location: ./us_daily_prices.csv")
+        print("\nUS Stock Daily Prices collection completed!")
+        print(f"File location: ./us_daily_prices.csv")
     else:
-        print("\n❌ Collection failed.")
+        print("\nCollection failed.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeCodingLab KR | 국내 주식 AI 분석</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="glass-card sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="assets/logo.jpg" class="w-10 h-10 rounded-lg shadow-lg" alt="Logo">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">VibeCodingLab <span class="text-blue-400">KR</span></h1>
+                <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Korea Stock AI Analyst</p>
+            </div>
+        </div>
+        <nav class="hidden md:flex gap-6 text-sm font-semibold">
+            <a href="#" class="text-blue-400">Market Insight</a>
+            <a href="#" class="hover:text-blue-400 transition-colors">Daily Report</a>
+            <a href="#" class="hover:text-blue-400 transition-colors">Smart Money</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Dashboard Summary -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-2 glass-card rounded-2xl p-6 h-[700px]">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-extrabold flex items-center gap-2">
+                        <span class="p-2 bg-blue-500/20 rounded-lg text-blue-400">📊</span>
+                        대한민국 증시 데일리 리포트
+                    </h2>
+                </div>
+                <!-- Iframe for KR Report -->
+                <iframe src="kr_market/kr_market_daily_report.html"
+                    class="w-full h-[600px] border-0 rounded-xl bg-white" id="reportFrame"></iframe>
+            </div>
+
+            <!-- Side Widgets -->
+            <div class="flex flex-col gap-6">
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold mb-4">투자자 매매동향</h3>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex justify-between border-b border-slate-700/50 pb-2">
+                            <span>외국인</span>
+                            <span class="text-red-400 font-bold">+2,450억</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-700/50 pb-2">
+                            <span>기관</span>
+                            <span class="text-blue-400 font-bold">-1,120억</span>
+                        </div>
+                        <div class="flex justify-between pb-2">
+                            <span>개인</span>
+                            <span class="text-blue-400 font-bold">-1,330억</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 flex-1 bg-gradient-to-br from-blue-600/20 to-transparent">
+                    <h3 class="font-bold mb-4">AI 모델 선정 오늘의 관점</h3>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        "코스피 상단 저항 인식 속에서 외국인 수급이 여전히 견조하게 유입되고 있습니다. 특히 반도체와 자동차 섹터의 매수세가 두드러지며 지수 하방 경직성을 확보 중입니다."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-20 border-t border-slate-800 bg-slate-900/50 py-10 px-6">
+        <div class="container mx-auto text-center">
+            <p class="text-slate-500 text-xs mt-4">© 2026 VibeCodingLab KR. 본 서비스는 데이터 분석을 참고용으로 제공하며 모든 투자 책임은 본인에게
+                있습니다.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
