@@ -9,9 +9,16 @@ from datetime import datetime
 # Adjust path for Vercel subdirectory deployment
 # BASE_DIR should be the root of the project (where templates and us_market are)
 # In Vercel, this is usually the parent of 'api/'
+# Robust path resolution
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
+
+try:
+    import us_market
+    DATA_DIR = os.path.dirname(us_market.__file__)
+except:
+    DATA_DIR = os.path.join(BASE_DIR, 'us_market')
 
 from us_market.daily_report_generator import USDailyReportGenerator
 
@@ -19,21 +26,23 @@ app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, 'templates'),
             static_folder=os.path.join(BASE_DIR, 'assets'),
             static_url_path='/assets')
-DATA_DIR = os.path.join(BASE_DIR, 'us_market')
 
-# Ensure we log the actual paths for debugging in Vercel logs
 print(f"DEBUG: BASE_DIR={BASE_DIR}")
 print(f"DEBUG: DATA_DIR={DATA_DIR}")
 
 def load_json(filename):
     path = os.path.join(DATA_DIR, filename)
     data = {}
+    print(f"DEBUG: Trying to load JSON from {path}")
     if os.path.exists(path):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+                print(f"DEBUG: Successfully loaded JSON {filename}")
         except Exception as e:
             print(f"DEBUG: Error reading {filename}: {e}")
+    else:
+        print(f"DEBUG: JSON NOT FOUND at {path}")
     
     # Provide default macro data if missing or empty
     if not data and filename == 'us_macro_analysis.json':
@@ -51,24 +60,38 @@ def load_json(filename):
     return data or {}
 
 def load_csv(filename):
-    path = os.path.join(DATA_DIR, filename)
+    # Try multiple potential paths to be robust against different execution environments
+    possible_paths = [
+        os.path.join(DATA_DIR, filename),                      # Derived from package/file location
+        os.path.join(os.getcwd(), 'us_market', filename),       # From root if run as 'python app.py'
+        os.path.join(os.getcwd(), filename),                   # If run from inside 'us_market/'
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'us_market', filename)) # Relative to api/
+    ]
+    
     data = []
-    print(f"DEBUG: Trying to load CSV from {path}")
-    if os.path.exists(path):
-        print(f"DEBUG: File exists, size={os.path.getsize(path)} bytes")
-        # Try utf-8-sig first for Korean Windows compatibility
+    path_to_use = None
+    
+    for path in possible_paths:
+        print(f"DEBUG: Checking path: {path}")
+        if os.path.exists(path) and os.path.getsize(path) > 100:
+            path_to_use = path
+            print(f"DEBUG: Found valid file at {path}")
+            break
+            
+    if path_to_use:
+        # Try multiple encodings for Korean Windows compatibility
         for enc in ['utf-8-sig', 'utf-8', 'cp949']:
             try:
-                with open(path, 'r', encoding=enc) as f:
+                with open(path_to_use, 'r', encoding=enc) as f:
                     reader = csv.DictReader(f)
                     data = list(reader)
                     if data:
-                        print(f"DEBUG: Successfully loaded {len(data)} rows using {enc}")
+                        print(f"DEBUG: Successfully loaded {len(data)} rows using {enc} from {path_to_use}")
                         break
             except Exception as e:
-                print(f"DEBUG: Failed to load with {enc}: {e}")
+                print(f"DEBUG: Failed to read {path_to_use} with {enc}: {e}")
     else:
-        print(f"DEBUG: File NOT FOUND at {path}")
+        print(f"DEBUG: Could not find a valid CSV file for {filename} in any searched location.")
     
     # Provide default smart money data if missing OR empty
     if not data and filename == 'smart_money_picks_v2.csv':

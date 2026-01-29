@@ -25,7 +25,7 @@ GitHub Desktop이 이미 설치되어 있으니 훨씬 쉽습니다!
 
 1. 메뉴: **File** → **Add local repository...**
 2. **Choose...** 버튼 클릭
-3. 폴더 선택: `c:\Users\mjang\Downloads\미국 종목 분석`
+3. 폴더 선택: `c:\Users\mjang\Downloads\Investment Vibecodinglab`
 4. "create a repository" 링크 클릭 (폴더가 Git 리포지토리가 아니라는 메시지가 나오면)
 
 **방법 B: 처음부터 새로 만들기**

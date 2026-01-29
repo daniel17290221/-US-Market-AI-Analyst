@@ -55,7 +55,7 @@ git config --global user.email "your-email@example.com"
 PowerShell에서 프로젝트 폴더로 이동:
 
 ```powershell
-cd "c:\Users\mjang\Downloads\미국 종목 분석"
+cd "c:\Users\mjang\Downloads\Investment Vibecodinglab"
 ```
 
 **확인:** `ls` 명령어를 입력하면 `index.html`, `us_market` 폴더 등이 보여야 합니다.
@@ -230,7 +230,7 @@ https://us-market-analyst-xxxxx.vercel.app
 
 ```powershell
 # 1. 프로젝트 폴더로 이동
-cd "c:\Users\mjang\Downloads\미국 종목 분석"
+cd "c:\Users\mjang\Downloads\Investment Vibecodinglab"
 
 # 2. 변경사항 추가
 git add .

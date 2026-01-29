@@ -4,7 +4,7 @@ import csv
 from datetime import datetime
 
 # Path where the API expects the file
-base_dir = r"c:\Users\mjang\Downloads\미국 종목 분석"
+base_dir = r"c:\Users\mjang\Downloads\Investment Vibecodinglab"
 data_dir = os.path.join(base_dir, "us_market")
 output_file = os.path.join(data_dir, "smart_money_picks_v2.csv")
 

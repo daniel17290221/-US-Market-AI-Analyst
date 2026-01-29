@@ -2,7 +2,7 @@
 import os
 import re
 
-path = r'c:\Users\mjang\Downloads\미국 종목 분석\templates\index.html'
+path = r'c:\Users\mjang\Downloads\Investment Vibecodinglab\templates\index.html'
 
 try:
     with open(path, 'r', encoding='utf-8') as f:

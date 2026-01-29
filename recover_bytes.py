@@ -1,7 +1,7 @@
 
 import os
 
-path = r'c:\Users\mjang\Downloads\미국 종목 분석\templates\index.html'
+path = r'c:\Users\mjang\Downloads\Investment Vibecodinglab\templates\index.html'
 
 try:
     # Read the file as UTF-8 (this gives us the corrupted 'ë¯¸êµ­' string)
