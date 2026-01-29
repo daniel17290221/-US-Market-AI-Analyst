@@ -181,6 +181,31 @@ class USDailyReportGenerator:
                 <span class="chg {change_class}">{item['change']}</span>
             </div>"""
 
+        # Build Smart Money Top 5
+        smart_money_html = ""
+        top_5 = raw_data.get('top_stocks', [])[:5]
+        if top_5:
+            smart_money_html = """
+            <div class="market-brief">
+                <div class="brief-title">🎯 스마트 머니 포착: 오늘의 TOP 5 유망주</div>
+                <div class="smart-money-grid">
+            """
+            for stock in top_5:
+                # Determine color based on grade
+                score = float(stock.get('composite_score', 0))
+                score_color = "#ff4d4f" if score >= 80 else ("#faad14" if score >= 70 else "#1890ff")
+                
+                smart_money_html += f"""
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="ticker">{stock['ticker']}</span>
+                        <span class="score" style="color: {score_color}">S:{stock['composite_score']}</span>
+                    </div>
+                    <div class="stock-name">{stock['name']}</div>
+                    <div class="stock-grade">{stock['grade']}</div>
+                </div>"""
+            smart_money_html += "</div></div>"
+
         # Build Hashtags
         hashtags_html = " ".join([f'<span class="hashtag">{t}</span>' for t in ai_content.get('hashtags', [])])
 
@@ -310,6 +335,26 @@ class USDailyReportGenerator:
         .hashtags {{ margin-top: 50px; padding-top: 25px; border-top: 1px solid var(--border-color); }}
         .hashtag {{ color: var(--text-sub); font-size: 15px; margin-right: 20px; font-weight: 600; }}
 
+        /* Smart Money Grid */
+        .smart-money-grid {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }}
+        .stock-card {{ 
+            padding: 12px; 
+            background: rgba(128,128,128,0.03); 
+            border-radius: 10px; 
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }}
+        .stock-card:hover {{ transform: translateY(-3px); }}
+        .stock-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }}
+        .stock-header .ticker {{ font-weight: 900; font-size: 14px; }}
+        .stock-header .score {{ font-size: 10px; font-weight: 800; }}
+        .stock-name {{ font-size: 10px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+        .stock-grade {{ font-size: 10px; font-weight: 700; margin-top: 5px; color: var(--text-main); }}
+
+        @media (max-width: 768px) {{
+            .smart-money-grid {{ grid-template-columns: repeat(2, 1fr); }}
+        }}
+
         .footer {{ margin-top: 70px; text-align: center; font-size: 13px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 30px; }}
 
         @keyframes pulse {{
@@ -379,6 +424,8 @@ class USDailyReportGenerator:
             </div>
 
             {sections_html}
+
+            {smart_money_html}
 
             <div class="market-brief">
                 <div class="brief-title">주요 원자재 및 암호화폐 시황</div>
