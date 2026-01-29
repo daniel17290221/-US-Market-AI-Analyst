@@ -127,20 +127,20 @@ class KRDailyReportGenerator:
     <title>{ai_content['catchy_title']}</title>
     <style>
         :root {{
-            --bg-color: #f7f9fb;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-sub: #666666;
-            --brand-blue: #0070f3;
-            --brand-red: #f44336;
-            --border-color: #eeeeee;
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-main: #e6edf3;
+            --text-sub: #8b949e;
+            --brand-blue: #58a6ff;
+            --brand-red: #ff7b72;
+            --border-color: #30363d;
         }}
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
         body {{ background: var(--bg-color); color: var(--text-main); font-family: 'Pretendard', sans-serif; line-height: 1.6; padding: 20px; }}
         .wrapper {{ display: flex; justify-content: center; gap: 20px; max-width: 1400px; margin: 0 auto; }}
         .ad-sidebar {{ width: 180px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px; height: fit-content; align-self: flex-start; }}
         .ad-unit {{ background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 12px; height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-sub); font-size: 11px; padding: 15px; }}
-        .container {{ max-width: 1000px; width: 100%; background: var(--card-bg); padding: 50px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }}
+        .container {{ max-width: 1000px; width: 100%; background: var(--card-bg); padding: 50px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }}
         h1 {{ font-size: 32px; margin-bottom: 20px; letter-spacing: -1px; }}
         .date {{ color: var(--text-sub); margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }}
         .box-summary {{ background: rgba(0, 112, 243, 0.05); border-radius: 12px; padding: 25px; margin-bottom: 40px; border: 1px solid rgba(0, 112, 243, 0.1); }}
