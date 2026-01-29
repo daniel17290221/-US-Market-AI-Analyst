@@ -114,7 +114,7 @@ class EnhancedSmartMoneyScreener:
         
         results_df = self.run_screening(top_n)
         
-        results_df.to_csv(self.output_file, index=False)
+        results_df.to_csv(self.output_file, index=False, encoding='utf-8-sig')
         logger.info(f"✅ Saved to {self.output_file}")
         
         return results_df

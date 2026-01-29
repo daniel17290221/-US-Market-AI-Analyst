@@ -53,13 +53,22 @@ def load_json(filename):
 def load_csv(filename):
     path = os.path.join(DATA_DIR, filename)
     data = []
+    print(f"DEBUG: Trying to load CSV from {path}")
     if os.path.exists(path):
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                data = list(reader)
-        except Exception as e:
-            print(f"DEBUG: Error loading CSV {filename}: {e}")
+        print(f"DEBUG: File exists, size={os.path.getsize(path)} bytes")
+        # Try utf-8-sig first for Korean Windows compatibility
+        for enc in ['utf-8-sig', 'utf-8', 'cp949']:
+            try:
+                with open(path, 'r', encoding=enc) as f:
+                    reader = csv.DictReader(f)
+                    data = list(reader)
+                    if data:
+                        print(f"DEBUG: Successfully loaded {len(data)} rows using {enc}")
+                        break
+            except Exception as e:
+                print(f"DEBUG: Failed to load with {enc}: {e}")
+    else:
+        print(f"DEBUG: File NOT FOUND at {path}")
     
     # Provide default smart money data if missing OR empty
     if not data and filename == 'smart_money_picks_v2.csv':
