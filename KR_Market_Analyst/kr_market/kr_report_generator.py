@@ -138,7 +138,7 @@ class KRDailyReportGenerator:
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
         body {{ background: var(--bg-color); color: var(--text-main); font-family: 'Pretendard', sans-serif; line-height: 1.6; padding: 20px; }}
         .wrapper {{ display: flex; justify-content: center; gap: 20px; max-width: 1400px; margin: 0 auto; }}
-        .ad-sidebar {{ width: 180px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }}
+        .ad-sidebar {{ width: 180px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px; height: fit-content; align-self: flex-start; }}
         .ad-unit {{ background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 12px; height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-sub); font-size: 11px; padding: 15px; }}
         .container {{ max-width: 1000px; width: 100%; background: var(--card-bg); padding: 50px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }}
         h1 {{ font-size: 32px; margin-bottom: 20px; letter-spacing: -1px; }}

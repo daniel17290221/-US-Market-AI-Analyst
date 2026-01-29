@@ -278,6 +278,10 @@ class USDailyReportGenerator:
             display: flex;
             flex-direction: column;
             gap: 20px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            align-self: flex-start;
         }}
 
         .ad-unit {{
