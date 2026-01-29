@@ -11,7 +11,10 @@ import requests
 import logging
 from datetime import datetime
 from typing import Dict, List
-import google.generativeai as genai
+try:
+    from google import genai
+except ImportError:
+    import google.generativeai as genai
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -31,7 +34,12 @@ class MacroAnalyzer:
         self.openai_key = os.getenv('OPENAI_API_KEY')
         
         if self.gemini_key:
-            genai.configure(api_key=self.gemini_key)
+            try:
+                self.client = genai.Client(api_key=self.gemini_key)
+                self.model_name = 'gemini-2.0-flash'
+            except:
+                genai.configure(api_key=self.gemini_key)
+                self.client = None
     
     def fetch_market_news(self) -> str:
         """
@@ -65,9 +73,15 @@ class MacroAnalyzer:
         """
         
         try:
-            if self.model == 'gemini' and self.gemini_key:
-                model = genai.GenerativeModel('gemini-2.0-flash')
-                response = model.generate_content(prompt)
+            if self.model == 'gemini' and (self.gemini_key):
+                if self.client:
+                    response = self.client.models.generate_content(
+                        model=self.model_name,
+                        contents=prompt
+                    )
+                else:
+                    model = genai.GenerativeModel('gemini-2.0-flash')
+                    response = model.generate_content(prompt)
                 return self._parse_response(response.text)
             
             elif self.model == 'gpt' and self.openai_key:

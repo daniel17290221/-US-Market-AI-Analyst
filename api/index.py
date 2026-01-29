@@ -83,6 +83,8 @@ def load_csv(filename):
         # Try multiple encodings for Korean Windows compatibility
         for enc in ['utf-8-sig', 'utf-8', 'cp949']:
             try:
+                with open(path_to_use, 'r', encoding=enc) as f:
+                    reader = csv.DictReader(f)
                     # Strip whitespace from field names
                     reader.fieldnames = [f.strip() for f in reader.fieldnames] if reader.fieldnames else []
                     data = []

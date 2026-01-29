@@ -12,7 +12,10 @@ import logging
 import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-import google.generativeai as genai
+try:
+    from google import genai
+except ImportError:
+    import google.generativeai as genai
 
 load_dotenv()
 
@@ -27,11 +30,17 @@ class USDailyReportGenerator:
         # Configure Gemini
         api_key = os.getenv('GOOGLE_API_KEY')
         if api_key and api_key != "your_gemini_api_key_here":
-            genai.configure(api_key=api_key)
-            # Use gemini-2.0-flash as requested by user
-            self.model = genai.GenerativeModel('gemini-2.0-flash')
-            logger.info("✅ Gemini AI Backend Initialized")
+            try:
+                self.client = genai.Client(api_key=api_key)
+                self.model_name = 'gemini-2.0-flash'
+                logger.info("✅ Gemini AI (google.genai) Backend Initialized")
+            except:
+                genai.configure(api_key=api_key)
+                self.client = None
+                self.model = genai.GenerativeModel('gemini-2.0-flash')
+                logger.info("✅ Gemini AI (legacy) Backend Initialized")
         else:
+            self.client = None
             self.model = None
             logger.warning("⚠️ GOOGLE_API_KEY not found or default. Using mock data.")
 
@@ -97,7 +106,14 @@ class USDailyReportGenerator:
         """
         
         try:
-            response = self.model.generate_content(prompt)
+            if self.client:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt
+                )
+            else:
+                response = self.model.generate_content(prompt)
+            
             text = response.text
             # Clean JSON string
             if "```json" in text:
