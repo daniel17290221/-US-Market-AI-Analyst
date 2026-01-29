@@ -72,9 +72,15 @@ class USDailyReportGenerator:
         screener_path = os.path.join(self.data_dir, 'smart_money_picks_v2.csv')
         if os.path.exists(screener_path):
             try:
-                with open(screener_path, 'r', encoding='utf-8') as f:
+                with open(screener_path, 'r', encoding='utf-8-sig') as f:
                     reader = csv.DictReader(f)
-                    data['top_stocks'] = list(reader)[:5]
+                    # Robust header handling
+                    reader.fieldnames = [fn.strip() for fn in reader.fieldnames] if reader.fieldnames else []
+                    data['top_stocks'] = []
+                    for row in list(reader)[:5]:
+                        # Clean each row keys
+                        clean_row = {k.strip(): v.strip() for k, v in row.items() if k}
+                        data['top_stocks'].append(clean_row)
             except Exception as e:
                 logger.error(f"Error loading picks: {e}")
                 
@@ -511,5 +517,5 @@ class USDailyReportGenerator:
         return self.generate_html(raw_data, ai_content)
 
 if __name__ == "__main__":
-    # If run directly as a script, default to current directory
-    USDailyReportGenerator(data_dir='.').run()
+    # If run directly as a script, default to us_market directory
+    USDailyReportGenerator(data_dir='us_market').run()

@@ -340,7 +340,11 @@ def get_daily_report():
     if os.path.exists(report_path):
         try:
             with open(report_path, 'r', encoding='utf-8') as f:
-                return f.read()
+                resp = make_response(f.read())
+                resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                resp.headers['Pragma'] = 'no-cache'
+                resp.headers['Expires'] = '0'
+                return resp
         except Exception as e:
             print(f"DEBUG: Error reading existing report: {e}")
 
