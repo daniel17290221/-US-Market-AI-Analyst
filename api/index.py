@@ -308,7 +308,12 @@ def get_smart_money():
 @app.route('/api/kr/smart-money')
 def get_kr_smart_money():
     # Load all stocks from daily data
-    kr_data = load_json('KR_Market_Analyst/kr_market/kr_daily_data.json')
+    kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
+    kr_data = None
+    if os.path.exists(kr_data_path):
+        with open(kr_data_path, 'r', encoding='utf-8') as f:
+            kr_data = json.load(f)
+    
     top_stocks = kr_data.get('top_stocks', []) if kr_data else []
     
     # Enrichment logic: Map existing mock data or generate dynamic mock

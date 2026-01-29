@@ -118,9 +118,9 @@
             <a onclick="switchTab('report')" id="nav-report"
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">데일리
                 리포트</a>
-            <a href="/kr"
-                class="tab-inactive py-1 text-[10px] bg-brand-primary/10 text-brand-primary px-3 rounded-full font-bold uppercase tracking-widest cursor-pointer transition border border-brand-primary/20 hover:bg-brand-primary hover:text-black ml-4">
-                Korea Market <span class="ml-1 opacity-70">NEW</span>
+            <a href="/"
+                class="tab-inactive py-1 text-[10px] bg-white/5 text-gray-400 px-3 rounded-full font-bold uppercase tracking-widest cursor-pointer transition border border-white/10 hover:bg-white/10 hover:text-white ml-4">
+                US Market
             </a>
         </div>
 
@@ -482,7 +482,7 @@
             try {
                 fetchNews(); // Initial news fetch
                 fetchIPO();  // Initial IPO fetch
-                const res = await fetch('/api/kr/smart-money');
+                const res = await fetch(`/api/kr/smart-money?t=${Date.now()}`);
                 if (res.ok) {
                     state.smartMoneyData = await res.json();
                     filterMarket('ALL'); // Initial render
