@@ -271,6 +271,20 @@ def index():
     resp.headers['Expires'] = '0'
     return resp
 
+@app.route('/kr')
+def kr_index():
+    resp = make_response(render_template('kr_index.html'))
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return resp
+
+@app.route('/api/kr/report')
+def get_kr_report():
+    report_path = os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    if os.path.exists(report_path):
+        from flask import send_file
+        return send_file(report_path)
+    return "Report not found", 404
+
 @app.route('/api/us/smart-money')
 def get_smart_money():
     data = load_csv('smart_money_picks_v2.csv')
