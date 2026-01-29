@@ -83,11 +83,29 @@ def load_csv(filename):
         # Try multiple encodings for Korean Windows compatibility
         for enc in ['utf-8-sig', 'utf-8', 'cp949']:
             try:
-                with open(path_to_use, 'r', encoding=enc) as f:
-                    reader = csv.DictReader(f)
-                    data = list(reader)
+                    # Strip whitespace from field names
+                    reader.fieldnames = [f.strip() for f in reader.fieldnames] if reader.fieldnames else []
+                    data = []
+                    for row in reader:
+                        # Cleanup values and normalize field names
+                        row = {k.strip() if k else k: v.strip() if isinstance(v, str) else v for k, v in row.items()}
+                        
+                        if 'composite_score' in row and 'score' not in row:
+                            row['score'] = row['composite_score']
+                        
+                        # Ensure numeric types for sorting/display
+                        try:
+                            row['score'] = float(row.get('score', 0))
+                            row['price'] = float(row.get('price', row.get('current_price', 0)))
+                            row['change'] = float(row.get('change', 0))
+                        except Exception as e:
+                            print(f"DEBUG: Data conversion error for {row.get('ticker')}: {e}")
+                            
+                        data.append(row)
+                        
                     if data:
-                        print(f"DEBUG: Successfully loaded {len(data)} rows using {enc} from {path_to_use}")
+                        print(f"DEBUG: Successfully loaded {len(data)} rows from {path_to_use}")
+                        print(f"DEBUG: First row preview: {data[0]}")
                         break
             except Exception as e:
                 print(f"DEBUG: Failed to read {path_to_use} with {enc}: {e}")
@@ -213,8 +231,8 @@ def fetch_realtime_data(tickers):
     prices = {}
     print(f"DEBUG: Fetching prices for {len(tickers)} tickers")
     
-    # Limit to top 10 for speed if list is long (increased from 5)
-    target_tickers = tickers[:10] if len(tickers) > 10 else tickers
+    # Limit to top 5 for speed to avoid timeouts (reduced from 10)
+    target_tickers = tickers[:5] if len(tickers) > 5 else tickers
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'

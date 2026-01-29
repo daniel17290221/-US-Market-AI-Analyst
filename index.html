@@ -733,10 +733,12 @@
         }
 
         async function fetchData() {
+            console.log("🔍 Fetching Smart Money data...");
             try {
                 const res = await fetch(`/api/us/smart-money?t=${Date.now()}`);
-                if (!res.ok) throw new Error();
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
+                console.log("📦 Data received:", data);
                 if (data && data.length > 0) {
                     smartMoneyData.length = 0;
                     data.forEach((item, i) => {
