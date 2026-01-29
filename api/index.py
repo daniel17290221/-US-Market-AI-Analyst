@@ -233,8 +233,8 @@ def fetch_realtime_data(tickers):
     prices = {}
     print(f"DEBUG: Fetching prices for {len(tickers)} tickers")
     
-    # Limit to top 5 for speed to avoid timeouts (reduced from 10)
-    target_tickers = tickers[:5] if len(tickers) > 5 else tickers
+    # Limit to top 10 for speed to avoid timeouts (increased from 5)
+    target_tickers = tickers[:10] if len(tickers) > 10 else tickers
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
@@ -283,7 +283,7 @@ def get_smart_money():
     except Exception as e:
         print(f"DEBUG: Price update error: {e}")
         
-    response = jsonify(data)
+    response = jsonify(data[:10])
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return response
 

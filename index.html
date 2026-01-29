@@ -603,7 +603,8 @@
             const data = smartMoneyData[index];
             if (!data) return;
 
-            updateTradingView('D', data.ticker);
+            const fullSymbol = data.exchange ? `${data.exchange}:${data.ticker}` : data.ticker;
+            updateTradingView('D', null, fullSymbol);
 
             try {
                 const res = await fetch(`/api/us/realtime-prices?tickers=${data.ticker}`);
@@ -703,8 +704,10 @@
         }
 
         let currentTicker = "NASDAQ:NVDA";
-        function updateTradingView(res = 'D', ticker = null) {
-            if (ticker) {
+        function updateTradingView(res = 'D', ticker = null, fullSymbol = null) {
+            if (fullSymbol) {
+                currentTicker = fullSymbol;
+            } else if (ticker) {
                 const nasdaq = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD'].includes(ticker);
                 currentTicker = (nasdaq ? 'NASDAQ:' : 'NYSE:') + ticker;
             }
@@ -747,7 +750,8 @@
                         smartMoneyData.push({
                             ...item, rank: (i + 1).toString().padStart(2, '0'),
                             ticker: item.ticker || 'N/A', name: item.name || item.ticker,
-                            sector: item.sector || '기타', score: score,
+                            sector: item.sector || '기타', exchange: item.exchange || 'NYSE',
+                            score: score,
                             signal: item.grade ? item.grade.split(' ')[1] : (score > 80 ? '적극 매수' : '매수'),
                             price: price, change: parseFloat(item.change) || 0,
                             insight: item.insight || '분석 완료.',
