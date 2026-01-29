@@ -603,10 +603,7 @@
             const data = smartMoneyData[index];
             if (!data) return;
 
-            // Debug alert for user confirmation (temporary)
-            if (data.ticker === 'STX') {
-                alert(`DEBUG: Loading STX. \nExchange from data: ${data.exchange}\nTicker: ${data.ticker}`);
-            }
+            // Debug alert removed
             console.log("DEBUG: Loading symbol", data.ticker, "Exchange:", data.exchange);
 
             let finalExchange = data.exchange || 'NYSE';
