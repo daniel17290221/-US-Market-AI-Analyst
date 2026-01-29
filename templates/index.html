@@ -116,7 +116,7 @@
     <!-- Header -->
     <nav
         class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-6 py-3 flex justify-between items-center rounded-2xl border-white/5">
-        <div class="flex items-center gap-4">
+        <a href="https://land.vibe-coding-lab.com/" class="flex items-center gap-4 hover:opacity-80 transition">
             <div
                 class="w-10 h-10 overflow-hidden rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/10 border border-white/10 bg-white">
                 <img src="/assets/logo.jpg" class="w-full h-full object-cover">
@@ -124,11 +124,12 @@
             <div>
                 <h1 class="text-xl font-bold tracking-tight text-white italic">Vibe<span
                         class="text-brand-primary">CodingLab</span></h1>
-
             </div>
-        </div>
+        </a>
 
         <div class="hidden lg:flex items-center gap-10">
+            <a href="https://land.vibe-coding-lab.com/"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">홈</a>
             <a onclick="switchTab('market')" id="nav-market"
                 class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">시장 분석</a>
             <a onclick="switchTab('calendar')" id="nav-calendar"
