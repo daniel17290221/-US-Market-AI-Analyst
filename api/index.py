@@ -463,15 +463,19 @@ def fetch_single_ticker(ticker, headers):
         
         if resp.status_code == 200:
             data = resp.json()
-            meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
-            price = meta.get('regularMarketPrice')
-            prev_close = meta.get('previousClose')
+            result = data.get('chart', {}).get('result')
             
-            if price is not None:
-                return ticker, {
-                    'price': round(price, 2),
-                    'change': round(((price - prev_close) / prev_close) * 100, 2) if prev_close else 0
-                }
+            if result:
+                meta = result[0].get('meta', {})
+                price = meta.get('regularMarketPrice')
+                prev_close = meta.get('chartPreviousClose', meta.get('previousClose')) # Try both keys
+                
+                if price is not None and prev_close is not None:
+                     change_pct = ((price - prev_close) / prev_close) * 100 if prev_close != 0 else 0.0
+                     return ticker, {
+                        'price': price, # Keep as float, formatted later
+                        'change': round(change_pct, 2)
+                    }
     except Exception as e:
         print(f"DEBUG: Failed to fetch {ticker}: {e}")
     return ticker, None
