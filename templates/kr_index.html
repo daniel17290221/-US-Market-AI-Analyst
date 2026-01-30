@@ -145,12 +145,12 @@
 
         <div class="flex items-center gap-4">
             <div class="flex flex-col items-end gap-1">
-                <span
-                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                    KOREA MARKET v1.1
+                <span id="data-updated-time"
+                    class="text-[10px] font-mono text-gray-400 bg-white/5 px-2 py-0.5 rounded border border-white/5">
+                    Update: -
                 </span>
-                <span id="clock" class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
-                    --:-- KST
+                <span id="clock" class="text-[10px] font-mono text-brand-primary font-bold">
+                    --:--:-- KST
                 </span>
             </div>
         </div>
@@ -535,6 +535,14 @@
                 const res = await fetch(`/api/kr/smart-money?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
+
+                    // Update Last Update Time
+                    if (data.date) {
+                        const updateTimeEl = document.getElementById('data-updated-time');
+                        if (updateTimeEl) {
+                            updateTimeEl.innerText = `Update: ${data.date}`;
+                        }
+                    }
 
                     // Parse structured data if available, else fallback to flat array (backward compatibility)
                     if (data.leaders_kospi || data.gainers) {

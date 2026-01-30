@@ -851,6 +851,7 @@ def get_kr_smart_money():
         return enriched
 
     response_data = {
+        "date": kr_data.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S KST')),
         "leaders": enrich_list(leaders_kospi), # Default for main tab
         "leaders_kospi": enrich_list(leaders_kospi),
         "leaders_kosdaq": enrich_list(leaders_kosdaq),

@@ -95,7 +95,7 @@ class KRDataManager:
         
         # 2. Structure Data
         data = {
-            'date': datetime.now().strftime('%Y-%m-%d'),
+            'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S KST'),
             'leaders_kospi': top_lists['leaders_kospi'],
             'leaders_kosdaq': top_lists['leaders_kosdaq'],
             'gainers': top_lists['gainers'],
