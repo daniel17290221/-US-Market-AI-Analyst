@@ -233,6 +233,47 @@ def load_csv(filename):
         ]
     return data or []
 
+import re
+
+def fetch_naver_movers(mover_type='rise'):
+    """
+    Scrape Naver Finance for real-time market movers.
+    types: 'rise' (gainers), 'volume' (quant), 'cap' (market sum)
+    """
+    urls = {
+        'rise': "https://finance.naver.com/sise/sise_rise.naver",
+        'volume': "https://finance.naver.com/sise/sise_quant.naver",
+        'cap': "https://finance.naver.com/sise/sise_market_sum.naver"
+    }
+    url = urls.get(mover_type, urls['rise'])
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    
+    try:
+        resp = requests.get(url, headers=headers, timeout=5)
+        if resp.status_code != 200: return []
+        
+        # Simple regex parsing to avoid extra libs like beautifulsoup
+        html = resp.text
+        # Find symbol and name patterns
+        # <a href="/item/main.naver?code=005930" class="tltle">삼성전자</a>
+        pattern = r'code=(\d{6})".*?class="tltle">(.*?)</a>'
+        matches = re.findall(pattern, html)
+        
+        results = []
+        for i, (code, name) in enumerate(matches[:10]):
+            results.append({
+                "symbol": code,
+                "name": name,
+                "price": "0", # Will be filled by price fetcher
+                "change": 0.0,
+                "market": "KOSPI" if mover_type == 'cap' else "KRX",
+                "rank": str(i+1)
+            })
+        return results
+    except Exception as e:
+        print(f"DEBUG: Naver scraping failed ({mover_type}): {e}")
+        return []
+
 def fetch_realtime_data(tickers):
     """Manual fetch for Yahoo Finance v8 (Stable for server-side)"""
     prices = {}
@@ -347,20 +388,37 @@ def get_kr_smart_money():
             {"symbol": "035420", "name": "NAVER", "price": "190,000", "change": "0.00", "market": "KOSPI", "rank": "5", "score": 82}
         ]
     
-    # Try to fetch real-time prices for these stocks
+    # DYNAMIC FETCH for real-time movers (Gainers / Volume)
+    # This overrides the static JSON if successful
     try:
-        kr_tickers = [d['symbol'] for d in leaders[:10]]
-        current_prices = fetch_realtime_data(kr_tickers)
-        for d in leaders:
-            sym = d['symbol']
-            # Yahoo fetcher returned with .KS, but we store by original symbol
-            lookup = f"{sym}.KS" if len(sym) == 6 else sym
-            if lookup in current_prices:
-                d['price'] = f"{int(current_prices[lookup]['price']):,}"
-                d['change'] = current_prices[lookup]['change']
-            elif sym in current_prices:
-                d['price'] = f"{int(current_prices[sym]['price']):,}"
-                d['change'] = current_prices[sym]['change']
+        live_gainers = fetch_naver_movers('rise')
+        if live_gainers: gainers = live_gainers
+        
+        live_volume = fetch_naver_movers('volume')
+        if live_volume: volume = live_volume
+        
+        # For leaders, we only override if the JSON was empty
+        if not leaders:
+            live_leaders = fetch_naver_movers('cap')
+            if live_leaders: leaders = live_leaders
+    except Exception as e:
+        print(f"DEBUG: Live mover fetch error: {e}")
+
+    # Try to fetch real-time prices for ALL active lists
+    try:
+        all_tickers = list(set([d['symbol'] for d in leaders + gainers + volume]))
+        current_prices = fetch_realtime_data(all_tickers[:20]) # Limit to avoid timeout
+        
+        for d_list in [leaders, gainers, volume]:
+            for d in d_list:
+                sym = d['symbol']
+                lookup = f"{sym}.KS" if len(sym) == 6 else sym
+                if lookup in current_prices:
+                    d['price'] = f"{int(current_prices[lookup]['price']):,}"
+                    d['change'] = current_prices[lookup]['change']
+                elif sym in current_prices:
+                    d['price'] = f"{int(current_prices[sym]['price']):,}"
+                    d['change'] = current_prices[sym]['change']
     except Exception as e:
         print(f"DEBUG: KR Price update error: {e}")
 

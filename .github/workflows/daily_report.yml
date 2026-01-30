@@ -39,7 +39,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           
           # Only add files that the AI generated
-          git add us_market/*.json us_market/*.csv us_market/*.html
+          git add us_market/*.json us_market/*.csv us_market/*.html KR_Market_Analyst/kr_market/*.json KR_Market_Analyst/kr_market/*.html
           
           # Commit only if there are changes
           if git commit -m "auto: daily market report update $(date +'%Y-%m-%d')"; then
