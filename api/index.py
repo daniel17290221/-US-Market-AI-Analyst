@@ -729,10 +729,10 @@ def get_kr_smart_money():
                 l_kosdaq = f6.result() or []
 
             # Merge and assign
-            gainers = (g_kospi[:5] + g_kosdaq[:5]) 
-            volume = (v_kospi[:5] + v_kosdaq[:5])
-            leaders_kospi = l_kospi[:5]
-            leaders_kosdaq = l_kosdaq[:5]
+            gainers = (g_kospi[:10] + g_kosdaq[:10]) 
+            volume = (v_kospi[:10] + v_kosdaq[:10])
+            leaders_kospi = l_kospi[:10]
+            leaders_kosdaq = l_kosdaq[:10]
             
         except Exception as e:
             print(f"DEBUG: Live mover parallel fetch error: {e}")
