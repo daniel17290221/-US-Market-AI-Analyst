@@ -120,7 +120,7 @@ class KRDataManager:
                 except ImportError:
                     import google.generativeai as genai
                     genai.configure(api_key=api_key)
-                    model_legacy = genai.GenerativeModel('gemini-1.5-flash')
+                    model_legacy = genai.GenerativeModel('gemini-pro')
 
                 # Gather all unique symbols
                 all_symbols = []
