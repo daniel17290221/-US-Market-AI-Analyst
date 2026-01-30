@@ -166,7 +166,7 @@
                                     async>
                                         {
                                             "autosize": true,
-                                                "symbol": "KRX:005930",
+                                                "symbol": "FX_IDC:USDKRW",
                                                     "interval": "D",
                                                         "timezone": "Asia/Seoul",
                                                             "theme": "dark",
@@ -520,7 +520,8 @@
                     switchMarketTab('leaders'); // Initial render
 
                     if (state.smartMoneyData.length > 0) {
-                        loadSymbol(0);
+                        // Load first symbol data but SKIP chart update to prevent popup on load
+                        loadSymbol(0, true);
                     }
                 }
             } catch (e) {
@@ -583,7 +584,7 @@
             `}).join('');
         }
 
-        async function loadSymbol(index) {
+        async function loadSymbol(index, skipChart = false) {
             try {
                 const data = state.smartMoneyData[index];
                 if (!data) return;
@@ -592,7 +593,9 @@
 
                 // Update Chart
                 try {
-                    updateTradingView('D', data.symbol);
+                    if (!skipChart) {
+                        updateTradingView('D', data.symbol);
+                    }
                 } catch (e) {
                     console.error("TradingView update failed:", e);
                 }
@@ -649,7 +652,7 @@
             }
         }
 
-        let currentSymbol = "KRX:005930";
+        let currentSymbol = "FX_IDC:USDKRW";
         function updateTradingView(res = 'D', symbol = null) {
             if (symbol) {
                 // If it's a 6-digit numeric string, it's a KR stock
