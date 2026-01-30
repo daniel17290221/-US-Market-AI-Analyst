@@ -276,6 +276,8 @@ class USDailyReportGenerator:
             gap: 20px;
             max-width: 1400px;
             margin: 0 auto;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
         }}
 
         .ad-sidebar {{
@@ -305,12 +307,14 @@ class USDailyReportGenerator:
             padding: 20px;
         }}
 
-        .container {{ 
-            max-width: 1000px; 
+        .container {{
+            max-width: 1000px;
+            min-width: 800px;
             width: 100%;
-            background: var(--card-bg); 
-            padding: 50px; 
+            background: var(--card-bg);
+            padding: 50px;
             border-radius: 12px;
+            border: 1px solid var(--border-color);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             position: relative;
         }}
@@ -409,7 +413,13 @@ class USDailyReportGenerator:
             .container {{ max-width: 100%; padding: 30px 20px; }}
             .mobile-ad-banner {{ display: block; }}
             body {{ padding-bottom: 100px; }} /* Space for sticky ad */
+            .container {{ min-width: 100%; }}
         }}
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>

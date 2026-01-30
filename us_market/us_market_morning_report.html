@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,15 +27,20 @@
             }
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: var(--bg-color); 
-            color: var(--text-main); 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-main);
             font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
             line-height: 1.6;
             padding: 20px;
         }
-        
+
         /* Layout Structure */
         .wrapper {
             display: flex;
@@ -43,6 +48,8 @@
             gap: 20px;
             max-width: 1400px;
             margin: 0 auto;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
         }
 
         .ad-sidebar {
@@ -72,88 +79,265 @@
             padding: 20px;
         }
 
-        .container { 
-            max-width: 1000px; 
+        .container {
+            max-width: 1000px;
+            min-width: 800px;
             width: 100%;
-            background: var(--card-bg); 
-            padding: 50px; 
+            background: var(--card-bg);
+            padding: 50px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             position: relative;
         }
 
-        .category { color: var(--brand-blue); font-weight: 800; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
-        h1 { font-size: 32px; line-height: 1.3; margin-bottom: 15px; letter-spacing: -1px; }
-        .date { color: var(--text-sub); font-size: 14px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
-
-        .box-summary { 
-            background: rgba(0, 112, 243, 0.05); 
-            border-radius: 12px; 
-            padding: 28px; 
-            margin-bottom: 45px; 
-            border: 1px solid rgba(0, 112, 243, 0.1); 
+        .category {
+            color: var(--brand-blue);
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
-        .box-summary h3 { font-size: 18px; margin-bottom: 12px; color: var(--brand-blue); }
-        .box-summary ul { list-style-position: inside; }
-        .box-summary li { margin-bottom: 8px; color: var(--text-main); font-size: 16px; }
 
-        .market-indices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 40px; }
-        .index-card { 
-            padding: 15px; 
-            background: rgba(128,128,128,0.05); 
-            border-radius: 10px; 
-            text-align: center; 
+        h1 {
+            font-size: 32px;
+            line-height: 1.3;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .date {
+            color: var(--text-sub);
+            font-size: 14px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .box-summary {
+            background: rgba(0, 112, 243, 0.05);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 45px;
+            border: 1px solid rgba(0, 112, 243, 0.1);
+        }
+
+        .box-summary h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--brand-blue);
+        }
+
+        .box-summary ul {
+            list-style-position: inside;
+        }
+
+        .box-summary li {
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        .market-indices {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .index-card {
+            padding: 15px;
+            background: rgba(128, 128, 128, 0.05);
+            border-radius: 10px;
+            text-align: center;
             border: 1px solid var(--border-color);
         }
-        .index-name { font-size: 12px; font-weight: 600; color: var(--text-sub); }
-        .index-value { font-size: 18px; font-weight: 800; margin: 4px 0; }
-        .index-change { font-size: 14px; font-weight: 600; }
-        .index-change.up { color: var(--brand-red); }
-        .index-change.down { color: var(--brand-blue); }
 
-        .article-section { margin-bottom: 60px; }
-        .section-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
-        .emoji { font-size: 28px; }
-        .section-header h2 { font-size: 22px; font-weight: 800; line-height: 1.4; }
-        .section-content p { font-size: 17px; color: var(--text-main); margin-bottom: 20px; line-height: 1.9; text-align: justify; }
+        .index-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
 
-        .market-brief { border-top: 2px solid var(--border-color); padding-top: 30px; margin-bottom: 45px; }
-        .brief-title { font-size: 19px; font-weight: 800; margin-bottom: 25px; }
-        .market-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; }
-        .market-row .label { font-weight: 600; }
-        .market-row .val { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
-        .market-row .chg.up { color: var(--brand-red); }
-        .market-row .chg.down { color: var(--brand-blue); }
+        .index-value {
+            font-size: 18px;
+            font-weight: 800;
+            margin: 4px 0;
+        }
 
-        .hashtags { margin-top: 50px; padding-top: 25px; border-top: 1px solid var(--border-color); }
-        .hashtag { color: var(--text-sub); font-size: 15px; margin-right: 20px; font-weight: 600; }
+        .index-change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .index-change.up {
+            color: var(--brand-red);
+        }
+
+        .index-change.down {
+            color: var(--brand-blue);
+        }
+
+        .article-section {
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .emoji {
+            font-size: 28px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .section-content p {
+            font-size: 17px;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            line-height: 1.9;
+            text-align: justify;
+        }
+
+        .market-brief {
+            border-top: 2px solid var(--border-color);
+            padding-top: 30px;
+            margin-bottom: 45px;
+        }
+
+        .brief-title {
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+
+        .market-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 16px;
+        }
+
+        .market-row .label {
+            font-weight: 600;
+        }
+
+        .market-row .val {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        .market-row .chg.up {
+            color: var(--brand-red);
+        }
+
+        .market-row .chg.down {
+            color: var(--brand-blue);
+        }
+
+        .hashtags {
+            margin-top: 50px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .hashtag {
+            color: var(--text-sub);
+            font-size: 15px;
+            margin-right: 20px;
+            font-weight: 600;
+        }
 
         /* Smart Money Grid */
-        .smart-money-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stock-card { 
-            padding: 12px; 
-            background: rgba(128,128,128,0.03); 
-            border-radius: 10px; 
+        .smart-money-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stock-card {
+            padding: 12px;
+            background: rgba(128, 128, 128, 0.03);
+            border-radius: 10px;
             border: 1px solid var(--border-color);
             transition: transform 0.2s;
         }
-        .stock-card:hover { transform: translateY(-3px); }
-        .stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .stock-header .ticker { font-weight: 900; font-size: 14px; }
-        .stock-header .score { font-size: 10px; font-weight: 800; }
-        .stock-name { font-size: 10px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .stock-grade { font-size: 10px; font-weight: 700; margin-top: 5px; color: var(--text-main); }
 
-        @media (max-width: 768px) {
-            .smart-money-grid { grid-template-columns: repeat(2, 1fr); }
+        .stock-card:hover {
+            transform: translateY(-3px);
         }
 
-        .footer { margin-top: 70px; text-align: center; font-size: 13px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 30px; }
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .stock-header .ticker {
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        .stock-header .score {
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .stock-name {
+            font-size: 10px;
+            color: var(--text-sub);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stock-grade {
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 5px;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 768px) {
+            .smart-money-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .footer {
+            margin-top: 70px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-sub);
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+        }
 
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         /* Mobile Sticky Ad */
@@ -167,18 +351,45 @@
             border-top: 1px solid var(--border-color);
             padding: 10px;
             z-index: 1000;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
         @media (max-width: 1200px) {
-            .ad-sidebar { display: none; }
-            .container { max-width: 100%; padding: 30px 20px; }
-            .mobile-ad-banner { display: block; }
-            body { padding-bottom: 100px; } /* Space for sticky ad */
+            .ad-sidebar {
+                display: none;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 30px 20px;
+                min-width: 100%;
+            }
+
+            .mobile-ad-banner {
+                display: block;
+            }
+
+            body {
+                padding-bottom: 100px;
+            }
+
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Left Sidebar for Ads -->
@@ -187,14 +398,15 @@
                 <!-- 쿠팡 파트너스 좌측 광고 (고객 관심기반 추천) -->
                 <script src="https://ads-partners.coupang.com/g.js"></script>
                 <script>
-                    new PartnersCoupang.G({ "id":961293,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" });
+                    new PartnersCoupang.G({ "id": 961293, "template": "carousel", "trackingCode": "AF1993837", "width": "180", "height": "600", "tsource": "" });
                 </script>
             </div>
         </aside>
 
         <div class="container">
             <div style="text-align: right; margin-bottom: 25px;">
-                <span style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
+                <span
+                    style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
                     🔴 LIVE UPDATED: 2026-01-30 09:35:24
                 </span>
             </div>
@@ -205,40 +417,46 @@
             <div class="box-summary">
                 <h3>핵심 요약</h3>
                 <ul>
-                    <li>미국 시장, 탐욕 심리 극대화! 연준 금리 인하 지연 우려에도 기술주 중심 랠리 지속, S&P500 7000선 돌파 기대감 고조.</li><li>AI 반도체 수요 폭발, STX, META 등 S급 기술주 '즉시 매수' 신호! 밸류에이션 부담에도 불구하고 상승 모멘텀 유지될 전망.</li><li>지정학적 리스크와 인플레이션 압력은 여전! 변동성 확대 대비, 포트폴리오 리밸런싱 및 경기 방어주 편입 전략 필요.</li>
+                    <li>미국 시장, 탐욕 심리 극대화! 연준 금리 인하 지연 우려에도 기술주 중심 랠리 지속, S&P500 7000선 돌파 기대감 고조.</li>
+                    <li>AI 반도체 수요 폭발, STX, META 등 S급 기술주 '즉시 매수' 신호! 밸류에이션 부담에도 불구하고 상승 모멘텀 유지될 전망.</li>
+                    <li>지정학적 리스크와 인플레이션 압력은 여전! 변동성 확대 대비, 포트폴리오 리밸런싱 및 경기 방어주 편입 전략 필요.</li>
                 </ul>
             </div>
 
             <div class="market-brief">
                 <div class="brief-title">미국 증시 브리핑: 01.30 장마감 기준</div>
                 <div class="market-indices">
-                    
-            <div class="index-card">
-                <div class="index-name">📈 S&P 500</div>
-                <div class="index-value">6,940.01</div>
-                <div class="index-change up">+0.00%</div>
-            </div>
-            <div class="index-card">
-                <div class="index-name">📈 나스닥</div>
-                <div class="index-value">23,515.39</div>
-                <div class="index-change up">+0.00%</div>
-            </div>
-            <div class="index-card">
-                <div class="index-name">📈 다우존스</div>
-                <div class="index-value">49,359.33</div>
-                <div class="index-change up">+0.00%</div>
-            </div>
+
+                    <div class="index-card">
+                        <div class="index-name">📈 S&P 500</div>
+                        <div class="index-value">6,940.01</div>
+                        <div class="index-change up">+0.00%</div>
+                    </div>
+                    <div class="index-card">
+                        <div class="index-name">📈 나스닥</div>
+                        <div class="index-value">23,515.39</div>
+                        <div class="index-change up">+0.00%</div>
+                    </div>
+                    <div class="index-card">
+                        <div class="index-name">📈 다우존스</div>
+                        <div class="index-value">49,359.33</div>
+                        <div class="index-change up">+0.00%</div>
+                    </div>
                 </div>
             </div>
 
-            
+
             <div class="article-section">
                 <div class="section-header">
                     <span class="emoji">🔥</span>
                     <h2>S&P 7000 시대, 불가능은 없다?! 기술주 랠리, 어디까지?</h2>
                 </div>
                 <div class="section-content">
-                    <p>S&P500 지수가 6940.01까지 치솟으면서 7000선 돌파를 목전에 두고 있습니다. 다우존스 역시 49,359.33으로 고공행진 중이죠. 시장 분위기는 그야말로 '탐욕' 그 자체입니다. 탐욕 지수가 70까지 올라온 것을 보면 투자 심리가 얼마나 과열되었는지 짐작할 수 있어요. 연준의 금리 인하 지연 가능성이 높아지고 있지만, 시장은 아랑곳하지 않고 랠리를 이어가고 있습니다. 특히 STX와 META 같은 기술주들은 'S급' 즉시 매수 신호를 보내며 랠리를 주도하고 있습니다. AI 반도체에 대한 엄청난 수요가 이들을 끌어올리고 있죠. 하지만 밸류에이션 부담을 간과해서는 안 됩니다. 지금은 단기적인 기술주 랠리에 편승하되, 언제든 차익 실현에 나설 준비를 해야 합니다. 옥석 가리기를 통해 진짜 성장 가능성이 있는 기업에 집중 투자하는 전략이 필요합니다. 묻지마 투자는 금물이에요!</p>
+                    <p>S&P500 지수가 6940.01까지 치솟으면서 7000선 돌파를 목전에 두고 있습니다. 다우존스 역시 49,359.33으로 고공행진 중이죠. 시장 분위기는 그야말로 '탐욕'
+                        그 자체입니다. 탐욕 지수가 70까지 올라온 것을 보면 투자 심리가 얼마나 과열되었는지 짐작할 수 있어요. 연준의 금리 인하 지연 가능성이 높아지고 있지만, 시장은
+                        아랑곳하지 않고 랠리를 이어가고 있습니다. 특히 STX와 META 같은 기술주들은 'S급' 즉시 매수 신호를 보내며 랠리를 주도하고 있습니다. AI 반도체에 대한 엄청난
+                        수요가 이들을 끌어올리고 있죠. 하지만 밸류에이션 부담을 간과해서는 안 됩니다. 지금은 단기적인 기술주 랠리에 편승하되, 언제든 차익 실현에 나설 준비를 해야 합니다. 옥석
+                        가리기를 통해 진짜 성장 가능성이 있는 기업에 집중 투자하는 전략이 필요합니다. 묻지마 투자는 금물이에요!</p>
                 </div>
             </div>
             <div class="article-section">
@@ -247,7 +465,11 @@
                     <h2>FOMC는 잊혀진 존재인가? 인플레 & 지정학적 리스크, 숨겨진 폭탄은?</h2>
                 </div>
                 <div class="section-content">
-                    <p>현재 시장은 장밋빛 전망에 취해있지만, 위험 요소들을 간과해서는 안 됩니다. 지속적인 인플레이션 압력은 연준의 추가 금리 인상 가능성을 높이고, 이는 시장에 찬물을 끼얹을 수 있습니다. 중동 지역의 지정학적 긴장 고조는 유가 급등으로 이어져 경기 침체를 야기할 수도 있죠. WTI 원유 가격이 배럴당 59.34달러로 소폭 상승한 것도 불안감을 더합니다. 금 선물 가격이 소폭 하락했지만, 여전히 높은 수준을 유지하고 있다는 점도 눈여겨봐야 합니다. 금은 대표적인 안전 자산으로, 불안정한 시장 상황에서 투자자들의 수요가 증가하는 경향이 있기 때문입니다. 따라서 섣부른 낙관론보다는 리스크 관리에 집중해야 합니다. 포트폴리오 내에서 채권 비중을 확대하거나, 경기 방어주를 편입하여 하방 경직성을 확보하는 것이 현명한 선택입니다. 방심은 금물! 항상 최악의 상황을 대비해야 합니다.</p>
+                    <p>현재 시장은 장밋빛 전망에 취해있지만, 위험 요소들을 간과해서는 안 됩니다. 지속적인 인플레이션 압력은 연준의 추가 금리 인상 가능성을 높이고, 이는 시장에 찬물을 끼얹을 수
+                        있습니다. 중동 지역의 지정학적 긴장 고조는 유가 급등으로 이어져 경기 침체를 야기할 수도 있죠. WTI 원유 가격이 배럴당 59.34달러로 소폭 상승한 것도 불안감을
+                        더합니다. 금 선물 가격이 소폭 하락했지만, 여전히 높은 수준을 유지하고 있다는 점도 눈여겨봐야 합니다. 금은 대표적인 안전 자산으로, 불안정한 시장 상황에서 투자자들의
+                        수요가 증가하는 경향이 있기 때문입니다. 따라서 섣부른 낙관론보다는 리스크 관리에 집중해야 합니다. 포트폴리오 내에서 채권 비중을 확대하거나, 경기 방어주를 편입하여 하방
+                        경직성을 확보하는 것이 현명한 선택입니다. 방심은 금물! 항상 최악의 상황을 대비해야 합니다.</p>
                 </div>
             </div>
             <div class="article-section">
@@ -256,78 +478,87 @@
                     <h2>단타 vs 장투? 지금 당신에게 필요한 투자 전략은?</h2>
                 </div>
                 <div class="section-content">
-                    <p>지금과 같이 변동성이 큰 시장에서는 투자 전략을 신중하게 세워야 합니다. 단기적으로는 기술주 랠리에 편승하여 수익을 올릴 수 있지만, 밸류에이션 부담이 커지고 있다는 점을 잊지 마세요. 따라서 포트폴리오 내 비중 조절을 통해 리스크를 관리하는 것이 중요합니다. 예를 들어, 기술주 비중이 너무 높다면 일부를 매도하여 차익을 실현하고, 다른 섹터로 분산 투자하는 것이 좋습니다. 장기적으로는 금리 변동에 대비하여 채권 비중을 확대하거나, 경기 방어주를 편입하는 전략을 고려해 볼 수 있습니다. CVS 같은 헬스케어주는 경기 방어적인 성격을 가지고 있어, 시장이 하락하더라도 비교적 안정적인 수익을 기대할 수 있습니다. 중요한 것은 자신만의 투자 원칙을 세우고, 감정에 휘둘리지 않고 꾸준히 실천하는 것입니다. 조급해하지 말고, 장기적인 관점에서 투자 결정을 내리세요. 성공 투자를 기원합니다!</p>
+                    <p>지금과 같이 변동성이 큰 시장에서는 투자 전략을 신중하게 세워야 합니다. 단기적으로는 기술주 랠리에 편승하여 수익을 올릴 수 있지만, 밸류에이션 부담이 커지고 있다는 점을
+                        잊지 마세요. 따라서 포트폴리오 내 비중 조절을 통해 리스크를 관리하는 것이 중요합니다. 예를 들어, 기술주 비중이 너무 높다면 일부를 매도하여 차익을 실현하고, 다른
+                        섹터로 분산 투자하는 것이 좋습니다. 장기적으로는 금리 변동에 대비하여 채권 비중을 확대하거나, 경기 방어주를 편입하는 전략을 고려해 볼 수 있습니다. CVS 같은
+                        헬스케어주는 경기 방어적인 성격을 가지고 있어, 시장이 하락하더라도 비교적 안정적인 수익을 기대할 수 있습니다. 중요한 것은 자신만의 투자 원칙을 세우고, 감정에 휘둘리지
+                        않고 꾸준히 실천하는 것입니다. 조급해하지 말고, 장기적인 관점에서 투자 결정을 내리세요. 성공 투자를 기원합니다!</p>
                 </div>
             </div>
 
-            
+
             <div class="market-brief">
                 <div class="brief-title">🎯 스마트 머니 포착: 오늘의 TOP 5 유망주</div>
                 <div class="smart-money-grid">
-            
-                <div class="stock-card">
-                    <div class="stock-header">
-                        <span class="ticker">STX</span>
-                        <span class="score" style="color: #ff4d4f">S:86.07</span>
+
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <span class="ticker">STX</span>
+                            <span class="score" style="color: #ff4d4f">S:86.07</span>
+                        </div>
+                        <div class="stock-name">STX</div>
+                        <div class="stock-grade">🔥 S급 (즉시 매수)</div>
                     </div>
-                    <div class="stock-name">STX</div>
-                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <span class="ticker">META</span>
+                            <span class="score" style="color: #ff4d4f">S:86.04</span>
+                        </div>
+                        <div class="stock-name">META</div>
+                        <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                    </div>
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <span class="ticker">MSCI</span>
+                            <span class="score" style="color: #ff4d4f">S:84.1</span>
+                        </div>
+                        <div class="stock-name">MSCI</div>
+                        <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                    </div>
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <span class="ticker">FCX</span>
+                            <span class="score" style="color: #ff4d4f">S:84.08</span>
+                        </div>
+                        <div class="stock-name">FCX</div>
+                        <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                    </div>
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <span class="ticker">CVS</span>
+                            <span class="score" style="color: #ff4d4f">S:84.07</span>
+                        </div>
+                        <div class="stock-name">CVS</div>
+                        <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                    </div>
                 </div>
-                <div class="stock-card">
-                    <div class="stock-header">
-                        <span class="ticker">META</span>
-                        <span class="score" style="color: #ff4d4f">S:86.04</span>
-                    </div>
-                    <div class="stock-name">META</div>
-                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
-                </div>
-                <div class="stock-card">
-                    <div class="stock-header">
-                        <span class="ticker">MSCI</span>
-                        <span class="score" style="color: #ff4d4f">S:84.1</span>
-                    </div>
-                    <div class="stock-name">MSCI</div>
-                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
-                </div>
-                <div class="stock-card">
-                    <div class="stock-header">
-                        <span class="ticker">FCX</span>
-                        <span class="score" style="color: #ff4d4f">S:84.08</span>
-                    </div>
-                    <div class="stock-name">FCX</div>
-                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
-                </div>
-                <div class="stock-card">
-                    <div class="stock-header">
-                        <span class="ticker">CVS</span>
-                        <span class="score" style="color: #ff4d4f">S:84.07</span>
-                    </div>
-                    <div class="stock-name">CVS</div>
-                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
-                </div></div></div>
+            </div>
 
             <div class="market-brief">
                 <div class="brief-title">주요 원자재 및 암호화폐 시황</div>
-                
-            <div class="market-row">
-                <span class="label">WTI 원유</span>
-                <span class="val">59.34</span>
-                <span class="chg up">+0.44%</span>
-            </div>
-            <div class="market-row">
-                <span class="label">금 선물</span>
-                <span class="val">4,595.40</span>
-                <span class="chg down">-0.61%</span>
-            </div>
-            <div class="market-row">
-                <span class="label">비트코인</span>
-                <span class="val">129,446,000</span>
-                <span class="chg down">-0.02%</span>
-            </div>
+
+                <div class="market-row">
+                    <span class="label">WTI 원유</span>
+                    <span class="val">59.34</span>
+                    <span class="chg up">+0.44%</span>
+                </div>
+                <div class="market-row">
+                    <span class="label">금 선물</span>
+                    <span class="val">4,595.40</span>
+                    <span class="chg down">-0.61%</span>
+                </div>
+                <div class="market-row">
+                    <span class="label">비트코인</span>
+                    <span class="val">129,446,000</span>
+                    <span class="chg down">-0.02%</span>
+                </div>
             </div>
 
             <div class="hashtags">
-                <span class="hashtag">#미국증시</span> <span class="hashtag">#기술주랠리</span> <span class="hashtag">#FOMC</span> <span class="hashtag">#인플레이션</span> <span class="hashtag">#지정학적리스크</span> <span class="hashtag">#포트폴리오</span> <span class="hashtag">#경기방어주</span> <span class="hashtag">#STX</span> <span class="hashtag">#META</span>
+                <span class="hashtag">#미국증시</span> <span class="hashtag">#기술주랠리</span> <span
+                    class="hashtag">#FOMC</span> <span class="hashtag">#인플레이션</span> <span
+                    class="hashtag">#지정학적리스크</span> <span class="hashtag">#포트폴리오</span> <span
+                    class="hashtag">#경기방어주</span> <span class="hashtag">#STX</span> <span class="hashtag">#META</span>
             </div>
 
             <div class="footer">
@@ -346,7 +577,7 @@
                 <!-- 쿠팡 파트너스 우측 광고 (재테크 관련 서적 추천) -->
                 <script src="https://ads-partners.coupang.com/g.js"></script>
                 <script>
-                    new PartnersCoupang.G({ "id":961294,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" });
+                    new PartnersCoupang.G({ "id": 961294, "template": "carousel", "trackingCode": "AF1993837", "width": "180", "height": "600", "tsource": "" });
                 </script>
             </div>
         </aside>
@@ -357,9 +588,9 @@
         <!-- 쿠팡 파트너스 모바일 하단 광고 (카테고리 베스트) -->
         <script src="https://ads-partners.coupang.com/g.js"></script>
         <script>
-            new PartnersCoupang.G({ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"320","height":"100","tsource":"" });
+            new PartnersCoupang.G({ "id": 961291, "template": "carousel", "trackingCode": "AF1993837", "width": "320", "height": "100", "tsource": "" });
         </script>
     </div>
 </body>
+
 </html>
-        

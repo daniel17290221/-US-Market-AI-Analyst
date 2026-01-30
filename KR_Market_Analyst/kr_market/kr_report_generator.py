@@ -137,10 +137,10 @@ class KRDailyReportGenerator:
         }}
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
         body {{ background: var(--bg-color); color: var(--text-main); font-family: 'Pretendard', sans-serif; line-height: 1.6; padding: 20px; }}
-        .wrapper {{ display: flex; justify-content: center; gap: 20px; max-width: 1400px; margin: 0 auto; }}
+        .wrapper {{ display: flex; justify-content: center; gap: 20px; max-width: 1400px; margin: 0 auto; opacity: 0; animation: fadeIn 0.5s ease-in-out forwards; }}
         .ad-sidebar {{ width: 180px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px; height: fit-content; align-self: flex-start; }}
         .ad-unit {{ background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 12px; height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-sub); font-size: 11px; padding: 15px; }}
-        .container {{ max-width: 1000px; width: 100%; background: var(--card-bg); padding: 50px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }}
+        .container {{ min-width: 800px; max-width: 1000px; width: 100%; background: var(--card-bg); padding: 50px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }}
         h1 {{ font-size: 32px; margin-bottom: 20px; letter-spacing: -1px; }}
         .date {{ color: var(--text-sub); margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }}
         .box-summary {{ background: rgba(0, 112, 243, 0.05); border-radius: 12px; padding: 25px; margin-bottom: 40px; border: 1px solid rgba(0, 112, 243, 0.1); }}
@@ -152,7 +152,8 @@ class KRDailyReportGenerator:
         .section-header {{ display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }}
         .footer {{ margin-top: 50px; text-align: center; font-size: 12px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 20px; }}
         .mobile-ad-banner {{ display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #eee; padding: 10px; text-align: center; z-index: 1000; }}
-        @media (max-width: 1200px) {{ .ad-sidebar {{ display: none; }} .mobile-ad-banner {{ display: block; }} body {{ padding-bottom: 100px; }} }}
+        @media (max-width: 1200px) {{ .ad-sidebar {{ display: none; }} .mobile-ad-banner {{ display: block; }} body {{ padding-bottom: 100px; }} .container {{ min-width: 100%; }} }}
+        @keyframes fadeIn {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
     </style>
 </head>
 <body>
