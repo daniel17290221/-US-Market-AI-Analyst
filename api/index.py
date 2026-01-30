@@ -352,24 +352,31 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
     today = datetime.now().strftime("%Y-%m-%d")
     results = {}
     
+    # helper to normalize symbols for lookup
+    def normalize(sym):
+        return str(sym).split('.')[0].upper().strip()
+    
     # Filter out what's already in cache
     needed = []
     for s in stocks_to_analyze:
-        key = (today, s['symbol'])
+        sym = s['symbol']
+        norm_sym = normalize(sym)
+        key = (today, norm_sym)
         if key in AI_CACHE:
-            results[s['symbol']] = AI_CACHE[key]
+            results[sym] = AI_CACHE[key]
+            results[norm_sym] = AI_CACHE[key]
         else:
             needed.append(s)
             
     if not needed: return results
 
-    print(f"DEBUG: Requesting dynamic AI analysis for {len(needed)} stocks")
+    print(f"DEBUG: Requesting dynamic AI analysis for {len(needed)} stocks: {[s['symbol'] for s in needed]}")
     
     prompt = f"""
     당신은 글로벌 증시 전문 AI 분석가입니다. 아래 제공된 종목 리스트(한국 또는 미국 주식)에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
     각 종목에 대해 다음 정보를 포함해야 합니다: insight(한줄평), risk(리스크), swot_s(강점), swot_w(약점), swot_o(기회), swot_t(위협), dcf_target, dcf_bear, dcf_bull.
     말투는 전문적이고 분석적이어야 하며, 한국어로 작성해주세요.
-    결과는 반드시 아래 JSON 형식으로 반환해주세요.
+    결과는 반드시 아래 JSON 형식으로 반환해주세요. 종목의 심볼(symbol)을 키로 사용하세요.
     
     [종목 리스트]
     {json.dumps([{ 'symbol': s['symbol'], 'name': s.get('name', 'N/A') } for s in needed], ensure_ascii=False)}
@@ -397,9 +404,11 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
         ai_data = json.loads(content)
         
         for symbol, data in ai_data.items():
-            key = (today, symbol)
+            norm_sym = normalize(symbol)
+            key = (today, norm_sym)
             AI_CACHE[key] = data
             results[symbol] = data
+            results[norm_sym] = data
             
         return results
     except Exception as e:
@@ -497,15 +506,24 @@ def get_smart_money():
     enriched = []
     for i, d in enumerate(data[:15]):
         ticker = d['ticker']
+        norm_ticker = ticker.split('.')[0].upper()
+        
         # Try major_us_analysis -> dynamic_results -> generic fallback
-        details = major_us_analysis.get(ticker, dynamic_results.get(ticker, {
-            "insight": f"{ticker} - 시장 지배력과 기술적 모멘텀이 유효한 구간입니다.",
-            "risk": "거시 경제 변동성 및 금리 시나리오 영향.",
-            "upside": "+15~20%", "mkt_cap": "-", "vol_ratio": "1.0x", "rsi": "55-60",
-            "swot_s": "브랜드 파워 및 시장 지배력", "swot_w": "높은 밸류에이션 부담",
-            "swot_o": "AI 및 디지털 전환 수혜", "swot_t": "규제 강화 및 경쟁 심화",
-            "dcf_target": d.get('price', '0'), "dcf_bear": "-", "dcf_bull": "-"
-        }))
+        details = major_us_analysis.get(ticker)
+        if not details:
+            details = dynamic_results.get(ticker)
+            if not details:
+                details = dynamic_results.get(norm_ticker)
+        
+        if not details:
+            details = {
+                "insight": f"{ticker} - 시장 지배력과 기술적 모멘텀이 유효한 구간입니다.",
+                "risk": "거시 경제 변동성 및 금리 시나리오 영향.",
+                "upside": "+15~20%", "mkt_cap": "-", "vol_ratio": "1.0x", "rsi": "55-60",
+                "swot_s": "브랜드 파워 및 시장 지배력", "swot_w": "높은 밸류에이션 부담",
+                "swot_o": "AI 및 디지털 전환 수혜", "swot_t": "규제 강화 및 경쟁 심화",
+                "dcf_target": d.get('price', '0'), "dcf_bear": "-", "dcf_bull": "-"
+            }
         
         # Merge and clean
         stock_obj = {**d, **details}
@@ -579,8 +597,6 @@ def get_kr_smart_money():
         all_stocks_to_fetch = []
         for s in leaders_kospi: all_stocks_to_fetch.append(f"{s['symbol']}.KS")
         for s in leaders_kosdaq: all_stocks_to_fetch.append(f"{s['symbol']}.KQ")
-        # For gainers/volume (now mixed), we use the 'market' field set in fetch_naver_movers
-        # fetch_naver_movers sets market based on sosok.
         for s in gainers: 
             suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
             all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
@@ -605,86 +621,42 @@ def get_kr_smart_money():
     except Exception as e:
         print(f"DEBUG: KR Price update error: {e}")
 
-    if not gainers:
-        gainers = leaders[:3] 
-    if not volume:
-        volume = leaders[:3]
-
-    # Pre-defined detailed analysis for major stocks (Persistent Knowledge)
-    major_analysis = {
-        "005930": {
-            "insight": "DRAM 가격 반등과 HBM3E 공급 확대가 실적 개선을 견인할 것으로 예상됩니다.",
-            "risk": "글로벌 스마트폰 수요 둔화 및 파운드리 점유율 확대 지연.",
-            "upside": "+25%", "mkt_cap": "$450B", "vol_ratio": "1.5x ↑", "rsi": "58.4",
-            "swot_s": "글로벌 메모리 반도체 1위 지배력", "swot_w": "기술 격차 축소 우려 (HBM 등)",
-            "swot_o": "AI 서버향 고부가가치 제품 수요 폭증", "swot_t": "경쟁 심화 및 미중 갈등",
-            "dcf_target": "205,000", "dcf_bear": "140,000", "dcf_bull": "240,000"
-        },
-        "000660": {
-            "insight": "NVIDIA향 HBM 공급 독점적 지위가 유지되며 AI 모멘텀의 최대 수혜주입니다.",
-            "risk": "메모리 업황의 높은 변동성과 과도한 하이엔드 제품 의존도.",
-            "upside": "+18%", "mkt_cap": "$62B", "vol_ratio": "2.8x ↑", "rsi": "72.1",
-            "swot_s": "HBM 시장 내 압도적 기술 우위", "swot_w": "상대적으로 취약한 비메모리 포트폴리오",
-            "swot_o": "AI 반도체 시장의 기하급수적 성장", "swot_t": "빅테크 기업들의 자체 칩 개발",
-            "dcf_target": "1,150,000", "dcf_bear": "820,000", "dcf_bull": "1,350,000"
-        },
-        "005380": {
-            "insight": "전기차와 하이브리드 투트랙 전략이 주효하며 사상 최대 이익 기조를 유지하고 있습니다.",
-            "risk": "글로벌 전기차 수요 캐즘(Chasm) 현상 및 지정학적 리스크.",
-            "upside": "+15%", "mkt_cap": "$48B", "vol_ratio": "1.1x", "rsi": "52.4",
-            "swot_s": "믹스 개선을 통한 수익성 극대화", "swot_w": "내수 시장 점유율 방어 필요성",
-            "swot_o": "북미 메타플랜트 가동 및 수소 생태계", "swot_t": "금리 인상에 따른 소비 심리 위축",
-            "dcf_target": "620,000", "dcf_bear": "480,000", "dcf_bull": "710,000"
-        },
-        "207940": {
-            "insight": "압도적인 생산 능력을 바탕으로 한 CMO/CDMO 수주 확대가 견조한 성장을 뒷받침합니다.",
-            "risk": "미국 생물보안법 영향 가능성 및 후발주자들의 추격.",
-            "upside": "+12%", "mkt_cap": "$55B", "vol_ratio": "0.9x", "rsi": "48.2",
-            "swot_s": "글로벌 1위의 바이오 생산 캐파", "swot_w": "높은 위탁 생산 의존도",
-            "swot_o": "자체 신약 파이프라인 상업화 가시화", "swot_t": "글로벌 공급망 재편 및 단가 경쟁",
-            "dcf_target": "2,150,000", "dcf_bear": "1,650,000", "dcf_bull": "2,400,000"
-        },
-        "373220": {
-            "insight": "LFP 배터리 및 차세대 제품군 확대를 통해 전기차 수요 둔화 국면을 정면 돌파 중입니다.",
-            "risk": "완성차 업체들의 배터리 내재화 추진 및 원자재 가격 변동성.",
-            "upside": "+20%", "mkt_cap": "$82B", "vol_ratio": "1.3x", "rsi": "55.1",
-            "swot_s": "북미 시장 내 압도적 점유율과 파트너십", "swot_w": "수익성 개선 속도 지연 우려",
-            "swot_o": "에너지저장장치(ESS) 시장의 고성장", "swot_t": "중국 LFP 배터리 기업의 글로벌 확장",
-            "dcf_target": "580,000", "dcf_bear": "360,000", "dcf_bull": "680,000"
-        },
-        "000270": {
-            "insight": "EV9 등 프리미엄 모델 비중 확대와 환율 효과로 강력한 현금 흐름을 창출하고 있습니다.",
-            "risk": "주주 환원 정책 기대감 소멸 및 피크 아웃 논란.",
-            "upside": "+22%", "mkt_cap": "$35B", "vol_ratio": "1.8x", "rsi": "61.5",
-            "swot_s": "브랜드 인지도 상승 및 디자인 경쟁력", "swot_w": "전동화 전환 초기 비용 부담",
-            "swot_o": "주주 환원 정책 강화(자사주 소각 등)", "swot_t": "글로벌 보호무역주의 강화 추세",
-            "dcf_target": "195,000", "dcf_bear": "145,000", "dcf_bull": "230,000"
-        }
-    }
+    # PRE-FETCH AI ANALYSIS FOR ALL UNIQUE STOCKS IN ONE BATCH
+    all_unique_stocks = []
+    seen = set()
+    for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume]:
+        for s in d_list:
+            if s['symbol'] not in seen:
+                all_unique_stocks.append(s)
+                seen.add(s['symbol'])
+    
+    # Filters based on major_analysis (hardcoded knowns)
+    needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in major_analysis]
+    dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
 
     def enrich_list(stock_list):
-        # Identify stocks needing AI analysis
-        needing_ai = []
-        for s in stock_list:
-            if s['symbol'] not in major_analysis:
-                needing_ai.append(s)
-        
-        # Fetch dynamic analysis in batch
-        dynamic_results = fetch_dynamic_ai_analysis(needing_ai)
-
         enriched = []
         for i, s in enumerate(stock_list):
             symbol = s['symbol']
             # Try major_analysis -> dynamic_results -> absolute fallback
-            details = major_analysis.get(symbol, dynamic_results.get(symbol, {
-                "insight": f"{s['name']} - 섹터 내 기술적 모멘텀이 발생하고 있습니다.",
-                "risk": "단기 급등에 따른 차익 실현 매물 출회 가능성.",
-                "upside": "+10~15%", "mkt_cap": "-", "vol_ratio": "1.2x", "rsi": "50-60",
-                "swot_s": "견고한 시장 지위", "swot_w": "거시 경제 민감도",
-                "swot_o": "신규 시장 진출 기회", "swot_t": "경쟁 심화",
-                "dcf_target": s['price'], "dcf_bear": "-", "dcf_bull": "-"
-            }))
+            details = major_analysis.get(symbol)
+            if not details:
+                # Try flexible mapping for dynamic results
+                details = dynamic_results.get(symbol)
+                if not details:
+                    # Try stripped symbol
+                    details = dynamic_results.get(symbol.split('.')[0])
             
+            if not details:
+                details = {
+                    "insight": f"{s['name']} - 섹터 내 기술적 모멘텀이 발생하고 있습니다.",
+                    "risk": "단기 급등에 따른 차익 실현 매물 출회 가능성.",
+                    "upside": "+10~15%", "mkt_cap": "-", "vol_ratio": "1.2x", "rsi": "50-60",
+                    "swot_s": "견고한 시장 지위", "swot_w": "거시 경제 민감도",
+                    "swot_o": "신규 시장 진출 기회", "swot_t": "경쟁 심화",
+                    "dcf_target": s['price'], "dcf_bear": "-", "dcf_bull": "-"
+                }
+
             # Safe parsing for price/change if they come as strings with commas/symbols
             try:
                 price_clean = s['price']
@@ -708,7 +680,7 @@ def get_kr_smart_money():
         return enriched
 
     response_data = {
-        "leaders": enrich_list(leaders),
+        "leaders": enrich_list(leaders_kospi), # Default for main tab
         "leaders_kospi": enrich_list(leaders_kospi),
         "leaders_kosdaq": enrich_list(leaders_kosdaq),
         "gainers": enrich_list(gainers),
