@@ -384,56 +384,44 @@
                         </div>
                     </div>
 
-                    <!-- IPO & Economic Calendar -->
+                    <!-- IPO & Schedule -->
                     <div class="glass-card p-6 h-[400px] flex flex-col">
-                        <h3 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">경제 및 IPO 일정</h3>
-                        <div class="flex-1 overflow-hidden -mx-4">
-                            <!-- TradingView Widget BEGIN -->
-                            <div class="tradingview-widget-container">
-                                <div class="tradingview-widget-container__widget"></div>
-                                <script type="text/javascript"
-                                    src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-                                        {
-                                            "colorTheme": "dark",
-                                                "isTransparent": true,
-                                                    "width": "100%",
-                                                        "height": "100%",
-                                                            "locale": "kr",
-                                                                "importanceFilter": "-1,0,1",
-                                                                    "currencyFilter": "KRW"
-                                        }
-                                    </script>
+                        <h3
+                            class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4 flex justify-between items-center">
+                            <span>IPO 및 공모주 청약 뉴스</span>
+                            <i class="fas fa-calendar-alt text-brand-primary"></i>
+                        </h3>
+                        <div id="kr-ipo-container" class="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-hide">
+                            <!-- IPO Items will load here -->
+                            <div class="animate-pulse space-y-2">
+                                <div class="h-10 bg-white/5 rounded-xl border border-white/5"></div>
+                                <div class="h-10 bg-white/5 rounded-xl border border-white/5"></div>
                             </div>
-                            <!-- TradingView Widget END -->
                         </div>
                     </div>
 
-                    <!-- Real-time News -->
+                    <!-- Market News -->
                     <div class="glass-card p-6 h-[500px] flex flex-col">
-                        <h3 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">실시간 마켓 뉴스 (국문)</h3>
-                        <div class="flex-1 overflow-hidden -mx-4">
-                            <!-- TradingView Widget BEGIN -->
-                            <div class="tradingview-widget-container">
-                                <div class="tradingview-widget-container__widget"></div>
-                                <script type="text/javascript"
-                                    src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-                                        {
-                                            "feedMode": "symbol",
-                                                "symbol": "KRX:KOSPI",
-                                                    "colorTheme": "dark",
-                                                        "isTransparent": true,
-                                                            "displayMode": "regular",
-                                                                "width": "100%",
-                                                                    "height": "100%",
-                                                                        "locale": "kr"
-                                        }
-                                    </script>
+                        <h3
+                            class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4 flex justify-between items-center">
+                            <span>주요 증시 뉴스 (Google News)</span>
+                            <i class="fas fa-newspaper text-brand-primary"></i>
+                        </h3>
+                        <div id="kr-news-container" class="flex-1 overflow-y-auto pr-2 space-y-4 scrollbar-hide">
+                            <!-- News Items will load here -->
+                            <div class="animate-pulse space-y-4">
+                                <div class="h-4 bg-white/5 rounded w-3/4"></div>
+                                <div class="h-4 bg-white/5 rounded w-full"></div>
+                                <div class="h-4 bg-white/5 rounded w-5/6"></div>
                             </div>
-                            <!-- TradingView Widget END -->
                         </div>
                     </div>
                 </div>
+                <!-- TradingView Widget END -->
             </div>
+        </div>
+        </div>
+        </div>
         </div>
 
         <!-- Tab: Subscription & News (Hidden by Default) -->
@@ -558,8 +546,8 @@
         // --- Data Handling ---
         async function fetchData() {
             try {
-                // fetchNews(); // Removed: Using TradingView Widget
-                // fetchIPO();  // Removed: Using TradingView Widget
+                fetchNews();
+                fetchIPO();
                 const res = await fetch(`/api/kr/smart-money?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
@@ -822,6 +810,61 @@
         }
 
         // Initialize
+        // --- News & IPO Fetching ---
+        async function fetchNews() {
+            const container = document.getElementById('kr-news-container');
+            if (!container) return;
+            try {
+                const res = await fetch('/api/kr/k-news');
+                if (res.ok) {
+                    const news = await res.json();
+                    if (news.length === 0) {
+                        container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-10">현재 뉴스가 없습니다.</p>';
+                        return;
+                    }
+                    container.innerHTML = news.map(item => `
+                        <a href="${item.url}" target="_blank" class="block p-4 bg-white/5 rounded-xl border border-white/5 hover:border-brand-primary/30 transition group">
+                            <h4 class="text-xs font-bold text-gray-200 group-hover:text-brand-primary transition leading-relaxed mb-1">${item.title}</h4>
+                            <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
+                                <span class="text-[9px] text-brand-primary font-black uppercase tracking-tighter">${item.source}</span>
+                                <span class="text-[9px] text-gray-600 font-mono">${item.date}</span>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error("News fetch failed:", e);
+                container.innerHTML = '<p class="text-[10px] text-brand-danger text-center py-4">뉴스 로드 실패</p>';
+            }
+        }
+
+        async function fetchIPO() {
+            const container = document.getElementById('kr-ipo-container');
+            if (!container) return;
+            try {
+                const res = await fetch('/api/kr/k-ipo');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.length === 0) {
+                        container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-4">일정 정보가 없습니다.</p>';
+                        return;
+                    }
+                    container.innerHTML = data.map(item => `
+                        <a href="${item.url}" target="_blank" class="block p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center transition hover:border-brand-primary/30 group">
+                            <div class="flex-1 pr-2">
+                                <p class="text-[11px] font-bold text-gray-200 group-hover:text-brand-primary transition line-clamp-1">${item.title}</p>
+                                <span class="text-[9px] text-gray-500">${item.source}</span>
+                            </div>
+                            <span class="text-[10px] font-mono font-black text-gray-600 whitespace-nowrap">${item.date ? item.date.split(' ')[0].substring(5) : ''}</span>
+                        </a>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error("IPO fetch failed:", e);
+                container.innerHTML = '<p class="text-[10px] text-brand-danger text-center">정보 로드 실패</p>';
+            }
+        }
+
         // Initialize Everything
         document.addEventListener('DOMContentLoaded', () => {
             updateClock();

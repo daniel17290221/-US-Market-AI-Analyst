@@ -5,6 +5,7 @@ import os
 import requests
 import sys
 from datetime import datetime
+import xml.etree.ElementTree as ET
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -687,8 +688,55 @@ def get_smart_money():
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return response
 
-@app.route('/api/kr/smart-money')
-def get_kr_smart_money():
+# --- Google News RSS Fetcher ---
+def fetch_google_news_rss(query):
+    try:
+        url = f"https://news.google.com/rss/search?q={query}&hl=ko&gl=KR&ceid=KR:ko"
+        resp = requests.get(url, timeout=5)
+        if resp.status_code == 200:
+            root = ET.fromstring(resp.content)
+            items = []
+            for item in root.findall('.//item')[:5]:
+                title = item.find('title').text
+                link = item.find('link').text
+                pubDate = item.find('pubDate').text
+                # Source is usually in title "Title - Source"
+                source = "Google News"
+                if " - " in title:
+                    parts = title.rsplit(" - ", 1)
+                    title = parts[0]
+                    source = parts[1]
+                
+                # Format Date
+                try:
+                    # Fri, 30 Jan 2026 07:00:00 GMT
+                    dt = datetime.strptime(pubDate, "%a, %d %b %Y %H:%M:%S %Z")
+                    date_str = dt.strftime("%Y.%m.%d %H:%M")
+                except:
+                    date_str = pubDate
+
+                items.append({
+                    "title": title,
+                    "url": link,
+                    "date": date_str,
+                    "source": source
+                })
+            return items
+    except Exception as e:
+        print(f"RSS Fetch Error: {e}")
+    return []
+
+@app.route('/api/kr/k-news')
+def get_kr_k_news():
+    # General Stock Market News
+    news = fetch_google_news_rss("주식시장+증시")
+    return jsonify(news)
+
+@app.route('/api/kr/k-ipo')
+def get_kr_k_ipo():
+    # IPO Subscription News
+    news = fetch_google_news_rss("공모주+청약+일정")
+    return jsonify(news)
     # Load all stocks from daily data
     kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
     kr_data = {}
