@@ -558,8 +558,8 @@
         // --- Data Handling ---
         async function fetchData() {
             try {
-                fetchNews(); // Initial news fetch
-                fetchIPO();  // Initial IPO fetch
+                // fetchNews(); // Removed: Using TradingView Widget
+                // fetchIPO();  // Removed: Using TradingView Widget
                 const res = await fetch(`/api/kr/smart-money?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
