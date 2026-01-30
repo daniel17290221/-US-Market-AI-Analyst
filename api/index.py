@@ -21,7 +21,13 @@ except:
     DATA_DIR = os.path.join(BASE_DIR, 'us_market')
 
 from us_market.daily_report_generator import USDailyReportGenerator
-from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
+
+try:
+    from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
+    KR_REPORT_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: KR Report Generator not available: {e}")
+    KR_REPORT_AVAILABLE = False
 
 app = Flask(__name__, 
             template_folder=os.path.join(BASE_DIR, 'templates'),
@@ -462,6 +468,9 @@ def get_kr_ipo():
 
 @app.route('/api/kr/report')
 def get_kr_report():
+    if not KR_REPORT_AVAILABLE:
+        return "<h1>KR Report Not Available</h1><p>The KR report generator module could not be loaded.</p>", 503
+    
     report_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_market_daily_report.html')
     if os.path.exists(report_path):
         try:
