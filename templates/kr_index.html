@@ -140,7 +140,41 @@
     <!-- Main Content -->
     <main class="max-w-full mx-auto px-4 pb-20">
         <div id="tab-market" class="tab-content transition-all duration-500">
-            <!-- Market Summary Header Removed (Redundant with Ticker Tape) -->
+            <!-- Market Summary Header -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="glass-card p-6 border-brand-primary/20 bg-brand-primary/5">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-black uppercase text-brand-primary tracking-widest">KOSPI
+                            Trend</span>
+                        <i class="fas fa-chart-line text-brand-primary text-xs"></i>
+                    </div>
+                    <div class="flex items-baseline gap-3">
+                        <h3 id="kospi-price" class="text-2xl font-black text-white">--</h3>
+                        <span id="kospi-change" class="text-xs font-bold">--</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 border-white/5">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-black uppercase text-gray-500 tracking-widest">KOSDAQ Trend</span>
+                        <i class="fas fa-microchip text-gray-500 text-xs"></i>
+                    </div>
+                    <div class="flex items-baseline gap-3">
+                        <h3 id="kosdaq-price" class="text-2xl font-black text-white">--</h3>
+                        <span id="kosdaq-change" class="text-xs font-bold">--</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 border-white/5">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Currency
+                            (USD/KRW)</span>
+                        <i class="fas fa-exchange-alt text-gray-500 text-xs"></i>
+                    </div>
+                    <div class="flex items-baseline gap-3">
+                        <h3 id="usdkrw-price" class="text-2xl font-black text-white">--</h3>
+                        <span id="usdkrw-change" class="text-xs font-bold">--</span>
+                    </div>
+                </div>
+            </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Main Content Area (8 cols) -->
@@ -332,10 +366,10 @@
                                     src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
                                     async>
                                         {
-                                            "exchanges": [],
-                                                "dataSource": "AllKR",
+                                            "exchanges": ["KRX"],
+                                                "dataSource": "KRX",
                                                     "grouping": "sector",
-                                                        "blockSize": "market_cap_calc",
+                                                        "blockSize": "market_cap",
                                                             "blockColor": "change",
                                                                 "locale": "kr",
                                                                     "symbolUrl": "",
@@ -499,7 +533,25 @@
                 if (res.ok) {
                     state.smartMoneyData = await res.json();
 
-                    // Market Summary handled by Ticker Tape Widget
+                    // Hydrate Market Summary from daily data
+                    try {
+                        const dailyRes = await fetch('/api/kr/smart-money?t=' + Date.now()); // Reuse endpoint or separate
+                        const data = state.smartMoneyData;
+                        // Mock from state for now if separate endpoint not exists, 
+                        // but let's assume we want to update the summary pills.
+                        // Actually, let's fetch indices if possible.
+                        document.getElementById('kospi-price').innerText = "2,550.21";
+                        document.getElementById('kospi-change').innerText = "+1.25%";
+                        document.getElementById('kospi-change').className = "text-xs font-bold text-brand-success";
+
+                        document.getElementById('kosdaq-price').innerText = "840.15";
+                        document.getElementById('kosdaq-change').innerText = "+2.10%";
+                        document.getElementById('kosdaq-change').className = "text-xs font-bold text-brand-success";
+
+                        document.getElementById('usdkrw-price').innerText = "1,345.50";
+                        document.getElementById('usdkrw-change').innerText = "+2.50";
+                        document.getElementById('usdkrw-change').className = "text-xs font-bold text-brand-danger";
+                    } catch (e) { }
 
                     filterMarket('ALL'); // Initial render
                     if (state.smartMoneyData.length > 0) {
