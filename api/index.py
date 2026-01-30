@@ -269,7 +269,7 @@ def fetch_naver_movers(mover_type='rise', sosok=None):
                 "name": name,
                 "price": "0",
                 "change": 0.0,
-                "market": "KOSPI" if sosok == 0 else ("KOSDAQ" if sosok == 1 else "KRX"),
+                "market": "KOSPI" if sosok == 0 else ("KOSDAQ" if sosok == 1 else "KOSPI"),
                 "rank": str(i+1)
             })
         return results
@@ -277,45 +277,57 @@ def fetch_naver_movers(mover_type='rise', sosok=None):
         print(f"DEBUG: Naver scraping failed ({mover_type}): {e}")
         return []
 
+import concurrent.futures
+
+def fetch_single_ticker(ticker, headers):
+    """Helper for parallel fetching"""
+    try:
+        # Handle KR stocks (6 digits) for Yahoo Finance if no suffix provided
+        fetch_ticker = ticker
+        if len(ticker) == 6 and ticker.isdigit() and "." not in ticker:
+            fetch_ticker = f"{ticker}.KS"
+        
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{fetch_ticker}?interval=1m&range=1d"
+        resp = requests.get(url, headers=headers, timeout=5)
+        
+        if resp.status_code == 200:
+            data = resp.json()
+            meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
+            price = meta.get('regularMarketPrice')
+            prev_close = meta.get('previousClose')
+            
+            if price is not None:
+                return ticker, {
+                    'price': round(price, 2),
+                    'change': round(((price - prev_close) / prev_close) * 100, 2) if prev_close else 0
+                }
+    except Exception as e:
+        print(f"DEBUG: Failed to fetch {ticker}: {e}")
+    return ticker, None
+
 def fetch_realtime_data(tickers):
-    """Manual fetch for Yahoo Finance v8 (Stable for server-side)"""
+    """Parallel fetch for Yahoo Finance v8 (Stable and fast)"""
     prices = {}
-    print(f"DEBUG: Fetching prices for {len(tickers)} tickers")
+    if not tickers: return prices
     
-    # Limit to top 10 for speed to avoid timeouts (increased from 5)
-    target_tickers = tickers[:10] if len(tickers) > 10 else tickers
+    print(f"DEBUG: Parallel fetching prices for {len(tickers)} tickers")
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
     }
     
-    for ticker in target_tickers:
-        if not ticker: continue
-        try:
-            # Handle KR stocks (6 digits) for Yahoo Finance if no suffix provided
-            fetch_ticker = ticker
-            if len(ticker) == 6 and ticker.isdigit() and "." not in ticker:
-                # Default to .KS if we don't know, but better to pass with suffix
-                fetch_ticker = f"{ticker}.KS"
+    # Use ThreadPoolExecutor for parallel requests (Max 20 threads to avoid rate limiting)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        future_to_ticker = {executor.submit(fetch_single_ticker, t, headers): t for t in tickers}
+        for future in concurrent.futures.as_completed(future_to_ticker):
+            ticker, result = future.result()
+            if result:
+                prices[ticker] = result
+                # Support suffix lookups if needed
+                if len(ticker) == 6 and ticker.isdigit():
+                    prices[f"{ticker}.KS"] = result
+                    prices[f"{ticker}.KQ"] = result
             
-            # Use v8 finance/chart for stability
-            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{fetch_ticker}?interval=1m&range=1d"
-            resp = requests.get(url, headers=headers, timeout=3)
-            
-            if resp.status_code == 200:
-                data = resp.json()
-                meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
-                price = meta.get('regularMarketPrice')
-                prev_close = meta.get('previousClose')
-                
-                if price is not None:
-                    prices[ticker] = {
-                        'price': round(price, 2),
-                        'change': round(((price - prev_close) / prev_close) * 100, 2) if prev_close else 0
-                    }
-        except Exception as e:
-            print(f"DEBUG: Failed to fetch {ticker}: {e}")
-            pass
     return prices
 
 @app.route('/')
@@ -430,7 +442,7 @@ def get_kr_smart_money():
             all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
         
         all_tickers = list(set(all_stocks_to_fetch))
-        current_prices = fetch_realtime_data(all_tickers[:30])
+        current_prices = fetch_realtime_data(all_tickers)
         
         # Map values back
         for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume, leaders]:
