@@ -98,13 +98,80 @@ class KRDataManager:
         # But we add specific keys for the tabs
         data = {
             'date': datetime.now().strftime('%Y-%m-%d'),
-            'top_stocks': top_lists['market_cap'], # Default view
+            'leaders': top_lists['market_cap'], # Explicit leaders list
             'gainers': top_lists['gainers'],
             'volume': top_lists['volume'],
-            'leaders': top_lists['market_cap']
+            'ai_analysis': {} # Placeholder for AI results
         }
         
-        # Save
+        # 3. Perform AI Analysis (Pre-calculation)
+        try:
+            from dotenv import load_dotenv
+            load_dotenv()
+            api_key = os.getenv('GOOGLE_API_KEY')
+            
+            if api_key:
+                print("Starting AI Analysis for Top Lists...")
+                # Robust Client Initialization matching Daily Report
+                client = None
+                model_legacy = None
+                
+                try:
+                    from google import genai
+                    client = genai.Client(api_key=api_key)
+                    print("Using Google GenAI Client (New SDK)")
+                except ImportError:
+                    import google.generativeai as genai
+                    genai.configure(api_key=api_key)
+                    model_legacy = genai.GenerativeModel('gemini-2.0-flash')
+                    print("Using Google GenerativeAI (Legacy SDK)")
+
+                # Gather all unique symbols
+                all_symbols = []
+                seen = set()
+                for cat in ['gainers', 'volume', 'leaders']:
+                    # Analyze top 5 to ensure coverage
+                    for stock in data[cat][:5]: 
+                        if stock['symbol'] not in seen:
+                            all_symbols.append(stock)
+                            seen.add(stock['symbol'])
+                
+                print(f"Analyzing {len(all_symbols)} stocks...")
+                
+                prompt = f"""
+                당신은 글로벌 증시 전문 AI 분석가입니다. 아래 한국 주식 리스트에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
+                
+                [지시사항]
+                1. 제공된 **모든 종목**에 대해 JSON 키(종목코드)로 결과를 반환하세요.
+                2. 답변은 **핵심만 간결하게** 작성하세요.
+                3. 정보가 부족하면 섹터 정보로 추론하세요.
+                4. 포맷: insight, risk, swot_s, swot_w, swot_o, swot_t, dcf_target(숫자), dcf_bear(숫자), dcf_bull(숫자), upside.
+                5. JSON 형식만 출력하세요.
+                
+                [대상]
+                {json.dumps([{ 'symbol': s['symbol'], 'name': s.get('name', 'N/A') } for s in all_symbols], ensure_ascii=False)}
+                """
+                
+                ai_text = ""
+                if client:
+                    response = client.models.generate_content(
+                        model='gemini-2.0-flash', 
+                        contents=prompt
+                    )
+                    ai_text = response.text
+                elif model_legacy:
+                    response = model_legacy.generate_content(prompt)
+                    ai_text = response.text
+                
+                cleaned_text = ai_text.replace('```json', '').replace('```', '').strip()
+                data['ai_analysis'] = json.loads(cleaned_text)
+                print(f"AI Analysis Completed. Parsed {len(data['ai_analysis'])} items.")
+                
+        except Exception as e:
+            print(f"AI Analysis Failed during update: {e}")
+            # traceback.print_exc()
+            
+        # 4. Save to JSON
         output_path = os.path.join(self.output_dir, 'kr_daily_data.json')
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)

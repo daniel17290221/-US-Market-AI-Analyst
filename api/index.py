@@ -697,6 +697,10 @@ def get_kr_smart_money():
     leaders = kr_data.get('leaders', [])
     gainers = kr_data.get('gainers', [])
     volume = kr_data.get('volume', [])
+    
+    # Load Pre-calculated AI Analysis
+    precomputed_ai = kr_data.get('ai_analysis', {})
+    print(f"DEBUG: Loaded {len(precomputed_ai)} pre-calculated AI insights")
 
     # Parallel Scrape if data is missing (Primary Logic for Vercel)
     if not gainers or not volume or not leaders:
@@ -776,14 +780,25 @@ def get_kr_smart_money():
                     all_unique_stocks.append(s)
                     seen.add(s['symbol'])
         
-        # Filters based on MAJOR_ANALYSIS_KR
-        needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
+        # 1. Start with Pre-calculated Data
+        dynamic_results = precomputed_ai.copy()
         
-        # Limit to 20 (Total unique is approx 20 now: 5+5+5+5)
-        needing_dynamic = needing_dynamic[:20]
-        print(f"DEBUG: KR AI processing {len(needing_dynamic)} stocks dynamically. Symbols: {[s['symbol'] for s in needing_dynamic]}")
-        dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
-        print(f"DEBUG: KR AI Results Count: {len(dynamic_results)}")
+        # 2. Identify missing stocks (that are not in major list and not in precomputed)
+        needing_dynamic = []
+        for s in all_unique_stocks:
+            sym = s['symbol']
+            if sym not in MAJOR_ANALYSIS_KR and sym not in dynamic_results:
+                needing_dynamic.append(s)
+        
+        # 3. Fetch missing only
+        if needing_dynamic:
+            # Safe limit for Vercel timeout
+            needing_dynamic = needing_dynamic[:5] 
+            print(f"DEBUG: Live Fetching missing AI for {len(needing_dynamic)} stocks: {[s['symbol'] for s in needing_dynamic]}")
+            live_results = fetch_dynamic_ai_analysis(needing_dynamic)
+            dynamic_results.update(live_results)
+            
+        print(f"DEBUG: Total AI Results Available: {len(dynamic_results)}")
     except Exception as e:
         print(f"DEBUG: KR AI Batch Analysis Error: {e}")
         dynamic_results = {}
