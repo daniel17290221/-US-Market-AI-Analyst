@@ -788,10 +788,11 @@ def get_kr_smart_money():
         # Filters based on MAJOR_ANALYSIS_KR
         needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
         
-        # Reduced limit for Speed (10 stocks max)
-        needing_dynamic = needing_dynamic[:10]
-        print(f"DEBUG: KR AI processing {len(needing_dynamic)} stocks dynamically")
+        # Safe limit for Vercel timeout (Increased back to 20 as parallel scraping saved time)
+        needing_dynamic = needing_dynamic[:20]
+        print(f"DEBUG: KR AI processing {len(needing_dynamic)} stocks dynamically. Symbols: {[s['symbol'] for s in needing_dynamic]}")
         dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
+        print(f"DEBUG: KR AI Results Count: {len(dynamic_results)}")
     except Exception as e:
         print(f"DEBUG: KR AI Batch Analysis Error: {e}")
         dynamic_results = {}
