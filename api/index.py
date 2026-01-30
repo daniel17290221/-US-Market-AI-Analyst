@@ -408,6 +408,12 @@ def fetch_naver_movers(mover_type='rise', sosok=None):
         
     headers = {'User-Agent': 'Mozilla/5.0'}
     
+    # ETF brand names and keywords to exclude
+    IGNORE_KEYWORDS = [
+        'KODEX', 'TIGER', 'KBSTAR', 'ACE', 'SOL', 'HANARO', 'RISE', 'ARIRANG', 'KOSEF', 'WOORI', 'FOCUS', 'PLUS',
+        '레버리지', '인버스', '2X', '선물', 'ETN', 'ETP'
+    ]
+    
     try:
         resp = requests.get(url, headers=headers, timeout=5)
         if resp.status_code != 200: return []
@@ -418,16 +424,25 @@ def fetch_naver_movers(mover_type='rise', sosok=None):
         matches = re.findall(pattern, html)
         
         results = []
-        # Support up to 15 items internally
-        for i, (code, name) in enumerate(matches[:15]):
+        count = 0
+        # Process up to 50 matches to allow for filtering
+        for code, name in matches[:50]:
+            name_upper = name.upper()
+            is_etf = any(kw in name_upper for kw in IGNORE_KEYWORDS)
+            if is_etf and mover_type != 'cap': # Don't filter out market cap leaders, mostly stocks anyway
+                continue
+                
             results.append({
                 "symbol": code,
                 "name": name,
                 "price": "0",
                 "change": 0.0,
                 "market": "KOSPI" if sosok == 0 else ("KOSDAQ" if sosok == 1 else "KOSPI"),
-                "rank": str(i+1)
+                "rank": str(count + 1)
             })
+            count += 1
+            if count >= 15: break # Keep top 15 after filtering
+            
         return results
     except Exception as e:
         print(f"DEBUG: Naver scraping failed ({mover_type}): {e}")
