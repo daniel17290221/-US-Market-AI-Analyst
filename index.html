@@ -84,10 +84,77 @@
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
+
+        /* Loading Overlay Style */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 8, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #FFF;
+            border-bottom-color: #00F0FF;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            margin-top: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 0.2rem;
+            color: #00F0FF;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
 <body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <span class="loader"></span>
+        <div class="loading-text italic font-bold">AI DATA SYNCING...</div>
+        <div class="text-gray-600 text-[10px] mt-4 font-mono">시장 분석 데이터를 동기화하고 있습니다</div>
+    </div>
+
     <!-- Ticker Tape Widget -->
     <div class="bg-[#08080A] border-b border-white/5">
         <div class="tradingview-widget-container">
@@ -127,7 +194,7 @@
             </div>
         </a>
 
-        <div class="hidden lg:flex items-center gap-10">
+        <div class="hidden lg:flex items-center gap-8">
             <a href="https://land.vibe-coding-lab.com/"
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">홈</a>
             <a onclick="switchTab('market')" id="nav-market"
@@ -138,11 +205,24 @@
             <a onclick="switchTab('report')" id="nav-report"
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">데일리
                 리포트</a>
+            <a href="/kr"
+                class="tab-inactive py-1 text-[10px] bg-brand-primary/10 text-brand-primary px-3 rounded-full font-bold uppercase tracking-widest cursor-pointer transition border border-brand-primary/20 hover:bg-brand-primary hover:text-black ml-4">
+                Korea Market <span class="ml-1 opacity-70">NEW</span>
+            </a>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
+            <div class="flex flex-col items-end gap-1">
+                <span
+                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                    US MARKET v1.5
+                </span>
+                <span id="clock" class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
+                    --:-- EST
+                </span>
+            </div>
             <button
-                class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-xs hover:brightness-110 transition flex items-center gap-2">
+                class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-[10px] hover:brightness-110 transition flex items-center gap-2">
                 <span class="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>
                 실시간 데이터 연결됨</button>
         </div>
@@ -898,14 +978,46 @@
             } catch (e) { }
         }
 
+        function updateClock() {
+            const options = {
+                timeZone: 'America/New_York',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+            const timeString = new Intl.DateTimeFormat('en-US', options).format(new Date());
+            const clockEl = document.getElementById('clock');
+            if (clockEl) clockEl.textContent = timeString + " EST";
+        }
+        setInterval(updateClock, 60000);
+        updateClock();
+
         async function fetchCal() {
             // Replaced with dynamic TradingView sidebar widget for better reliability
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchData(); fetchAI(); fetchCal(); fetchETFs();
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log("🚀 Initializing Dashboard...");
+            // Run all fetches
+            await Promise.allSettled([
+                fetchData(),
+                fetchAI(),
+                fetchETFs()
+            ]);
+
+            // Hide overlay with a small delay for smoothness
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    overlay.style.visibility = 'hidden';
+                    setTimeout(() => overlay.remove(), 600);
+                }
+            }, 500);
+
             setInterval(fetchData, 5 * 60 * 1000);
-            console.log("🚀 Terminal Redline v3.5 Online");
+            updateClock();
+            console.log("🚀 Terminal Redline v4.1 Online");
         });
     </script>
 </body>

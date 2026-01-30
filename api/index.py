@@ -100,8 +100,9 @@ def load_csv(filename):
                             row['score'] = float(row.get('score', 0))
                             row['price'] = float(row.get('price', row.get('current_price', 0)))
                             row['change'] = float(row.get('change', 0))
-                        except Exception as e:
-                            print(f"DEBUG: Data conversion error for {row.get('ticker')}: {e}")
+                        except Exception:
+                            # Silent conversion error to prevent encoding issues with 'e'
+                            pass
                             
                         data.append(row)
                         
@@ -109,8 +110,9 @@ def load_csv(filename):
                         print(f"DEBUG: Successfully loaded {len(data)} rows from {path_to_use}")
                         # print(f"DEBUG: First row preview: {data[0]}") # Causes UnicodeEncodeError on Windows with emojis
                         break
-            except Exception as e:
-                print(f"DEBUG: Failed to read {path_to_use} with {enc}: {e}")
+            except Exception:
+                # Silent read failure to try next encoding/fallback
+                pass
     else:
         print(f"DEBUG: Could not find a valid CSV file for {filename} in any searched location.")
     
