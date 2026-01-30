@@ -477,28 +477,6 @@ def get_kr_ipo():
     except Exception as e:
         return jsonify([])
 
-@app.route('/api/kr/report')
-def get_kr_report():
-    if not KR_REPORT_AVAILABLE:
-        return "<h1>KR Report Not Available</h1><p>The KR report generator module could not be loaded.</p>", 503
-    
-    report_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_market_daily_report.html')
-    if os.path.exists(report_path):
-        try:
-            with open(report_path, 'r', encoding='utf-8') as f:
-                resp = make_response(f.read())
-                resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                return resp
-        except Exception as e:
-            print(f"DEBUG: KR Report read error: {e}")
-
-    # Fallback to live generation
-    try:
-        generator = KRDailyReportGenerator()
-        return generator.run()
-    except Exception as e:
-        return f"<h1>Error generating KR report</h1><p>{str(e)}</p>", 500
-
 @app.route('/api/us/macro-analysis')
 def get_macro_analysis():
     return jsonify(load_json('us_macro_analysis.json'))
