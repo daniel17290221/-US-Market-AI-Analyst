@@ -314,78 +314,77 @@ def get_smart_money():
 def get_kr_smart_money():
     # Load all stocks from daily data
     kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
-    kr_data = None
+    kr_data = {}
     if os.path.exists(kr_data_path):
         with open(kr_data_path, 'r', encoding='utf-8') as f:
             kr_data = json.load(f)
     
-    top_stocks = kr_data.get('top_stocks', []) if kr_data else []
-    
-    # Enrichment logic: Map existing mock data or generate dynamic mock
-    enriched_data = []
-    
-    # Pre-defined detailed analysis for major stocks
+    # Extract lists (default to specific keys if available, else standard top_stocks)
+    leaders = kr_data.get('leaders', kr_data.get('top_stocks', []))
+    gainers = kr_data.get('gainers', [])
+    volume = kr_data.get('volume', [])
+
+    # Pre-defined detailed analysis for major stocks (Persistent Knowledge)
     major_analysis = {
         "005930": {
             "insight": "DRAM 가격 반등과 HBM3E 공급 확대가 실적 개선을 견인할 것으로 예상됩니다.",
             "risk": "글로벌 스마트폰 수요 둔화 및 파운드리 점유율 확대 지연.",
             "upside": "+25%", "mkt_cap": "$450B", "vol_ratio": "1.5x ↑", "rsi": "58.4",
             "swot_s": "글로벌 메모리 반도체 1위 지배력", "swot_w": "기술 격차 축소 우려 (HBM 등)",
-            "swot_o": "AI 서버향 고부가가치 제품 수요 폭증", "swot_t": "지정학적 리스크 및 공급망 불안정",
-            "dcf_target": "205,000", "dcf_bear": "140,000", "dcf_bull": "240,000"
+            "swot_o": "AI 서버향 고부가가치 제품 수요 폭증", "dcf_target": "205,000", "dcf_bear": "140,000", "dcf_bull": "240,000"
         },
         "000660": {
             "insight": "NVIDIA향 HBM 공급 독점적 지위가 유지되며 AI 모멘텀의 최대 수혜주입니다.",
             "risk": "메모리 업황의 높은 변동성과 과도한 하이엔드 제품 의존도.",
             "upside": "+18%", "mkt_cap": "$62B", "vol_ratio": "2.8x ↑", "rsi": "72.1",
             "swot_s": "HBM 시장 내 압도적 기술 우위", "swot_w": "상대적으로 취약한 비메모리 포트폴리오",
-            "swot_o": "AI 반도체 시장의 기하급수적 성장", "swot_t": "후발 주자들의 HBM 시장 진입 가속화",
-            "dcf_target": "990,000", "dcf_bear": "720,000", "dcf_bull": "1,150,000"
+            "swot_o": "AI 반도체 시장의 기하급수적 성장", "dcf_target": "990,000", "dcf_bear": "720,000", "dcf_bull": "1,150,000"
         }
     }
 
-    # If data manager is still running or file is small, add simulation stocks to hit "200 range" intent
-    if len(top_stocks) < 15:
-        sim_stocks = [
-            {"symbol": "005490", "name": "POSCO홀딩스", "price": "378,000", "change_pct": "+5.15%", "market": "KOSPI"},
-            {"symbol": "035420", "name": "NAVER", "price": "277,500", "change_pct": "-1.42%", "market": "KOSPI"},
-            {"symbol": "035720", "name": "카카오", "price": "61,800", "change_pct": "-0.64%", "market": "KOSPI"},
-            {"symbol": "000270", "name": "기아", "price": "149,700", "change_pct": "-2.48%", "market": "KOSPI"},
-            {"symbol": "105560", "name": "KB금융", "price": "137,900", "change_pct": "-3.57%", "market": "KOSPI"},
-            {"symbol": "055550", "name": "신한지주", "price": "83,800", "change_pct": "-2.67%", "market": "KOSPI"},
-            {"symbol": "003550", "name": "LG", "price": "81,200", "change_pct": "+0.50%", "market": "KOSPI"},
-            {"symbol": "032830", "name": "삼성생명", "price": "92,100", "change_pct": "+1.10%", "market": "KOSPI"},
-            {"symbol": "012330", "name": "현대모비스", "price": "225,500", "change_pct": "-0.44%", "market": "KOSPI"},
-            {"symbol": "010140", "name": "삼성중공업", "price": "9,120", "change_pct": "+2.30%", "market": "KOSPI"}
-        ]
-        for sim in sim_stocks:
-            if not any(ts['symbol'] == sim['symbol'] for ts in top_stocks):
-                top_stocks.append(sim)
+    def enrich_list(stock_list):
+        enriched = []
+        for i, s in enumerate(stock_list):
+            symbol = s['symbol']
+            # Default enrichment if not in major_analysis
+            details = major_analysis.get(symbol, {
+                "insight": f"{s['name']} - 섹터 내 기술적 모멘텀이 발생하고 있습니다.",
+                "risk": "단기 급등에 따른 차익 실현 매물 출회 가능성.",
+                "upside": "+10~15%", "mkt_cap": "-", "vol_ratio": "1.2x", "rsi": "50-60",
+                "swot_s": "견고한 시장 지위", "swot_w": "거시 경제 민감도",
+                "swot_o": "신규 시장 진출 기회", "swot_t": "경쟁 심화",
+                "dcf_target": s['price'], "dcf_bear": "-", "dcf_bull": "-"
+            })
+            
+            # Safe parsing for price/change if they come as strings with commas/symbols
+            try:
+                price_clean = s['price']
+                change_clean = float(str(s.get('change', '0')).replace('%', '').replace('+', ''))
+            except:
+                price_clean = s.get('price', '0')
+                change_clean = 0.0
 
-    for i, s in enumerate(top_stocks):
-        symbol = s['symbol']
-        details = major_analysis.get(symbol, {
-            "insight": f"{s['name']}은(는) KOSPI 200/KOSDAQ 150 주요 종목으로서 안정적인 시장 지위를 유지하고 있습니다.",
-            "risk": "매크로 변동성 및 섹터 수급 불균형 리스크.",
-            "upside": "+15%", "mkt_cap": "-", "vol_ratio": "1.2x", "rsi": "54",
-            "swot_s": "브랜드 파워", "swot_w": "원가 부담 상승", "swot_o": "신성장 동력 확보", "swot_t": "글로벌 경쟁 심화",
-            "dcf_target": s['price'], "dcf_bear": s['price'], "dcf_bull": s['price']
-        })
-        
-        enriched_data.append({
-            "rank": str(i+1).zfill(2),
-            "ticker": s['name'],
-            "symbol": symbol,
-            "name": s['name'],
-            "sector": s.get('market', 'KOSPI'),
-            "score": round(88.0 - (i * 0.4), 1),
-            "signal": "적극 매수" if i < 8 else "매수",
-            "price": s['price'],
-            "change": float(s['change_pct'].replace('%', '')),
-            **details
-        })
+            enriched.append({
+                "rank": str(i+1).zfill(2),
+                "ticker": s['name'],
+                "symbol": symbol,
+                "name": s['name'],
+                "sector": s.get('market', 'KOSPI'),
+                "score": round(90.0 - (i * 0.5), 1), # Mock score based on rank
+                "signal": "적극 매수" if i < 3 else ("매수" if i < 7 else "중립"),
+                "price": price_clean,
+                "change": change_clean,
+                **details
+            })
+        return enriched
 
-    response = jsonify(enriched_data)
+    response_data = {
+        "leaders": enrich_list(leaders),
+        "gainers": enrich_list(gainers),
+        "volume": enrich_list(volume)
+    }
+
+    response = jsonify(response_data)
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return response
 

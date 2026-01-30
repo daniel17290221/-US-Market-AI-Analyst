@@ -142,40 +142,7 @@
     <main class="max-w-full mx-auto px-4 pb-20">
         <div id="tab-market" class="tab-content transition-all duration-500">
             <!-- Market Summary Header -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="glass-card p-6 border-brand-primary/20 bg-brand-primary/5">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-[10px] font-black uppercase text-brand-primary tracking-widest">KOSPI
-                            Trend</span>
-                        <i class="fas fa-chart-line text-brand-primary text-xs"></i>
-                    </div>
-                    <div class="flex items-baseline gap-3">
-                        <h3 id="kospi-price" class="text-2xl font-black text-white">--</h3>
-                        <span id="kospi-change" class="text-xs font-bold">--</span>
-                    </div>
-                </div>
-                <div class="glass-card p-6 border-white/5">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-[10px] font-black uppercase text-gray-500 tracking-widest">KOSDAQ Trend</span>
-                        <i class="fas fa-microchip text-gray-500 text-xs"></i>
-                    </div>
-                    <div class="flex items-baseline gap-3">
-                        <h3 id="kosdaq-price" class="text-2xl font-black text-white">--</h3>
-                        <span id="kosdaq-change" class="text-xs font-bold">--</span>
-                    </div>
-                </div>
-                <div class="glass-card p-6 border-white/5">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Currency
-                            (USD/KRW)</span>
-                        <i class="fas fa-exchange-alt text-gray-500 text-xs"></i>
-                    </div>
-                    <div class="flex items-baseline gap-3">
-                        <h3 id="usdkrw-price" class="text-2xl font-black text-white">--</h3>
-                        <span id="usdkrw-change" class="text-xs font-bold">--</span>
-                    </div>
-                </div>
-            </div>
+            <!-- Market Summary Header (Removed by user request) -->
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Main Content Area (8 cols) -->
@@ -323,15 +290,15 @@
                     <div class="glass-card p-8">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                             <h2 class="text-xl font-bold flex items-center gap-3">
-                                <i class="fas fa-bolt text-brand-primary"></i> 실시간 주도주 분석
+                                <i class="fas fa-bolt text-brand-primary"></i> 실시간 시장 분석
                             </h2>
                             <div class="flex p-1 bg-white/5 rounded-xl border border-white/10">
-                                <button onclick="filterMarket('ALL')" id="btn-mkt-all"
-                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-brand-primary text-black transition-all">전체</button>
-                                <button onclick="filterMarket('KOSPI')" id="btn-mkt-kospi"
-                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">KOSPI</button>
-                                <button onclick="filterMarket('KOSDAQ')" id="btn-mkt-kosdaq"
-                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">KOSDAQ</button>
+                                <button onclick="switchMarketTab('leaders')" id="btn-mkt-leaders"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-brand-primary text-black transition-all">주도주</button>
+                                <button onclick="switchMarketTab('gainers')" id="btn-mkt-gainers"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">급등주</button>
+                                <button onclick="switchMarketTab('volume')" id="btn-mkt-volume"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">거래량</button>
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -486,11 +453,16 @@
 
     </main>
 
+
     <script>
         // --- State Management ---
         const state = {
             currentTab: 'market',
-            smartMoneyData: []
+            currentMarketTab: 'leaders', // leaders, gainers, volume
+            smartMoneyData: [], // Currently displayed list
+            leaders: [],
+            gainers: [],
+            volume: []
         };
 
         // Tab Switch Logic
@@ -532,29 +504,21 @@
                 fetchIPO();  // Initial IPO fetch
                 const res = await fetch(`/api/kr/smart-money?t=${Date.now()}`);
                 if (res.ok) {
-                    state.smartMoneyData = await res.json();
+                    const data = await res.json();
 
-                    // Hydrate Market Summary from daily data
-                    try {
-                        const dailyRes = await fetch('/api/kr/smart-money?t=' + Date.now()); // Reuse endpoint or separate
-                        const data = state.smartMoneyData;
-                        // Mock from state for now if separate endpoint not exists, 
-                        // but let's assume we want to update the summary pills.
-                        // Actually, let's fetch indices if possible.
-                        document.getElementById('kospi-price').innerText = "2,550.21";
-                        document.getElementById('kospi-change').innerText = "+1.25%";
-                        document.getElementById('kospi-change').className = "text-xs font-bold text-brand-success";
+                    // Parse structured data if available, else fallback to flat array (backward compatibility)
+                    if (data.leaders || data.gainers) {
+                        state.leaders = data.leaders || [];
+                        state.gainers = data.gainers || [];
+                        state.volume = data.volume || [];
+                        state.smartMoneyData = state.leaders; // Default view
+                    } else {
+                        state.smartMoneyData = data; // Legacy format
+                        state.leaders = data;
+                    }
 
-                        document.getElementById('kosdaq-price').innerText = "840.15";
-                        document.getElementById('kosdaq-change').innerText = "+2.10%";
-                        document.getElementById('kosdaq-change').className = "text-xs font-bold text-brand-success";
+                    switchMarketTab('leaders'); // Initial render
 
-                        document.getElementById('usdkrw-price').innerText = "1,345.50";
-                        document.getElementById('usdkrw-change').innerText = "+2.50";
-                        document.getElementById('usdkrw-change').className = "text-xs font-bold text-brand-danger";
-                    } catch (e) { }
-
-                    filterMarket('ALL'); // Initial render
                     if (state.smartMoneyData.length > 0) {
                         loadSymbol(0);
                     }
@@ -564,12 +528,14 @@
             }
         }
 
-        function filterMarket(mkt) {
-            // Update UI buttons
-            ['all', 'kospi', 'kosdaq'].forEach(id => {
-                const btn = document.getElementById(`btn-mkt-${id}`);
+        function switchMarketTab(tab) {
+            state.currentMarketTab = tab;
+
+            // Update Buttons
+            ['leaders', 'gainers', 'volume'].forEach(t => {
+                const btn = document.getElementById(`btn-mkt-${t}`);
                 if (btn) {
-                    if (id.toUpperCase() === mkt) {
+                    if (t === tab) {
                         btn.classList.add('bg-brand-primary', 'text-black');
                         btn.classList.remove('text-gray-500', 'hover:text-white');
                     } else {
@@ -579,23 +545,20 @@
                 }
             });
 
-            const filtered = mkt === 'ALL'
-                ? state.smartMoneyData
-                : state.smartMoneyData.filter(s => s.sector === mkt);
+            // Update Data Source
+            if (tab === 'leaders') state.smartMoneyData = state.leaders;
+            else if (tab === 'gainers') state.smartMoneyData = state.gainers;
+            else if (tab === 'volume') state.smartMoneyData = state.volume;
 
-            // Limit: 20 for ALL, 10 for individual tabs
-            const limit = mkt === 'ALL' ? 20 : 10;
-            injectSmartMoney(filtered.slice(0, limit));
+            injectSmartMoney(state.smartMoneyData);
         }
 
         function injectSmartMoney(data) {
             const tbody = document.getElementById('smart-money-tbody');
             if (!tbody) return;
             tbody.innerHTML = data.map((item, index) => {
-                // Find original index in master data to keep loadSymbol working
-                const originalIndex = state.smartMoneyData.findIndex(s => s.symbol === item.symbol);
                 return `
-                <tr onclick="loadSymbol(${originalIndex})" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
+                <tr onclick="loadSymbol(${index})" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
                     <td class="px-6 text-gray-600 font-mono text-[10px]">${item.rank}</td>
                     <td class="px-6">
                         <div class="flex flex-col">
@@ -603,14 +566,14 @@
                             <span class="text-[10px] text-gray-500 font-mono">${item.symbol}</span>
                         </div>
                     </td>
-                    <td class="px-6 text-center text-[10px] text-gray-500 font-bold uppercase">${item.sector}</td>
+                    <td class="px-6 text-center text-[10px] text-gray-500 font-bold uppercase">${item.sector || 'KRX'}</td>
                     <td class="px-6 text-center">
                         <span class="px-2 py-1 rounded text-[10px] font-bold ${item.score > 80 ? 'bg-brand-success/20 text-brand-success' : 'bg-brand-primary/20 text-brand-primary'}">
-                            ${item.score}
+                            ${item.score || '-'}
                         </span>
                     </td>
-                    <td class="px-6 font-bold ${item.signal.includes('적극') ? 'text-brand-success' : 'text-brand-primary'} text-xs italic">
-                        ${item.signal}
+                    <td class="px-6 font-bold ${item.signal && item.signal.includes('적극') ? 'text-brand-success' : 'text-brand-primary'} text-xs italic">
+                        ${item.signal || 'Hold'}
                     </td>
                     <td class="px-6 text-right font-mono text-gray-200">₩${item.price}</td>
                     <td class="px-6 text-right font-mono ${item.change >= 0 ? 'text-brand-success' : 'text-brand-danger'}">
