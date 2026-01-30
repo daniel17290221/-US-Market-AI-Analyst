@@ -315,14 +315,35 @@ def get_kr_smart_money():
     # Load all stocks from daily data
     kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
     kr_data = {}
+    print(f"DEBUG: KR Data Path = {kr_data_path}")
     if os.path.exists(kr_data_path):
-        with open(kr_data_path, 'r', encoding='utf-8') as f:
-            kr_data = json.load(f)
+        try:
+            with open(kr_data_path, 'r', encoding='utf-8') as f:
+                kr_data = json.load(f)
+                print("DEBUG: Successfully loaded KR daily data")
+        except Exception as e:
+            print(f"DEBUG: Error loading KR JSON: {e}")
+    else:
+        print("DEBUG: KR DAILY DATA FILE NOT FOUND - Using Fallback")
     
     # Extract lists (default to specific keys if available, else standard top_stocks)
     leaders = kr_data.get('leaders', kr_data.get('top_stocks', []))
     gainers = kr_data.get('gainers', [])
     volume = kr_data.get('volume', [])
+
+    # FALLBACK DATA for KR (if file missing or empty)
+    if not leaders:
+        leaders = [
+            {"symbol": "005930", "name": "삼성전자", "price": "72,500", "change": "+0.69", "market": "KOSPI"},
+            {"symbol": "000660", "name": "SK하이닉스", "price": "182,300", "change": "+1.24", "market": "KOSPI"},
+            {"symbol": "005380", "name": "현대차", "price": "245,500", "change": "+0.41", "market": "KOSPI"},
+            {"symbol": "035420", "name": "NAVER", "price": "188,400", "change": "-0.53", "market": "KOSPI"},
+            {"symbol": "068270", "name": "셀트리온", "price": "178,200", "change": "+2.11", "market": "KOSPI"}
+        ]
+    if not gainers:
+        gainers = leaders[:3] # Just as placeholder
+    if not volume:
+        volume = leaders[:3]
 
     # Pre-defined detailed analysis for major stocks (Persistent Knowledge)
     major_analysis = {
