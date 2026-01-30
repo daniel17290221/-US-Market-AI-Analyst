@@ -403,7 +403,7 @@ def fetch_naver_movers(mover_type='rise', sosok=None):
         'cap': "https://finance.naver.com/sise/sise_market_sum.naver"
     }
     url = urls.get(mover_type, urls['rise'])
-    if sosok is not None and mover_type == 'cap':
+    if sosok is not None:
         url += f"?sosok={sosok}"
         
     headers = {'User-Agent': 'Mozilla/5.0'}
