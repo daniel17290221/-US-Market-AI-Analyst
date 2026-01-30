@@ -75,8 +75,18 @@
             <div class="tradingview-widget-container__widget"></div>
             <script type="text/javascript"
                 src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                    "locale": "kr"
-                    };
+                    {
+                        "symbols": [
+                            { "proName": "KRX:KOSPI", "title": "KOSPI" },
+                            { "proName": "KRX:KOSDAQ", "title": "KOSDAQ" },
+                            { "proName": "FX_IDC:USDKRW", "title": "USD/KRW" }
+                        ],
+                            "showSymbolLogo": true,
+                                "colorTheme": "dark",
+                                    "isTransparent": true,
+                                        "displayMode": "adaptive",
+                                            "locale": "kr"
+                    }
                 </script>
         </div>
     </div>
@@ -288,8 +298,12 @@
                                 <i class="fas fa-bolt text-brand-primary"></i> 실시간 시장 분석
                             </h2>
                             <div class="flex p-1 bg-white/5 rounded-xl border border-white/10">
-                                <button onclick="switchMarketTab('leaders')" id="btn-mkt-leaders"
-                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-brand-primary text-black transition-all">주도주</button>
+                                <button onclick="switchMarketTab('leaders_kospi')" id="btn-mkt-leaders_kospi"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-brand-primary text-black transition-all">코스피
+                                    주도주</button>
+                                <button onclick="switchMarketTab('leaders_kosdaq')" id="btn-mkt-leaders_kosdaq"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">코스닥
+                                    주도주</button>
                                 <button onclick="switchMarketTab('gainers')" id="btn-mkt-gainers"
                                     class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">급등주</button>
                                 <button onclick="switchMarketTab('volume')" id="btn-mkt-volume"
@@ -453,9 +467,10 @@
         // --- State Management ---
         const state = {
             currentTab: 'market',
-            currentMarketTab: 'leaders', // leaders, gainers, volume
+            currentMarketTab: 'leaders_kospi', // leaders_kospi, leaders_kosdaq, gainers, volume
             smartMoneyData: [], // Currently displayed list
-            leaders: [],
+            leaders_kospi: [],
+            leaders_kosdaq: [],
             gainers: [],
             volume: []
         };
@@ -502,17 +517,18 @@
                     const data = await res.json();
 
                     // Parse structured data if available, else fallback to flat array (backward compatibility)
-                    if (data.leaders || data.gainers) {
-                        state.leaders = data.leaders || [];
+                    if (data.leaders_kospi || data.gainers) {
+                        state.leaders_kospi = data.leaders_kospi || [];
+                        state.leaders_kosdaq = data.leaders_kosdaq || [];
                         state.gainers = data.gainers || [];
                         state.volume = data.volume || [];
-                        state.smartMoneyData = state.leaders; // Default view
+                        state.smartMoneyData = state.leaders_kospi; // Default view
                     } else {
                         state.smartMoneyData = data; // Legacy format
-                        state.leaders = data;
+                        state.leaders_kospi = data;
                     }
 
-                    switchMarketTab('leaders'); // Initial render
+                    switchMarketTab('leaders_kospi'); // Initial render
 
                     if (state.smartMoneyData.length > 0) {
                         // Load first symbol data but SKIP chart update to prevent popup on load
@@ -528,7 +544,7 @@
             state.currentMarketTab = tab;
 
             // Update Buttons
-            ['leaders', 'gainers', 'volume'].forEach(t => {
+            ['leaders_kospi', 'leaders_kosdaq', 'gainers', 'volume'].forEach(t => {
                 const btn = document.getElementById(`btn-mkt-${t}`);
                 if (btn) {
                     if (t === tab) {
@@ -542,7 +558,8 @@
             });
 
             // Update Data Source
-            if (tab === 'leaders') state.smartMoneyData = state.leaders;
+            if (tab === 'leaders_kospi') state.smartMoneyData = state.leaders_kospi;
+            else if (tab === 'leaders_kosdaq') state.smartMoneyData = state.leaders_kosdaq;
             else if (tab === 'gainers') state.smartMoneyData = state.gainers;
             else if (tab === 'volume') state.smartMoneyData = state.volume;
 

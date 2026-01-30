@@ -235,10 +235,11 @@ def load_csv(filename):
 
 import re
 
-def fetch_naver_movers(mover_type='rise'):
+def fetch_naver_movers(mover_type='rise', sosok=None):
     """
     Scrape Naver Finance for real-time market movers.
     types: 'rise' (gainers), 'volume' (quant), 'cap' (market sum)
+    sosok: 0 for KOSPI, 1 for KOSDAQ (only for 'cap')
     """
     urls = {
         'rise': "https://finance.naver.com/sise/sise_rise.naver",
@@ -246,27 +247,29 @@ def fetch_naver_movers(mover_type='rise'):
         'cap': "https://finance.naver.com/sise/sise_market_sum.naver"
     }
     url = urls.get(mover_type, urls['rise'])
+    if sosok is not None and mover_type == 'cap':
+        url += f"?sosok={sosok}"
+        
     headers = {'User-Agent': 'Mozilla/5.0'}
     
     try:
         resp = requests.get(url, headers=headers, timeout=5)
         if resp.status_code != 200: return []
         
-        # Simple regex parsing to avoid extra libs like beautifulsoup
+        # Simple regex parsing
         html = resp.text
-        # Find symbol and name patterns
-        # <a href="/item/main.naver?code=005930" class="tltle">삼성전자</a>
         pattern = r'code=(\d{6})".*?class="tltle">(.*?)</a>'
         matches = re.findall(pattern, html)
         
         results = []
-        for i, (code, name) in enumerate(matches[:10]):
+        # Support up to 15 items internally
+        for i, (code, name) in enumerate(matches[:15]):
             results.append({
                 "symbol": code,
                 "name": name,
-                "price": "0", # Will be filled by price fetcher
+                "price": "0",
                 "change": 0.0,
-                "market": "KOSPI" if mover_type == 'cap' else "KRX",
+                "market": "KOSPI" if sosok == 0 else ("KOSDAQ" if sosok == 1 else "KRX"),
                 "rank": str(i+1)
             })
         return results
@@ -388,28 +391,32 @@ def get_kr_smart_money():
             {"symbol": "035420", "name": "NAVER", "price": "190,000", "change": "0.00", "market": "KOSPI", "rank": "5", "score": 82}
         ]
     
-    # DYNAMIC FETCH for real-time movers (Gainers / Volume)
-    # This overrides the static JSON if successful
+    # DYNAMIC FETCH for real-time movers
     try:
         live_gainers = fetch_naver_movers('rise')
-        if live_gainers: gainers = live_gainers
+        if live_gainers: gainers = live_gainers[:10]
         
         live_volume = fetch_naver_movers('volume')
-        if live_volume: volume = live_volume
+        if live_volume: volume = live_volume[:10]
         
-        # For leaders, we only override if the JSON was empty
-        if not leaders:
-            live_leaders = fetch_naver_movers('cap')
-            if live_leaders: leaders = live_leaders
+        # Leaders Split: KOSPI and KOSDAQ
+        leaders_kospi = fetch_naver_movers('cap', sosok=0)[:10]
+        leaders_kosdaq = fetch_naver_movers('cap', sosok=1)[:10]
+        
+        # Merge for the standard 'leaders' key (legacy support)
+        if leaders_kospi:
+            leaders = leaders_kospi
     except Exception as e:
         print(f"DEBUG: Live mover fetch error: {e}")
+        leaders_kospi, leaders_kosdaq = [], []
 
     # Try to fetch real-time prices for ALL active lists
     try:
-        all_tickers = list(set([d['symbol'] for d in leaders + gainers + volume]))
-        current_prices = fetch_realtime_data(all_tickers[:20]) # Limit to avoid timeout
+        all_stocks = leaders_kospi + leaders_kosdaq + gainers + volume
+        all_tickers = list(set([d['symbol'] for d in all_stocks]))
+        current_prices = fetch_realtime_data(all_tickers[:30]) # Increased limit
         
-        for d_list in [leaders, gainers, volume]:
+        for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume, leaders]:
             for d in d_list:
                 sym = d['symbol']
                 lookup = f"{sym}.KS" if len(sym) == 6 else sym
@@ -483,6 +490,8 @@ def get_kr_smart_money():
 
     response_data = {
         "leaders": enrich_list(leaders),
+        "leaders_kospi": enrich_list(leaders_kospi),
+        "leaders_kosdaq": enrich_list(leaders_kosdaq),
         "gainers": enrich_list(gainers),
         "volume": enrich_list(volume)
     }
