@@ -20,7 +20,7 @@ try:
 except:
     DATA_DIR = os.path.join(BASE_DIR, 'us_market')
 
-from us_market.daily_report_generator import USDailyReportGenerator
+# from us_market.daily_report_generator import USDailyReportGenerator (Moved inside function)
 
 # KR Report functionality temporarily disabled for Vercel deployment
 KR_REPORT_AVAILABLE = False
@@ -478,7 +478,15 @@ def get_kr_ipo():
 
 @app.route('/api/us/macro-analysis')
 def get_macro_analysis():
-    return jsonify(load_json('us_macro_analysis.json'))
+    # Defensive import inside function to avoid start-up crash
+    try:
+        from us_market.macro_analyzer import MacroAnalyzer
+        macro = MacroAnalyzer(data_dir=DATA_DIR)
+        # If the file exists, we can return it, or use the generator
+        return jsonify(load_json('us_macro_analysis.json'))
+    except Exception as e:
+        print(f"DEBUG: Macro analysis import error: {e}")
+        return jsonify(load_json('us_macro_analysis.json'))
 
 @app.route('/api/us/sector-heatmap')
 def get_sector_heatmap():
@@ -521,6 +529,7 @@ def get_daily_report():
 
     # 2. Fallback to live generation if file doesn't exist or failed to read
     try:
+        from us_market.daily_report_generator import USDailyReportGenerator
         generator = USDailyReportGenerator(data_dir=DATA_DIR)
         return generator.run()
     except Exception as e:
