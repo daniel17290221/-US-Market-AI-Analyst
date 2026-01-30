@@ -107,7 +107,7 @@ def load_csv(filename):
                         
                     if data:
                         print(f"DEBUG: Successfully loaded {len(data)} rows from {path_to_use}")
-                        print(f"DEBUG: First row preview: {data[0]}")
+                        # print(f"DEBUG: First row preview: {data[0]}") # Causes UnicodeEncodeError on Windows with emojis
                         break
             except Exception as e:
                 print(f"DEBUG: Failed to read {path_to_use} with {enc}: {e}")

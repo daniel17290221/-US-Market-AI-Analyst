@@ -33,16 +33,16 @@ class USDailyReportGenerator:
             try:
                 self.client = genai.Client(api_key=api_key)
                 self.model_name = 'gemini-2.0-flash'
-                logger.info("✅ Gemini AI (google.genai) Backend Initialized")
+                logger.info("[SUCCESS] Gemini AI (google.genai) Backend Initialized")
             except:
                 genai.configure(api_key=api_key)
                 self.client = None
                 self.model = genai.GenerativeModel('gemini-2.0-flash')
-                logger.info("✅ Gemini AI (legacy) Backend Initialized")
+                logger.info("[SUCCESS] Gemini AI (legacy) Backend Initialized")
         else:
             self.client = None
             self.model = None
-            logger.warning("⚠️ GOOGLE_API_KEY not found or default. Using mock data.")
+            logger.warning("[WARNING] GOOGLE_API_KEY not found or default. Using mock data.")
 
     def load_data(self):
         """Aggregate data from all available sources"""
@@ -516,6 +516,7 @@ class USDailyReportGenerator:
         ai_content = self.generate_ai_content(raw_data)
         return self.generate_html(raw_data, ai_content)
 
+
 if __name__ == "__main__":
-    # If run directly as a script, default to us_market directory
-    USDailyReportGenerator(data_dir='us_market').run()
+    # If run directly as a script, default to current directory
+    USDailyReportGenerator(data_dir='.').run()

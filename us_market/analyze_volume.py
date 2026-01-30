@@ -34,7 +34,7 @@ class VolumeAnalyzer:
         if not os.path.exists(self.prices_file):
             raise FileNotFoundError(f"Price file not found: {self.prices_file}")
         
-        logger.info(f"📂 Loading prices from {self.prices_file}")
+        logger.info(f"[FILE] Loading prices from {self.prices_file}")
         df = pd.read_csv(self.prices_file)
         df['date'] = pd.to_datetime(df['date'], utc=True)
         return df
@@ -208,7 +208,7 @@ class VolumeAnalyzer:
     
     def run(self) -> pd.DataFrame:
         """Run volume analysis for all stocks"""
-        logger.info("🚀 Starting Volume Analysis...")
+        logger.info("Starting Volume Analysis...")
         
         # Load data
         df = self.load_prices()
@@ -240,10 +240,10 @@ class VolumeAnalyzer:
         
         # Save results
         results_df.to_csv(self.output_file, index=False)
-        logger.info(f"✅ Analysis complete! Saved to {self.output_file}")
+        logger.info("[SUCCESS] Analysis complete! Saved to {self.output_file}")
         
         # Print summary
-        logger.info("\n📊 Summary:")
+        logger.info("\n[SUMMARY]:")
         stage_counts = results_df['supply_demand_stage'].value_counts()
         for stage, count in stage_counts.items():
             logger.info(f"   {stage}: {count} stocks")
@@ -263,7 +263,7 @@ def main():
     results = analyzer.run()
     
     # Show top 10 accumulation stocks
-    print("\n🔥 Top 10 Accumulation Stocks:")
+    print("\n[HOT] Top 10 Accumulation Stocks:")
     top_10 = results.nlargest(10, 'supply_demand_score')
     for _, row in top_10.iterrows():
         print(f"   {row['ticker']}: Score {row['supply_demand_score']} - {row['supply_demand_stage']}")

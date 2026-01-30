@@ -174,7 +174,7 @@ class SEC13FAnalyzer:
     
     def run(self) -> pd.DataFrame:
         """Run institutional analysis for stocks in the data directory"""
-        logger.info("🚀 Starting 13F Institutional Analysis...")
+        logger.info("Starting 13F Institutional Analysis...")
         
         # Load stock list
         stocks_file = os.path.join(self.data_dir, 'us_stocks_list.csv')
@@ -199,10 +199,10 @@ class SEC13FAnalyzer:
         # Save results
         if not results_df.empty:
             results_df.to_csv(self.output_file, index=False)
-            logger.info(f"✅ Analysis complete! Saved to {self.output_file}")
+            logger.info(f"[SUCCESS] Analysis complete! Saved to {self.output_file}")
             
             # Summary
-            logger.info("\n📊 Summary:")
+            logger.info("\n[SUMMARY]:")
             stage_counts = results_df['institutional_stage'].value_counts()
             for stage, count in stage_counts.items():
                 logger.info(f"   {stage}: {count} stocks")
@@ -230,7 +230,7 @@ def main():
     
     if not results.empty:
         # Show top institutional support
-        print("\n🏦 Top 10 Institutional Support:")
+        print("\n[BANK] Top 10 Institutional Support:")
         top_10 = results.nlargest(10, 'institutional_score')
         for _, row in top_10.iterrows():
             print(f"   {row['ticker']}: Score {row['institutional_score']} | "
@@ -238,7 +238,7 @@ def main():
                   f"Insider: {row['insider_sentiment']}")
         
         # Show stocks with insider buying
-        print("\n📈 Insider Buying Activity:")
+        print("\n[BUY] Insider Buying Activity:")
         buying = results[results['insider_sentiment'] == 'Buying'].head(10)
         for _, row in buying.iterrows():
             print(f"   {row['ticker']}: {row['insider_buys']} buys vs {row['insider_sells']} sells")

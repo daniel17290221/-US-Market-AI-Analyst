@@ -37,22 +37,22 @@ SCRIPTS = [
 
 def run_all():
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    logger.info(f"🚀 Starting Full US Market Update... ({base_dir})")
+    logger.info(f"Starting Full US Market Update... ({base_dir})")
     
     for script in SCRIPTS:
         script_path = os.path.join(base_dir, script)
         if not os.path.exists(script_path):
-            logger.warning(f"⚠️ Script not found: {script}")
+            logger.warning(f"[WARNING] Script not found: {script}")
             continue
             
-        logger.info(f"▶️ Running {script}...")
+        logger.info(f"Running {script}...")
         try:
             # Run the script with its directory as CWD
             subprocess.run([sys.executable, script_path], check=True, cwd=base_dir)
         except subprocess.CalledProcessError as e:
-            logger.error(f"❌ Error running {script}: {e}")
+            logger.error(f"[ERROR] Error running {script}: {e}")
             
-    logger.info("✨ Update Complete!")
+    logger.info("Update Complete!")
 
 if __name__ == "__main__":
     run_all()

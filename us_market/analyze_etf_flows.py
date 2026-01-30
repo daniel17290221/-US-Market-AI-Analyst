@@ -129,7 +129,7 @@ class ETFFlowAnalyzer:
     
     def run(self) -> pd.DataFrame:
         """Analyze all ETFs"""
-        logger.info("🚀 Starting ETF Flow Analysis...")
+        logger.info("Starting ETF Flow Analysis...")
         
         results = []
         
@@ -164,10 +164,10 @@ def main():
     analyzer = ETFFlowAnalyzer(data_dir=args.dir)
     results = analyzer.run()
     
-    print("\n🔥 Top 5 Inflows:")
+    print("\n[HOT] Top 5 Inflows:")
     print(results.nlargest(5, 'flow_score')[['ticker', 'name', 'flow_score', 'price_change_20d']])
     
-    print("\n❄️ Top 5 Outflows:")
+    print("\n[COLD] Top 5 Outflows:")
     print(results.nsmallest(5, 'flow_score')[['ticker', 'name', 'flow_score', 'price_change_20d']])
 
 
