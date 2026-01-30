@@ -26,7 +26,7 @@ from us_market.daily_report_generator import USDailyReportGenerator
 try:
     from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
     KR_REPORT_AVAILABLE = True
-except ImportError as e:
+except Exception as e:
     print(f"Warning: KR Report Generator not available: {e}")
     KR_REPORT_AVAILABLE = False
 
