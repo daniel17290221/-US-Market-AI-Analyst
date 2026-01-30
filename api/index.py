@@ -723,11 +723,11 @@ def get_kr_smart_money():
                 l_kospi = f5.result() or []
                 l_kosdaq = f6.result() or []
 
-            # Merge and assign
-            gainers = (g_kospi[:5] + g_kosdaq[:5])
-            volume = (v_kospi[:5] + v_kosdaq[:5])
-            leaders_kospi = l_kospi[:10]
-            leaders_kosdaq = l_kosdaq[:10]
+            # Merge and assign (Limit to 5 items as requested)
+            gainers = (g_kospi[:3] + g_kosdaq[:2]) 
+            volume = (v_kospi[:3] + v_kosdaq[:2])
+            leaders_kospi = l_kospi[:5]
+            leaders_kosdaq = l_kosdaq[:5]
             
             # Use Leaders KOSPI as default 'leaders' list
             leaders = leaders_kospi
@@ -738,8 +738,8 @@ def get_kr_smart_money():
             leaders_kosdaq = []
     else:
         # If loaded from JSON, just split leaders if not already split
-        leaders_kospi = leaders
-        leaders_kosdaq = leaders # Fallback if no specific data
+        leaders_kospi = leaders[:5]
+        leaders_kosdaq = leaders[:5] # Fallback
 
     # Try to fetch real-time prices for ALL active lists
     try:
@@ -784,8 +784,8 @@ def get_kr_smart_money():
         # Filters based on MAJOR_ANALYSIS_KR
         needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
         
-        # Safe limit for Vercel timeout (Reduced to 8 to ensure response within 10s)
-        needing_dynamic = needing_dynamic[:8]
+        # Limit to 20 (Total unique is approx 20 now: 5+5+5+5)
+        needing_dynamic = needing_dynamic[:20]
         print(f"DEBUG: KR AI processing {len(needing_dynamic)} stocks dynamically. Symbols: {[s['symbol'] for s in needing_dynamic]}")
         dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
         print(f"DEBUG: KR AI Results Count: {len(dynamic_results)}")
