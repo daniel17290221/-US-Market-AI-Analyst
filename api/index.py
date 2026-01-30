@@ -34,6 +34,126 @@ app = Flask(__name__,
             static_folder=os.path.join(BASE_DIR, 'assets'),
             static_url_path='/assets')
 
+# --- Persistent Knowledge: Major KR Analysis ---
+MAJOR_ANALYSIS_KR = {
+    "005930": {
+        "insight": "DRAM 가격 반등과 HBM3E 공급 확대가 실적 개선을 견인할 것으로 예상됩니다.",
+        "risk": "글로벌 스마트폰 수요 둔화 및 파운드리 점유율 확대 지연.",
+        "upside": "+25%", "mkt_cap": "$450B", "vol_ratio": "1.5x ↑", "rsi": "58.4",
+        "swot_s": "글로벌 메모리 반도체 1위 지배력", "swot_w": "기술 격차 축소 우려 (HBM 등)",
+        "swot_o": "AI 서버향 고부가가치 제품 수요 폭증", "swot_t": "경쟁 심화 및 미중 갈등",
+        "dcf_target": "205,000", "dcf_bear": "140,000", "dcf_bull": "240,000"
+    },
+    "000660": {
+        "insight": "NVIDIA향 HBM 공급 독점적 지위가 유지되며 AI 모멘텀의 최대 수혜주입니다.",
+        "risk": "메모리 업황의 높은 변동성과 과도한 하이엔드 제품 의존도.",
+        "upside": "+18%", "mkt_cap": "$62B", "vol_ratio": "2.8x ↑", "rsi": "72.1",
+        "swot_s": "HBM 시장 내 압도적 기술 우위", "swot_w": "상대적으로 취약한 비메모리 포트폴리오",
+        "swot_o": "AI 반도체 시장의 기하급수적 성장", "swot_t": "빅테크 기업들의 자체 칩 개발",
+        "dcf_target": "1,150,000", "dcf_bear": "820,000", "dcf_bull": "1,350,000"
+    },
+    "005380": {
+        "insight": "전기차와 하이브리드 투트랙 전략이 주효하며 사상 최대 이익 기조를 유지하고 있습니다.",
+        "risk": "글로벌 전기차 수요 캐즘(Chasm) 현상 및 지정학적 리스크.",
+        "upside": "+15%", "mkt_cap": "$48B", "vol_ratio": "1.1x", "rsi": "52.4",
+        "swot_s": "믹스 개선을 통한 수익성 극대화", "swot_w": "내수 시장 점유율 방어 필요성",
+        "swot_o": "북미 메타플랜트 가동 및 수소 생태계", "swot_t": "금리 인상에 따른 소비 심리 위축",
+        "dcf_target": "620,000", "dcf_bear": "480,000", "dcf_bull": "710,000"
+    },
+    "207940": {
+        "insight": "압도적인 생산 능력을 바탕으로 한 CMO/CDMO 수주 확대가 견조한 성장을 뒷받침합니다.",
+        "risk": "미국 생물보안법 영향 가능성 및 후발주자들의 추격.",
+        "upside": "+12%", "mkt_cap": "$55B", "vol_ratio": "0.9x", "rsi": "48.2",
+        "swot_s": "글로벌 1위의 바이오 생산 캐파", "swot_w": "높은 위탁 생산 의존도",
+        "swot_o": "자체 신약 파이프라인 상업화 가시화", "swot_t": "글로벌 공급망 재편 및 단가 경쟁",
+        "dcf_target": "2,150,000", "dcf_bear": "1,650,000", "dcf_bull": "2,400,000"
+    },
+    "373220": {
+        "insight": "LFP 배터리 및 차세대 제품군 확대를 통해 전기차 수요 둔화 국면을 정면 돌파 중입니다.",
+        "risk": "완성차 업체들의 배터리 내재화 추진 및 원자재 가격 변동성.",
+        "upside": "+20%", "mkt_cap": "$82B", "vol_ratio": "1.3x", "rsi": "55.1",
+        "swot_s": "북미 시장 내 압도적 점유율과 파트너십", "swot_w": "수익성 개선 속도 지연 우려",
+        "swot_o": "에너지저장장치(ESS) 시장의 고성장", "swot_t": "중국 LFP 배터리 기업의 글로벌 확장",
+        "dcf_target": "580,000", "dcf_bear": "360,000", "dcf_bull": "680,000"
+    },
+    "000270": {
+        "insight": "EV9 등 프리미엄 모델 비중 확대와 환율 효과로 강력한 현금 흐름을 창출하고 있습니다.",
+        "risk": "주주 환원 정책 기대감 소멸 및 피크 아웃 논란.",
+        "upside": "+22%", "mkt_cap": "$35B", "vol_ratio": "1.8x", "rsi": "61.5",
+        "swot_s": "브랜드 인지도 상승 및 디자인 경쟁력", "swot_w": "전동화 전환 초기 비용 부담",
+        "swot_o": "주주 환원 정책 강화(자사주 소각 등)", "swot_t": "글로벌 보호무역주의 강화 추세",
+        "dcf_target": "195,000", "dcf_bear": "145,000", "dcf_bull": "230,000"
+    },
+    "068270": {
+        "insight": "합병 이후 원가율 개선과 짐펜트라의 미국 시장 안착이 실적 성장의 핵심 동력입니다.",
+        "risk": "바이오시밀러 경쟁 심화에 따른 약가 인하 압박.",
+        "upside": "+15%", "mkt_cap": "$32B", "vol_ratio": "1.2x", "rsi": "54.2",
+        "swot_s": "바이오시밀러 시장 내 선도적 입지", "swot_w": "높은 램시마 의존도 및 합병 후 초기 비용",
+        "swot_o": "신약 짐펜트라의 미국 매출 본격화", "swot_t": "글로벌 대형 제약사들의 시장 진입",
+        "dcf_target": "320,000", "dcf_bear": "250,000", "dcf_bull": "380,000"
+    }
+}
+
+# --- Persistent Knowledge: Major US Analysis ---
+major_us_analysis = {
+    "NVDA": {
+        "insight": "NVIDIA는 AI 가속기 시장에서 독보적 지위를 유지하고 있으며, Blackwell 출시로 매출 성장이 가속화될 전망입니다.",
+        "risk": "중국 수출 규제 영향 및 경쟁사 AMD MI300 대항 전략.",
+        "upside": "+18.2%", "mkt_cap": "$3.5T", "vol_ratio": "3.2x ↑", "rsi": "72.4",
+        "swot_s": "AI 시장 80%+ 점유율 및 CUDA 생태계", "swot_w": "빅테크 고객 집중도 및 높은 의존도",
+        "swot_o": "자율주행 및 엣지 AI 시장 확대", "swot_t": "중국 수출 규제 및 경쟁 심화",
+        "dcf_target": "165.00", "dcf_bear": "125.00", "dcf_bull": "190.00"
+    },
+    "AAPL": {
+        "insight": "Apple Intelligence를 통한 교체 수요 자극과 서비스 부문의 고마진 성장이 밸류에이션을 지지합니다.",
+        "risk": "아이폰 판매량 둔화 및 하드웨어 혁신 속도에 대한 시장의 의구심.",
+        "upside": "+12.5%", "mkt_cap": "$3.4T", "vol_ratio": "0.9x", "rsi": "58.2",
+        "swot_s": "강력한 브랜드 로열티 및 생태계 락인 효과", "swot_w": "하드웨어 매출 의존도 및 규제 리스크",
+        "swot_o": "AI 통합을 이용한 프리미엄 기기 수요 창출", "swot_t": "스마트폰 시장 성숙 및 미중 갈등",
+        "dcf_target": "265.00", "dcf_bear": "210.00", "dcf_bull": "310.00"
+    },
+    "TSLA": {
+        "insight": "자율주행 기술력 우위와 로보택시 비즈니스 모델 구체화가 주가의 핵심 변수입니다.",
+        "risk": "전기차 수요 캐즘 현상 및 글로벌 가격 경쟁 심화.",
+        "upside": "+22.8%", "mkt_cap": "$820B", "vol_ratio": "2.4x ↑", "rsi": "64.5",
+        "swot_s": "압도적인 자율주행 데이터 축적 및 브랜드 리딩", "swot_w": "생산 효율화 한계 및 CEO 리스크",
+        "swot_o": "에너지 저장 장치(ESS) 및 옵티머스 로봇 사업 가속화", "swot_t": "중국산 저가 전기차 공세 강화",
+        "dcf_target": "350.00", "dcf_bear": "220.00", "dcf_bull": "480.00"
+    },
+    "MSFT": {
+        "insight": "Azure와 Copilot의 결합으로 기업용 AI 시장의 실질적인 수익화가 가장 빠르게 진행되고 있습니다.",
+        "risk": "인프라 투자 비용(CAPEX) 급증에 따른 수익성 일시 하락 우려.",
+        "upside": "+15.4%", "mkt_cap": "$3.1T", "vol_ratio": "1.1x", "rsi": "55.8",
+        "swot_s": "독보적인 B2B 영업망 및 클라우드 기술력", "swot_w": "높은 인수로 인한 부채 및 통합 과제",
+        "swot_o": "생성형 AI의 전 제품군 통합 시너지", "swot_t": "클라우드 시장 내 구글/아마존의 추격",
+        "dcf_target": "500.00", "dcf_bear": "410.00", "dcf_bull": "560.00"
+    },
+    "AMZN": {
+        "insight": "AWS의 견조한 성장세 회복과 광고 부문의 폭발적인 성장이 수익성 개선을 주도하고 있습니다.",
+        "risk": "전자상거래 부문의 경쟁 심화 및 물류 비용 증가 리스크.",
+        "upside": "+20.1%", "mkt_cap": "$1.9T", "vol_ratio": "1.5x ↑", "rsi": "62.4",
+        "swot_s": "글로벌 클라우드 1위(AWS) 및 막강한 물류망", "swot_w": "낮은 리테일 마진 및 반독점 규제",
+        "swot_o": "AI를 활용한 물류 최적화 및 광고 사업 확장", "swot_t": "Temu, Shein 등 저가 이커머스 공세",
+        "dcf_target": "230.00", "dcf_bear": "180.00", "dcf_bull": "270.00"
+    },
+    "META": {
+        "insight": "광고 효율 개선과 AI 추천 엔진 강화로 인스타그램/페이스북의 사용자 체류 시간이 늘어나고 있습니다.",
+        "risk": "메타버스 부문의 대규모 적자 지속 및 규제 강화.",
+        "upside": "+18.5%", "mkt_cap": "$1.4T", "vol_ratio": "1.8x ↑", "rsi": "68.2",
+        "swot_s": "압도적인 소셜 미디어 점유율 및 광고 정밀 타겟팅", "swot_w": "현금 창출원의 애플 플랫폼 의존성",
+        "swot_o": "릴스(Reels) 수익화 가속 및 Llama 통한 AI 주도권", "swot_t": "틱톡 경쟁 및 가짜 뉴스 관련 사회적 책임",
+        "dcf_target": "650.00", "dcf_bear": "520.00", "dcf_bull": "760.00"
+    },
+    "GOOGL": {
+        "insight": "검색 광고 시장의 지배력 유지와 제미나이(Gemini) 고도화를 통한 AI 반격이 기대됩니다.",
+        "risk": "생성형 AI 검색 도입에 따른 기존 검색 광고 모델 잠식(Cannibalization) 우려.",
+        "upside": "+14.2%", "mkt_cap": "$2.1T", "vol_ratio": "1.3x", "rsi": "51.4",
+        "swot_s": "유튜브 및 안드로이드 등 방대한 데이터 생태계", "swot_w": "AI 대응 속도에 대한 시장의 의구심",
+        "swot_o": "구글 클라우드의 가파른 성장 및 웨이모 상용화", "swot_t": "브라우저 점유율 및 검색 반독점 소송 리스크",
+        "dcf_target": "210.00", "dcf_bear": "165.00", "dcf_bull": "245.00"
+    }
+}
+
 print(f"DEBUG: BASE_DIR={BASE_DIR}")
 print(f"DEBUG: DATA_DIR={DATA_DIR}")
 
@@ -438,16 +558,10 @@ def get_kr_report():
     return "Report not found", 404
 
 
-# --- Major US Analysis Persistent Knowledge ---
-major_us_analysis = {
-    "NVDA": {
-        "insight": "NVIDIA는 AI 가속기 시장에서 독보적 지위를 유지하고 있으며, Blackwell 출시로 매출 성장이 가속화될 전망입니다.",
-        "risk": "중국 수출 규제 영향 및 경쟁사 AMD MI300 대항 전략.",
-        "upside": "+18.2%", "mkt_cap": "$3.5T", "vol_ratio": "3.2x ↑", "rsi": "72.4",
-        "swot_s": "AI 시장 80%+ 점유율 및 CUDA 생태계", "swot_w": "빅테크 고객 집중도 및 높은 의존도",
-        "swot_o": "자율주행 및 엣지 AI 시장 확대", "swot_t": "중국 수출 규제 및 경쟁 심화",
-        "dcf_target": "165.00", "dcf_bear": "125.00", "dcf_bull": "190.00"
-    },
+# --- Major US Analysis Persistent Knowledge (already defined above globally) ---
+
+@app.route('/api/us/smart-money')
+def get_smart_money():
     "TSLA": {
         "insight": "FSD v12 및 로보택시 기대감이 강력한 모멘텀을 형성하고 있으며, 비용 절감 노력이 마진을 방어 중입니다.",
         "risk": "전기차 시장의 경쟁 심화와 중국 시장 점유율 둔화 가능성.",
@@ -622,24 +736,30 @@ def get_kr_smart_money():
         print(f"DEBUG: KR Price update error: {e}")
 
     # PRE-FETCH AI ANALYSIS FOR ALL UNIQUE STOCKS IN ONE BATCH
-    all_unique_stocks = []
-    seen = set()
-    for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume]:
-        for s in d_list:
-            if s['symbol'] not in seen:
-                all_unique_stocks.append(s)
-                seen.add(s['symbol'])
-    
-    # Filters based on major_analysis (hardcoded knowns)
-    needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in major_analysis]
-    dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
+    try:
+        all_unique_stocks = []
+        seen = set()
+        for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume]:
+            for s in d_list:
+                if s['symbol'] not in seen:
+                    all_unique_stocks.append(s)
+                    seen.add(s['symbol'])
+        
+        # Filters based on MAJOR_ANALYSIS_KR (hardcoded knowns)
+        needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
+        # Further limit to top 12 to avoid timeouts
+        needing_dynamic = needing_dynamic[:12]
+        dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
+    except Exception as e:
+        print(f"DEBUG: KR AI Batch Analysis Error: {e}")
+        dynamic_results = {}
 
     def enrich_list(stock_list):
         enriched = []
         for i, s in enumerate(stock_list):
             symbol = s['symbol']
-            # Try major_analysis -> dynamic_results -> absolute fallback
-            details = major_analysis.get(symbol)
+            # Try MAJOR_ANALYSIS_KR -> dynamic_results -> absolute fallback
+            details = MAJOR_ANALYSIS_KR.get(symbol)
             if not details:
                 # Try flexible mapping for dynamic results
                 details = dynamic_results.get(symbol)
