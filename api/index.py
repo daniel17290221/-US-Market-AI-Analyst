@@ -721,29 +721,26 @@ def get_kr_smart_money():
             {"symbol": "035420", "name": "NAVER", "price": "190,000", "change": "0.00", "market": "KOSPI", "rank": "5", "score": 82}
         ]
     
-    # DYNAMIC FETCH for real-time movers
-    # DYNAMIC FETCH for real-time movers
+    # ALWAYS FETCH REAL-TIME MOVERS (Vercel has no persistent JSON)
     try:
-        # Gainers: Merge KOSPI and KOSDAQ
-        gainers_kospi = fetch_naver_movers('rise', sosok=0)
-        gainers_kosdaq = fetch_naver_movers('rise', sosok=1)
-        # Sort by rank or just take top 5 from each to make 10
-        gainers = (gainers_kospi[:5] + gainers_kosdaq[:5]) if (gainers_kospi and gainers_kosdaq) else (gainers_kospi or gainers_kosdaq or [])
+        if not gainers:
+            g_kospi = fetch_naver_movers('rise', sosok=0) or []
+            g_kosdaq = fetch_naver_movers('rise', sosok=1) or []
+            gainers = g_kospi[:5] + g_kosdaq[:5]
+            
+        if not volume:
+            v_kospi = fetch_naver_movers('volume', sosok=0) or []
+            v_kosdaq = fetch_naver_movers('volume', sosok=1) or []
+            volume = v_kospi[:5] + v_kosdaq[:5]
+            
+        # Leaders are always fetched fresh if possible
+        leaders_kospi = fetch_naver_movers('cap', sosok=0)[:10] or leaders
+        leaders_kosdaq = fetch_naver_movers('cap', sosok=1)[:10] or []
         
-        # Volume: Merge
-        vol_kospi = fetch_naver_movers('volume', sosok=0)
-        vol_kosdaq = fetch_naver_movers('volume', sosok=1)
-        volume = (vol_kospi[:5] + vol_kosdaq[:5]) if (vol_kospi and vol_kosdaq) else (vol_kospi or vol_kosdaq or [])
-        
-        # Leaders Split: KOSPI and KOSDAQ
-        leaders_kospi = fetch_naver_movers('cap', sosok=0)[:10]
-        leaders_kosdaq = fetch_naver_movers('cap', sosok=1)[:10]
-        
-        # Legacy support
-        leaders = leaders_kospi
     except Exception as e:
         print(f"DEBUG: Live mover fetch error: {e}")
-        leaders_kospi, leaders_kosdaq = [], []
+        leaders_kospi = leaders
+        leaders_kosdaq = []
 
     # Try to fetch real-time prices for ALL active lists
     try:
