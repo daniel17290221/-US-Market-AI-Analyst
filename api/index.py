@@ -543,17 +543,19 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
     name_to_sym = {normalize(s.get('name', '')): s['symbol'] for s in needed}
     
     prompt = f"""
-    당신은 글로벌 증시 전문 AI 분석가입니다. 아래 제공된 종목 리스트에 대해 최신 데이터 기반 SWOT 분석과 투자 인사이트를 제공해주세요.
+    당신은 글로벌 증시 전문 AI 분석가입니다. 아래 제공된 한국 주식(KOSPI/KOSDAQ) 리스트에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
     
-    [중요 지시사항]
-    1. 반드시 제공된 **6자리 종목코드(symbol)**를 JSON의 키(Key)로 사용하세요. 종목명(name)을 키로 사용하지 마세요.
-    2. 각 종목에 대해 다음 정보를 포함하세요:
-       - insight: 1문장 투자 한줄평 (한국어)
-       - risk: 핵심 리스크 요인 1가지
-       - swot_s, swot_w, swot_o, swot_t: 각각 1문장의 강태약기위분석
-       - dcf_target, dcf_bear, dcf_bull: 목표/하단/상단 가격 (숫자 및 필요시 단위)
-       - upside: 예상 상승 여력 (예: +20%)
-    3. 결과는 반드시 순수 JSON 형식으로만 반환하세요.
+    [필수 지시사항]
+    1. **제공된 모든 종목(Key)에 대해 빠짐없이 분석 결과를 반환하세요.**
+    2. 소형주라 정보가 부족하다면, 해당 종목의 **섹터(업종) 동향이나 기술적 위치**를 기반으로 추론하여 작성하세요. (분석 포기 금지)
+    3. 반드시 제공된 **6자리 종목코드**를 JSON 키로 사용하세요.
+    4. 각 종목에 대해 아래 포맷을 엄수하세요:
+       - insight: 최근 주가 흐름이나 수급 특징을 반영한 한줄평 (구체적일수록 좋음)
+       - risk: 재무적 리스크 또는 차익실현 매물 가능성 등
+       - swot_s, swot_w, swot_o, swot_t: 각각 1문장의 핵심 요약
+       - dcf_target, dcf_bear, dcf_bull: 현재가 대비 현실적인 목표가 설정 (숫자만)
+       - upside: 예상 상승 여력 (예: +15%)
+    5. 결과는 오직 JSON 형식으로만 출력하세요.
     
     [분석 대상 리스트]
     {json.dumps([{ 'symbol': s['symbol'], 'name': s.get('name', 'N/A') } for s in needed], ensure_ascii=False)}
@@ -561,16 +563,9 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
     [출력 예시]
     {{
         "005930": {{
-            "insight": "...",
-            "risk": "...",
-            "swot_s": "...",
-            "swot_w": "...",
-            "swot_o": "...",
-            "swot_t": "...",
-            "dcf_target": "85000",
-            "dcf_bear": "65000",
-            "dcf_bull": "110000",
-            "upside": "+15%"
+            "insight": "반도체 업황 회복과 HBM 기대감으로 상승 추세가 지속되고 있습니다.",
+            "risk": "외국인 매도세 전환 가능성",
+            ...
         }}
     }}
     """
@@ -580,9 +575,10 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
         content = response.text.replace('```json', '').replace('```', '').strip()
         ai_data = json.loads(content)
         
-        print(f"DEBUG: Gemini returned analysis for {len(ai_data)} symbols")
+        print(f"DEBUG: Gemini returned analysis for {len(ai_data)} symbols (Target: {len(needed)})")
         
         for key, data in ai_data.items():
+            norm_key = normalize(key)
             norm_key = normalize(key)
             
             # Map back to provided 6-digit symbol if AI used a name or dotted symbol
