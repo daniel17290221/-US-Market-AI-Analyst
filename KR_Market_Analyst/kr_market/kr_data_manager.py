@@ -51,8 +51,8 @@ class KRDataManager:
                 combined_list.append((row['Code'], row['Name'], 'KOSDAQ'))
                 
             stock_data = []
-            # 상위 20개 종목에 대해 상세 데이터 수집 (성능상 제한)
-            for symbol, name, market in combined_list[:25]:
+            # 상위 100개 종목에 대해 상세 데이터 수집 (충분한 데이터 확보를 위함)
+            for symbol, name, market in combined_list[:100]:
                 try:
                     df = fdr.DataReader(symbol)
                     if not df.empty and len(df) >= 2:

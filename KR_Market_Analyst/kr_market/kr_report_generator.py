@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class KRDailyReportGenerator:
-    def __init__(self, data_dir='kr_market', output_file='kr_market_daily_report.html'):
+    def __init__(self, data_dir='KR_Market_Analyst/kr_market', output_file='kr_market_daily_report.html'):
         load_dotenv()
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
@@ -83,11 +83,13 @@ class KRDailyReportGenerator:
         # Build Index Cards
         indices_html = ""
         for k, v in raw_data['market_indices'].items():
+            is_up = '+' in v['change']
+            change_class = 'up' if is_up else 'down'
             indices_html += f"""
             <div class="index-card">
                 <div class="index-name">📈 {v['name']}</div>
                 <div class="index-value">{v['price']}</div>
-                <div class="index-change up">{v['change']}</div>
+                <div class="index-change {change_class}">{v['change']}</div>
             </div>"""
 
         # Build News Sections
