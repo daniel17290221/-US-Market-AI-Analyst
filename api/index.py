@@ -695,52 +695,55 @@ def get_kr_smart_money():
     # Load all stocks from daily data
     kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
     kr_data = {}
-    print(f"DEBUG: KR Data Path = {kr_data_path}")
     if os.path.exists(kr_data_path):
         try:
             with open(kr_data_path, 'r', encoding='utf-8') as f:
                 kr_data = json.load(f)
-                print("DEBUG: Successfully loaded KR daily data")
-        except Exception as e:
-            print(f"DEBUG: Error loading KR JSON: {e}")
-    else:
-        print("DEBUG: KR DAILY DATA FILE NOT FOUND - Using Fallback")
+        except Exception:
+            pass
     
-    # Extract lists (default to specific keys if available, else standard top_stocks)
-    leaders = kr_data.get('leaders', kr_data.get('top_stocks', []))
+    # Initialize lists (may be empty if file missing)
+    leaders = kr_data.get('leaders', [])
     gainers = kr_data.get('gainers', [])
     volume = kr_data.get('volume', [])
 
-    # FALLBACK DATA for KR (if file missing or empty)
-    if not leaders:
-        leaders = [
-            {"symbol": "005930", "name": "삼성전자", "price": "75,000", "change": "0.00", "market": "KOSPI", "rank": "1", "score": 95},
-            {"symbol": "000660", "name": "SK하이닉스", "price": "180,000", "change": "0.00", "market": "KOSPI", "rank": "2", "score": 92},
-            {"symbol": "005380", "name": "현대차", "price": "240,000", "change": "0.00", "market": "KOSPI", "rank": "3", "score": 88},
-            {"symbol": "068270", "name": "셀트리온", "price": "180,000", "change": "0.00", "market": "KOSPI", "rank": "4", "score": 85},
-            {"symbol": "035420", "name": "NAVER", "price": "190,000", "change": "0.00", "market": "KOSPI", "rank": "5", "score": 82}
-        ]
-    
-    # ALWAYS FETCH REAL-TIME MOVERS (Vercel has no persistent JSON)
-    try:
-        if not gainers:
-            g_kospi = fetch_naver_movers('rise', sosok=0) or []
-            g_kosdaq = fetch_naver_movers('rise', sosok=1) or []
-            gainers = g_kospi[:5] + g_kosdaq[:5]
+    # Parallel Scrape if data is missing (Primary Logic for Vercel)
+    if not gainers or not volume or not leaders:
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                # Submit all scraping tasks
+                f1 = executor.submit(fetch_naver_movers, 'rise', 0)   # Gainers KOSPI
+                f2 = executor.submit(fetch_naver_movers, 'rise', 1)   # Gainers KOSDAQ
+                f3 = executor.submit(fetch_naver_movers, 'volume', 0) # Volume KOSPI
+                f4 = executor.submit(fetch_naver_movers, 'volume', 1) # Volume KOSDAQ
+                f5 = executor.submit(fetch_naver_movers, 'cap', 0)    # Leaders KOSPI
+                f6 = executor.submit(fetch_naver_movers, 'cap', 1)    # Leaders KOSDAQ
+                
+                # Collect results
+                g_kospi = f1.result() or []
+                g_kosdaq = f2.result() or []
+                v_kospi = f3.result() or []
+                v_kosdaq = f4.result() or []
+                l_kospi = f5.result() or []
+                l_kosdaq = f6.result() or []
+
+            # Merge and assign
+            gainers = (g_kospi[:5] + g_kosdaq[:5])
+            volume = (v_kospi[:5] + v_kosdaq[:5])
+            leaders_kospi = l_kospi[:10]
+            leaders_kosdaq = l_kosdaq[:10]
             
-        if not volume:
-            v_kospi = fetch_naver_movers('volume', sosok=0) or []
-            v_kosdaq = fetch_naver_movers('volume', sosok=1) or []
-            volume = v_kospi[:5] + v_kosdaq[:5]
+            # Use Leaders KOSPI as default 'leaders' list
+            leaders = leaders_kospi
             
-        # Leaders are always fetched fresh if possible
-        leaders_kospi = fetch_naver_movers('cap', sosok=0)[:10] or leaders
-        leaders_kosdaq = fetch_naver_movers('cap', sosok=1)[:10] or []
-        
-    except Exception as e:
-        print(f"DEBUG: Live mover fetch error: {e}")
+        except Exception as e:
+            print(f"DEBUG: Live mover parallel fetch error: {e}")
+            leaders_kospi = []
+            leaders_kosdaq = []
+    else:
+        # If loaded from JSON, just split leaders if not already split
         leaders_kospi = leaders
-        leaders_kosdaq = []
+        leaders_kosdaq = leaders # Fallback if no specific data
 
     # Try to fetch real-time prices for ALL active lists
     try:
@@ -771,7 +774,7 @@ def get_kr_smart_money():
     except Exception as e:
         print(f"DEBUG: KR Price update error: {e}")
 
-    # PRE-FETCH AI ANALYSIS FOR ALL UNIQUE STOCKS IN ONE BATCH
+    # PRE-FETCH AI ANALYSIS
     try:
         all_unique_stocks = []
         seen = set()
@@ -782,11 +785,11 @@ def get_kr_smart_money():
                     all_unique_stocks.append(s)
                     seen.add(s['symbol'])
         
-        # Filters based on MAJOR_ANALYSIS_KR (hardcoded knowns)
+        # Filters based on MAJOR_ANALYSIS_KR
         needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
         
-        # Safe limit for Vercel timeout (15 stocks)
-        needing_dynamic = needing_dynamic[:15]
+        # Reduced limit for Speed (10 stocks max)
+        needing_dynamic = needing_dynamic[:10]
         print(f"DEBUG: KR AI processing {len(needing_dynamic)} stocks dynamically")
         dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
     except Exception as e:
