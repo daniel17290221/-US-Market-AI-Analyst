@@ -566,9 +566,10 @@
             injectSmartMoney(state.smartMoneyData);
 
             // Auto-load first item of the new tab to sync AI details
-            if (state.smartMoneyData && state.smartMoneyData.length > 0) {
-                loadSymbol(0, true); // Use true to avoid triggering popup on tab switch
-            }
+            // REMOVED based on user feedback: Do not auto-select or scroll. 
+            // if (state.smartMoneyData && state.smartMoneyData.length > 0) {
+            //    loadSymbol(0, true); 
+            // }
         }
 
         function injectSmartMoney(data) {
@@ -664,7 +665,9 @@
                     }
                 }
 
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (!skipChart) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             } catch (e) {
                 console.error("Error in loadSymbol:", e);
             }
