@@ -542,7 +542,19 @@
                     if (data.date) {
                         const updateTimeEl = document.getElementById('data-updated-time');
                         if (updateTimeEl) {
-                            updateTimeEl.innerText = `Update: ${data.date}`;
+                            // Format: "2026-01-30 16:11:43 KST" -> "01.30 16:11 기준"
+                            try {
+                                const parts = data.date.split(' ');
+                                if (parts.length >= 2) {
+                                    const datePart = parts[0].substring(5).replace('-', '.'); // 01.30
+                                    const timePart = parts[1].substring(0, 5); // 16:11
+                                    updateTimeEl.innerHTML = `<span class="text-brand-primary">●</span> ${datePart} ${timePart} 기준`;
+                                } else {
+                                    updateTimeEl.innerText = data.date;
+                                }
+                            } catch (e) {
+                                updateTimeEl.innerText = data.date;
+                            }
                         }
                     }
 
