@@ -737,6 +737,9 @@ def get_kr_k_ipo():
     # IPO Subscription News
     news = fetch_google_news_rss("공모주+청약+일정")
     return jsonify(news)
+
+@app.route('/api/kr/smart-money')
+def get_kr_smart_money():
     # Load all stocks from daily data
     kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
     kr_data = {}
