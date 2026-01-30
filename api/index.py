@@ -5,6 +5,10 @@ import os
 import requests
 import sys
 from datetime import datetime
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Adjust path for Vercel subdirectory deployment
 # BASE_DIR should be the root of the project (where templates and us_market are)
@@ -330,6 +334,78 @@ def fetch_realtime_data(tickers):
             
     return prices
 
+# --- Dynamic AI Analysis Global Cache ---
+AI_CACHE = {} # (date, symbol) -> analysis_dict
+try:
+    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+    model = genai.GenerativeModel('gemini-2.0-flash')
+except Exception as e:
+    print(f"DEBUG: Gemini Config Error: {e}")
+    model = None
+
+def fetch_dynamic_ai_analysis(stocks_to_analyze):
+    """
+    Fetch SWOT, Insights, and DCF for a list of stocks using Gemini.
+    """
+    if not stocks_to_analyze or model is None: return {}
+    
+    today = datetime.now().strftime("%Y-%m-%d")
+    results = {}
+    
+    # Filter out what's already in cache
+    needed = []
+    for s in stocks_to_analyze:
+        key = (today, s['symbol'])
+        if key in AI_CACHE:
+            results[s['symbol']] = AI_CACHE[key]
+        else:
+            needed.append(s)
+            
+    if not needed: return results
+
+    print(f"DEBUG: Requesting dynamic AI analysis for {len(needed)} stocks")
+    
+    prompt = f"""
+    당신은 대한민국 증시 전문 AI 분석가입니다. 아래 제공된 종목 리스트에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
+    각 종목에 대해 다음 정보를 포함해야 합니다: insight(한줄평), risk(리스크), swot_s(강점), swot_w(약점), swot_o(기회), swot_t(위협), dcf_target, dcf_bear, dcf_bull.
+    말투는 전문적이고 분석적이어야 하며, 한국어로 작성해주세요.
+    결과는 반드시 아래 JSON 형식으로 반환해주세요.
+    
+    [종목 리스트]
+    {json.dumps([{ 'symbol': s['symbol'], 'name': s['name'] } for s in needed], ensure_ascii=False)}
+    
+    [출력 형식 가이드]
+    {{
+        "종목코드": {{
+            "insight": "...",
+            "risk": "...",
+            "swot_s": "...",
+            "swot_w": "...",
+            "swot_o": "...",
+            "swot_t": "...",
+            "dcf_target": "숫자만(예: 50000)",
+            "dcf_bear": "숫자만",
+            "dcf_bull": "숫자만",
+            "upside": "+20%"
+        }}
+    }}
+    """
+    
+    try:
+        response = model.generate_content(prompt)
+        content = response.text.replace('```json', '').replace('```', '').strip()
+        ai_data = json.loads(content)
+        
+        for symbol, data in ai_data.items():
+            key = (today, symbol)
+            AI_CACHE[key] = data
+            results[symbol] = data
+            
+        return results
+    except Exception as e:
+        print(f"DEBUG: Gemini AI Analysis Error: {e}")
+        return results
+
 @app.route('/')
 def index():
     resp = make_response(render_template('index.html'))
@@ -516,18 +592,27 @@ def get_kr_smart_money():
     }
 
     def enrich_list(stock_list):
+        # Identify stocks needing AI analysis
+        needing_ai = []
+        for s in stock_list:
+            if s['symbol'] not in major_analysis:
+                needing_ai.append(s)
+        
+        # Fetch dynamic analysis in batch
+        dynamic_results = fetch_dynamic_ai_analysis(needing_ai)
+
         enriched = []
         for i, s in enumerate(stock_list):
             symbol = s['symbol']
-            # Default enrichment if not in major_analysis
-            details = major_analysis.get(symbol, {
+            # Try major_analysis -> dynamic_results -> absolute fallback
+            details = major_analysis.get(symbol, dynamic_results.get(symbol, {
                 "insight": f"{s['name']} - 섹터 내 기술적 모멘텀이 발생하고 있습니다.",
                 "risk": "단기 급등에 따른 차익 실현 매물 출회 가능성.",
                 "upside": "+10~15%", "mkt_cap": "-", "vol_ratio": "1.2x", "rsi": "50-60",
                 "swot_s": "견고한 시장 지위", "swot_w": "거시 경제 민감도",
                 "swot_o": "신규 시장 진출 기회", "swot_t": "경쟁 심화",
                 "dcf_target": s['price'], "dcf_bear": "-", "dcf_bull": "-"
-            })
+            }))
             
             # Safe parsing for price/change if they come as strings with commas/symbols
             try:
