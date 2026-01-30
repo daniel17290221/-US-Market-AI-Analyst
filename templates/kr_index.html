@@ -145,10 +145,6 @@
 
         <div class="flex items-center gap-4">
             <div class="flex flex-col items-end gap-1">
-                <span id="data-updated-time"
-                    class="text-[10px] font-mono text-gray-400 bg-white/5 px-2 py-0.5 rounded border border-white/5">
-                    Update: -
-                </span>
                 <span id="clock" class="text-[10px] font-mono text-brand-primary font-bold">
                     --:--:-- KST
                 </span>
@@ -314,9 +310,15 @@
                     <!-- Top 10 Stock List -->
                     <div class="glass-card p-8">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                            <h2 class="text-xl font-bold flex items-center gap-3">
-                                <i class="fas fa-bolt text-brand-primary"></i> 실시간 시장 분석
-                            </h2>
+                            <div class="flex items-center gap-4">
+                                <h2 class="text-xl font-bold flex items-center gap-3">
+                                    <i class="fas fa-bolt text-brand-primary"></i> 실시간 시장 분석
+                                </h2>
+                                <span id="data-updated-time"
+                                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-2 py-0.5 rounded border border-white/5 animate-pulse">
+                                    Update: -
+                                </span>
+                            </div>
                             <div class="flex p-1 bg-white/5 rounded-xl border border-white/10">
                                 <button onclick="switchMarketTab('leaders_kospi')" id="btn-mkt-leaders_kospi"
                                     class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-brand-primary text-black transition-all">코스피
