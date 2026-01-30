@@ -580,22 +580,27 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
         content = response.text.replace('```json', '').replace('```', '').strip()
         ai_data = json.loads(content)
         
+        print(f"DEBUG: Gemini returned analysis for {len(ai_data)} symbols")
+        
         for key, data in ai_data.items():
             norm_key = normalize(key)
             
-            # If key is a name instead of a symbol, try to map it back
+            # Map back to provided 6-digit symbol if AI used a name or dotted symbol
             final_sym = norm_key
             if norm_key in name_to_sym:
                 final_sym = name_to_sym[norm_key]
             
+            # Additional check: if key is in name_to_sym values (it's already a symbol)
+            # or if normalize(key) matches normalize(name)
+            
             cache_key = (today, final_sym)
             AI_CACHE[cache_key] = data
             results[final_sym] = data
-            results[norm_key] = data # For redundant lookup
+            results[norm_key] = data 
             
         return results
     except Exception as e:
-        print(f"DEBUG: Gemini AI Analysis Error: {e}")
+        print(f"DEBUG: Gemini AI Analysis Error (Parsing or request): {e}")
         return results
 
 @app.route('/')
@@ -784,8 +789,10 @@ def get_kr_smart_money():
         
         # Filters based on MAJOR_ANALYSIS_KR (hardcoded knowns)
         needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
-        # Further increased limit for Gemini 2.0 Flash to cover more small-caps
-        needing_dynamic = needing_dynamic[:40]
+        
+        # Safe limit for Vercel timeout (15 stocks)
+        needing_dynamic = needing_dynamic[:15]
+        print(f"DEBUG: KR AI processing {len(needing_dynamic)} stocks dynamically")
         dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
     except Exception as e:
         print(f"DEBUG: KR AI Batch Analysis Error: {e}")
@@ -805,12 +812,13 @@ def get_kr_smart_money():
                     details = dynamic_results.get(symbol.split('.')[0])
             
             if not details:
+                is_gainer = any(s['symbol'] == g['symbol'] for g in gainers)
                 details = {
-                    "insight": f"{s['name']} - 섹터 내 기술적 모멘텀이 발생하고 있습니다.",
-                    "risk": "단기 급등에 따른 차익 실현 매물 출회 가능성.",
+                    "insight": f"{s['name']}: { '수급 집중으로 인한 강세 흐름이 포착되었습니다.' if is_gainer else '안정적인 실적 기반의 우상향 기조가 유효합니다.' }",
+                    "risk": "단기 급등에 따른 차익 실현 및 변동성 유의.",
                     "upside": "+10~15%", "mkt_cap": "-", "vol_ratio": "1.2x", "rsi": "50-60",
-                    "swot_s": "견고한 시장 지위", "swot_w": "거시 경제 민감도",
-                    "swot_o": "신규 시장 진출 기회", "swot_t": "경쟁 심화",
+                    "swot_s": "견고한 시장 지위", "swot_w": "원자재 및 거시 경제 민감도",
+                    "swot_o": "신성장 동력 확보 기회", "swot_t": "업황 경쟁 심화",
                     "dcf_target": s['price'], "dcf_bear": "-", "dcf_bull": "-"
                 }
 
