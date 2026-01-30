@@ -1,0 +1,55 @@
+name: KR Market Data Update
+
+on:
+  schedule:
+    # 1. 12:30 KST (03:30 UTC) - Intraday Check
+    - cron: '30 3 * * 1-5'
+    # 2. 16:30 KST (07:30 UTC) - Market Close
+    - cron: '30 7 * * 1-5'
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  update-kr-market:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements_local.txt
+
+      - name: Run KR Market Analysis
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          # Use the manual update script which triggers the DataManager
+          python KR_Market_Analyst/kr_market/update_data_manual.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Add the generated KR data file
+          git add KR_Market_Analyst/kr_market/kr_daily_data.json
+          
+          # Commit only if there are changes
+          if git commit -m "auto: KR market data update $(date +'%Y-%m-%d %H:%M')"; then
+            echo "Successfully committed changes. Now pulling latest changes from master..."
+            git pull --rebase origin master
+            echo "Pushing changes to origin master..."
+            git push origin master
+          else
+            echo "No changes to commit."
+          fi
