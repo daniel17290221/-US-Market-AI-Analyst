@@ -271,7 +271,8 @@ class USDailyReportGenerator:
         
         /* Layout Structure */
         .wrapper {{
-            display: flex;
+            display: grid;
+            grid-template-columns: 180px minmax(600px, 1000px) 180px;
             justify-content: center;
             gap: 20px;
             max-width: 1400px;
@@ -282,7 +283,6 @@ class USDailyReportGenerator:
 
         .ad-sidebar {{
             width: 180px;
-            flex-shrink: 0;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -309,7 +309,6 @@ class USDailyReportGenerator:
 
         .container {{
             max-width: 1000px;
-            min-width: 800px;
             width: 100%;
             background: var(--card-bg);
             padding: 50px;
@@ -317,6 +316,7 @@ class USDailyReportGenerator:
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             position: relative;
+            overflow: hidden;
         }}
 
         .category {{ color: var(--brand-blue); font-weight: 800; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }}
