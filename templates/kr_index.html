@@ -601,20 +601,14 @@
                     }
                 } else {
                     console.error("KR Data Fetch Failed");
-                    // Force hide overlay on error
                     const overlay = document.getElementById('loading-overlay');
                     if (overlay) overlay.style.display = 'none';
                 }
-            } catch (error) {
-                console.error("KR Data Fetch Error:", error);
-                // Force hide overlay on error
+            } catch (e) {
+                console.error("Failed to fetch KR data:", e);
                 const overlay = document.getElementById('loading-overlay');
                 if (overlay) overlay.style.display = 'none';
             }
-        }
-            } catch (e) {
-            console.error("Failed to fetch KR data:", e);
-        }
         }
 
         function switchMarketTab(tab) {
