@@ -590,9 +590,7 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
             if norm_key in name_to_sym:
                 final_sym = name_to_sym[norm_key]
             
-            # Additional check: if key is in name_to_sym values (it's already a symbol)
-            # or if normalize(key) matches normalize(name)
-            
+            # Update cache and results
             cache_key = (today, final_sym)
             AI_CACHE[cache_key] = data
             results[final_sym] = data
