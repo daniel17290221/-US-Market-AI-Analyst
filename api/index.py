@@ -292,10 +292,10 @@ def fetch_realtime_data(tickers):
     for ticker in target_tickers:
         if not ticker: continue
         try:
-            # Handle KR stocks (6 digits) for Yahoo Finance
+            # Handle KR stocks (6 digits) for Yahoo Finance if no suffix provided
             fetch_ticker = ticker
-            if len(ticker) == 6 and ticker.isdigit():
-                # Default to .KS (KOSPI) for major stocks, if it fails we could try .KQ
+            if len(ticker) == 6 and ticker.isdigit() and "." not in ticker:
+                # Default to .KS if we don't know, but better to pass with suffix
                 fetch_ticker = f"{ticker}.KS"
             
             # Use v8 finance/chart for stability
@@ -392,40 +392,57 @@ def get_kr_smart_money():
         ]
     
     # DYNAMIC FETCH for real-time movers
+    # DYNAMIC FETCH for real-time movers
     try:
-        live_gainers = fetch_naver_movers('rise')
-        if live_gainers: gainers = live_gainers[:10]
+        # Gainers: Merge KOSPI and KOSDAQ
+        gainers_kospi = fetch_naver_movers('rise', sosok=0)
+        gainers_kosdaq = fetch_naver_movers('rise', sosok=1)
+        # Sort by rank or just take top 5 from each to make 10
+        gainers = (gainers_kospi[:5] + gainers_kosdaq[:5]) if (gainers_kospi and gainers_kosdaq) else (gainers_kospi or gainers_kosdaq or [])
         
-        live_volume = fetch_naver_movers('volume')
-        if live_volume: volume = live_volume[:10]
+        # Volume: Merge
+        vol_kospi = fetch_naver_movers('volume', sosok=0)
+        vol_kosdaq = fetch_naver_movers('volume', sosok=1)
+        volume = (vol_kospi[:5] + vol_kosdaq[:5]) if (vol_kospi and vol_kosdaq) else (vol_kospi or vol_kosdaq or [])
         
         # Leaders Split: KOSPI and KOSDAQ
         leaders_kospi = fetch_naver_movers('cap', sosok=0)[:10]
         leaders_kosdaq = fetch_naver_movers('cap', sosok=1)[:10]
         
-        # Merge for the standard 'leaders' key (legacy support)
-        if leaders_kospi:
-            leaders = leaders_kospi
+        # Legacy support
+        leaders = leaders_kospi
     except Exception as e:
         print(f"DEBUG: Live mover fetch error: {e}")
         leaders_kospi, leaders_kosdaq = [], []
 
     # Try to fetch real-time prices for ALL active lists
     try:
-        all_stocks = leaders_kospi + leaders_kosdaq + gainers + volume
-        all_tickers = list(set([d['symbol'] for d in all_stocks]))
-        current_prices = fetch_realtime_data(all_tickers[:30]) # Increased limit
+        all_stocks_to_fetch = []
+        for s in leaders_kospi: all_stocks_to_fetch.append(f"{s['symbol']}.KS")
+        for s in leaders_kosdaq: all_stocks_to_fetch.append(f"{s['symbol']}.KQ")
+        # For gainers/volume (now mixed), we use the 'market' field set in fetch_naver_movers
+        # fetch_naver_movers sets market based on sosok.
+        for s in gainers: 
+            suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
+            all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
+        for s in volume:
+            suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
+            all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
         
+        all_tickers = list(set(all_stocks_to_fetch))
+        current_prices = fetch_realtime_data(all_tickers[:30])
+        
+        # Map values back
         for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume, leaders]:
             for d in d_list:
                 sym = d['symbol']
-                lookup = f"{sym}.KS" if len(sym) == 6 else sym
-                if lookup in current_prices:
-                    d['price'] = f"{int(current_prices[lookup]['price']):,}"
-                    d['change'] = current_prices[lookup]['change']
-                elif sym in current_prices:
-                    d['price'] = f"{int(current_prices[sym]['price']):,}"
-                    d['change'] = current_prices[sym]['change']
+                # Try with .KS then .KQ then raw
+                for suffix in ['.KS', '.KQ', '']:
+                    lookup = f"{sym}{suffix}" if suffix else sym
+                    if lookup in current_prices:
+                        d['price'] = f"{int(current_prices[lookup]['price']):,}"
+                        d['change'] = current_prices[lookup]['change']
+                        break
     except Exception as e:
         print(f"DEBUG: KR Price update error: {e}")
 
