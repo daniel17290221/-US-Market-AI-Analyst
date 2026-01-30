@@ -620,45 +620,69 @@
         }
 
         async function loadSymbol(index) {
-            const data = state.smartMoneyData[index];
-            if (!data) return;
+            try {
+                const data = state.smartMoneyData[index];
+                if (!data) return;
 
-            // Update Chart
-            updateTradingView('D', data.symbol);
+                console.log("Loading Symbol Data:", data);
 
-            // Update UI Elements
-            document.getElementById('main-ticker-name').innerText = data.name;
-            document.getElementById('main-full-name').innerText = data.ticker;
-            document.getElementById('current-price-label').innerText = data.price;
-            document.getElementById('ai-insight').innerText = data.insight;
-            document.getElementById('ai-risk').innerText = data.risk;
-            document.getElementById('ai-upside').innerText = `${data.upside} 예상 상승 여력`;
-
-            document.getElementById('swot-s').innerText = data.swot_s;
-            document.getElementById('swot-w').innerText = data.swot_w;
-            document.getElementById('swot-o').innerText = data.swot_o;
-            document.getElementById('swot-t').innerText = data.swot_t;
-
-            document.getElementById('dcf-target').innerText = data.dcf_target;
-            document.getElementById('dcf-bear').innerText = data.dcf_bear;
-            document.getElementById('dcf-bull').innerText = data.dcf_bull;
-
-            // DCF Marker Position
-            if (data.dcf_bear && data.dcf_bull) {
-                const bear = parseFloat(data.dcf_bear.replace(/,/g, ''));
-                const bull = parseFloat(data.dcf_bull.replace(/,/g, ''));
-                const current = parseFloat(data.price.replace(/,/g, ''));
-                if (!isNaN(bear) && !isNaN(bull) && !isNaN(current)) {
-                    const pos = ((current - bear) / (bull - bear)) * 100;
-                    document.getElementById('price-marker').style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
+                // Update Chart
+                try {
+                    updateTradingView('D', data.symbol);
+                } catch (e) {
+                    console.error("TradingView update failed:", e);
                 }
+
+                // Update UI Elements
+                const safeSetText = (id, text, fallback = '-') => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerText = text || fallback;
+                };
+
+                safeSetText('main-ticker-name', data.name);
+                safeSetText('main-full-name', data.ticker || data.symbol); // Fallback to symbol if ticker missing
+                safeSetText('current-price-label', data.price);
+
+                // AI Insights
+                safeSetText('ai-insight', data.insight, "AI 분석 데이터가 없습니다.");
+                safeSetText('ai-risk', data.risk, "분석 데이터 없음");
+
+                if (document.getElementById('ai-upside')) {
+                    document.getElementById('ai-upside').innerText = `${data.upside || '0%'} 예상 상승 여력`;
+                }
+
+                safeSetText('swot-s', data.swot_s);
+                safeSetText('swot-w', data.swot_w);
+                safeSetText('swot-o', data.swot_o);
+                safeSetText('swot-t', data.swot_t);
+
+                safeSetText('dcf-target', data.dcf_target);
+                safeSetText('dcf-bear', data.dcf_bear);
+                safeSetText('dcf-bull', data.dcf_bull);
+
+                // DCF Marker Position
+                if (data.dcf_bear && data.dcf_bull) {
+                    const bear = parseFloat(String(data.dcf_bear).replace(/,/g, ''));
+                    const bull = parseFloat(String(data.dcf_bull).replace(/,/g, ''));
+                    const current = parseFloat(String(data.price).replace(/,/g, ''));
+                    if (!isNaN(bear) && !isNaN(bull) && !isNaN(current) && (bull - bear) !== 0) {
+                        const pos = ((current - bear) / (bull - bear)) * 100;
+                        const marker = document.getElementById('price-marker');
+                        if (marker) marker.style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
+                    }
+                }
+
+                // Update Logo
+                const logoImg = document.getElementById('main-ticker-logo');
+                if (logoImg) {
+                    logoImg.src = `https://s3-symbol-logo.tradingview.com/indices/korea-stock-exchange--big.svg`;
+                    logoImg.onerror = () => { logoImg.src = 'https://via.placeholder.com/40'; };
+                }
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (e) {
+                console.error("Error in loadSymbol:", e);
             }
-
-            // Update Logo (using placeholders or generic for KR)
-            const logoImg = document.getElementById('main-ticker-logo');
-            logoImg.src = `https://s3-symbol-logo.tradingview.com/indices/korea-stock-exchange--big.svg`; // Default KR logo
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         let currentSymbol = "TVC:KOSPI";
