@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숨 막히는 고공행진, S&P 7000선 코앞! 나스닥은 24,000선 넘볼까? 원유는 꿈틀, 금은 주춤, 비트코인은 숨 고르기?</title>
+    <style>
+        :root {
+            --bg-color: #f7f9fb;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --brand-blue: #0070f3;
+            --brand-red: #f44336;
+            --brand-green: #4caf50;
+            --border-color: #eeeeee;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0d1117;
+                --card-bg: #161b22;
+                --text-main: #e6edf3;
+                --text-sub: #8b949e;
+                --border-color: #30363d;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        /* Layout Structure */
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        .ad-sidebar {
+            width: 180px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            align-self: flex-start;
+        }
+
+        .ad-unit {
+            background: var(--card-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: bold;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            min-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .category { color: var(--brand-blue); font-weight: 800; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
+        h1 { font-size: 32px; line-height: 1.3; margin-bottom: 15px; letter-spacing: -1px; }
+        .date { color: var(--text-sub); font-size: 14px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+
+        .box-summary { 
+            background: rgba(0, 112, 243, 0.05); 
+            border-radius: 12px; 
+            padding: 28px; 
+            margin-bottom: 45px; 
+            border: 1px solid rgba(0, 112, 243, 0.1); 
+        }
+        .box-summary h3 { font-size: 18px; margin-bottom: 12px; color: var(--brand-blue); }
+        .box-summary ul { list-style-position: inside; }
+        .box-summary li { margin-bottom: 8px; color: var(--text-main); font-size: 16px; }
+
+        .market-indices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 40px; }
+        .index-card { 
+            padding: 15px; 
+            background: rgba(128,128,128,0.05); 
+            border-radius: 10px; 
+            text-align: center; 
+            border: 1px solid var(--border-color);
+        }
+        .index-name { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+        .index-value { font-size: 18px; font-weight: 800; margin: 4px 0; }
+        .index-change { font-size: 14px; font-weight: 600; }
+        .index-change.up { color: var(--brand-red); }
+        .index-change.down { color: var(--brand-blue); }
+
+        .article-section { margin-bottom: 60px; }
+        .section-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+        .emoji { font-size: 28px; }
+        .section-header h2 { font-size: 22px; font-weight: 800; line-height: 1.4; }
+        .section-content p { font-size: 17px; color: var(--text-main); margin-bottom: 20px; line-height: 1.9; text-align: justify; }
+
+        .market-brief { border-top: 2px solid var(--border-color); padding-top: 30px; margin-bottom: 45px; }
+        .brief-title { font-size: 19px; font-weight: 800; margin-bottom: 25px; }
+        .market-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; }
+        .market-row .label { font-weight: 600; }
+        .market-row .val { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+        .market-row .chg.up { color: var(--brand-red); }
+        .market-row .chg.down { color: var(--brand-blue); }
+
+        .hashtags { margin-top: 50px; padding-top: 25px; border-top: 1px solid var(--border-color); }
+        .hashtag { color: var(--text-sub); font-size: 15px; margin-right: 20px; font-weight: 600; }
+
+        /* Smart Money Grid */
+        .smart-money-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stock-card { 
+            padding: 12px; 
+            background: rgba(128,128,128,0.03); 
+            border-radius: 10px; 
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+        .stock-card:hover { transform: translateY(-3px); }
+        .stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .stock-header .ticker { font-weight: 900; font-size: 14px; }
+        .stock-header .score { font-size: 10px; font-weight: 800; }
+        .stock-name { font-size: 10px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .stock-grade { font-size: 10px; font-weight: 700; margin-top: 5px; color: var(--text-main); }
+
+        @media (max-width: 768px) {
+            .smart-money-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .footer { margin-top: 70px; text-align: center; font-size: 13px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 30px; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Mobile Sticky Ad */
+        .mobile-ad-banner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        @media (max-width: 1200px) {
+            .ad-sidebar { display: none; }
+            .container { max-width: 100%; padding: 30px 20px; }
+            .mobile-ad-banner { display: block; }
+            body { padding-bottom: 100px; } /* Space for sticky ad */
+            .container { min-width: 100%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Left Sidebar for Ads -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                <!-- 쿠팡 파트너스 좌측 광고 (고객 관심기반 추천) -->
+                <script src="https://ads-partners.coupang.com/g.js"></script>
+                <script>
+                    new PartnersCoupang.G({ "id":961293,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" });
+                </script>
+            </div>
+        </aside>
+
+        <div class="container">
+            <div style="text-align: right; margin-bottom: 25px;">
+                <span style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
+                    🔴 LIVE UPDATED: 2026-01-30 10:22:28
+                </span>
+            </div>
+            <div class="category">Daily Morning Report</div>
+            <h1>숨 막히는 고공행진, S&P 7000선 코앞! 나스닥은 24,000선 넘볼까? 원유는 꿈틀, 금은 주춤, 비트코인은 숨 고르기?</h1>
+            <div class="date">2026.01.30 • Premium AI Analysis</div>
+
+            <div class="box-summary">
+                <h3>핵심 요약</h3>
+                <ul>
+                    <li>S&P500, 나스닥, 다우존스 모두 보합세 유지하며 역사적 고점 부근에서 숨 고르기 장세. 추가 상승 모멘텀 확보에 주력하는 모습입니다.</li><li>WTI 원유는 지정학적 리스크 완화에도 소폭 상승하며 59달러 선을 회복. 산유국들의 감산 유지 의지가 유가 하방 경직성을 지지하는 요인으로 작용하고 있어요.</li><li>금 선물은 달러 강세와 위험 선호 심리 확산에 하락. 비트코인은 초고가 시대에 진입했지만, 변동성은 여전히 큰 상황입니다.</li>
+                </ul>
+            </div>
+
+            <div class="market-brief">
+                <div class="brief-title">미국 증시 브리핑: 01.30 장마감 기준</div>
+                <div class="market-indices">
+                    
+            <div class="index-card">
+                <div class="index-name">📈 S&P 500</div>
+                <div class="index-value">6,940.01</div>
+                <div class="index-change up">+0.00%</div>
+            </div>
+            <div class="index-card">
+                <div class="index-name">📈 나스닥</div>
+                <div class="index-value">23,515.39</div>
+                <div class="index-change up">+0.00%</div>
+            </div>
+            <div class="index-card">
+                <div class="index-name">📈 다우존스</div>
+                <div class="index-value">49,359.33</div>
+                <div class="index-change up">+0.00%</div>
+            </div>
+                </div>
+            </div>
+
+            
+            <div class="article-section">
+                <div class="section-header">
+                    <span class="emoji">🚀</span>
+                    <h2>지칠 줄 모르는 상승세, S&P 500 7,000선 돌파 가능할까?</h2>
+                </div>
+                <div class="section-content">
+                    <p>미국 증시, 특히 S&P 500의 상승세가 정말 무섭습니다. 6,940포인트, 거의 7,000선을 목전에 두고 있는데, 과연 돌파할 수 있을까요? 긍정적인 시각을 가진 투자자들은 견조한 기업 실적과 연준의 금리 인하 기대감을 바탕으로 추가 상승을 점치고 있습니다. 특히 AI 반도체, 클라우드 컴퓨팅 관련 기술주들이 시장을 견인하고 있다는 분석이 많죠. 하지만 ⚠️경계해야 할 부분도 분명히 존재합니다. 현재 주가가 기업의 펀더멘털 대비 과도하게 고평가되어 있다는 의견도 만만치 않거든요. 금리 인하 기대감이 이미 상당 부분 반영된 만큼, 실망스러운 경제 지표나 연준의 매파적 발언이 나온다면 언제든 조정이 올 수 있다는 점을 명심해야 합니다. 변동성에 대비해 포트폴리오를 분산하고, 리스크 관리에 더욱 신경 써야 할 시점입니다. 나스닥 역시 24,000선 돌파를 눈 앞에 두고 있지만, 금리 변동에 민감하게 반응할 수 있다는 점을 간과해선 안 됩니다. 투자에는 항상 신중해야죠.</p>
+                </div>
+            </div>
+            <div class="article-section">
+                <div class="section-header">
+                    <span class="emoji">🛢️</span>
+                    <h2>원유, 지정학적 긴장 완화에도 꿈틀대는 이유는?</h2>
+                </div>
+                <div class="section-content">
+                    <p>WTI 원유 가격이 배럴당 59달러 선을 회복했습니다. 최근 중동 지역의 지정학적 긴장이 다소 완화되면서 하락 압력을 받았지만, 산유국들의 감산 유지 의지가 유가 하방 경직성을 확보하는 데 기여하고 있는 모습입니다. 사우디 아라비아를 비롯한 OPEC+ 국가들은 꾸준히 감산 정책을 유지하며 공급량을 조절하고 있는데요, 이는 유가 안정을 위한 노력의 일환이라고 볼 수 있습니다. 하지만 🤔 장기적으로는 전기차 보급 확대와 친환경 에너지 전환 추세가 원유 수요에 부정적인 영향을 미칠 수 있다는 점을 고려해야 합니다. 단기적으로는 수급 불균형에 따른 가격 변동성이 나타날 수 있지만, 장기적인 투자 관점에서는 신중한 접근이 필요합니다. 러시아-우크라이나 전쟁 장기화 역시 원유 시장의 불확실성을 키우는 요인 중 하나입니다. 유가 변동에 따른 인플레이션 압력 역시 간과할 수 없는 부분이죠. 결국, 에너지 시장은 다양한 요인들이 복합적으로 작용하는 만큼, 면밀한 분석과 예측이 중요합니다. 투자자 여러분, 신중하게 투자 결정을 내리시길 바랍니다.</p>
+                </div>
+            </div>
+            <div class="article-section">
+                <div class="section-header">
+                    <span class="emoji">💰</span>
+                    <h2>금과 비트코인, 디지털 시대의 안전 자산 경쟁 승자는?</h2>
+                </div>
+                <div class="section-content">
+                    <p>금 선물 가격이 소폭 하락했습니다. 전통적인 안전 자산으로 여겨지는 금은 일반적으로 위험 회피 심리가 강해질 때 가격이 상승하는 경향이 있습니다. 하지만 최근에는 달러 강세와 위험 자산 선호 심리 확산으로 인해 하락세를 보이고 있습니다. 반면 비트코인은 1억 2천만원을 돌파하는 초고가 행진을 이어가고 있지만, 변동성은 여전히 큰 상황입니다. 비트코인은 디지털 시대의 새로운 안전 자산으로 주목받고 있지만, 규제 불확실성과 가격 변동성이라는 리스크를 안고 있습니다. 🤔 과연 금과 비트코인 중 디지털 시대의 안전 자산 경쟁에서 누가 승리할까요? 이는 투자자들의 투자 성향과 위험 감수 능력에 따라 달라질 수 있습니다. 금은 전통적인 안전 자산으로서 안정적인 가치 보존 수단으로 활용될 수 있지만, 비트코인은 높은 수익률을 기대할 수 있는 투자 수단으로 여겨질 수 있습니다. 하지만 비트코인 투자는 높은 위험을 감수해야 한다는 점을 명심해야 합니다. 투자 결정은 항상 신중하게 내려야 합니다.</p>
+                </div>
+            </div>
+
+            
+
+            <div class="market-brief">
+                <div class="brief-title">주요 원자재 및 암호화폐 시황</div>
+                
+            <div class="market-row">
+                <span class="label">WTI 원유</span>
+                <span class="val">59.34</span>
+                <span class="chg up">+0.44%</span>
+            </div>
+            <div class="market-row">
+                <span class="label">금 선물</span>
+                <span class="val">4,595.40</span>
+                <span class="chg down">-0.61%</span>
+            </div>
+            <div class="market-row">
+                <span class="label">비트코인</span>
+                <span class="val">129,446,000</span>
+                <span class="chg down">-0.02%</span>
+            </div>
+            </div>
+
+            <div class="hashtags">
+                <span class="hashtag">#미국증시</span> <span class="hashtag">#S&P500</span> <span class="hashtag">#나스닥</span> <span class="hashtag">#다우존스</span> <span class="hashtag">#원유</span> <span class="hashtag">#금선물</span> <span class="hashtag">#비트코인</span> <span class="hashtag">#시장분석</span> <span class="hashtag">#투자전략</span> <span class="hashtag">#경제뉴스</span>
+            </div>
+
+            <div class="footer">
+                <div style="font-size: 11px; margin-bottom: 15px; color: var(--text-sub); font-weight: 600;">
+                    "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+                </div>
+                🚀 본 리포트는 VibeCodingLab 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
+                <b>생성 시각: 2026-01-30 10:22:28</b> (KST 한국 시각 반영 완료)<br>
+                © 2026 VibeCodingLab. All Rights Reserved.
+            </div>
+        </div>
+
+        <!-- Right Sidebar for Ads -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                <!-- 쿠팡 파트너스 우측 광고 (재테크 관련 서적 추천) -->
+                <script src="https://ads-partners.coupang.com/g.js"></script>
+                <script>
+                    new PartnersCoupang.G({ "id":961294,"template":"carousel","trackingCode":"AF1993837","width":"180","height":"600","tsource":"" });
+                </script>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Mobile Sticky Ad Banner -->
+    <div class="mobile-ad-banner">
+        <!-- 쿠팡 파트너스 모바일 하단 광고 (카테고리 베스트) -->
+        <script src="https://ads-partners.coupang.com/g.js"></script>
+        <script>
+            new PartnersCoupang.G({ "id":961291,"template":"carousel","trackingCode":"AF1993837","width":"320","height":"100","tsource":"" });
+        </script>
+    </div>
+</body>
+</html>
+        
