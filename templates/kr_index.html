@@ -148,16 +148,45 @@
                 <!-- Main Content Area (8 cols) -->
                 <div class="lg:col-span-8 space-y-6">
                     <!-- Advanced Chart -->
-                    <div class="glass-card p-6 h-[600px] relative">
-                        <div class="absolute top-4 right-6 z-10 flex gap-2">
-                            <button onclick="changeInterval('1D')"
-                                class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black transition">1D</button>
-                            <button onclick="changeInterval('1W')"
-                                class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5 transition">1W</button>
-                            <button onclick="changeInterval('1M')"
-                                class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5 transition">1M</button>
+                    <!-- Advanced Chart with Unified Header -->
+                    <div class="glass-card p-6 h-[600px] flex flex-col">
+                        <!-- Chart Header -->
+                        <div class="flex justify-between items-center mb-4">
+                            <!-- Left: Ticker & Score -->
+                            <div class="flex items-center gap-4">
+                                <div id="main-ticker-logo-container"
+                                    class="w-10 h-10 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center overflow-hidden">
+                                    <img id="main-ticker-logo" src="https://via.placeholder.com/40"
+                                        class="w-6 h-6 object-contain" alt="">
+                                </div>
+                                <div class="flex flex-col">
+                                    <h2 id="main-ticker-name" class="text-xl font-black text-white leading-tight">KRX
+                                    </h2>
+                                    <p id="main-full-name" class="text-[10px] text-gray-500 font-medium">Korea Exchange
+                                    </p>
+                                </div>
+                                <!-- AI Score Badge -->
+                                <div
+                                    class="hidden md:flex bg-brand-success/10 border border-brand-success/20 text-brand-success px-3 py-1 rounded-full text-[10px] font-bold items-center gap-2">
+                                    <i class="fas fa-robot"></i>
+                                    AI Score: <span id="main-ai-score">--</span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Interval Buttons -->
+                            <div class="flex p-1 bg-white/5 rounded-lg border border-white/10">
+                                <button onclick="changeInterval('1D')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md bg-brand-primary text-black transition hover:opacity-90">1D</button>
+                                <button onclick="changeInterval('1W')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1W</button>
+                                <button onclick="changeInterval('1M')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1M</button>
+                            </div>
                         </div>
-                        <div id="tradingview_main" class="h-full w-full rounded-xl overflow-hidden">
+
+                        <!-- Chart Container -->
+                        <div id="tradingview_main"
+                            class="flex-1 rounded-xl overflow-hidden border border-white/5 bg-[#111114]">
                             <!-- TradingView Widget Will Load Here -->
                             <div class="tradingview-widget-container h-full w-full">
                                 <div class="tradingview-widget-container__widget h-full w-full"></div>
@@ -189,18 +218,7 @@
                         <div class="flex flex-col lg:flex-row gap-8">
                             <!-- Left: Insights & Risk -->
                             <div class="flex-1 space-y-6">
-                                <div class="flex items-center gap-4 mb-2">
-                                    <div id="main-ticker-logo-container"
-                                        class="w-12 h-12 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden">
-                                        <img id="main-ticker-logo" src="" class="w-8 h-8 object-contain" alt="">
-                                    </div>
-                                    <div>
-                                        <h2 id="main-ticker-name" class="text-2xl font-black text-white leading-tight">
-                                            삼성전자</h2>
-                                        <p id="main-full-name" class="text-xs text-gray-500 font-medium">Samsung
-                                            Electronics</p>
-                                    </div>
-                                </div>
+
 
                                 <div class="p-6 bg-brand-primary/5 rounded-2xl border border-brand-primary/20">
                                     <h4 class="text-sm font-bold mb-3 flex items-center gap-2">
@@ -600,23 +618,31 @@
                     console.error("TradingView update failed:", e);
                 }
 
-                // Update UI Elements
+                // Update UI Elements (New Header)
                 const safeSetText = (id, text, fallback = '-') => {
                     const el = document.getElementById(id);
                     if (el) el.innerText = text || fallback;
                 };
 
-                safeSetText('main-ticker-name', data.name);
-                safeSetText('main-full-name', data.ticker || data.symbol); // Fallback to symbol if ticker missing
+                safeSetText('main-ticker-name', data.name); // Now in header
+                safeSetText('main-full-name', data.ticker); // Now in header
+                safeSetText('main-ai-score', data.score);   // New AI Score in header
+
+                // Update Logo
+                const logoImg = document.getElementById('main-ticker-logo');
+                if (logoImg) {
+                    // Use a generic placeholder or dynamic logic if available
+                    // For KR stocks, we might not have a reliable logo source, defaulting to generic kse or placeholder
+                    logoImg.src = `https://s3-symbol-logo.tradingview.com/indices/korea-stock-exchange--big.svg`;
+                    logoImg.onerror = () => { logoImg.src = 'https://via.placeholder.com/40'; };
+                }
+
                 safeSetText('current-price-label', data.price);
 
                 // AI Insights
-                safeSetText('ai-insight', data.insight, "AI 분석 데이터가 없습니다.");
-                safeSetText('ai-risk', data.risk, "분석 데이터 없음");
-
-                if (document.getElementById('ai-upside')) {
-                    document.getElementById('ai-upside').innerText = `${data.upside || '0%'} 예상 상승 여력`;
-                }
+                safeSetText('ai-insight', data.insight);
+                safeSetText('ai-risk', data.risk);
+                safeSetText('ai-upside', `${data.upside} 예상 상승 여력`);
 
                 safeSetText('swot-s', data.swot_s);
                 safeSetText('swot-w', data.swot_w);
@@ -637,13 +663,6 @@
                         const marker = document.getElementById('price-marker');
                         if (marker) marker.style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
                     }
-                }
-
-                // Update Logo
-                const logoImg = document.getElementById('main-ticker-logo');
-                if (logoImg) {
-                    logoImg.src = `https://s3-symbol-logo.tradingview.com/indices/korea-stock-exchange--big.svg`;
-                    logoImg.onerror = () => { logoImg.src = 'https://via.placeholder.com/40'; };
                 }
 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
