@@ -539,28 +539,38 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
 
     print(f"DEBUG: Requesting dynamic AI analysis for {len(needed)} stocks: {[s['symbol'] for s in needed]}")
     
-    prompt = f"""
-    당신은 글로벌 증시 전문 AI 분석가입니다. 아래 제공된 종목 리스트(한국 또는 미국 주식)에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
-    각 종목에 대해 다음 정보를 포함해야 합니다: insight(한줄평), risk(리스크), swot_s(강점), swot_w(약점), swot_o(기회), swot_t(위협), dcf_target, dcf_bear, dcf_bull.
-    말투는 전문적이고 분석적이어야 하며, 한국어로 작성해주세요.
-    결과는 반드시 아래 JSON 형식으로 반환해주세요. 종목의 심볼(symbol)을 키로 사용하세요.
+    # Create a mapping of names to symbols to help with matching
+    name_to_sym = {normalize(s.get('name', '')): s['symbol'] for s in needed}
     
-    [종목 리스트]
+    prompt = f"""
+    당신은 글로벌 증시 전문 AI 분석가입니다. 아래 제공된 종목 리스트에 대해 최신 데이터 기반 SWOT 분석과 투자 인사이트를 제공해주세요.
+    
+    [중요 지시사항]
+    1. 반드시 제공된 **6자리 종목코드(symbol)**를 JSON의 키(Key)로 사용하세요. 종목명(name)을 키로 사용하지 마세요.
+    2. 각 종목에 대해 다음 정보를 포함하세요:
+       - insight: 1문장 투자 한줄평 (한국어)
+       - risk: 핵심 리스크 요인 1가지
+       - swot_s, swot_w, swot_o, swot_t: 각각 1문장의 강태약기위분석
+       - dcf_target, dcf_bear, dcf_bull: 목표/하단/상단 가격 (숫자 및 필요시 단위)
+       - upside: 예상 상승 여력 (예: +20%)
+    3. 결과는 반드시 순수 JSON 형식으로만 반환하세요.
+    
+    [분석 대상 리스트]
     {json.dumps([{ 'symbol': s['symbol'], 'name': s.get('name', 'N/A') } for s in needed], ensure_ascii=False)}
     
-    [출력 형식 가이드]
+    [출력 예시]
     {{
-        "종목코드": {{
+        "005930": {{
             "insight": "...",
             "risk": "...",
             "swot_s": "...",
             "swot_w": "...",
             "swot_o": "...",
             "swot_t": "...",
-            "dcf_target": "숫자만(단위 포함 가능, 예: 150 또는 75000)",
-            "dcf_bear": "숫자만",
-            "dcf_bull": "숫자만",
-            "upside": "+20%"
+            "dcf_target": "85000",
+            "dcf_bear": "65000",
+            "dcf_bull": "110000",
+            "upside": "+15%"
         }}
     }}
     """
@@ -570,12 +580,18 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
         content = response.text.replace('```json', '').replace('```', '').strip()
         ai_data = json.loads(content)
         
-        for symbol, data in ai_data.items():
-            norm_sym = normalize(symbol)
-            key = (today, norm_sym)
-            AI_CACHE[key] = data
-            results[symbol] = data
-            results[norm_sym] = data
+        for key, data in ai_data.items():
+            norm_key = normalize(key)
+            
+            # If key is a name instead of a symbol, try to map it back
+            final_sym = norm_key
+            if norm_key in name_to_sym:
+                final_sym = name_to_sym[norm_key]
+            
+            cache_key = (today, final_sym)
+            AI_CACHE[cache_key] = data
+            results[final_sym] = data
+            results[norm_key] = data # For redundant lookup
             
         return results
     except Exception as e:
@@ -768,8 +784,8 @@ def get_kr_smart_money():
         
         # Filters based on MAJOR_ANALYSIS_KR (hardcoded knowns)
         needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
-        # Increased limit for Gemini 2.0 Flash speed
-        needing_dynamic = needing_dynamic[:25]
+        # Further increased limit for Gemini 2.0 Flash to cover more small-caps
+        needing_dynamic = needing_dynamic[:40]
         dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
     except Exception as e:
         print(f"DEBUG: KR AI Batch Analysis Error: {e}")
