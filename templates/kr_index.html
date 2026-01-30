@@ -639,25 +639,51 @@
 
                 safeSetText('current-price-label', data.price);
 
+                // Helper for Currency
+                const formatKRW = (val) => {
+                    if (!val || val === '-' || val === 'N/A') return '-';
+                    const num = parseFloat(String(val).replace(/,/g, '').replace('원', ''));
+                    if (isNaN(num)) return val;
+                    return num.toLocaleString() + '원';
+                };
+
+                // Helper for Upside Percentage
+                const formatUpside = (val) => {
+                    if (!val || val === '-') return '-';
+                    // If already has %, just return
+                    if (String(val).includes('%')) return val;
+
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) {
+                        // If small decimal like 0.25, treat as 25%
+                        if (Math.abs(num) <= 1.0) {
+                            return (num > 0 ? '+' : '') + Math.round(num * 100) + '%';
+                        }
+                        // If large number like 25, treat as 25%
+                        return (num > 0 ? '+' : '') + num + '%';
+                    }
+                    return val;
+                };
+
                 // AI Insights
-                safeSetText('ai-insight', data.insight);
-                safeSetText('ai-risk', data.risk);
-                safeSetText('ai-upside', `${data.upside} 예상 상승 여력`);
+                safeSetText('ai-insight', data.insight || '분석 데이터 대기중...');
+                safeSetText('ai-risk', data.risk || '-');
+                safeSetText('ai-upside', `${formatUpside(data.upside)} 예상 상승 여력`);
 
-                safeSetText('swot-s', data.swot_s);
-                safeSetText('swot-w', data.swot_w);
-                safeSetText('swot-o', data.swot_o);
-                safeSetText('swot-t', data.swot_t);
+                safeSetText('swot-s', data.swot_s || '-');
+                safeSetText('swot-w', data.swot_w || '-');
+                safeSetText('swot-o', data.swot_o || '-');
+                safeSetText('swot-t', data.swot_t || '-');
 
-                safeSetText('dcf-target', data.dcf_target);
-                safeSetText('dcf-bear', data.dcf_bear);
-                safeSetText('dcf-bull', data.dcf_bull);
+                safeSetText('dcf-target', formatKRW(data.dcf_target));
+                safeSetText('dcf-bear', formatKRW(data.dcf_bear));
+                safeSetText('dcf-bull', formatKRW(data.dcf_bull));
 
                 // DCF Marker Position
                 if (data.dcf_bear && data.dcf_bull) {
-                    const bear = parseFloat(String(data.dcf_bear).replace(/,/g, ''));
-                    const bull = parseFloat(String(data.dcf_bull).replace(/,/g, ''));
-                    const current = parseFloat(String(data.price).replace(/,/g, ''));
+                    const bear = parseFloat(String(data.dcf_bear).replace(/,/g, '').replace('원', ''));
+                    const bull = parseFloat(String(data.dcf_bull).replace(/,/g, '').replace('원', ''));
+                    const current = parseFloat(String(data.price).replace(/,/g, '').replace('원', ''));
                     if (!isNaN(bear) && !isNaN(bull) && !isNaN(current) && (bull - bear) !== 0) {
                         const pos = ((current - bear) / (bull - bear)) * 100;
                         const marker = document.getElementById('price-marker');
