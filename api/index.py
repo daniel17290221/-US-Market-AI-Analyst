@@ -478,6 +478,8 @@ def fetch_single_ticker(ticker, headers):
                     }
     except Exception as e:
         print(f"DEBUG: Failed to fetch {ticker}: {e}")
+        import traceback
+        traceback.print_exc()
     return ticker, None
 
 def fetch_realtime_data(tickers):
@@ -740,7 +742,42 @@ def get_kr_smart_money():
             leaders_kosdaq = []
 
     # Map Values Back (Leaders, Gainers, Volume) & Price Update
-    # ... (Rest remains similar, but leaders list handling is simpler)
+    try:
+        all_stocks_to_fetch = []
+        # Gather all symbols
+        for s in leaders_kospi: all_stocks_to_fetch.append(f"{s['symbol']}.KS")
+        for s in leaders_kosdaq: all_stocks_to_fetch.append(f"{s['symbol']}.KQ")
+        for s in gainers: 
+            suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
+            all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
+        for s in volume:
+            suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
+            all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
+        
+        all_tickers = list(set(all_stocks_to_fetch))
+        current_prices = fetch_realtime_data(all_tickers)
+        
+        # Update lists with real-time data
+        for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume]:
+            for d in d_list:
+                sym = d['symbol']
+                # Try suffixes matching logic
+                found = False
+                for suffix in ['.KS', '.KQ', '']:
+                    lookup = f"{sym}{suffix}" if suffix else sym
+                    if lookup in current_prices:
+                        # Yahoo returns float, we need to format it or keep it raw for later?
+                        # enrich_list expects string or raw. 
+                        # Let's save formatted string to match old behavior
+                        price_val = current_prices[lookup]['price']
+                        d['price'] = f"{int(price_val):,}"
+                        d['change'] = current_prices[lookup]['change']
+                        found = True
+                        break
+    except Exception as e:
+        print(f"DEBUG: KR Price update error: {e}")
+        import traceback
+        traceback.print_exc()
 
     # Use Pre-calculated AI Analysis directly
     dynamic_results = precomputed_ai.copy()
