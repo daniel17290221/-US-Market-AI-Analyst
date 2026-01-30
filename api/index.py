@@ -558,35 +558,8 @@ def get_kr_report():
     return "Report not found", 404
 
 
-# --- Major US Analysis Persistent Knowledge (already defined above globally) ---
 
-@app.route('/api/us/smart-money')
-def get_smart_money():
-    "TSLA": {
-        "insight": "FSD v12 및 로보택시 기대감이 강력한 모멘텀을 형성하고 있으며, 비용 절감 노력이 마진을 방어 중입니다.",
-        "risk": "전기차 시장의 경쟁 심화와 중국 시장 점유율 둔화 가능성.",
-        "upside": "+25.5%", "mkt_cap": "$825B", "vol_ratio": "2.4x ↑", "rsi": "64.5",
-        "swot_s": "자율주행 데이터 우위 및 브랜드 파워", "swot_w": "CEO 리스크 및 생산 효율화 과제",
-        "swot_o": "옵티머스 로봇 및 에너지 저장 사업", "swot_t": "중국산 저가 전기차 공세",
-        "dcf_target": "320.00", "dcf_bear": "210.00", "dcf_bull": "410.00"
-    },
-    "AAPL": {
-        "insight": "애플 인텔리전스(AI)가 차기 아이폰 교체 수요의 핵심 동력으로 작용할 것으로 분석됩니다.",
-        "risk": "앱스토어 반독점 규제 및 중국 내 판매 둔화 리스크.",
-        "upside": "+12.1%", "mkt_cap": "$3.4T", "vol_ratio": "1.2x ↑", "rsi": "55.4",
-        "swot_s": "충성도 높은 생태계 및 강력한 현금흐름", "swot_w": "하드웨어 혁신 속도 둔화",
-        "swot_o": "AI 기반 서비스 부문 매출 확대", "swot_t": "글로벌 규제 당국의 반독점 조사",
-        "dcf_target": "255.00", "dcf_bear": "205.00", "dcf_bull": "285.00"
-    },
-    "MSFT": {
-        "insight": "Azure 클라우드와 OpenAI 파트너십을 통한 기업용 AI 시장 지배력이 수익성 개선을 견인하고 있습니다.",
-        "risk": "성장 둔화 우려 및 클라우드 부문 마진 압박 가능성.",
-        "upside": "+17.5%", "mkt_cap": "$3.1T", "vol_ratio": "1.1x", "rsi": "52.3",
-        "swot_s": "클라우드 및 기업용 소프트웨어 독점력", "swot_w": "높은 밸류에이션 부담",
-        "swot_o": "생성형 AI 서비스의 전사적 통합", "swot_t": "AWS와 구글의 클라우드 추격",
-        "dcf_target": "505.00", "dcf_bear": "410.00", "dcf_bull": "580.00"
-    }
-}
+# --- Major US Analysis Persistent Knowledge (already defined globally at top) ---
 
 @app.route('/api/us/smart-money')
 def get_smart_money():
