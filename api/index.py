@@ -505,7 +505,7 @@ def fetch_realtime_data(tickers):
 AI_CACHE = {} # (date, symbol) -> analysis_dict
 try:
     genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
     print(f"DEBUG: Gemini Config Error: {e}")
     model = None
