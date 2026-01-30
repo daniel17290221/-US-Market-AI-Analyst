@@ -543,34 +543,29 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
     name_to_sym = {normalize(s.get('name', '')): s['symbol'] for s in needed}
     
     prompt = f"""
-    당신은 글로벌 증시 전문 AI 분석가입니다. 아래 제공된 한국 주식(KOSPI/KOSDAQ) 리스트에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
+    당신은 글로벌 증시 전문 AI 분석가입니다. 아래 한국 주식 리스트에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
     
     [필수 지시사항]
-    1. **제공된 모든 종목(Key)에 대해 빠짐없이 분석 결과를 반환하세요.**
-    2. 소형주라 정보가 부족하다면, 해당 종목의 **섹터(업종) 동향이나 기술적 위치**를 기반으로 추론하여 작성하세요. (분석 포기 금지)
-    3. 반드시 제공된 **6자리 종목코드**를 JSON 키로 사용하세요.
-    4. 각 종목에 대해 아래 포맷을 엄수하세요:
-       - insight: 최근 주가 흐름이나 수급 특징을 반영한 한줄평 (구체적일수록 좋음)
-       - risk: 재무적 리스크 또는 차익실현 매물 가능성 등
-       - swot_s, swot_w, swot_o, swot_t: 각각 1문장의 핵심 요약
-       - dcf_target, dcf_bear, dcf_bull: 현재가 대비 현실적인 목표가 설정 (숫자만)
-       - upside: 예상 상승 여력 (예: +15%)
-    5. 결과는 오직 JSON 형식으로만 출력하세요.
+    1. **제공된 20개 내외의 모든 종목(Key)에 대해 분석 결과를 반환하세요. (누락 금지)**
+    2. 답변은 **핵심만 간결하게(Short & Impactful)** 작성하여 생성 시간을 단축하세요.
+    3. 소형주라 정보가 없으면 섹터 동향으로 추론하여 답하세요.
+    4. 포맷 준수:
+       - insight: 1문장 핵심 한줄평
+       - risk: 최대 리스크 1개
+       - swot_s/w/o/t: 각각 핵심 키워드 위주의 짧은 문장
+       - dcf_target/bear/bull: 숫자만
+       - upside: 예: +15%
+    5. JSON 형식만 출력.
     
-    [분석 대상 리스트]
+    [분석 대상]
     {json.dumps([{ 'symbol': s['symbol'], 'name': s.get('name', 'N/A') } for s in needed], ensure_ascii=False)}
     
-    [출력 예시]
-    {{
-        "005930": {{
-            "insight": "반도체 업황 회복과 HBM 기대감으로 상승 추세가 지속되고 있습니다.",
-            "risk": "외국인 매도세 전환 가능성",
-            ...
-        }}
-    }}
+    [예시]
+    {{ "005930": {{ "insight": "HBM 공급 확대 기대", "risk": "재고 부담", "swot_s": "시장 지배력", ... }} }}
     """
     
     try:
+        # Using gemini-1.5-flash for maximum speed and compatibility
         response = model.generate_content(prompt)
         content = response.text.replace('```json', '').replace('```', '').strip()
         ai_data = json.loads(content)
