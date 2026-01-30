@@ -248,8 +248,14 @@ def fetch_realtime_data(tickers):
     for ticker in target_tickers:
         if not ticker: continue
         try:
+            # Handle KR stocks (6 digits) for Yahoo Finance
+            fetch_ticker = ticker
+            if len(ticker) == 6 and ticker.isdigit():
+                # Default to .KS (KOSPI) for major stocks, if it fails we could try .KQ
+                fetch_ticker = f"{ticker}.KS"
+            
             # Use v8 finance/chart for stability
-            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1m&range=1d"
+            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{fetch_ticker}?interval=1m&range=1d"
             resp = requests.get(url, headers=headers, timeout=3)
             
             if resp.status_code == 200:
@@ -334,14 +340,32 @@ def get_kr_smart_money():
     # FALLBACK DATA for KR (if file missing or empty)
     if not leaders:
         leaders = [
-            {"symbol": "005930", "name": "삼성전자", "price": "72,500", "change": "+0.69", "market": "KOSPI"},
-            {"symbol": "000660", "name": "SK하이닉스", "price": "182,300", "change": "+1.24", "market": "KOSPI"},
-            {"symbol": "005380", "name": "현대차", "price": "245,500", "change": "+0.41", "market": "KOSPI"},
-            {"symbol": "035420", "name": "NAVER", "price": "188,400", "change": "-0.53", "market": "KOSPI"},
-            {"symbol": "068270", "name": "셀트리온", "price": "178,200", "change": "+2.11", "market": "KOSPI"}
+            {"symbol": "005930", "name": "삼성전자", "price": "75,000", "change": "0.00", "market": "KOSPI", "rank": "1", "score": 95},
+            {"symbol": "000660", "name": "SK하이닉스", "price": "180,000", "change": "0.00", "market": "KOSPI", "rank": "2", "score": 92},
+            {"symbol": "005380", "name": "현대차", "price": "240,000", "change": "0.00", "market": "KOSPI", "rank": "3", "score": 88},
+            {"symbol": "068270", "name": "셀트리온", "price": "180,000", "change": "0.00", "market": "KOSPI", "rank": "4", "score": 85},
+            {"symbol": "035420", "name": "NAVER", "price": "190,000", "change": "0.00", "market": "KOSPI", "rank": "5", "score": 82}
         ]
+    
+    # Try to fetch real-time prices for these stocks
+    try:
+        kr_tickers = [d['symbol'] for d in leaders[:10]]
+        current_prices = fetch_realtime_data(kr_tickers)
+        for d in leaders:
+            sym = d['symbol']
+            # Yahoo fetcher returned with .KS, but we store by original symbol
+            lookup = f"{sym}.KS" if len(sym) == 6 else sym
+            if lookup in current_prices:
+                d['price'] = f"{int(current_prices[lookup]['price']):,}"
+                d['change'] = current_prices[lookup]['change']
+            elif sym in current_prices:
+                d['price'] = f"{int(current_prices[sym]['price']):,}"
+                d['change'] = current_prices[sym]['change']
+    except Exception as e:
+        print(f"DEBUG: KR Price update error: {e}")
+
     if not gainers:
-        gainers = leaders[:3] # Just as placeholder
+        gainers = leaders[:3] 
     if not volume:
         volume = leaders[:3]
 

@@ -75,20 +75,8 @@
             <div class="tradingview-widget-container__widget"></div>
             <script type="text/javascript"
                 src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                    {
-                        "symbols": [
-                            { "proName": "TVC:KOSPI", "title": "코스피" },
-                            { "proName": "TVC:KOSDAQ", "title": "코스닥" },
-                            { "proName": "FX_IDC:USDKRW", "title": "원달러 환율" },
-                            { "proName": "FOREXCOM:SPX500", "title": "S&P 500" },
-                            { "proName": "FOREXCOM:NSXUSD", "title": "나스닥 100" }
-                        ],
-                            "showSymbolLogo": true,
-                                "colorTheme": "dark",
-                                    "isTransparent": true,
-                                        "displayMode": "adaptive",
-                                            "locale": "kr"
-                    }
+                    "locale": "kr"
+                    };
                 </script>
         </div>
     </div>
@@ -195,21 +183,8 @@
                                 <script type="text/javascript"
                                     src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
                                     async>
-                                        {
-                                            "autosize": true,
-                                                "symbol": "FX_IDC:USDKRW",
-                                                    "interval": "D",
-                                                        "timezone": "Asia/Seoul",
-                                                            "theme": "dark",
-                                                                "style": "1",
-                                                                    "locale": "kr",
-                                                                        "enable_publishing": false,
-                                                                            "backgroundColor": "rgba(17, 17, 20, 1)",
-                                                                                "gridColor": "rgba(255, 255, 255, 0.05)",
-                                                                                    "hide_top_toolbar": false,
-                                                                                        "save_image": false,
-                                                                                            "container_id": "tradingview_main"
-                                        }
+                                        "container_id": "tradingview_main"
+                                        };
                                     </script>
                             </div>
                         </div>
@@ -632,8 +607,8 @@
                 };
 
                 safeSetText('main-ticker-name', data.name); // Now in header
-                safeSetText('main-full-name', data.ticker); // Now in header
-                safeSetText('main-ai-score', data.score);   // New AI Score in header
+                safeSetText('main-full-name', data.symbol); // Changed from data.ticker to data.symbol
+                safeSetText('main-ai-score', data.score || '90');   // Fallback score
 
                 // Update Logo
                 const logoImg = document.getElementById('main-ticker-logo');
@@ -682,10 +657,14 @@
         function updateTradingView(res = 'D', symbol = null) {
             if (symbol) {
                 // If it's a 6-digit numeric string, it's a KR stock
-                if (/^\d{6}$/.test(symbol)) {
-                    currentSymbol = `KRX:${symbol}`;
+                // Ensure we trim whitespace and normalize string
+                const cleanSymbol = String(symbol).trim();
+                if (/^\d{6}$/.test(cleanSymbol)) {
+                    currentSymbol = `KRX:${cleanSymbol}`;
+                } else if (cleanSymbol.includes(':')) {
+                    currentSymbol = cleanSymbol;
                 } else {
-                    currentSymbol = symbol;
+                    currentSymbol = cleanSymbol;
                 }
             }
             const container = document.getElementById('tradingview_main');
