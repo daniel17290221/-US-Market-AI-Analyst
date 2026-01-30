@@ -22,13 +22,8 @@ except:
 
 from us_market.daily_report_generator import USDailyReportGenerator
 
-# KR Report Generator - optional import
-try:
-    from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
-    KR_REPORT_AVAILABLE = True
-except Exception as e:
-    print(f"Warning: KR Report Generator not available: {e}")
-    KR_REPORT_AVAILABLE = False
+# KR Report functionality temporarily disabled for Vercel deployment
+KR_REPORT_AVAILABLE = False
 
 app = Flask(__name__, 
             template_folder=os.path.join(BASE_DIR, 'templates'),
