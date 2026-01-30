@@ -91,6 +91,38 @@ MAJOR_ANALYSIS_KR = {
         "swot_s": "바이오시밀러 시장 내 선도적 입지", "swot_w": "높은 램시마 의존도 및 합병 후 초기 비용",
         "swot_o": "신약 짐펜트라의 미국 매출 본격화", "swot_t": "글로벌 대형 제약사들의 시장 진입",
         "dcf_target": "320,000", "dcf_bear": "250,000", "dcf_bull": "380,000"
+    },
+    "035420": {
+        "insight": "AI 검색 서비스 '큐:' 도입과 클라우드 부문의 견조한 성장세가 주가 반등의 촉매제가 될 전망입니다.",
+        "risk": "C-커머스 공세에 따른 커머스 수익성 둔화 우려.",
+        "upside": "+28%", "mkt_cap": "$25B", "vol_ratio": "1.4x", "rsi": "56.8",
+        "swot_s": "국내 최대 검색 플랫폼 및 방대한 유저 데이터", "swot_w": "글로벌 확장성 부족 및 마케팅 비용 부담",
+        "swot_o": "B2B AI 시장 선점 및 자회사 상장 모멘텀", "swot_t": "유튜브/구글 등 글로벌 플랫폼의 국내 점유율 확대",
+        "dcf_target": "285,000", "dcf_bear": "180,000", "dcf_bull": "340,000"
+    },
+    "035720": {
+        "insight": "광고 매출의 회복과 AI 사업 조직 통합을 통한 경영 효율화가 가시화되고 있습니다.",
+        "risk": "사법 리스크 및 계열사들의 실적 부진 장기화.",
+        "upside": "+22%", "mkt_cap": "$18B", "vol_ratio": "1.1x", "rsi": "51.2",
+        "swot_s": "압도적인 플랫폼 접근성(카카오톡)", "swot_w": "사법 리스크에 따른 신사업 추진 지연",
+        "swot_o": "카카오톡 내 AI 에이전트 도입 시너지", "swot_t": "플랫폼 규제 강화 및 경쟁 앱들의 약진",
+        "dcf_target": "75,000", "dcf_bear": "45,000", "dcf_bull": "92,000"
+    },
+    "005490": {
+        "insight": "리튬 가격 저점 통과 기대감과 철강 업황의 완만한 회복세가 투자 심리를 개선 중입니다.",
+        "risk": "전기차 수요 둔화에 따른 이차전지 소재 부문 실적 지연.",
+        "upside": "+18%", "mkt_cap": "$30B", "vol_ratio": "1.3x", "rsi": "49.5",
+        "swot_s": "철강에서 이차전지 소재로의 완벽한 체질 개선", "swot_w": "원재료(리튬 등) 가격 변동에 높은 노출도",
+        "swot_o": "북미 리튬 생산 시설 가동 및 폐배터리 리사이클링", "swot_t": "중국발 철강 공급 과잉 및 저가 공세",
+        "dcf_target": "580,000", "dcf_bear": "380,000", "dcf_bull": "680,000"
+    },
+    "105560": {
+        "insight": "강력한 주주 환원 정책과 밸류업 프로그램의 직접적인 수혜가 기대되는 저평가 우량주입니다.",
+        "risk": "부동산 PF 관련 충당금 적립 부담 및 금리 인하 국면 진입 시 마진 축소.",
+        "upside": "+15%", "mkt_cap": "$22B", "vol_ratio": "1.0x", "rsi": "62.4",
+        "swot_s": "국내 1위 금융지주의 압도적인 자산 건전성", "swot_w": "비은행 부문의 상대적 낮은 기여도",
+        "swot_o": "적극적인 자사주 매입 및 소각 로드맵", "swot_t": "금융 당국의 대출 규제 및 상생 금융 압박",
+        "dcf_target": "95,000", "dcf_bear": "68,000", "dcf_bull": "110,000"
     }
 }
 
@@ -712,7 +744,8 @@ def get_kr_smart_money():
     try:
         all_unique_stocks = []
         seen = set()
-        for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume]:
+        # PRIORITIZE Gainers and Volume stocks for AI analysis
+        for d_list in [gainers, volume, leaders_kospi, leaders_kosdaq]:
             for s in d_list:
                 if s['symbol'] not in seen:
                     all_unique_stocks.append(s)
@@ -720,8 +753,8 @@ def get_kr_smart_money():
         
         # Filters based on MAJOR_ANALYSIS_KR (hardcoded knowns)
         needing_dynamic = [s for s in all_unique_stocks if s['symbol'] not in MAJOR_ANALYSIS_KR]
-        # Further limit to top 12 to avoid timeouts
-        needing_dynamic = needing_dynamic[:12]
+        # Increased limit for Gemini 2.0 Flash speed
+        needing_dynamic = needing_dynamic[:25]
         dynamic_results = fetch_dynamic_ai_analysis(needing_dynamic)
     except Exception as e:
         print(f"DEBUG: KR AI Batch Analysis Error: {e}")
