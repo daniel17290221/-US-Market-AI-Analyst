@@ -69,6 +69,26 @@
 </head>
 
 <body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay"
+        class="fixed inset-0 z-[100] bg-[#08080A] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-t-4 border-brand-primary rounded-full animate-spin"></div>
+            <div class="absolute inset-2 border-r-4 border-brand-secondary rounded-full animate-spin reverse-spin">
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-robot text-3xl text-white animate-pulse"></i>
+            </div>
+        </div>
+        <h2
+            class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary mb-2">
+            AI Market Analyst
+        </h2>
+        <p class="text-gray-400 font-mono text-sm typewriter">
+            Generating real-time investment insights...
+        </p>
+    </div>
+
     <!-- Ticker Tape Widget (KOSPI/KOSDAQ) -->
     <div class="bg-[#08080A] border-b border-white/5">
         <div class="tradingview-widget-container">
@@ -529,6 +549,15 @@
                     }
 
                     switchMarketTab('leaders_kospi'); // Initial render
+
+                    // Hide Loading Overlay
+                    const overlay = document.getElementById('loading-overlay');
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                        }, 500);
+                    }
 
                     if (state.smartMoneyData.length > 0) {
                         // Load first symbol data but SKIP chart update to prevent popup on load
