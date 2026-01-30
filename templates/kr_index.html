@@ -174,13 +174,15 @@
                             </div>
 
                             <!-- Right: Interval Buttons -->
-                            <div class="flex p-1 bg-white/5 rounded-lg border border-white/10">
-                                <button onclick="changeInterval('1D')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md bg-brand-primary text-black transition hover:opacity-90">1D</button>
-                                <button onclick="changeInterval('1W')"
+                            <div id="interval-btn-group" class="flex p-1 bg-white/5 rounded-lg border border-white/10">
+                                <button id="btn-int-1D" onclick="changeInterval('1D')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md bg-brand-primary text-black transition">1D</button>
+                                <button id="btn-int-1W" onclick="changeInterval('1W')"
                                     class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1W</button>
-                                <button onclick="changeInterval('1M')"
+                                <button id="btn-int-1M" onclick="changeInterval('1M')"
                                     class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1M</button>
+                                <button id="btn-int-1Y" onclick="changeInterval('1Y')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1Y</button>
                             </div>
                         </div>
 
@@ -570,6 +572,11 @@
             else if (tab === 'volume') state.smartMoneyData = state.volume;
 
             injectSmartMoney(state.smartMoneyData);
+
+            // Auto-load first item of the new tab to sync AI details
+            if (state.smartMoneyData && state.smartMoneyData.length > 0) {
+                loadSymbol(0, true); // Use true to avoid triggering popup on tab switch
+            }
         }
 
         function injectSmartMoney(data) {
@@ -692,7 +699,23 @@
         }
 
         function changeInterval(int) {
-            const map = { '1D': '60', '1W': 'D', '1M': 'D' };
+            const map = { '1D': '60', '1W': 'D', '1M': 'D', '1Y': 'D' };
+
+            // Update UI Button Classes
+            const buttons = ['1D', '1W', '1M', '1Y'];
+            buttons.forEach(b => {
+                const btn = document.getElementById(`btn-int-${b}`);
+                if (btn) {
+                    if (b === int) {
+                        btn.classList.add('bg-brand-primary', 'text-black');
+                        btn.classList.remove('text-gray-400', 'hover:text-white');
+                    } else {
+                        btn.classList.remove('bg-brand-primary', 'text-black');
+                        btn.classList.add('text-gray-400', 'hover:text-white');
+                    }
+                }
+            });
+
             updateTradingView(map[int] || 'D');
         }
 
