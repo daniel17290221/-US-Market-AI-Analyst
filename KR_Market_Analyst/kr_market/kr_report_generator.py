@@ -82,7 +82,14 @@ class KRDailyReportGenerator:
             return self.get_fallback_content()
 
     def generate_html(self, raw_data, ai_content):
-        kst_now = datetime.utcnow() + timedelta(hours=9)
+        try:
+            import pytz
+            kst = pytz.timezone('Asia/Seoul')
+            kst_now = datetime.now(kst)
+        except ImportError:
+            # Fallback if pytz is not available
+            kst_now = datetime.utcnow() + timedelta(hours=9)
+            
         today_date = kst_now.strftime("%Y.%m.%d")
         gen_time = kst_now.strftime("%Y-%m-%d %H:%M:%S")
         
