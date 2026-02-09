@@ -51,8 +51,13 @@ jobs:
           if git commit -m "auto: KR market data & report update $(date +'%Y-%m-%d %H:%M')"; then
             echo "Successfully committed changes. Now pulling latest changes from master..."
             git pull --rebase origin master
-            echo "Pushing changes to origin master..."
+            echo "Pushing merged changes to origin master..."
             git push origin master
+            
+            # 🔥 Trigger Vercel Deployment explicitly after push
+            curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_hYHnViRFvIuQoGJqQ7pgRUXWv78P/1sZQeXELu7"
           else
             echo "No changes to commit."
+            # 🔥 Trigger Vercel Deployment explicitly after push
+            curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_hYHnViRFvIuQoGJqQ7pgRUXWv78P/1sZQeXELu7"
           fi
