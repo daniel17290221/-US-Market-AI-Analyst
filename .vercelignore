@@ -6,13 +6,36 @@ venv
 .env
 .gemini
 brain
-# *.csv
-# us_market/*.csv
-us_market/history/
 node_modules
 *.html.bak
 *.md
 docs/
 tests/
-quick_test_report.py
-requirements_local.txt
+# Exclude all test/debug scripts
+test_*.py
+debug_*.py
+quick_*.py
+robust_*.py
+patch_*.py
+rebuild_*.py
+reconstruct_*.py
+restore_*.py
+surgical_*.py
+total_*.py
+cleanup_*.py
+expand_*.py
+fix_*.py
+generate_*.py
+localize_*.py
+full_*.py
+recover_*.py
+update_frontend_date.py
+# Exclude large CSVs
+us_market/us_daily_prices.csv
+us_market/us_volume_analysis.csv
+us_market/us_13f_holdings.csv
+us_market/us_etf_flows.csv
+# Keep only needed data
+!us_market/smart_money_picks_v2.csv
+!us_market/*.json
+!KR_Market_Analyst/kr_market/*.json
