@@ -10,6 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -64,10 +65,71 @@
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
+
+        .score-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            border: 1px solid transparent;
+        }
+
+        .score-high {
+            background: rgba(0, 230, 118, 0.1);
+            color: #00E676;
+            border-color: rgba(0, 230, 118, 0.2);
+        }
+
+        .text-glow-primary {
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Loading Overlay Style */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 8, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #FFF;
+            border-bottom-color: #00F0FF;
+            border-radius: 50%;
+            display: inline-block;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
 <body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <span class="loader"></span>
+        <div class="italic font-bold text-brand-primary mt-6 tracking-widest uppercase">AI DATA SYNCING...</div>
+    </div>
+
     <!-- Ticker Tape Widget (KOSPI/KOSDAQ) -->
     <div class="bg-[#08080A] border-b border-white/5">
         <div class="tradingview-widget-container">
@@ -118,13 +180,16 @@
             <a onclick="switchTab('report')" id="nav-report"
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">데일리
                 리포트</a>
+            <a href="/"
+                class="tab-inactive py-1 text-[10px] bg-white/5 border border-white/10 px-3 rounded-full hover:text-white">US
+                Market</a>
         </div>
 
         <div class="flex items-center gap-4">
             <div class="flex flex-col items-end gap-1">
                 <span
                     class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                    KOREA MARKET v1.1
+                    KOREA MARKET v1.5
                 </span>
                 <span id="clock" class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
                     --:-- KST
@@ -136,144 +201,256 @@
     <!-- Main Content -->
     <main class="max-w-[1600px] mx-auto px-4 pb-20">
 
-        <!-- Tab: Market Analyst (Active by Default) -->
+        <!-- Tab: Market Analyst -->
         <div id="tab-market" class="space-y-6 animate-fade-in">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Main Chart (8 cols) -->
+                <!-- Main Content (8 cols) -->
                 <div class="lg:col-span-8 space-y-6">
-                    <div class="glass-card p-6 h-[600px]">
-                        <div class="tradingview-widget-container h-full w-full">
-                            <div class="tradingview-widget-container__widget h-full w-full"></div>
-                            <script type="text/javascript"
-                                src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
-                                async>
-                                    {
-                                        "autosize": true,
-                                            "symbol": "TVC:KOSPI",
-                                                "interval": "D",
-                                                    "timezone": "Asia/Seoul",
-                                                        "theme": "dark",
-                                                            "style": "1",
-                                                                "locale": "kr",
-                                                                    "enable_publishing": false,
-                                                                        "backgroundColor": "rgba(17, 17, 20, 1)",
-                                                                            "gridColor": "rgba(255, 255, 255, 0.05)",
-                                                                                "hide_top_toolbar": false,
-                                                                                    "save_image": false,
-                                                                                        "calendar": false,
-                                                                                            "hide_volume": true,
-                                                                                                "support_host": "https://www.tradingview.com"
-                                    }
-                                </script>
+                    <!-- Featured Stock Core -->
+                    <div class="glass-card p-8 min-h-[900px] flex flex-col relative overflow-hidden">
+                        <!-- BG Glow -->
+                        <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-primary/5 rounded-full blur-[100px]">
+                        </div>
+
+                        <div class="flex justify-between items-start mb-8 relative z-10">
+                            <div class="flex items-center gap-5">
+                                <div
+                                    class="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center border border-white/10 overflow-hidden">
+                                    <img id="main-ticker-logo" src="" class="w-11 h-11 object-contain"
+                                        onerror="this.onerror=null; this.src='https://assets.parqet.com/logos/symbols/'+this.alt.split('.')[0]+'?format=svg';">
+                                </div>
+                                <div>
+                                    <h2 class="text-4xl font-bold flex items-center gap-4">
+                                        <span id="main-ticker-name" class="text-glow-primary">--</span>
+                                        <span id="main-full-name"
+                                            class="text-gray-500 text-xl font-medium tracking-tight">--</span>
+                                    </h2>
+                                    <div class="flex gap-4 mt-3">
+                                        <span id="ai-score-pill" class="score-pill score-high px-4 py-1">AI 점수:
+                                            --</span>
+                                        <span id="ai-signal-pill"
+                                            class="score-pill bg-white/5 text-gray-300 border-white/10 px-4 py-1">분석
+                                            중</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button onclick="changeInterval('1D')"
+                                        class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1D</button>
+                                    <button onclick="changeInterval('1M')"
+                                        class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black">1M</button>
+                                    <button onclick="changeInterval('1Y')"
+                                        class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1Y</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Chart Area -->
+                        <div id="main-chart-container"
+                            class="w-full h-[550px] rounded-2xl overflow-hidden mb-10 bg-black/40 border border-white/5 shadow-2xl relative">
+                            <!-- Chart rendering here -->
+                        </div>
+
+                        <!-- Analysis Blocks -->
+                        <div class="space-y-8 relative z-10">
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">시가 총액</p>
+                                    <p id="detail-mkt-cap" class="font-mono font-bold text-lg">--</p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">거래량 비율</p>
+                                    <p id="detail-vol-ratio" class="font-mono font-bold text-lg text-brand-success">--
+                                    </p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">AI Score</p>
+                                    <p id="detail-score" class="font-mono font-bold text-lg text-brand-primary">--</p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">업종</p>
+                                    <p id="detail-sector" class="font-mono font-bold text-lg">--</p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">신호 강도</p>
+                                    <p id="detail-signal-strength"
+                                        class="font-mono font-bold text-lg text-brand-success">--</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="space-y-6">
+                                    <div class="p-6 bg-brand-secondary/10 rounded-2xl border border-brand-secondary/20">
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i
+                                                class="fas fa-bolt text-brand-secondary"></i> AI 투자 인사이트</h4>
+                                        <p id="ai-insight" class="text-sm leading-relaxed text-gray-300 italic">분석 중...
+                                        </p>
+                                    </div>
+                                    <div class="p-6 bg-brand-danger/10 rounded-2xl border border-brand-danger/20">
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i
+                                                class="fas fa-shield-alt text-brand-danger"></i> 핵심 리스크</h4>
+                                        <p id="ai-risk" class="text-sm leading-relaxed text-gray-400">분석 중...</p>
+                                        <p id="ai-upside"
+                                            class="mt-4 text-xs font-bold text-brand-success uppercase tracking-widest">
+                                            +0% 예상 상승 여력</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="p-6 bg-gray-900/60 rounded-2xl border border-white/10">
+                                        <h4 class="text-sm font-bold mb-6 flex justify-between items-center">
+                                            <span>적정 주가 분석</span>
+                                            <span class="text-[10px] font-mono text-gray-500">AI MODEL v2.0</span>
+                                        </h4>
+                                        <div class="flex justify-between text-[11px] font-mono">
+                                            <div class="text-center">
+                                                <p class="text-gray-500 mb-1">BEAR</p>
+                                                <p id="dcf-bear" class="text-white font-bold">--</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <p class="text-brand-primary mb-1">FAIR VALUE</p>
+                                                <p id="dcf-target" class="text-brand-primary font-black text-sm">--</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <p class="text-gray-500 mb-1">BULL</p>
+                                                <p id="dcf-bull" class="text-white font-bold">--</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="p-3 bg-brand-success/5 rounded-xl border border-brand-success/20">
+                                            <p class="text-[9px] text-brand-success font-black mb-1">강점 (S)</p>
+                                            <p id="swot-s" class="text-[11px] text-gray-200">--</p>
+                                        </div>
+                                        <div class="p-3 bg-brand-danger/5 rounded-xl border border-brand-danger/20">
+                                            <p class="text-[9px] text-brand-danger font-black mb-1">약점 (W)</p>
+                                            <p id="swot-w" class="text-[11px] text-gray-200">--</p>
+                                        </div>
+                                        <div class="p-3 bg-brand-primary/5 rounded-xl border border-brand-primary/20">
+                                            <p class="text-[9px] text-brand-primary font-black mb-1">기회 (O)</p>
+                                            <p id="swot-o" class="text-[11px] text-gray-200">--</p>
+                                        </div>
+                                        <div class="p-3 bg-brand-warning/5 rounded-xl border border-brand-warning/20">
+                                            <p class="text-[9px] text-brand-warning font-black mb-1">위협 (T)</p>
+                                            <p id="swot-t" class="text-[11px] text-gray-200">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Market Movers Table -->
+                    <div class="glass-card p-8">
+                        <div class="flex justify-between items-center mb-8">
+                            <h2 class="text-xl font-bold flex items-center gap-3">
+                                <i class="fas fa-fire-alt text-brand-danger"></i> 실시간 국내 급등/주도주
+                            </h2>
+                            <div class="flex gap-2">
+                                <button onclick="loadList('leaders_kospi')"
+                                    class="px-3 py-1 text-[10px] font-bold rounded border border-white/10 hover:bg-white/5">코스피
+                                    시총상위</button>
+                                <button onclick="loadList('leaders_kosdaq')"
+                                    class="px-3 py-1 text-[10px] font-bold rounded border border-white/10 hover:bg-white/5">코스닥
+                                    시총상위</button>
+                                <button onclick="loadList('gainers')"
+                                    class="px-3 py-1 text-[10px] font-bold rounded border border-white/10 hover:bg-white/5">급등주</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto scrollbar-hide">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="text-[10px] text-gray-500 font-black uppercase border-b border-white/10">
+                                        <th class="px-4 py-3">코드</th>
+                                        <th class="px-4 py-3">종목명</th>
+                                        <th class="px-4 py-3 text-right">현재가</th>
+                                        <th class="px-4 py-3 text-right">등락율</th>
+                                        <th class="px-4 py-3 text-right">분석</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kr-movers-tbody" class="text-sm font-medium"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
                 <!-- Sidebar (4 cols) -->
                 <div class="lg:col-span-4 space-y-6">
-                    <!-- Smart Money KR (Placeholder) -->
-                    <div class="glass-card p-6">
-                        <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                            <i class="fas fa-microchip text-brand-primary"></i> 주도주 분석 (KR)
-                        </h3>
-                        <div class="space-y-3">
-                            <div
-                                class="p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center">
-                                <span class="text-xs font-bold">삼성전자</span>
-                                <span class="text-[10px] text-brand-success">+1.2%</span>
-                            </div>
-                            <div
-                                class="p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center">
-                                <span class="text-xs font-bold">SK하이닉스</span>
-                                <span class="text-[10px] text-brand-danger">-0.5%</span>
-                            </div>
-                            <div
-                                class="p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center">
-                                <span class="text-xs font-bold">LG에너지솔루션</span>
-                                <span class="text-[10px] text-brand-success">+2.1%</span>
-                            </div>
+                    <!-- Market Sector Heatmap -->
+                    <div class="glass-card p-6 h-[400px] flex flex-col">
+                        <h2 class="text-xs font-black uppercase text-gray-500 mb-4 flex items-center gap-2">
+                            <i class="fas fa-th-large text-brand-success"></i> 주요 섹터 퍼포먼스
+                        </h2>
+                        <div id="sector-heatmap-container" class="flex-1 space-y-3 overflow-y-auto pr-2 scrollbar-hide">
                         </div>
                     </div>
 
-                    <!-- Market Sentiment -->
-                    <div class="glass-card p-6">
-                        <h3 class="text-sm font-bold text-white mb-4">시장 심리</h3>
-                        <div class="text-center py-4">
-                            <div class="text-4xl font-black text-brand-primary mb-2">68</div>
-                            <div class="text-[10px] text-gray-500 uppercase tracking-widest">Neutral-Greed</div>
+                    <!-- Macro Analysis Panel -->
+                    <div class="glass-card p-7 bg-brand-primary/5 border-brand-primary/10">
+                        <h2 class="text-base font-bold mb-6 flex items-center gap-3">
+                            <i class="fas fa-info-circle text-brand-primary"></i> 국내 시장 뉴스/알림
+                        </h2>
+                        <div id="ipo-news-container" class="space-y-4"></div>
+                    </div>
+
+                    <!-- TradingView Widget Heatmap -->
+                    <div class="glass-card p-6 h-[400px] flex flex-col overflow-hidden">
+                        <h2 class="text-xs font-black uppercase text-gray-500 mb-4">전체 시장 맵 (KRX)</h2>
+                        <div class="flex-1 rounded-xl overflow-hidden relative">
+                            <div class="tradingview-widget-container h-full">
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
+                                    async>
+                                        {
+                                            "exchanges": ["KRX"],
+                                                "dataSource": "KRX",
+                                                    "grouping": "sector",
+                                                        "blockSize": "market_cap",
+                                                            "blockColor": "change",
+                                                                "locale": "kr",
+                                                                    "symbolUrl": "",
+                                                                        "colorTheme": "dark",
+                                                                            "hasTopBar": false,
+                                                                                "isTransparent": true,
+                                                                                    "width": "100%", "height": "100%"
+                                        }
+                                    </script>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tab: Subscription & News (Hidden by Default) -->
+        <!-- Tab: Subscription (IPO) -->
         <div id="tab-subscription" class="hidden space-y-6 animate-fade-in">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- IPO Subscription -->
-                <div class="glass-card p-6 min-h-[500px]">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-calendar-check text-brand-primary"></i> 주요 공무주 청약 일정
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-sm font-bold text-brand-primary">샘플 소프트웨어</span>
-                                <span
-                                    class="text-[10px] bg-brand-primary/20 text-brand-primary px-2 py-0.5 rounded">청약중</span>
-                            </div>
-                            <p class="text-[11px] text-gray-400">주관사: 한국투자증권 | 공모가: 12,000원</p>
-                        </div>
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-sm font-bold text-white">바이브코딩 테크</span>
-                                <span class="text-[10px] bg-gray-500/20 text-gray-400 px-2 py-0.5 rounded">D-3</span>
-                            </div>
-                            <p class="text-[11px] text-gray-400">주관사: 미래에셋증권 | 공모가: 25,000원</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KR Market News -->
-                <div class="glass-card p-6 min-h-[500px]">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-newspaper text-brand-secondary"></i> 실시간 국내 증시 뉴스
-                    </h3>
-                    <div class="tradingview-widget-container h-[400px]">
-                        <div class="tradingview-widget-container__widget"></div>
-                        <script type="text/javascript"
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-                                {
-                                    "feedMode": "market",
-                                        "market": "stock",
-                                            "isTransparent": true,
-                                                "displayMode": "regular",
-                                                    "width": "100%",
-                                                        "height": "100%",
-                                                            "colorTheme": "dark",
-                                                                "locale": "kr"
-                                }
-                            </script>
-                    </div>
+            <div class="glass-card p-6 min-h-[500px]">
+                <h3 class="text-lg font-bold text-white mb-6">📌 상세 국내 증시 뉴스 및 공시</h3>
+                <div class="tradingview-widget-container h-[600px]">
+                    <script type="text/javascript"
+                        src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+                            {
+                                "feedMode": "market", "market": "stock", "isTransparent": true,
+                                    "displayMode": "regular", "width": "100%", "height": "100%",
+                                        "colorTheme": "dark", "locale": "kr"
+                            }
+                        </script>
                 </div>
             </div>
         </div>
 
-        <!-- Tab: Daily Report (Hidden by Default) -->
+        <!-- Tab: Daily Report -->
         <div id="tab-report" class="hidden space-y-6 animate-fade-in">
             <div class="glass-card p-0 flex flex-col h-[85vh] overflow-hidden relative">
-                <div class="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center flex-shrink-0">
-                    <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
-                    <div class="flex gap-2">
-                        <button onclick="document.getElementById('reportFrame').contentWindow.location.reload();"
-                            class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
-                            <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
-                        </button>
-                        <a href="/api/kr/report" target="_blank"
-                            class="text-[10px] bg-white/10 text-white px-3 py-1 rounded hover:bg-white/20 transition">
-                            <i class="fas fa-external-link-alt mr-1"></i> 새 창
-                        </a>
-                    </div>
+                <div class="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-400">PREMIUM ANALYSIS REPORT</span>
+                    <button onclick="document.getElementById('reportFrame').contentWindow.location.reload();"
+                        class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded">리포트 새로고침</button>
                 </div>
                 <iframe id="reportFrame" src="/api/kr/report" class="w-full flex-1 bg-white/5" frameborder="0"></iframe>
             </div>
@@ -282,46 +459,195 @@
     </main>
 
     <script>
-        // Tab Switch Logic
-        function switchTab(tabName) {
-            const tabs = ['market', 'subscription', 'report'];
+        // --- State ---
+        let state = {
+            currentTab: 'market',
+            currentInterval: '1M',
+            allData: null,
+            currentList: 'leaders_kospi',
+            chart: null,
+            candleSeries: null
+        };
 
-            // Update Nav Styles
-            tabs.forEach(t => {
-                const el = document.getElementById(`nav-${t}`);
-                if (!el) return;
-                if (t === tabName) {
-                    el.classList.remove('tab-inactive', 'hover:text-white');
-                    el.classList.add('tab-active');
-                } else {
-                    el.classList.remove('tab-active');
-                    el.classList.add('tab-inactive', 'hover:text-white');
+        // --- Init ---
+        async function init() {
+            try {
+                const res = await fetch('/api/kr/market-data');
+                const data = await res.json();
+                state.allData = data;
+
+                renderHeatmap(data.sector_heatmap);
+                renderLists();
+                renderIpo(data.ipo_news);
+
+                // Load First Stock
+                if (data.leaders_kospi && data.leaders_kospi.length > 0) {
+                    loadStock(data.leaders_kospi[0]);
                 }
-            });
 
-            // Update Content Visibility
-            tabs.forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                if (!el) return;
-                if (t === tabName) {
-                    el.classList.remove('hidden');
-                } else {
-                    el.classList.add('hidden');
-                }
-            });
+                document.getElementById('loading-overlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 600);
+            } catch (e) {
+                console.error("Init failed", e);
+            }
+        }
 
-            // Re-trigger layout for TV widgets
+        function switchTab(tab) {
+            ['market', 'subscription', 'report'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('nav-' + t).className = 'tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white';
+            });
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.getElementById('nav-' + tab).className = 'tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition';
             window.dispatchEvent(new Event('resize'));
+        }
+
+        function loadList(type) {
+            state.currentList = type;
+            renderLists();
+        }
+
+        function renderLists() {
+            const list = state.allData[state.currentList];
+            const tbody = document.getElementById('kr-movers-tbody');
+            tbody.innerHTML = '';
+
+            list.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-white/5 hover:bg-white/5 cursor-pointer transition group';
+                tr.onclick = () => loadStock(s);
+
+                const isUp = parseFloat(s.change) >= 0;
+                tr.innerHTML = `
+                    <td class="px-4 py-4 font-mono text-gray-500">${s.symbol}</td>
+                    <td class="px-4 py-4 font-bold text-white group-hover:text-brand-primary">${s.name}</td>
+                    <td class="px-4 py-4 text-right font-mono">${s.price}</td>
+                    <td class="px-4 py-4 text-right font-mono ${isUp ? 'text-brand-success' : 'text-brand-danger'}">${s.change}%</td>
+                    <td class="px-4 py-4 text-right"><i class="fas fa-chevron-right text-gray-700"></i></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderHeatmap(sectors) {
+            const container = document.getElementById('sector-heatmap-container');
+            container.innerHTML = '';
+            sectors.forEach(sec => {
+                const isUp = sec.change >= 0;
+                const div = document.createElement('div');
+                div.className = 'p-4 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center';
+                div.innerHTML = `
+                    <span class="text-xs font-bold">${sec.sector}</span>
+                    <span class="text-xs font-mono font-bold ${isUp ? 'text-brand-success' : 'text-brand-danger'}">${sec.change_str}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderIpo(news) {
+            const container = document.getElementById('ipo-news-container');
+            container.innerHTML = '';
+            news.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'p-3 bg-black/20 rounded-xl border border-white/5';
+                div.innerHTML = `
+                    <div class="flex justify-between mb-1">
+                        <span class="text-[10px] text-brand-primary font-bold">${n.status || 'IPO'}</span>
+                        <span class="text-[9px] text-gray-600">${n.date}</span>
+                    </div>
+                    <p class="text-xs font-medium text-gray-300">${n.name}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function loadStock(stock) {
+            const s = stock;
+            document.getElementById('main-ticker-name').innerText = s.symbol;
+            document.getElementById('main-full-name').innerText = s.name;
+            document.getElementById('ai-score-pill').innerText = `AI 점수: ${s.score}`;
+            document.getElementById('ai-signal-pill').innerText = s.signal;
+
+            document.getElementById('detail-mkt-cap').innerText = s.mkt_cap;
+            document.getElementById('detail-vol-ratio').innerText = s.vol_ratio;
+            document.getElementById('detail-score').innerText = s.score;
+            document.getElementById('detail-sector').innerText = s.sector;
+            document.getElementById('detail-signal-strength').innerText = s.signal;
+
+            document.getElementById('ai-insight').innerText = s.insight;
+            document.getElementById('ai-risk').innerText = s.risk;
+            document.getElementById('ai-upside').innerText = `${s.upside} 예상 상승 여력`;
+
+            document.getElementById('dcf-target').innerText = s.dcf_target;
+            document.getElementById('dcf-bear').innerText = s.dcf_bear;
+            document.getElementById('dcf-bull').innerText = s.dcf_bull;
+
+            document.getElementById('swot-s').innerText = s.swot_s;
+            document.getElementById('swot-w').innerText = s.swot_w;
+            document.getElementById('swot-o').innerText = s.swot_o;
+            document.getElementById('swot-t').innerText = s.swot_t;
+
+            // Logo
+            document.getElementById('main-ticker-logo').alt = s.symbol;
+            document.getElementById('main-ticker-logo').src = `https://assets.parqet.com/logos/symbols/${s.symbol}?format=svg`;
+
+            renderChart(s.symbol);
+        }
+
+        async function renderChart(symbol) {
+            const container = document.getElementById('main-chart-container');
+            container.innerHTML = '';
+
+            const chart = LightweightCharts.createChart(container, {
+                layout: { background: { color: 'transparent' }, textColor: '#8b949e' },
+                grid: { vertLines: { color: 'rgba(255,255,255,0.03)' }, horzLines: { color: 'rgba(255,255,255,0.03)' } },
+                timeScale: { borderColor: 'rgba(255,255,255,0.05)' }
+            });
+
+            const candleSeries = chart.addCandlestickSeries({
+                upColor: '#00E676', downColor: '#FF1744', borderVisible: false, wickedVisible: true
+            });
+
+            try {
+                // Fetch historical data from Yahoo bridge
+                const res = await fetch(`/api/us/chart-data/${symbol}.KS?period=${state.currentInterval === '1Y' ? '1y' : (state.currentInterval === '1D' ? '5d' : '6mo')}`);
+                let data = await res.json();
+
+                // Fallback for KOSDAQ if KOSPI fails
+                if (!data || data.length === 0) {
+                    const res2 = await fetch(`/api/us/chart-data/${symbol}.KQ?period=6mo`);
+                    data = await res2.json();
+                }
+
+                if (data && data.length > 0) {
+                    candleSeries.setData(data);
+                    chart.timeScale().fitContent();
+                }
+            } catch (e) {
+                console.error("Chart load failed", e);
+            }
+        }
+
+        function changeInterval(int) {
+            state.currentInterval = int;
+            // Update UI buttons
+            const btns = document.querySelectorAll('button[onclick^="changeInterval"]');
+            btns.forEach(b => {
+                b.className = 'px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5';
+                if (b.innerText === int) b.className = 'px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black';
+            });
+            renderChart(document.getElementById('main-ticker-name').innerText);
         }
 
         // Clock
         function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('clock').textContent = timeString + " KST";
+            document.getElementById('clock').textContent = now.toLocaleTimeString('ko-KR') + " KST";
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        init();
     </script>
 </body>
 

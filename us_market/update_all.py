@@ -30,6 +30,7 @@ SCRIPTS = [
     # Part 3: AI & Reporting
     'macro_analyzer.py',
     'economic_calendar.py',
+    'us_ai_analyzer.py',
     'ai_summary_generator.py',
     'daily_report_generator.py',
     # 'final_report_generator.py' (Optional)

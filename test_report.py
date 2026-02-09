@@ -15,10 +15,12 @@ with app.test_request_context():
         html = generator.run()
         print(f"Generated HTML length: {len(html)}")
         if len(html) < 100:
-            print("Generated HTML is suspiciously short:")
-            print(html)
+            print(f"Generated HTML is suspiciously short: {len(html)}")
         else:
-            print("HTML generated successfully (first 200 chars):")
-            print(html[:200])
+            print(f"HTML generated successfully. Length: {len(html)}")
+            # Avoid printing raw HTML to terminal which might cause charmap errors on Windows
+            # print(html[:200]) 
     except Exception as e:
-        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        print(f"Error during report generation: {e}")

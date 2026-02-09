@@ -7,8 +7,13 @@ import json
 import traceback
 
 class KRDataManager:
-    def __init__(self, output_dir='KR_Market_Analyst/kr_market'):
-        self.output_dir = output_dir
+    def __init__(self, output_dir=None):
+        if output_dir is None:
+            # Default to the directory where the script is located
+            self.output_dir = os.path.dirname(os.path.abspath(__file__))
+        else:
+            self.output_dir = output_dir
+
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
@@ -86,6 +91,186 @@ class KRDataManager:
             'volume': format_stocks(volume_df)
         }
 
+    def get_indices(self):
+        """Fetch major KR market indices with improved reliability"""
+        try:
+            print("Fetching KR indices...")
+            indices = {
+                'KOSPI': {'symbol': 'KS11', 'name': '코스피'},
+                'KOSDAQ': {'symbol': 'KQ11', 'name': '코스닥'},
+                'KOSPI200': {'symbol': 'KS200', 'name': '코스피 200'}
+            }
+            
+            results = {}
+            for k, v in indices.items():
+                try:
+                    # Fetch last 5 days to ensure we have enough points for price & previous close
+                    df = fdr.DataReader(v['symbol']).tail(5)
+                    if not df.empty and len(df) >= 2:
+                        price = df['Close'].iloc[-1]
+                        prev_price = df['Close'].iloc[-2]
+                        change_val = price - prev_price
+                        change_rate = (change_val / prev_price) * 100
+                        
+                        results[k] = {
+                            'symbol': v['symbol'],
+                            'name': v['name'],
+                            'price': f"{price:,.2f}",
+                            'change': f"{change_rate:+.2f}%"
+                        }
+                    else:
+                        results[k] = {'symbol': v['symbol'], 'name': v['name'], 'price': 'N/A', 'change': '0%'}
+                except Exception as e:
+                    print(f"Error fetching index {k}: {e}")
+                    results[k] = {'symbol': v['symbol'], 'name': v['name'], 'price': 'N/A', 'change': '0%'}
+            
+            return results
+        except Exception as e:
+            print(f"Error in get_indices: {e}")
+            return {}
+
+    def get_sector_performance(self):
+        """
+        Calculate performance for major sectors based on representative stocks.
+        This provides a reliable 'Sector Heatmap' view.
+        """
+        try:
+            print("Calculating sector performance...")
+            # Predefined mapping of Sectors to Representative Stock Symbols
+            SECTOR_MAP = {
+                '반도체': ['005930', '000660', '042700', '000990', '140860'],
+                '2차전지': ['373220', '006400', '247540', '066970', '091990'],
+                '자동차': ['005380', '000270', '012330', '011210'],
+                '바이오': ['207940', '068270', '000100', '302440', '183490'],
+                'IT/플랫폼': ['035420', '035720', '035810', '041510'],
+                '금융/지주': ['105560', '055550', '086790', '005490', '000370'],
+                '철강/금속': ['005490', '004020', '010130', '001230'],
+                '화학/에너지': ['051910', '096770', '010950', '011780'],
+                '게임/엔터': ['036570', '259960', '352820', '041510', '035900'],
+                '조선/중공업': ['329180', '010140', '009540', '042670']
+            }
+
+            # Fetch the latest stock listing to get prices and changes
+            df = self.get_real_market_movers('ALL')
+            if df.empty: return []
+
+            # Create a lookup for quick access
+            df.set_index('Code', inplace=True)
+            
+            results = []
+            for sector, symbols in SECTOR_MAP.items():
+                changes = []
+                stocks_info = []
+                
+                # Filter symbols that exist in the current listing
+                valid_symbols = [s for s in symbols if s in df.index]
+                
+                for s in valid_symbols:
+                    row = df.loc[s]
+                    change = float(row['ChagesRatio'])
+                    changes.append(change)
+                    stocks_info.append({
+                        'symbol': s,
+                        'name': row['Name'],
+                        'change': f"{change:+.2f}%"
+                    })
+                
+                if changes:
+                    avg_change = sum(changes) / len(changes)
+                    results.append({
+                        'sector': sector,
+                        'change': avg_change,
+                        'change_str': f"{avg_change:+.2f}%",
+                        'stocks': stocks_info[:3] # Top 3 representative stocks
+                    })
+            
+            # Sort by change descending
+            results.sort(key=lambda x: x['change'], reverse=True)
+            return results
+        except Exception as e:
+            print(f"Error calculating sector performance: {e}")
+            traceback.print_exc()
+            return []
+
+    def get_commodities(self):
+        """Fetch general commodities and FX relevant to KR market"""
+        try:
+            print("Fetching commodities & FX...")
+            items = [
+                {'symbol': 'USD/KRW', 'name': '원/달러 환율'},
+                {'symbol': 'CL=F', 'name': 'WTI 원유'},
+                {'symbol': 'GC=F', 'name': '국제 금'}
+            ]
+            
+            result = []
+            for item in items:
+                try:
+                    # Fetch last 5 days
+                    df = fdr.DataReader(item['symbol']).tail(5)
+                    if not df.empty and len(df) >= 2:
+                        price = df['Close'].iloc[-1]
+                        prev_price = df['Close'].iloc[-2]
+                        change_val = price - prev_price
+                        change_rate = (change_val / prev_price) * 100
+                        
+                        result.append({
+                            'name': item['name'],
+                            'price': f"{price:,.2f}",
+                            'change': f"{change_rate:+.2f}%"
+                        })
+                    else:
+                        result.append({'name': item['name'], 'price': 'N/A', 'change': '0%'})
+                except Exception as e:
+                    print(f"Error fetching commodity {item['name']}: {e}")
+                    result.append({'name': item['name'], 'price': 'N/A', 'change': '0%'})
+            
+            return result
+        except Exception as e:
+            print(f"Error in get_commodities: {e}")
+            return []
+
+    def get_ipo_and_schedules(self):
+        """Fetch IPO and corporate action schedules from Naver Finance"""
+        try:
+            print("Fetching IPO & Schedule news...")
+            import requests
+            from bs4 import BeautifulSoup
+            
+            # Use Naver Finance IPO news sections
+            url = "https://finance.naver.com/news/news_list.naver?mode=LSS3D&section_id=101&section_id2=258&section_id3=406" # 공시/IPO 뉴스
+            resp = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
+            if resp.status_code != 200: return []
+            
+            soup = BeautifulSoup(resp.content, 'html.parser')
+            news_list = []
+            
+            # Parse news titles
+            items = soup.select('.articleSubject a, .articleTitle a')
+            for item in items[:8]:
+                title = item.get_text().strip()
+                # Filter for IPO, 유상증자, 무상증자, etc.
+                if any(kw in title for kw in ['IPO', '공모', '청약', '유상', '무상', '증자', '상장']):
+                    link = "https://finance.naver.com" + item['href']
+                    news_list.append({
+                        "name": title[:25] + "..." if len(title) > 25 else title,
+                        "status": "뉴스",
+                        "manager": "네이버금융",
+                        "price": "-",
+                        "date": datetime.now().strftime("%m.%d"),
+                        "full_title": title,
+                        "url": link
+                    })
+            
+            # Fallback if no news found
+            if not news_list:
+                news_list = [
+                    {"name": "IPO/증자 정보 업데이트 중", "status": "알림", "manager": "-", "price": "-", "date": "-"}
+                ]
+            return news_list
+        except Exception as e:
+            print(f"Error fetching IPO news: {e}")
+            return []
+
     def collect_all(self):
         """Main execution method to gather all data and save to JSON"""
         print("Starting KR Market Data Collection...")
@@ -93,9 +278,26 @@ class KRDataManager:
         # 1. Get Top Lists
         top_lists = self.get_top_lists()
         
-        # 2. Structure Data
+        # 2. Get Indices & Commodities & Sectors & IPOs
+        market_indices = self.get_indices()
+        commodities = self.get_commodities()
+        sector_heatmap = self.get_sector_performance()
+        ipo_news = self.get_ipo_and_schedules()
+        
+        # 3. Structure Data - Make top_stocks more dynamic by mixing leaders, gainers, and volume
+        dynamic_stocks = []
+        dynamic_stocks.extend(top_lists['gainers'][:3])     # Top 3 Gainers
+        dynamic_stocks.extend(top_lists['volume'][:3])      # Top 3 Volume Leaders
+        dynamic_stocks.extend(top_lists['leaders_kospi'][:2]) # Top 2 KOSPI Leaders
+        dynamic_stocks.extend(top_lists['leaders_kosdaq'][:2]) # Top 2 KOSDAQ Leaders
+        
         data = {
             'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S KST'),
+            'market_indices': market_indices,
+            'commodities': commodities,
+            'sector_heatmap': sector_heatmap,
+            'ipo_news': ipo_news,
+            'top_stocks': dynamic_stocks, 
             'leaders_kospi': top_lists['leaders_kospi'],
             'leaders_kosdaq': top_lists['leaders_kosdaq'],
             'gainers': top_lists['gainers'],
@@ -103,7 +305,7 @@ class KRDataManager:
             'ai_analysis': {} 
         }
         
-        # 3. Perform AI Analysis (Pre-calculation) with Batching
+        # 4. Perform AI Analysis (Pre-calculation) with Batching
         try:
             from dotenv import load_dotenv
             load_dotenv()
@@ -132,10 +334,11 @@ class KRDataManager:
                             all_symbols.append(stock)
                             seen.add(stock['symbol'])
                 
+                import time
                 print(f"Analyzing {len(all_symbols)} stocks in batches...")
                 
-                # Split into chunks of 20 to avoid token limits
-                chunk_size = 20
+                # Split into chunks of 15 to be safer with token/JSON limits
+                chunk_size = 15
                 for i in range(0, len(all_symbols), chunk_size):
                     batch = all_symbols[i:i + chunk_size]
                     print(f"Processing batch {i//chunk_size + 1}: {len(batch)} stocks...")
@@ -143,36 +346,84 @@ class KRDataManager:
                     prompt = f"""
                     당신은 글로벌 증시 전문 AI 분석가입니다. 아래 한국 주식 리스트에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
                     
+                    [반드시 준수할 JSON 데이터 구조]
+                    각 종목 코드(Symbol)를 키로 하는 객체를 반환하세요.
+                    {{
+                        "symbol_code": {{
+                            "insight": "핵심 투자 포인트 (1문장)",
+                            "risk": "핵심 리스크 (1문장)",
+                            "swot_s": "Strength 강점 키워드",
+                            "swot_w": "Weakness 약점 키워드",
+                            "swot_o": "Opportunity 기회 키워드",
+                            "swot_t": "Threat 위협 키워드",
+                            "upside": "+15%",
+                            "dcf_target": "적정주가 숫자",
+                            "dcf_bear": "하단주가 숫자", 
+                            "dcf_bull": "상단주가 숫자"
+                        }}
+                    }}
+
                     [지시사항]
-                    1. 답변은 **핵심만 간결하게** 작성하세요.
-                    2. 정보가 부족하면 섹터 정보로 추론하세요.
-                    3. 포맷을 지키고 JSON 포맷만 반환하세요.
+                    1. 모든 텍스트는 한국어로 작성하세요.
+                    2. 정보가 부족하면 섹터/업종의 일반적인 특징으로 추론하여 공란 없이 채우세요.
+                    3. JSON 형식 외의 다른 설명이나 텍스트는 포함하지 마세요.
                     
-                    [대상]
+                    [대상 종목]
                     {json.dumps([{ 'symbol': s['symbol'], 'name': s.get('name', 'N/A') } for s in batch], ensure_ascii=False)}
                     """
                     
                     ai_text = ""
                     try:
-                        if client:
-                            response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
-                            ai_text = response.text
-                        elif model_legacy:
-                            response = model_legacy.generate_content(prompt)
-                            ai_text = response.text
-                        
+                        # Safe retry logic
+                        for attempt in range(2):
+                            try:
+                                if client:
+                                    response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+                                    ai_text = response.text
+                                elif model_legacy:
+                                    model = genai.GenerativeModel('gemini-2.0-flash')
+                                    response = model.generate_content(prompt)
+                                    ai_text = response.text
+                                
+                                if ai_text:
+                                    break
+                            except Exception as api_e:
+                                print(f"API Attempt {attempt+1} failed: {api_e}")
+                                time.sleep(2)
+
+                        if not ai_text:
+                            continue
+
+                        # Clean and Parse
                         cleaned_text = ai_text.replace('```json', '').replace('```', '').strip()
-                        batch_results = json.loads(cleaned_text)
-                        data['ai_analysis'].update(batch_results)
+                        # Sometimes Gemini adds text before or after JSON
+                        if '{' in cleaned_text and '}' in cleaned_text:
+                            start = cleaned_text.find('{')
+                            end = cleaned_text.rfind('}') + 1
+                            cleaned_text = cleaned_text[start:end]
+                        
+                        try:
+                            batch_results = json.loads(cleaned_text)
+                            if isinstance(batch_results, dict):
+                                # Clean keys - ensure they are the original symbols
+                                for sym, results in batch_results.items():
+                                    data['ai_analysis'][sym] = results
+                            print(f"Successfully processed {len(batch_results)} stocks in this batch.")
+                        except json.JSONDecodeError as jde:
+                            print(f"JSON Parse Error in batch {i//chunk_size + 1}: {jde}")
+                            # Fallback: maybe it's too many stocks, but we'll try next batch
                     except Exception as batch_e:
-                        print(f"Batch {i//chunk_size + 1} failed: {batch_e}")
+                        print(f"Batch {i//chunk_size + 1} fatal error: {batch_e}")
+                    
+                    # Small throttle between batches
+                    time.sleep(1)
                 
                 print(f"AI Analysis Completed. Total items: {len(data['ai_analysis'])}")
                 
         except Exception as e:
             print(f"AI Analysis Init Failed: {e}")
             
-        # 4. Save to JSON
+        # 5. Save to JSON
         output_path = os.path.join(self.output_dir, 'kr_daily_data.json')
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)

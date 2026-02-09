@@ -7,6 +7,7 @@
     <title>VibeCodingLab KR | 국내 주식 AI 분석</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -174,9 +175,13 @@
                                         class="w-6 h-6 object-contain" alt="">
                                 </div>
                                 <div class="flex flex-col">
-                                    <h2 id="main-ticker-name" class="text-xl font-black text-white leading-tight">KRX
-                                    </h2>
-                                    <p id="main-full-name" class="text-[10px] text-gray-500 font-medium">Korea Exchange
+                                    <div class="flex items-center gap-2">
+                                        <h2 id="main-ticker-name" class="text-xl font-black text-white leading-tight">
+                                            KRX</h2>
+                                        <span id="main-ticker-symbol"
+                                            class="text-[10px] font-mono text-gray-500">000000</span>
+                                    </div>
+                                    <p id="main-full-name" class="text-[10px] text-gray-400 font-medium">Korea Exchange
                                     </p>
                                 </div>
                                 <!-- AI Score Badge -->
@@ -187,31 +192,37 @@
                                 </div>
                             </div>
 
-                            <!-- Right: Interval Buttons -->
-                            <div id="interval-btn-group" class="flex p-1 bg-white/5 rounded-lg border border-white/10">
-                                <button id="btn-int-1D" onclick="changeInterval('1D')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md bg-brand-primary text-black transition">1D</button>
-                                <button id="btn-int-1W" onclick="changeInterval('1W')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1W</button>
-                                <button id="btn-int-1M" onclick="changeInterval('1M')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1M</button>
-                                <button id="btn-int-1Y" onclick="changeInterval('1Y')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-md text-gray-400 hover:text-white transition">1Y</button>
+                            <!-- Right: Chart Settings -->
+                            <div class="flex items-center gap-3">
+                                <!-- Indicators Toggle -->
+                                <div class="flex p-0.5 bg-white/5 rounded-lg border border-white/10 gap-1">
+                                    <button onclick="toggleIndicator('SMA')" id="btn-ind-SMA"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-500 hover:text-white transition">SMA</button>
+                                    <button onclick="toggleIndicator('RSI')" id="btn-ind-RSI"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-500 hover:text-white transition">RSI</button>
+                                    <button onclick="toggleIndicator('BB')" id="btn-ind-BB"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-500 hover:text-white transition">BB</button>
+                                </div>
+
+                                <!-- Interval Buttons -->
+                                <div id="interval-btn-group"
+                                    class="flex p-0.5 bg-white/5 rounded-lg border border-white/10">
+                                    <button id="btn-int-1D" onclick="changeInterval('1D')"
+                                        class="px-2 py-1 text-[9px] font-bold rounded-md bg-brand-primary text-black transition">1D</button>
+                                    <button id="btn-int-1W" onclick="changeInterval('1W')"
+                                        class="px-2 py-1 text-[9px] font-bold rounded-md text-gray-400 hover:text-white transition">1W</button>
+                                    <button id="btn-int-1M" onclick="changeInterval('1M')"
+                                        class="px-2 py-1 text-[9px] font-bold rounded-md text-gray-400 hover:text-white transition">1M</button>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Chart Container -->
                         <div id="tradingview_main"
-                            class="flex-1 rounded-xl overflow-hidden border border-white/5 bg-[#111114]">
-                            <!-- TradingView Widget Will Load Here -->
-                            <div class="tradingview-widget-container h-full w-full">
-                                <div class="tradingview-widget-container__widget h-full w-full"></div>
-                                <script type="text/javascript"
-                                    src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
-                                    async>
-                                        "container_id": "tradingview_main"
-                                        };
-                                    </script>
+                            class="flex-1 rounded-xl overflow-hidden border border-white/5 bg-[#08080A]">
+                            <div id="chart-loader"
+                                class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">
+                                차트를 구성 중입니다...
                             </div>
                         </div>
                     </div>
@@ -356,30 +367,34 @@
 
                 <!-- Right Sidebar (4 cols) -->
                 <div class="lg:col-span-4 space-y-6">
-                    <!-- Stock Heatmap -->
-                    <div class="glass-card p-6 h-[400px] flex flex-col">
-                        <h3 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">국내 주식 실시간 맵</h3>
-                        <div class="flex-1 rounded-xl overflow-hidden">
-                            <div class="tradingview-widget-container h-full w-full">
-                                <script type="text/javascript"
-                                    src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
-                                    async>
-                                        {
-                                            "exchanges": [],
-                                                "dataSource": "KOSPI",
-                                                    "grouping": "sector",
-                                                        "blockSize": "market_cap_calc",
-                                                            "blockColor": "change",
-                                                                "locale": "kr",
-                                                                    "symbolUrl": "",
-                                                                        "colorTheme": "dark",
-                                                                            "hasTopBar": true,
-                                                                                "isTransparent": true,
-                                                                                    "hasSymbolTooltip": true,
-                                                                                        "width": "100%",
-                                                                                            "height": "100%"
-                                        }
-                                    </script>
+                    <!-- Sector Heatmap (Custom Card Design) -->
+                    <div class="glass-card p-6 h-[480px] flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xs font-black uppercase text-gray-400 tracking-wider">업종별 실시간 시황</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-success"></span>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">-3% ~
+                                    +3%</span>
+                            </div>
+                        </div>
+                        <div id="sector-heatmap-container"
+                            class="flex-1 grid grid-cols-2 gap-3 overflow-y-auto pr-1 scrollbar-hide">
+                            <!-- Sector Cards Loaded Dynamically -->
+                            <div class="col-span-2 flex flex-col items-center justify-center h-full opacity-20">
+                                <i class="fas fa-circle-notch animate-spin text-2xl mb-2"></i>
+                                <span class="text-[10px] uppercase font-black tracking-widest">분석 중...</span>
+                            </div>
+                        </div>
+
+                        <!-- Heatmap Legend -->
+                        <div class="mt-4 pt-4 border-t border-white/5">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[8px] font-black text-white/20">-3%</span>
+                                <span class="text-[8px] font-black text-white/20">0%</span>
+                                <span class="text-[8px] font-black text-white/20">+3%</span>
+                            </div>
+                            <div
+                                class="h-1 w-full rounded-full bg-gradient-to-r from-brand-danger via-gray-800 to-brand-success opacity-50">
                             </div>
                         </div>
                     </div>
@@ -508,7 +523,12 @@
             leaders_kospi: [],
             leaders_kosdaq: [],
             gainers: [],
-            volume: []
+            volume: [],
+            indicators: {
+                SMA: false,
+                RSI: false,
+                BB: false
+            }
         };
 
         // Tab Switch Logic
@@ -544,11 +564,66 @@
         }
 
         // --- Data Handling ---
+        async function renderSectorHeatmap(sectors) {
+            const container = document.getElementById('sector-heatmap-container');
+            if (!container) return;
+
+            if (!sectors || sectors.length === 0) {
+                container.innerHTML = '<div class="col-span-2 text-center text-gray-500 text-xs py-10 italic">섹터 정보를 불러올 수 없습니다.</div>';
+                return;
+            }
+
+            container.innerHTML = sectors.map(s => {
+                const isUp = s.change >= 0;
+                const absChange = Math.abs(s.change);
+
+                // Colors based on change intensity
+                let bgColor, borderClass, textIntensity;
+                if (isUp) {
+                    const intensity = Math.min(Math.floor(absChange * 30), 80);
+                    bgColor = `rgba(16, 185, 129, ${0.1 + (intensity / 100)})`;
+                    borderClass = 'border-brand-success/20';
+                    textIntensity = 'text-brand-success';
+                } else {
+                    const intensity = Math.min(Math.floor(absChange * 30), 80);
+                    bgColor = `rgba(239, 68, 68, ${0.1 + (intensity / 100)})`;
+                    borderClass = 'border-brand-danger/20';
+                    textIntensity = 'text-brand-danger';
+                }
+
+                return `
+                <div class="p-3.5 rounded-2xl border ${borderClass} transition-all duration-300 hover:translate-y-[-2px] group" 
+                     style="background: ${bgColor};">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[11px] font-black text-white/90 group-hover:text-white transition-colors">${s.sector}</span>
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] font-black ${textIntensity} flex items-center gap-1">
+                                <i class="fas ${isUp ? 'fa-caret-up' : 'fa-caret-down'}"></i>
+                                ${s.change_str}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-[7px] font-black text-white/30 uppercase tracking-widest">상위 종목</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${s.stocks.map(st => `
+                                <div class="flex flex-col">
+                                    <span class="text-[8px] font-bold text-white/80">${st.name}</span>
+                                    <span class="text-[7px] font-mono text-white/40">${st.change}</span>
+                                </div>
+                            `).join('<div class="w-[1px] h-3 bg-white/10 self-center"></div>')}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
         async function fetchData() {
             try {
                 fetchNews();
                 fetchIPO();
-                const res = await fetch(`/api/kr/smart-money?t=${Date.now()}`);
+                const res = await fetch(`/api/kr/market-data?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
 
@@ -584,7 +659,17 @@
                         state.leaders_kospi = data;
                     }
 
+                    if (data.sector_heatmap) {
+                        renderSectorHeatmap(data.sector_heatmap);
+                    }
+
                     switchMarketTab('leaders_kospi'); // Initial render
+
+                    // Initial Chart Load
+                    if (state.leaders_kospi.length > 0) {
+                        state.currentSymbol = state.leaders_kospi[0].symbol;
+                    }
+                    renderChart();
 
                     // Hide Loading Overlay
                     const overlay = document.getElementById('loading-overlay');
@@ -596,7 +681,7 @@
                     }
 
                     if (state.smartMoneyData.length > 0) {
-                        // Load first symbol data but SKIP chart update to prevent popup on load
+                        // Load first symbol details
                         loadSymbol(0, true);
                     }
                 } else {
@@ -678,39 +763,35 @@
                 const data = state.smartMoneyData[index];
                 if (!data) return;
 
-                console.log("Loading Symbol Data:", data);
-
-                // Update Chart
-                try {
-                    if (!skipChart) {
-                        updateTradingView('D', data.symbol);
-                    }
-                } catch (e) {
-                    console.error("TradingView update failed:", e);
-                }
-
-                // Update UI Elements (New Header)
+                // Update UI Elements
                 const safeSetText = (id, text, fallback = '-') => {
                     const el = document.getElementById(id);
                     if (el) el.innerText = text || fallback;
                 };
 
-                safeSetText('main-ticker-name', data.name); // Now in header
-                safeSetText('main-full-name', data.symbol); // Changed from data.ticker to data.symbol
-                safeSetText('main-ai-score', data.score || '90');   // Fallback score
+                safeSetText('main-ticker-name', data.name);
+                safeSetText('main-ticker-symbol', data.symbol);
+                safeSetText('main-full-name', data.name);
+                safeSetText('main-ai-score', data.score || '90');
 
                 // Update Logo
                 const logoImg = document.getElementById('main-ticker-logo');
                 if (logoImg) {
-                    // Use a generic placeholder or dynamic logic if available
-                    // For KR stocks, we might not have a reliable logo source, defaulting to generic kse or placeholder
                     logoImg.src = `https://s3-symbol-logo.tradingview.com/indices/korea-stock-exchange--big.svg`;
                     logoImg.onerror = () => { logoImg.src = 'https://via.placeholder.com/40'; };
                 }
 
                 safeSetText('current-price-label', data.price);
 
-                // Helper for Currency
+                // AI Insights Helpers
+                const formatUpside = (val) => {
+                    if (!val || val === '-') return '-';
+                    if (String(val).includes('%')) return val;
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) return (num > 0 ? '+' : '') + num + '%';
+                    return val;
+                };
+
                 const formatKRW = (val) => {
                     if (!val || val === '-' || val === 'N/A') return '-';
                     const num = parseFloat(String(val).replace(/,/g, '').replace('원', ''));
@@ -718,25 +799,6 @@
                     return num.toLocaleString() + '원';
                 };
 
-                // Helper for Upside Percentage
-                const formatUpside = (val) => {
-                    if (!val || val === '-') return '-';
-                    // If already has %, just return
-                    if (String(val).includes('%')) return val;
-
-                    const num = parseFloat(val);
-                    if (!isNaN(num)) {
-                        // If small decimal like 0.25, treat as 25%
-                        if (Math.abs(num) <= 1.0) {
-                            return (num > 0 ? '+' : '') + Math.round(num * 100) + '%';
-                        }
-                        // If large number like 25, treat as 25%
-                        return (num > 0 ? '+' : '') + num + '%';
-                    }
-                    return val;
-                };
-
-                // AI Insights
                 safeSetText('ai-insight', data.insight || '분석 데이터 대기중...');
                 safeSetText('ai-risk', data.risk || '-');
                 safeSetText('ai-upside', `${formatUpside(data.upside)} 예상 상승 여력`);
@@ -762,7 +824,10 @@
                     }
                 }
 
+                // Update Chart
                 if (!skipChart) {
+                    state.currentSymbol = data.symbol;
+                    renderChart();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             } catch (e) {
@@ -770,36 +835,216 @@
             }
         }
 
-        let currentSymbol = "FX_IDC:USDKRW";
-        function updateTradingView(res = 'D', symbol = null) {
-            if (symbol) {
-                // If it's a 6-digit numeric string, it's a KR stock
-                // Ensure we trim whitespace and normalize string
-                const cleanSymbol = String(symbol).trim();
-                if (/^\d{6}$/.test(cleanSymbol)) {
-                    currentSymbol = `KRX:${cleanSymbol}`;
-                } else if (cleanSymbol.includes(':')) {
-                    currentSymbol = cleanSymbol;
-                } else {
-                    currentSymbol = cleanSymbol;
-                }
+        // --- Chart Configuration ---
+        state.chartProvider = 'custom';
+        state.currentSymbol = '005930';
+
+        function toggleIndicator(ind) {
+            state.indicators[ind] = !state.indicators[ind];
+            const btn = document.getElementById(`btn-ind-${ind}`);
+            if (state.indicators[ind]) {
+                btn.classList.add('bg-brand-primary/20', 'text-brand-primary');
+                btn.classList.remove('text-gray-500');
+            } else {
+                btn.classList.remove('bg-brand-primary/20', 'text-brand-primary');
+                btn.classList.add('text-gray-500');
             }
+            renderChart();
+        }
+
+        let chartInstance = null;
+        let candleSeries = null;
+
+        function renderChart() {
             const container = document.getElementById('tradingview_main');
             if (!container) return;
-            container.innerHTML = '<div class="tradingview-widget-container__widget h-full w-full"></div>';
-            new TradingView.widget({
-                "autosize": true, "symbol": currentSymbol, "interval": res, "timezone": "Asia/Seoul",
-                "theme": "dark", "style": "1", "locale": "kr", "toolbar_bg": "#111114",
-                "enable_publishing": false, "container_id": "tradingview_main"
-            });
+
+            const symbol = state.currentSymbol || '005930';
+            const res = state.currentInterval || 'D';
+
+            // Clean container
+            container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">차트 데이터 로드 중...</div>';
+            chartInstance = null;
+            candleSeries = null;
+
+            if (state.chartProvider === 'tv') {
+                updateTradingView(res, symbol);
+                return;
+            }
+
+            // Check if LightweightCharts is loaded
+            if (typeof LightweightCharts === 'undefined') {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full gap-4 text-center px-6">
+                        <i class="fas fa-exclamation-triangle text-amber-500 text-2xl"></i>
+                        <p class="text-gray-400 text-xs font-mono">차트 엔진을 불러오지 못했습니다.<br>새로고침을 하거나 TV 모드를 사용해 주세요.</p>
+                        <button onclick="location.reload()" class="px-4 py-2 bg-white/10 rounded-lg text-[10px] font-bold hover:bg-white/20">새로고침</button>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // Ensure dimensions are valid
+                const width = container.clientWidth || 800;
+                const height = container.clientHeight || 500;
+
+                // Create Custom Lightweight Chart
+                const chartOptions = {
+                    layout: {
+                        background: { color: '#08080A' },
+                        textColor: '#D9D9D9',
+                    },
+                    grid: {
+                        vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
+                        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
+                    },
+                    rightPriceScale: { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                    timeScale: { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                    width: width,
+                    height: height,
+                    crosshair: {
+                        mode: LightweightCharts.CrosshairMode.Normal,
+                    },
+                };
+
+                container.innerHTML = ''; // Clear for real injection
+                chartInstance = LightweightCharts.createChart(container, chartOptions);
+
+                candleSeries = chartInstance.addCandlestickSeries({
+                    upColor: '#FF1744',
+                    downColor: '#00F0FF',
+                    borderDownColor: '#00F0FF',
+                    borderUpColor: '#FF1744',
+                    wickDownColor: '#00F0FF',
+                    wickUpColor: '#FF1744',
+                });
+
+                fetchChartData(symbol);
+
+                // Resize observer to handle container changes
+                const resizeObserver = new ResizeObserver(entries => {
+                    if (chartInstance && entries.length > 0) {
+                        const { width, height } = entries[0].contentRect;
+                        if (width > 0 && height > 0) {
+                            chartInstance.applyOptions({ width, height });
+                        }
+                    }
+                });
+                resizeObserver.observe(container);
+
+            } catch (err) {
+                console.error("Chart initialization error:", err);
+                container.innerHTML = `<div class="flex items-center justify-center h-full text-red-500 font-mono text-[10px]">초기화 오류: ${err.message}</div>`;
+            }
+        }
+
+        async function fetchChartData(symbol) {
+            const container = document.getElementById('tradingview_main');
+            try {
+                const cleanSym = String(symbol).padStart(6, '0');
+                const response = await fetch(`/api/chart-data?symbol=${cleanSym}&market=KR`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0 && candleSeries) {
+                        candleSeries.setData(data);
+
+                        // Indicators Calculation
+                        if (state.indicators.SMA) {
+                            const smaData = calculateSMA(data, 20);
+                            const smaLine = chartInstance.addLineSeries({ color: '#FFEA00', lineWidth: 1, title: 'SMA 20' });
+                            smaLine.setData(smaData);
+                        }
+
+                        if (state.indicators.BB) {
+                            const bb = calculateBB(data, 20, 2);
+                            const upper = chartInstance.addLineSeries({ color: 'rgba(255, 255, 255, 0.2)', lineWidth: 1, lineStyle: 2 });
+                            const lower = chartInstance.addLineSeries({ color: 'rgba(255, 255, 255, 0.2)', lineWidth: 1, lineStyle: 2 });
+                            upper.setData(bb.upper);
+                            lower.setData(bb.lower);
+                        }
+
+                        chartInstance.timeScale().fitContent();
+                    } else {
+                        if (container) container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">데이터를 찾을 수 없습니다 (No Data)</div>';
+                    }
+                } else {
+                    if (container) container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">서버 응답 오류 (Server Error)</div>';
+                }
+            } catch (e) {
+                console.error("Chart data error:", e);
+            }
+        }
+
+        function calculateSMA(data, count) {
+            const result = [];
+            for (let i = count - 1; i < data.length; i++) {
+                let sum = 0;
+                for (let j = 0; j < count; j++) {
+                    sum += data[i - j].close;
+                }
+                result.push({ time: data[i].time, value: sum / count });
+            }
+            return result;
+        }
+
+        function calculateBB(data, count, stdDev) {
+            const upper = [];
+            const lower = [];
+            for (let i = count - 1; i < data.length; i++) {
+                let sum = 0;
+                for (let j = 0; j < count; j++) sum += data[i - j].close;
+                const avg = sum / count;
+                let sqDiffSum = 0;
+                for (let j = 0; j < count; j++) sqDiffSum += Math.pow(data[i - j].close - avg, 2);
+                const dev = Math.sqrt(sqDiffSum / count);
+                upper.push({ time: data[i].time, value: avg + (stdDev * dev) });
+                lower.push({ time: data[i].time, value: avg - (stdDev * dev) });
+            }
+            return { upper, lower };
+        }
+
+        function updateTradingView(res = 'D', symbol = null) {
+            let tvSymbol = "KRX:KOSPI";
+            if (symbol) {
+                let cleanSymbol = String(symbol).trim().padStart(6, '0');
+                tvSymbol = `KRX:${cleanSymbol}`;
+            }
+
+            const container = document.getElementById('tradingview_main');
+            if (!container) return;
+
+            container.innerHTML = '<div class="tradingview-widget-container" style="width:100%;height:100%"><div id="tv-widget" style="width:100%;height:100%"></div></div>';
+
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+            script.async = true;
+
+            const config = {
+                "autosize": true,
+                "symbol": tvSymbol,
+                "interval": res === '60' ? 'D' : res,
+                "timezone": "Asia/Seoul",
+                "theme": "dark",
+                "style": "1",
+                "locale": "kr",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "calendar": false,
+                "support_host": "https://www.tradingview.com"
+            };
+
+            script.innerHTML = JSON.stringify(config);
+            container.querySelector('.tradingview-widget-container').appendChild(script);
         }
 
         function changeInterval(int) {
-            const map = { '1D': '60', '1W': 'D', '1M': 'D', '1Y': 'D' };
+            const map = { '1D': '60', '1W': 'D', '1M': 'D' };
+            state.currentInterval = map[int] || 'D';
 
-            // Update UI Button Classes
-            const buttons = ['1D', '1W', '1M', '1Y'];
-            buttons.forEach(b => {
+            // UI Buttons
+            ['1D', '1W', '1M'].forEach(b => {
                 const btn = document.getElementById(`btn-int-${b}`);
                 if (btn) {
                     if (b === int) {
@@ -812,7 +1057,7 @@
                 }
             });
 
-            updateTradingView(map[int] || 'D');
+            if (state.chartProvider === 'tv') renderChart();
         }
 
         // Initialize
@@ -821,10 +1066,11 @@
             const container = document.getElementById('kr-news-container');
             if (!container) return;
             try {
-                const res = await fetch('/api/kr/k-news');
+                // Fixed endpoint for KR news
+                const res = await fetch('/api/kr/news');
                 if (res.ok) {
                     const news = await res.json();
-                    if (news.length === 0) {
+                    if (!news || news.length === 0) {
                         container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-10">현재 뉴스가 없습니다.</p>';
                         return;
                     }
@@ -848,20 +1094,24 @@
             const container = document.getElementById('kr-ipo-container');
             if (!container) return;
             try {
-                const res = await fetch('/api/kr/k-ipo');
+                // Using the specific KR IPO endpoint which now returns real-time scraped schedules
+                const res = await fetch('/api/kr/ipo');
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.length === 0) {
+                    if (!data || data.length === 0) {
                         container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-4">일정 정보가 없습니다.</p>';
                         return;
                     }
                     container.innerHTML = data.map(item => `
-                        <a href="${item.url}" target="_blank" class="block p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center transition hover:border-brand-primary/30 group">
+                        <a href="${item.url || '#'}" target="_blank" class="block p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center transition hover:border-brand-primary/30 group mb-2">
                             <div class="flex-1 pr-2">
-                                <p class="text-[11px] font-bold text-gray-200 group-hover:text-brand-primary transition line-clamp-1">${item.title}</p>
-                                <span class="text-[9px] text-gray-500">${item.source}</span>
+                                <p class="text-[11px] font-bold text-gray-200 group-hover:text-brand-primary transition line-clamp-2 leading-tight">${item.name || item.title || '일정'}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[8px] px-1 py-0.5 rounded bg-brand-primary/10 text-brand-primary font-black uppercase">${item.status || '공시'}</span>
+                                    <span class="text-[9px] text-gray-500">${item.manager || '네이버금융'}</span>
+                                </div>
                             </div>
-                            <span class="text-[10px] font-mono font-black text-gray-600 whitespace-nowrap">${item.date ? item.date.split(' ')[0].substring(5) : ''}</span>
+                            <span class="text-[10px] font-mono font-black text-gray-400 whitespace-nowrap ml-2">${item.date || ''}</span>
                         </a>
                     `).join('');
                 }
@@ -875,6 +1125,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateClock();
             fetchData();
+            renderChart();
             setInterval(updateClock, 1000);
             setInterval(fetchData, 5 * 60 * 1000);
             console.log("🚀 KR Market Dashboard Online");

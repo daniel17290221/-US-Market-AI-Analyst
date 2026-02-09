@@ -733,8 +733,8 @@ def fetch_google_news_rss(query):
 
 # Removed redundant k-news and k-ipo routes
 
-@app.route('/api/kr/smart-money')
-def get_kr_smart_money():
+@app.route('/api/kr/market-data')
+def get_kr_market_data():
     # Load all stocks from daily data
     kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
     kr_data = {}
@@ -903,7 +903,8 @@ def get_kr_smart_money():
         "leaders_kosdaq": enrich_list(leaders_kosdaq),
         "gainers": enrich_list(gainers),
         "volume": enrich_list(volume),
-        "sector_heatmap": kr_data.get('sector_heatmap', [])
+        "sector_heatmap": kr_data.get('sector_heatmap', []),
+        "ipo_news": kr_data.get('ipo_news', [])
     }
 
     response = jsonify(response_data)

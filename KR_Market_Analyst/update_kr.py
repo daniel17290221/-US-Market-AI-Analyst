@@ -8,25 +8,25 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 def run_update():
-    logger.info("🇰🇷 Starting KR Market Update Pipeline...")
+    logger.info("Starting KR Market Update Pipeline...")
     
     # 1. Collect Data
     logger.info("1/2 Collecting KR Market Data...")
     try:
-        subprocess.run([sys.executable, "kr_market/kr_data_manager.py"], check=True)
+        subprocess.run([sys.executable, "kr_market/kr_data_manager.py"], check=True, cwd=os.path.dirname(os.path.abspath(__file__)))
     except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Data collection failed: {e}")
+        logger.error(f"Data collection failed: {e}")
         return
 
     # 2. Generate AI Report
     logger.info("2/2 Generating AI Report...")
     try:
-        subprocess.run([sys.executable, "kr_market/kr_report_generator.py"], check=True)
+        subprocess.run([sys.executable, "kr_market/kr_report_generator.py"], check=True, cwd=os.path.dirname(os.path.abspath(__file__)))
     except subprocess.CalledProcessError as e:
-        logger.error(f"❌ AI Report generation failed: {e}")
+        logger.error(f"AI Report generation failed: {e}")
         return
 
-    logger.info("✅ KR Market Update Completed successfully!")
+    logger.info("KR Market Update Completed successfully!")
 
 if __name__ == "__main__":
     run_update()
