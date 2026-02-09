@@ -132,9 +132,8 @@
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">홈</a>
             <a onclick="switchTab('market')" id="nav-market"
                 class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">시장 분석</a>
-            <a onclick="switchTab('calendar')" id="nav-calendar"
-                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">경제
-                일정</a>
+            <a onclick="switchTab('subscription')" id="nav-subscription"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">인사이트/유튜브</a>
             <a onclick="switchTab('report')" id="nav-report"
                 class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">데일리
                 리포트</a>
@@ -439,53 +438,28 @@
         </div>
         </div>
 
-        <!-- Tab: Subscription & News (Hidden by Default) -->
+        <!-- Insight/Youtube Tab (Placeholder) -->
         <div id="tab-subscription" class="hidden space-y-6 animate-fade-in">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- IPO Subscription -->
-                <div class="glass-card p-6 min-h-[500px]">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-calendar-check text-brand-primary"></i> 주요 공무주 청약 일정
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-sm font-bold text-brand-primary">샘플 소프트웨어</span>
-                                <span
-                                    class="text-[10px] bg-brand-primary/20 text-brand-primary px-2 py-0.5 rounded">청약중</span>
-                            </div>
-                            <p class="text-[11px] text-gray-400">주관사: 한국투자증권 | 공모가: 12,000원</p>
-                        </div>
-                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-sm font-bold text-white">바이브코딩 테크</span>
-                                <span class="text-[10px] bg-gray-500/20 text-gray-400 px-2 py-0.5 rounded">D-3</span>
-                            </div>
-                            <p class="text-[11px] text-gray-400">주관사: 미래에셋증권 | 공모가: 25,000원</p>
-                        </div>
-                    </div>
+            <div
+                class="glass-card p-20 flex flex-col items-center justify-center text-center min-h-[600px] relative overflow-hidden">
+                <div class="absolute inset-0 bg-brand-primary/5 blur-[100px] -z-10"></div>
+                <div
+                    class="w-24 h-24 bg-brand-primary/10 rounded-3xl flex items-center justify-center mb-8 border border-brand-primary/20 rotate-12 transition hover:rotate-0 duration-500">
+                    <i class="fas fa-rocket text-4xl text-brand-primary"></i>
                 </div>
-
-                <!-- KR Market News -->
-                <div class="glass-card p-6 min-h-[500px]">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-newspaper text-brand-secondary"></i> 실시간 국내 증시 뉴스
-                    </h3>
-                    <div class="tradingview-widget-container h-[400px]">
-                        <div class="tradingview-widget-container__widget"></div>
-                        <script type="text/javascript"
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-                                {
-                                    "feedMode": "market",
-                                        "market": "stock",
-                                            "isTransparent": true,
-                                                "displayMode": "regular",
-                                                    "width": "100%",
-                                                        "height": "100%",
-                                                            "colorTheme": "dark",
-                                                                "locale": "kr"
-                                }
-                            </script>
+                <h3 class="text-3xl font-black text-white mb-4 tracking-tighter">SERVICE <span
+                        class="text-brand-primary italic">PREPARING</span></h3>
+                <p class="text-gray-400 max-w-sm leading-relaxed mb-10">
+                    AI 시장 브리핑과 주요 경제 유튜브 채널 연동 기능을 준비하고 있습니다.<br>더 풍부한 인사이트로 곧 찾아뵙겠습니다.
+                </p>
+                <div class="flex gap-4">
+                    <div
+                        class="px-4 py-2 bg-white/5 rounded-full border border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        #AI_Insights
+                    </div>
+                    <div
+                        class="px-4 py-2 bg-white/5 rounded-full border border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        #Economy_YouTube
                     </div>
                 </div>
             </div>

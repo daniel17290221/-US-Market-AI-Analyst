@@ -615,11 +615,23 @@ def kr_index():
 
 @app.route('/api/kr/report')
 def get_kr_report():
+    # Attempt 1: Using BASE_DIR (Absolute)
     report_path = os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    
+    # Attempt 2: Using relative path from this file
+    if not os.path.exists(report_path):
+        report_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+
     if os.path.exists(report_path):
-        from flask import send_file
-        return send_file(report_path)
-    return "Report not found", 404
+        try:
+            from flask import send_file
+            return send_file(report_path, mimetype='text/html')
+        except Exception as e:
+            print(f"DEBUG: Report serve error: {e}")
+            return f"Error serving report: {str(e)}", 500
+            
+    print(f"DEBUG: Report not found at {report_path}")
+    return "데일리 리포트 파일을 찾을 수 없습니다. (Report not found)", 404
 
 
 
