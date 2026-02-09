@@ -10,6 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -265,15 +266,27 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
-                                <button onclick="changeInterval('1D')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1D</button>
-                                <button onclick="changeInterval('1W')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1W</button>
-                                <button onclick="changeInterval('1M')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black">1M</button>
-                                <button onclick="changeInterval('1Y')"
-                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1Y</button>
+                            <div class="flex items-center gap-3">
+                                <!-- Indicators Toggle -->
+                                <div class="flex p-0.5 bg-white/5 rounded-lg border border-white/10 gap-1">
+                                    <button onclick="toggleIndicator('SMA')" id="btn-ind-SMA"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-400 hover:text-white transition">SMA</button>
+                                    <button onclick="toggleIndicator('RSI')" id="btn-ind-RSI"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-400 hover:text-white transition">RSI</button>
+                                    <button onclick="toggleIndicator('BB')" id="btn-ind-BB"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-400 hover:text-white transition">BB</button>
+                                </div>
+
+                                <div class="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+                                    <button id="btn-int-1D" onclick="changeInterval('1D')"
+                                        class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1D</button>
+                                    <button id="btn-int-1W" onclick="changeInterval('1W')"
+                                        class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1W</button>
+                                    <button id="btn-int-1M" onclick="changeInterval('1M')"
+                                        class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black">1M</button>
+                                    <button id="btn-int-1Y" onclick="changeInterval('1Y')"
+                                        class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1Y</button>
+                                </div>
                             </div>
                         </div>
 
@@ -626,6 +639,9 @@
         // --- State Management ---
         const state = {
             currentTab: 'market',
+            currentSymbol: 'NVDA',
+            currentInterval: '1M',
+            indicators: { SMA: false, RSI: false, BB: false },
             symbols: { 'SPY': { price: 585.12, change: 0.5 }, 'QQQ': { price: 515.3, change: 1.1 } }
         };
 
@@ -802,6 +818,8 @@
                     const marker = document.getElementById('price-marker');
                     if (marker) marker.style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
                 }
+                state.currentSymbol = data.ticker;
+                renderChart();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1004,6 +1022,7 @@
                 fetchAI(),
                 fetchETFs()
             ]);
+            renderChart();
 
             // Hide overlay with a small delay for smoothness
             setTimeout(() => {

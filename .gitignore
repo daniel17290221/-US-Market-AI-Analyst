@@ -23,10 +23,16 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Data files (optional - uncomment if you don't want to commit data)
-# us_market/*.json
-# us_market/*.csv
-# us_market/*.html
+# Data files
+us_market/*.csv
+us_market/*.html
+KR_Market_Analyst/kr_market/*.json
+KR_Market_Analyst/kr_market/*.html
+*.txt
+*.json
+!vercel.json
+!us_market/us_ai_analysis.json
+!us_market/us_macro_analysis.json
 
 # Logs
 *.log

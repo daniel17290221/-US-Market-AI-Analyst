@@ -642,18 +642,23 @@ def get_smart_money():
     except Exception as e:
         print(f"DEBUG: US Price update error: {e}")
 
-    # 2. Identify stocks needing AI enrichment
+    # 2. Load Pre-computed AI Analysis
+    precomputed_ai = load_json('us_ai_analysis.json')
+    
+    # 3. Identify stocks needing dynamic AI enrichment (fallback)
     needing_ai = []
-    # Mix of ticker and symbol for robust lookup
     for d in data[:15]:
         ticker = d.get('ticker')
-        if ticker not in major_us_analysis:
+        if ticker not in major_us_analysis and ticker not in precomputed_ai:
             needing_ai.append({'symbol': ticker, 'name': d.get('name', ticker)})
     
-    # Batch enrichment
-    dynamic_results = fetch_dynamic_ai_analysis(needing_ai)
+    # Optional Batch enrichment for missing ones (limit to 5 for speed)
+    dynamic_results = precomputed_ai.copy()
+    if needing_ai:
+        live_ai = fetch_dynamic_ai_analysis(needing_ai[:5])
+        dynamic_results.update(live_ai)
 
-    # 3. Final enrichment loop
+    # 4. Final enrichment loop
     enriched = []
     for i, d in enumerate(data[:15]):
         ticker = d['ticker']
@@ -726,17 +731,7 @@ def fetch_google_news_rss(query):
         print(f"RSS Fetch Error: {e}")
     return []
 
-@app.route('/api/kr/k-news')
-def get_kr_k_news():
-    # General Stock Market News
-    news = fetch_google_news_rss("주식시장+증시")
-    return jsonify(news)
-
-@app.route('/api/kr/k-ipo')
-def get_kr_k_ipo():
-    # IPO Subscription News
-    news = fetch_google_news_rss("공모주+청약+일정")
-    return jsonify(news)
+# Removed redundant k-news and k-ipo routes
 
 @app.route('/api/kr/smart-money')
 def get_kr_smart_money():
@@ -907,7 +902,8 @@ def get_kr_smart_money():
         "leaders_kospi": enrich_list(leaders_kospi),
         "leaders_kosdaq": enrich_list(leaders_kosdaq),
         "gainers": enrich_list(gainers),
-        "volume": enrich_list(volume)
+        "volume": enrich_list(volume),
+        "sector_heatmap": kr_data.get('sector_heatmap', [])
     }
 
     response = jsonify(response_data)
@@ -919,87 +915,22 @@ from datetime import datetime
 
 @app.route('/api/kr/news')
 def get_kr_news():
-    try:
-        # Google News RSS for "주식" (Stocks) in Korean
-        url = "https://news.google.com/rss/search?q=%EC%A3%BC%EC%8B%9D&hl=ko&gl=KR&ceid=KR:ko"
-        response = requests.get(url, timeout=10)
-        
-        if response.status_code != 200:
-            return jsonify([])
-
-        root = ET.fromstring(response.content)
-        news_items = []
-        
-        for item in root.findall('.//item')[:15]:
-            title = item.find('title').text if item.find('title') is not None else ""
-            link = item.find('link').text if item.find('link') is not None else ""
-            pub_date = item.find('pubDate').text if item.find('pubDate') is not None else ""
-            source = item.find('source').text if item.find('source') is not None else "뉴스"
-            description = item.find('description').text if item.find('description') is not None else ""
-            
-            # Clean description (remove HTML tags)
-            if description:
-                description = ET.fromstring(f"<root>{description}</root>").itertext()
-                description = "".join(description).strip()
-                # Limit length
-                if len(description) > 100:
-                    description = description[:100] + "..."
-            
-            # Clean title
-            if " - " in title:
-                title = title.rsplit(" - ", 1)[0]
-                
-            news_items.append({
-                "title": title,
-                "url": link,
-                "date": pub_date,
-                "source": source,
-                "summary": description
-            })
-            
-        return jsonify(news_items)
-    except Exception as e:
-        print(f"Error fetching news: {e}")
-        return jsonify([])
+    return jsonify(fetch_google_news_rss("주식시장+증시"))
 
 @app.route('/api/kr/ipo')
 def get_kr_ipo():
     try:
-        # Fetching IPO info from a public source or using a structured real-time mock for demo
-        # In a real production, we'd scrape kind.krx.co.kr or use a finance API
-        # For now, providing structured data that can be easily connected to a scraper
-        ipo_data = [
-            {
-                "name": "에이치비인베스트먼트",
-                "status": "청약종료",
-                "manager": "NH투자증권",
-                "price": "3,400원",
-                "date": "01.29"
-            },
-            {
-                "name": "우진엔텍",
-                "status": "상장예정",
-                "manager": "KB증권",
-                "price": "5,300원",
-                "date": "01.30"
-            },
-            {
-                "name": "포스뱅크",
-                "status": "청약중",
-                "manager": "하나증권",
-                "price": "18,000원",
-                "date": "01.29"
-            },
-            {
-                "name": "현대힘스",
-                "status": "청약예정",
-                "manager": "미래에셋증권",
-                "price": "7,300원",
-                "date": "02.05"
-            }
-        ]
-        return jsonify(ipo_data)
+        # Use absolute path consistent with other KR routes
+        kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
+        if os.path.exists(kr_data_path):
+            with open(kr_data_path, 'r', encoding='utf-8') as f:
+                kr_data = json.load(f)
+                return jsonify(kr_data.get('ipo_news', []))
+        
+        # Fallback to RSS if JSON not ready
+        return jsonify(fetch_google_news_rss("공모주+청약+일정"))
     except Exception as e:
+        print(f"Error fetching KR IPO: {e}")
         return jsonify([])
 
 @app.route('/api/us/macro-analysis')
@@ -1061,6 +992,18 @@ def get_daily_report():
     except Exception as e:
         return f"<h1>Error generating report</h1><p>{str(e)}</p>", 500
 
+@app.route('/api/cron/update')
+def cron_update():
+    """Endpoint for Vercel Cron to trigger data refresh"""
+    # Check for secret key if you want to secure this
+    try:
+        from us_market.daily_report_generator import USDailyReportGenerator
+        generator = USDailyReportGenerator(data_dir=DATA_DIR)
+        generator.run()
+        return jsonify({"status": "success", "message": "Report updated"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/api/us/realtime-prices')
 def get_realtime_prices():
     tickers = request.args.get('tickers', 'SPY,QQQ,NVDA,AAPL,TSLA').split(',')
@@ -1068,6 +1011,54 @@ def get_realtime_prices():
         return jsonify(fetch_realtime_data(tickers))
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.route('/api/chart-data')
+def get_universal_chart_data():
+    symbol = request.args.get('symbol', '005930')
+    market = request.args.get('market', 'KR') # KR or US
+    
+    if not symbol:
+        return jsonify([])
+
+    # Determine suffix for yfinance
+    if market.upper() == 'US':
+        ticker_sym = symbol.upper()
+    else:
+        # Default KR logic
+        ticker_sym = f"{symbol}.KS"
+    
+    try:
+        import yfinance as yf
+        ticker = yf.Ticker(ticker_sym)
+        # Fetch last 6 months of daily data
+        period = "6mo"
+        df = ticker.history(period=period)
+        
+        # If KR and empty, try KOSDAQ
+        if df.empty and market.upper() == 'KR':
+            ticker_sym = f"{symbol}.KQ"
+            ticker = yf.Ticker(ticker_sym)
+            df = ticker.history(period=period)
+            
+        if df.empty:
+            return jsonify([])
+            
+        # Format for Lightweight Charts
+        chart_data = []
+        for index, row in df.iterrows():
+            chart_data.append({
+                "time": index.strftime('%Y-%m-%d'),
+                "open": float(row['Open']),
+                "high": float(row['High']),
+                "low": float(row['Low']),
+                "close": float(row['Close']),
+                "volume": float(row['Volume'])
+            })
+            
+        return jsonify(chart_data)
+    except Exception as e:
+        print(f"Error fetching chart data for {symbol}: {e}")
+        return jsonify([])
 
 @app.route('/api/debug')
 def debug_server():

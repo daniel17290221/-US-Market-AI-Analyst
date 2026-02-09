@@ -202,9 +202,13 @@ class KRDailyReportGenerator:
 </html>
         """
         
-        with open(self.output_file, 'w', encoding='utf-8') as f:
-            f.write(html_template)
-        logger.info(f"✅ KR Premium report saved to: {self.output_file}")
+        try:
+            with open(self.output_file, 'w', encoding='utf-8') as f:
+                f.write(html_template)
+            logger.info(f"[SUCCESS] KR Premium report saved to: {self.output_file}")
+        except Exception as e:
+            logger.warning(f"[WARNING] Could not write KR report to filesystem: {e}")
+            
         return html_template
 
     def get_fallback_content(self):
@@ -216,7 +220,7 @@ class KRDailyReportGenerator:
         }
 
     def run(self):
-        logger.info("🚀 Starting KR Market Daily Report Generation...")
+        logger.info("Starting KR Market Daily Report Generation...")
         raw_data = self.load_data()
         if not raw_data: return
         ai_content = self.generate_ai_content(raw_data)

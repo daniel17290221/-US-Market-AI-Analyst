@@ -9,7 +9,7 @@ import os
 import json
 import csv
 import logging
-import requests
+import yfinance as yf
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 try:
@@ -31,34 +31,98 @@ class USDailyReportGenerator:
         api_key = os.getenv('GOOGLE_API_KEY')
         if api_key and api_key != "your_gemini_api_key_here":
             try:
-                self.client = genai.Client(api_key=api_key)
+                # Try new google.genai client first
+                from google import genai as new_genai
+                self.client = new_genai.Client(api_key=api_key)
                 self.model_name = 'gemini-2.0-flash'
                 logger.info("[SUCCESS] Gemini AI (google.genai) Backend Initialized")
             except:
-                genai.configure(api_key=api_key)
+                # Fallback to legacy google.generativeai
+                import google.generativeai as legacy_genai
+                legacy_genai.configure(api_key=api_key)
                 self.client = None
-                self.model = genai.GenerativeModel('gemini-2.0-flash')
+                self.model = legacy_genai.GenerativeModel('gemini-2.0-flash')
                 logger.info("[SUCCESS] Gemini AI (legacy) Backend Initialized")
         else:
             self.client = None
             self.model = None
             logger.warning("[WARNING] GOOGLE_API_KEY not found or default. Using mock data.")
 
+    def fetch_live_indices(self):
+        """Fetch live index data using yfinance"""
+        indices = {
+            'SPX500': {'symbol': '^GSPC', 'name': 'S&P 500'},
+            'NSXUSD': {'symbol': '^IXIC', 'name': '나스닥'},
+            'DJI': {'symbol': '^DJI', 'name': '다우존스'}
+        }
+        results = {}
+        for k, v in indices.items():
+            try:
+                ticker = yf.Ticker(v['symbol'])
+                # Get current and previous close
+                hist = ticker.history(period="3d") # Fetch more days for robustness
+                if not hist.empty and len(hist) >= 1:
+                    price = hist['Close'].iloc[-1]
+                    if len(hist) >= 2:
+                        prev_close = hist['Close'].iloc[-2]
+                        change_pct = (price - prev_close) / prev_close * 100
+                    else:
+                        change_pct = 0.0
+                        
+                    results[k] = {
+                        'name': v['name'],
+                        'price': f"{price:,.2f}",
+                        'change': f"{change_pct:+.2f}%"
+                    }
+                else:
+                    results[k] = {'name': v['name'], 'price': 'N/A', 'change': '0.00%'}
+            except Exception as e:
+                logger.error(f"Error fetching index {k}: {e}")
+                results[k] = {'name': v['name'], 'price': 'N/A', 'change': '0.00%'}
+        return results
+
+    def fetch_live_commodities(self):
+        """Fetch live commodity data"""
+        items = [
+            {'symbol': 'CL=F', 'name': 'WTI 원유'},
+            {'symbol': 'GC=F', 'name': '금 선물'},
+            {'symbol': 'BTC-USD', 'name': '비트코인'}
+        ]
+        results = []
+        for item in items:
+            try:
+                ticker = yf.Ticker(item['symbol'])
+                hist = ticker.history(period="3d")
+                if not hist.empty and len(hist) >= 1:
+                    price = hist['Close'].iloc[-1]
+                    if len(hist) >= 2:
+                        prev_close = hist['Close'].iloc[-2]
+                        change_pct = (price - prev_close) / prev_close * 100
+                    else:
+                        change_pct = 0.0
+                    results.append({
+                        'name': item['name'],
+                        'price': f"{price:,.2f}",
+                        'change': f"{change_pct:+.2f}%"
+                    })
+                else:
+                    results.append({'name': item['name'], 'price': 'N/A', 'change': '0.00%'})
+            except Exception as e:
+                logger.error(f"Error fetching commodity {item['name']}: {e}")
+                results.append({'name': item['name'], 'price': 'N/A', 'change': '0.00%'})
+        return results
+
     def load_data(self):
         """Aggregate data from all available sources"""
+        # Fetch live indices and commodities
+        live_indices = self.fetch_live_indices()
+        live_comms = self.fetch_live_commodities()
+        
         data = {
             'date': datetime.now().strftime("%m.%d"),
             'macro': {},
-            'market_indices': {
-                'SPX500': {'name': 'S&P 500', 'price': '6,940.01', 'change': '+0.00%'},
-                'NSXUSD': {'name': '나스닥', 'price': '23,515.39', 'change': '+0.00%'},
-                'DJI': {'name': '다우존스', 'price': '49,359.33', 'change': '+0.00%'}
-            },
-            'commodities': [
-                {'name': 'WTI 원유', 'price': '59.34', 'change': '+0.44%'},
-                {'name': '금 선물', 'price': '4,595.40', 'change': '-0.61%'},
-                {'name': '비트코인', 'price': '129,446,000', 'change': '-0.02%'}
-            ],
+            'market_indices': live_indices,
+            'commodities': live_comms,
             'top_stocks': []
         }
         
@@ -69,17 +133,47 @@ class USDailyReportGenerator:
                 data['macro'] = json.load(f)
         
         # 2. Top Stocks (Smart Money)
-        screener_path = os.path.join(self.data_dir, 'smart_money_picks_v2.csv')
-        if os.path.exists(screener_path):
+        # Search for CSV in multiple locations to be robust (local vs vercel)
+        possible_csv_paths = [
+            os.path.join(self.data_dir, 'smart_money_picks_v2.csv'),
+            os.path.join(os.getcwd(), 'us_market', 'smart_money_picks_v2.csv'),
+            os.path.join(os.path.dirname(__file__), 'smart_money_picks_v2.csv')
+        ]
+        
+        screener_path = None
+        for p in possible_csv_paths:
+            if os.path.exists(p):
+                screener_path = p
+                break
+
+        if screener_path:
             try:
                 with open(screener_path, 'r', encoding='utf-8-sig') as f:
                     reader = csv.DictReader(f)
-                    # Robust header handling
                     reader.fieldnames = [fn.strip() for fn in reader.fieldnames] if reader.fieldnames else []
+                    top_list = list(reader)[:10]  # Get top 10 to allow for some variety or filtering
+                    
                     data['top_stocks'] = []
-                    for row in list(reader)[:5]:
-                        # Clean each row keys
+                    for row in top_list:
                         clean_row = {k.strip(): v.strip() for k, v in row.items() if k}
+                        ticker_sym = clean_row.get('ticker')
+                        if ticker_sym:
+                            try:
+                                # Fetch live price to ensure "current" data
+                                t = yf.Ticker(ticker_sym)
+                                hist = t.history(period="3d")
+                                if not hist.empty and len(hist) >= 1:
+                                    price = hist['Close'].iloc[-1]
+                                    if len(hist) >= 2:
+                                        prev_close = hist['Close'].iloc[-2]
+                                        change_pct = (price - prev_close) / prev_close * 100
+                                    else:
+                                        change_pct = 0.0
+                                    clean_row['price'] = f"{price:,.2f}"
+                                    clean_row['change'] = f"{change_pct:+.2f}%"
+                            except Exception as price_e:
+                                logger.warning(f"Failed to refresh price for {ticker_sym}: {price_e}")
+                        
                         data['top_stocks'].append(clean_row)
             except Exception as e:
                 logger.error(f"Error loading picks: {e}")
@@ -507,26 +601,26 @@ class USDailyReportGenerator:
         """
         
         try:
-            # Ensure output directory exists
-            output_dir = os.path.dirname(self.output_file)
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir)
-                
-            with open(self.output_file, 'w', encoding='utf-8') as f:
-                f.write(html_template)
-            logger.info(f"✅ Premium report saved to: {self.output_file}")
+            # Try to write only if allowed (it might fail on Vercel)
+            try:
+                with open(self.output_file, 'w', encoding='utf-8') as f:
+                    f.write(html_template)
+                logger.info(f"[SUCCESS] Premium report saved to: {self.output_file}")
+            except Exception as write_e:
+                logger.warning(f"[WARNING] Could not write report to filesystem (typical on Vercel): {write_e}")
         except Exception as e:
-            logger.error(f"❌ Error saving report to {self.output_file}: {e}")
+            logger.error(f"[ERROR] Error generating/saving report: {e}")
             
         return html_template
 
     def run(self):
-        logger.info("🚀 Generating Premium Daily US Market Report...")
+        logger.info("Generating Premium Daily US Market Report...")
         raw_data = self.load_data()
         ai_content = self.generate_ai_content(raw_data)
         return self.generate_html(raw_data, ai_content)
 
 
 if __name__ == "__main__":
-    # If run directly as a script, default to current directory
-    USDailyReportGenerator(data_dir='.').run()
+    # If run directly as a script, default to its own directory
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    USDailyReportGenerator(data_dir=base_dir).run()
