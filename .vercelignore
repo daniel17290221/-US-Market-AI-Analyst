@@ -11,7 +11,15 @@ node_modules
 *.md
 docs/
 tests/
-# Exclude all test/debug scripts
+# Exclude all root scripts except app.py (if needed) and api/
+*.py
+!app.py
+!api/index.py
+!us_market/*.py
+!KR_Market_Analyst/kr_market/*.py
+!KR_Market_Analyst/update_kr.py
+
+# Exclude all test/debug prefixes
 test_*.py
 debug_*.py
 quick_*.py
@@ -29,13 +37,14 @@ generate_*.py
 localize_*.py
 full_*.py
 recover_*.py
-update_frontend_date.py
-# Exclude large CSVs
-us_market/us_daily_prices.csv
-us_market/us_volume_analysis.csv
-us_market/us_13f_holdings.csv
-us_market/us_etf_flows.csv
-# Keep only needed data
+
+# Exclude ALL CSVs except the picks
+*.csv
 !us_market/smart_money_picks_v2.csv
-!us_market/*.json
-!KR_Market_Analyst/kr_market/*.json
+
+# Exclude large HTML files if any
+standalone_dashboard.html
+kr_dashboard_standalone.html
+
+# Specifically exclude the 40MB file
+us_market/us_daily_prices.csv

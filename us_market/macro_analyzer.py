@@ -31,14 +31,13 @@ class MacroAnalyzer:
         
         # Configure APIs
         self.gemini_key = os.getenv('GOOGLE_API_KEY')
-        self.openai_key = os.getenv('OPENAI_API_KEY')
         
         if self.gemini_key:
             try:
-                self.client = genai.Client(api_key=self.gemini_key)
-                self.model_name = 'gemini-2.0-flash'
-            except:
+                import google.generativeai as genai
                 genai.configure(api_key=self.gemini_key)
+                self.client = None
+            except:
                 self.client = None
     
     def fetch_market_news(self) -> str:
@@ -74,25 +73,11 @@ class MacroAnalyzer:
         
         try:
             if self.model == 'gemini' and (self.gemini_key):
-                if self.client:
-                    response = self.client.models.generate_content(
-                        model=self.model_name,
-                        contents=prompt
-                    )
-                else:
-                    model = genai.GenerativeModel('gemini-2.0-flash')
-                    response = model.generate_content(prompt)
+                import google.generativeai as genai
+                model = genai.GenerativeModel('gemini-2.0-flash')
+                response = model.generate_content(prompt)
                 return self._parse_response(response.text)
             
-            elif self.model == 'gpt' and self.openai_key:
-                client = OpenAI(api_key=self.openai_key)
-                response = client.chat.completions.create(
-                    model="gpt-4-turbo",  # Using available model
-                    messages=[{"role": "user", "content": prompt}],
-                    response_format={"type": "json_object"}
-                )
-                return json.loads(response.choices[0].message.content)
-                
             else:
                 logger.warning("No API keys found. Returning mock analysis.")
                 return self._get_mock_analysis()

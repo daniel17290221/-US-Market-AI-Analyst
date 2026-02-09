@@ -31,18 +31,15 @@ class USDailyReportGenerator:
         api_key = os.getenv('GOOGLE_API_KEY')
         if api_key and api_key != "your_gemini_api_key_here":
             try:
-                # Try new google.genai client first
-                from google import genai as new_genai
-                self.client = new_genai.Client(api_key=api_key)
-                self.model_name = 'gemini-2.0-flash'
-                logger.info("[SUCCESS] Gemini AI (google.genai) Backend Initialized")
-            except:
-                # Fallback to legacy google.generativeai
-                import google.generativeai as legacy_genai
-                legacy_genai.configure(api_key=api_key)
+                import google.generativeai as genai
+                genai.configure(api_key=api_key)
                 self.client = None
-                self.model = legacy_genai.GenerativeModel('gemini-2.0-flash')
+                self.model = genai.GenerativeModel('gemini-2.0-flash')
                 logger.info("[SUCCESS] Gemini AI (legacy) Backend Initialized")
+            except Exception as e:
+                logger.error(f"[ERROR] Gemini Initialization failed: {e}")
+                self.client = None
+                self.model = None
         else:
             self.client = None
             self.model = None
