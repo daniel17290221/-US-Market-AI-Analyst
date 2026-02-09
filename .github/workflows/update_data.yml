@@ -1,0 +1,22 @@
+name: Scheduled Market Update
+
+on:
+  schedule:
+    # 07:30 KST = 22:30 UTC (Previous day)
+    - cron: '30 22 * * *'
+    # 08:30 KST = 23:30 UTC (Previous day)
+    - cron: '30 23 * * *'
+    # 12:30 KST = 03:30 UTC
+    - cron: '30 3 * * *'
+    # 16:30 KST = 07:30 UTC
+    - cron: '30 7 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Update API
+        run: |
+          curl -X GET "https://${{ secrets.VERCEL_PROJECT_URL }}/api/cron/update" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
