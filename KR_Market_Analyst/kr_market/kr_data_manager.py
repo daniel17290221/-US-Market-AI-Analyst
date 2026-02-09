@@ -234,7 +234,11 @@ class KRDataManager:
         try:
             print("Fetching IPO & Schedule news...")
             import requests
+        try:
             from bs4 import BeautifulSoup
+        except ImportError:
+            print("❌ Error: beautifulsoup4 is not installed.")
+            return []
             
             # Use Naver Finance IPO news sections
             url = "https://finance.naver.com/news/news_list.naver?mode=LSS3D&section_id=101&section_id2=258&section_id3=406" # 공시/IPO 뉴스

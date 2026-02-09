@@ -3,7 +3,7 @@ import sys
 
 # Ensure project root is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
+project_root = os.path.dirname(os.path.dirname(current_dir))
 sys.path.append(project_root)
 
 from kr_data_manager import KRDataManager

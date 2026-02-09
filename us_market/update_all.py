@@ -50,19 +50,27 @@ def run_all():
             
         logger.info(f"Running US script: {script}...")
         try:
-            subprocess.run([sys.executable, script_path], check=True, cwd=base_dir)
+            res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, check=True, cwd=base_dir)
+            if res.stdout: logger.info(res.stdout)
         except subprocess.CalledProcessError as e:
-            logger.error(f"[ERROR] Error running {script}: {e}")
+            logger.error(f"❌ Error running {script}!")
+            logger.error(f"STDOUT: {e.stdout}")
+            logger.error(f"STDERR: {e.stderr}")
+            # Continue to next script even if one fails
+            continue
     
     # 2. Run KR Market Update
     logger.info("Starting KR Market Update...")
     kr_update_script = os.path.join(root_dir, 'KR_Market_Analyst', 'update_kr.py')
     if os.path.exists(kr_update_script):
         try:
-            subprocess.run([sys.executable, kr_update_script], check=True, cwd=os.path.join(root_dir, 'KR_Market_Analyst'))
+            res = subprocess.run([sys.executable, kr_update_script], capture_output=True, text=True, check=True, cwd=os.path.join(root_dir, 'KR_Market_Analyst'))
+            logger.info(res.stdout)
             logger.info("KR Update Complete!")
-        except Exception as e:
-            logger.error(f"[ERROR] KR Market Update failed: {e}")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"❌ KR Market Update failed!")
+            logger.error(f"STDOUT: {e.stdout}")
+            logger.error(f"STDERR: {e.stderr}")
     else:
         logger.warning("KR Update script not found.")
             

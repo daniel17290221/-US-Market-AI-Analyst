@@ -15,8 +15,14 @@ class KRDailyReportGenerator:
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
             logger.error("❌ GOOGLE_API_KEY not found in environment variables.")
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-2.0-flash')
+            self.model = None
+        else:
+            try:
+                genai.configure(api_key=api_key)
+                self.model = genai.GenerativeModel('gemini-2.0-flash')
+            except Exception as e:
+                logger.error(f"❌ AI Initialization failed: {e}")
+                self.model = None
         
         self.data_dir = data_dir
         self.data_file = os.path.join(data_dir, 'kr_daily_data.json')
