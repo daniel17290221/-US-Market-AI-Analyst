@@ -1024,15 +1024,42 @@ def get_daily_report():
 
 @app.route('/api/cron/update')
 def cron_update():
-    """Endpoint for Vercel Cron to trigger data refresh"""
-    # Check for secret key if you want to secure this
+    """Endpoint for Vercel Cron to trigger data refresh for both US and KR markets"""
+    results = {}
+    
+    # 1. Update US Market Report
     try:
         from us_market.daily_report_generator import USDailyReportGenerator
-        generator = USDailyReportGenerator(data_dir=DATA_DIR)
-        generator.run()
-        return jsonify({"status": "success", "message": "Report updated"}), 200
+        us_gen = USDailyReportGenerator(data_dir=DATA_DIR)
+        us_gen.run()
+        results["us"] = "success"
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        results["us"] = f"error: {str(e)}"
+
+    # 2. Update KR Market Data and Report
+    try:
+        # Resolve KR paths correctly
+        kr_base = os.path.join(BASE_DIR, 'KR_Market_Analyst')
+        kr_market_dir = os.path.join(kr_base, 'kr_market')
+        
+        # Add to path to allow imports if necessary, or call classes directly
+        from KR_Market_Analyst.kr_market.kr_data_manager import KRDataManager
+        from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
+        
+        # Step A: Collect Data
+        data_manager = KRDataManager(output_dir=kr_market_dir)
+        data_manager.collect_all()
+        
+        # Step B: Generate Report
+        report_gen = KRDailyReportGenerator(data_dir=kr_market_dir)
+        report_gen.run()
+        
+        results["kr"] = "success"
+    except Exception as e:
+        results["kr"] = f"error: {str(e)}"
+
+    status_code = 200 if all(v == "success" for v in results.values()) else 207
+    return jsonify({"status": "completed", "details": results}), status_code
 
 @app.route('/api/us/realtime-prices')
 def get_realtime_prices():
