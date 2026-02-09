@@ -896,6 +896,15 @@ def get_kr_market_data():
             })
         return enriched
 
+    # Live Fallback for IPO if JSON is just a placeholder
+    ipo_list = kr_data.get('ipo_news', [])
+    if not ipo_list or (len(ipo_list) == 1 and "업데이트" in ipo_list[0].get('name', '')):
+        ipo_list = fetch_google_news_rss("공모주+청약+일정+상장")
+        # Format RSS output to match IPO structure if needed
+        for item in ipo_list:
+            if 'status' not in item: item['status'] = "뉴스"
+            if 'name' not in item: item['name'] = item['title']
+
     response_data = {
         "date": kr_data.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S KST')),
         "leaders": enrich_list(leaders_kospi), # Default for main tab
@@ -904,7 +913,7 @@ def get_kr_market_data():
         "gainers": enrich_list(gainers),
         "volume": enrich_list(volume),
         "sector_heatmap": kr_data.get('sector_heatmap', []),
-        "ipo_news": kr_data.get('ipo_news', [])
+        "ipo_news": ipo_list
     }
 
     response = jsonify(response_data)
@@ -916,20 +925,24 @@ from datetime import datetime
 
 @app.route('/api/kr/news')
 def get_kr_news():
-    return jsonify(fetch_google_news_rss("주식시장+증시"))
+    # Use more specific and fresh search terms
+    return jsonify(fetch_google_news_rss("국내+증시+시황+마감+브리핑"))
 
 @app.route('/api/kr/ipo')
 def get_kr_ipo():
     try:
-        # Use absolute path consistent with other KR routes
         kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
         if os.path.exists(kr_data_path):
             with open(kr_data_path, 'r', encoding='utf-8') as f:
                 kr_data = json.load(f)
-                return jsonify(kr_data.get('ipo_news', []))
+                ipo_list = kr_data.get('ipo_news', [])
+                # If data is just a placeholder, use live fallback
+                if not ipo_list or (len(ipo_list) == 1 and "업데이트" in ipo_list[0].get('name', '')):
+                     return jsonify(fetch_google_news_rss("공모주+청약+일정+상장"))
+                return jsonify(ipo_list)
         
         # Fallback to RSS if JSON not ready
-        return jsonify(fetch_google_news_rss("공모주+청약+일정"))
+        return jsonify(fetch_google_news_rss("공모주+청약+일정+상장"))
     except Exception as e:
         print(f"Error fetching KR IPO: {e}")
         return jsonify([])
