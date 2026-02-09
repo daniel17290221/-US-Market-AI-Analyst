@@ -9,13 +9,17 @@ import os
 import json
 import requests
 import logging
+import time
 from datetime import datetime
-from typing import Dict, List
+from dotenv import load_dotenv
 try:
     from google import genai
 except ImportError:
-    import google.generativeai as genai
-from openai import OpenAI
+    try:
+        import google.generativeai as genai
+    except ImportError:
+        genai = None
+
 from dotenv import load_dotenv
 
 load_dotenv()

@@ -6,7 +6,6 @@ Generates SWOT, Insights, and Targets for top US stocks using Gemini
 """
 import os
 import json
-import pandas as pd
 import logging
 import time
 from datetime import datetime
