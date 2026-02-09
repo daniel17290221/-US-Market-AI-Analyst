@@ -9,7 +9,7 @@ import os
 import json
 import csv
 import logging
-import yfinance as yf
+import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 try:
@@ -47,6 +47,30 @@ class USDailyReportGenerator:
 
     def fetch_live_indices(self):
         """Fetch live index data using yfinance"""
+    def _fetch_yahoo_data(self, symbol):
+        """Helper to fetch price data from Yahoo API without yfinance"""
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d"
+        try:
+            resp = requests.get(url, headers=headers, timeout=5)
+            if resp.status_code == 200:
+                data = resp.json()
+                result = data.get('chart', {}).get('result')
+                if result:
+                    meta = result[0].get('meta', {})
+                    price = meta.get('regularMarketPrice')
+                    prev_close = meta.get('chartPreviousClose', meta.get('previousClose'))
+                    
+                    if price is not None and prev_close is not None:
+                        change_pct = ((price - prev_close) / prev_close) * 100 if prev_close != 0 else 0.0
+                        return price, change_pct
+            return None, None
+        except Exception as e:
+            logger.error(f"Error fetching data for {symbol}: {e}")
+            return None, None
+
+    def fetch_live_indices(self):
+        """Fetch live index data using requests"""
         indices = {
             'SPX500': {'symbol': '^GSPC', 'name': 'S&P 500'},
             'NSXUSD': {'symbol': '^IXIC', 'name': '나스닥'},
@@ -54,32 +78,19 @@ class USDailyReportGenerator:
         }
         results = {}
         for k, v in indices.items():
-            try:
-                ticker = yf.Ticker(v['symbol'])
-                # Get current and previous close
-                hist = ticker.history(period="3d") # Fetch more days for robustness
-                if not hist.empty and len(hist) >= 1:
-                    price = hist['Close'].iloc[-1]
-                    if len(hist) >= 2:
-                        prev_close = hist['Close'].iloc[-2]
-                        change_pct = (price - prev_close) / prev_close * 100
-                    else:
-                        change_pct = 0.0
-                        
-                    results[k] = {
-                        'name': v['name'],
-                        'price': f"{price:,.2f}",
-                        'change': f"{change_pct:+.2f}%"
-                    }
-                else:
-                    results[k] = {'name': v['name'], 'price': 'N/A', 'change': '0.00%'}
-            except Exception as e:
-                logger.error(f"Error fetching index {k}: {e}")
+            price, change_pct = self._fetch_yahoo_data(v['symbol'])
+            if price is not None:
+                results[k] = {
+                    'name': v['name'],
+                    'price': f"{price:,.2f}",
+                    'change': f"{change_pct:+.2f}%"
+                }
+            else:
                 results[k] = {'name': v['name'], 'price': 'N/A', 'change': '0.00%'}
         return results
 
     def fetch_live_commodities(self):
-        """Fetch live commodity data"""
+        """Fetch live commodity data using requests"""
         items = [
             {'symbol': 'CL=F', 'name': 'WTI 원유'},
             {'symbol': 'GC=F', 'name': '금 선물'},
@@ -87,25 +98,14 @@ class USDailyReportGenerator:
         ]
         results = []
         for item in items:
-            try:
-                ticker = yf.Ticker(item['symbol'])
-                hist = ticker.history(period="3d")
-                if not hist.empty and len(hist) >= 1:
-                    price = hist['Close'].iloc[-1]
-                    if len(hist) >= 2:
-                        prev_close = hist['Close'].iloc[-2]
-                        change_pct = (price - prev_close) / prev_close * 100
-                    else:
-                        change_pct = 0.0
-                    results.append({
-                        'name': item['name'],
-                        'price': f"{price:,.2f}",
-                        'change': f"{change_pct:+.2f}%"
-                    })
-                else:
-                    results.append({'name': item['name'], 'price': 'N/A', 'change': '0.00%'})
-            except Exception as e:
-                logger.error(f"Error fetching commodity {item['name']}: {e}")
+            price, change_pct = self._fetch_yahoo_data(item['symbol'])
+            if price is not None:
+                results.append({
+                    'name': item['name'],
+                    'price': f"{price:,.2f}",
+                    'change': f"{change_pct:+.2f}%"
+                })
+            else:
                 results.append({'name': item['name'], 'price': 'N/A', 'change': '0.00%'})
         return results
 

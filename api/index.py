@@ -1027,35 +1027,52 @@ def get_universal_chart_data():
         # Default KR logic
         ticker_sym = f"{symbol}.KS"
     
+    def fetch_yahoo_history(sym, period="6mo"):
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=1d&range={period}"
+        try:
+            resp = requests.get(url, headers=headers, timeout=10)
+            if resp.status_code == 200:
+                data = resp.json()
+                result = data.get('chart', {}).get('result')
+                if not result: return []
+                
+                res = result[0]
+                timestamps = res.get('timestamp', [])
+                quotes = res.get('indicators', {}).get('quote', [{}])[0]
+                
+                opens = quotes.get('open', [])
+                highs = quotes.get('high', [])
+                lows = quotes.get('low', [])
+                closes = quotes.get('close', [])
+                volumes = quotes.get('volume', [])
+                
+                chart_data = []
+                for i in range(len(timestamps)):
+                    # Skip if any essential data is None
+                    if opens[i] is None or closes[i] is None: continue
+                    
+                    dt = datetime.fromtimestamp(timestamps[i])
+                    chart_data.append({
+                        "time": dt.strftime('%Y-%m-%d'),
+                        "open": float(opens[i]),
+                        "high": float(highs[i]),
+                        "low": float(lows[i]),
+                        "close": float(closes[i]),
+                        "volume": float(volumes[i] or 0)
+                    })
+                return chart_data
+        except Exception as e:
+            print(f"Error in fetch_yahoo_history: {e}")
+        return []
+
     try:
-        import yfinance as yf
-        ticker = yf.Ticker(ticker_sym)
-        # Fetch last 6 months of daily data
-        period = "6mo"
-        df = ticker.history(period=period)
-        
+        data = fetch_yahoo_history(ticker_sym)
         # If KR and empty, try KOSDAQ
-        if df.empty and market.upper() == 'KR':
-            ticker_sym = f"{symbol}.KQ"
-            ticker = yf.Ticker(ticker_sym)
-            df = ticker.history(period=period)
+        if not data and market.upper() == 'KR':
+            data = fetch_yahoo_history(f"{symbol}.KQ")
             
-        if df.empty:
-            return jsonify([])
-            
-        # Format for Lightweight Charts
-        chart_data = []
-        for index, row in df.iterrows():
-            chart_data.append({
-                "time": index.strftime('%Y-%m-%d'),
-                "open": float(row['Open']),
-                "high": float(row['High']),
-                "low": float(row['Low']),
-                "close": float(row['Close']),
-                "volume": float(row['Volume'])
-            })
-            
-        return jsonify(chart_data)
+        return jsonify(data)
     except Exception as e:
         print(f"Error fetching chart data for {symbol}: {e}")
         return jsonify([])
