@@ -2,9 +2,11 @@ name: KR Market Data Update
 
 on:
   schedule:
-    # 1. 12:30 KST (03:30 UTC) - Intraday Check
+    # 1. 08:30 KST (23:30 UTC - previous day) - Morning Briefing
+    - cron: '30 23 * * 0-4'
+    # 2. 12:30 KST (03:30 UTC) - Intraday Check
     - cron: '30 3 * * 1-5'
-    # 2. 16:30 KST (07:30 UTC) - Market Close
+    # 3. 16:30 KST (07:30 UTC) - Market Close
     - cron: '30 7 * * 1-5'
   workflow_dispatch: # Manual trigger
 
@@ -33,19 +35,20 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
-          # Use the manual update script which triggers the DataManager
-          python KR_Market_Analyst/kr_market/update_data_manual.py
+          # Use the orchestrator script to update both data and AI report
+          python KR_Market_Analyst/update_kr.py
 
       - name: Commit and Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Add the generated KR data file
+          # Add the generated KR data and report files
           git add KR_Market_Analyst/kr_market/kr_daily_data.json
+          git add KR_Market_Analyst/kr_market/kr_market_daily_report.html
           
           # Commit only if there are changes
-          if git commit -m "auto: KR market data update $(date +'%Y-%m-%d %H:%M')"; then
+          if git commit -m "auto: KR market data & report update $(date +'%Y-%m-%d %H:%M')"; then
             echo "Successfully committed changes. Now pulling latest changes from master..."
             git pull --rebase origin master
             echo "Pushing changes to origin master..."
