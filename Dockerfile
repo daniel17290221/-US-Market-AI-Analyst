@@ -11,8 +11,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements and install
-# We use requirements_local.txt as it contains the full set of dependencies for AI and analysis
-COPY requirements_local.txt ./requirements.txt
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
@@ -26,5 +25,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 7860
 
 # Run the application
-# We'll use a slightly modified app.py or just call flask directly
 CMD ["python", "app.py"]
