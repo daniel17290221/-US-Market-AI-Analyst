@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배당 포트폴리오 도우미 (Beta)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #050505;
+            color: #e5e7eb;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .text-glow-cyan {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        .text-glow-purple {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .theme-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .theme-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 240, 255, 0.5);
+            background: rgba(0, 240, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .theme-card.selected {
+            border-color: #00F0FF;
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        .theme-card.selected i {
+            color: #00F0FF;
+        }
+
+        .theme-card.selected span {
+            color: white;
+            font-weight: 700;
+        }
+
+        .risk-card {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .risk-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .risk-card.selected {
+            border-color: #A855F7;
+            background: rgba(168, 85, 247, 0.1);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .brand-text-gradient {
+            background: linear-gradient(to right, #00F0FF, #0066FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Layout for side ads like daily report */
+        .page-wrapper {
+            display: grid;
+            grid-template-columns: 180px minmax(320px, 1280px) 180px;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1700px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .ad-sidebar {
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            align-self: flex-start;
+            padding-top: 20px;
+        }
+
+        .ad-unit-vertical {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #555;
+            font-size: 11px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1400px) {
+            .ad-sidebar {
+                display: none;
+            }
+
+            .page-wrapper {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+            }
+        }
+
+        .mobile-ad-banner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #000;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 0;
+            text-align: center;
+            z-index: 10000;
+            min-height: 100px;
+        }
+
+        .mobile-ad-inner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 1200px) {
+            .mobile-ad-banner {
+                display: block;
+            }
+
+            body {
+                padding-bottom: 120px !important;
+            }
+        }
+
+        /* Hide RECOMMENDED label */
+        .lg\:col-span-4::before,
+        .lg\:col-span-4::after {
+            display: none !important;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            cyan: '#00F0FF',
+                            purple: '#A855F7',
+                            dark: '#050505',
+                            card: '#111',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen flex flex-col selection:bg-brand-cyan/30 text-base">
+
+
+    <!-- Navigation -->
+    <nav
+        class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-4 md:px-6 py-3 flex flex-col lg:flex-row justify-between items-center rounded-2xl border-white/5 gap-4">
+        <div class="flex items-center justify-between w-full lg:w-auto">
+            <a href="https://land.vibe-coding-lab.com/" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 md:w-10 md:h-10 overflow-hidden rounded-xl flex items-center justify-center shadow-lg shadow-brand-cyan/10 border border-white/10 bg-white">
+                    <img src="/assets/logo.jpg" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight text-white italic">Vibe<span
+                            class="text-brand-cyan">CodingLab</span></h1>
+                </div>
+            </a>
+
+            <!-- Mobile Hidden Spacer -->
+            <div class="flex lg:hidden w-[60px]"></div>
+        </div>
+
+        <div
+            class="flex flex-wrap items-center gap-x-3 gap-y-2 md:gap-8 justify-center lg:justify-start w-full lg:w-auto py-2 lg:py-0 border-t border-b lg:border-none border-white/5 text-[10px] md:text-xs">
+            <a href="https://land.vibe-coding-lab.com/"
+                class="py-1 font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">홈</a>
+            <a href="https://us-market-ai-analyst.vercel.app/"
+                class="py-1 font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">미국
+                시장</a>
+            <a href="https://us-market-ai-analyst.vercel.app/kr"
+                class="py-1 font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">한국
+                시장</a>
+            <div class="flex gap-2 ml-auto lg:ml-0">
+                <a href="/dividend"
+                    class="py-1 text-[8px] md:text-[10px] bg-brand-cyan/10 text-brand-cyan px-2 md:px-3 rounded-full font-bold uppercase tracking-widest border border-brand-cyan/20">
+                    배당 포트폴리오
+                </a>
+            </div>
+        </div>
+
+        <div class="hidden lg:block w-[180px]"></div>
+    </nav>
+
+    <div class="page-wrapper py-10">
+        <!-- Left Sidebar Ad -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit-vertical bg-white/5 border-dashed border-white/10">
+                <script src="https://ads-partners.coupang.com/g.js"></script>
+                <script>
+                    new PartnersCoupang.G({ "id": 961293, "trackingCode": "AF1993837", "subId": null, "template": "carousel", "width": "180", "height": "600" });
+                </script>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full">
+            <div class="max-w-7xl mx-auto">
+                <div
+                    class="mb-10 flex flex-col sm:flex-row sm:items-end justify-between border-b border-white/5 pb-6 gap-4">
+                    <div>
+                        <h1
+                            class="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 text-white tracking-tight flex flex-wrap items-center gap-x-3">
+                            배당 포트폴리오 <span class="brand-text-gradient">최적화</span>
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                    <!-- Left Column: Controls (Span 8) -->
+                    <div class="lg:col-span-8 space-y-8">
+
+                        <!-- 1. Investment Theme -->
+                        <section class="glass-card rounded-xl p-8 relative overflow-hidden group">
+                            <div
+                                class="absolute top-0 right-0 w-32 h-32 bg-brand-cyan/5 rounded-full blur-3xl -z-10 transition-all duration-500 group-hover:bg-brand-cyan/10">
+                            </div>
+                            <h2
+                                class="text-base font-bold text-gray-300 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <i class="fas fa-layer-group text-brand-cyan"></i> 투자 테마 선택
+                            </h2>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36">
+                                    <i
+                                        class="fas fa-calendar-alt text-3xl text-gray-500 group-hover:text-brand-cyan transition-colors"></i>
+                                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wide">월배당</span>
+                                </button>
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36 selected">
+                                    <i class="fas fa-umbrella text-3xl text-brand-cyan transition-colors"></i>
+                                    <span class="text-sm font-bold text-white uppercase tracking-wide">노후 연금</span>
+                                </button>
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36">
+                                    <i
+                                        class="fas fa-chart-line text-3xl text-gray-500 group-hover:text-green-400 transition-colors"></i>
+                                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wide">성장 배당</span>
+                                </button>
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36">
+                                    <i
+                                        class="fas fa-medal text-3xl text-gray-500 group-hover:text-yellow-400 transition-colors"></i>
+                                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wide">퀄리티 우량주</span>
+                                </button>
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36">
+                                    <i
+                                        class="fas fa-percent text-3xl text-gray-500 group-hover:text-red-400 transition-colors"></i>
+                                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wide">커버드콜</span>
+                                </button>
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36">
+                                    <i
+                                        class="fas fa-building text-3xl text-gray-500 group-hover:text-indigo-400 transition-colors"></i>
+                                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wide">리츠
+                                        (부동산)</span>
+                                </button>
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36">
+                                    <i
+                                        class="fas fa-shield-alt text-3xl text-gray-500 group-hover:text-pink-400 transition-colors"></i>
+                                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wide">저변동성</span>
+                                </button>
+                                <button onclick="selectTheme(this)"
+                                    class="theme-card rounded-xl p-5 flex flex-col items-center justify-center gap-4 text-center h-36">
+                                    <i
+                                        class="fas fa-globe text-3xl text-gray-500 group-hover:text-blue-400 transition-colors"></i>
+                                    <span class="text-sm font-bold text-gray-300 uppercase tracking-wide">글로벌 분산</span>
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- 2. Risk Tier Selection -->
+                        <section class="glass-card rounded-xl p-8">
+                            <h2
+                                class="text-base font-bold text-gray-300 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <i class="fas fa-tachometer-alt text-brand-purple"></i> 위험 성향 (리스크)
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div onclick="selectRisk(this)"
+                                    class="risk-card p-6 rounded-xl cursor-group relative overflow-hidden">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <span
+                                            class="text-sm font-mono text-gray-400 border border-gray-600 px-3 py-1 rounded">LEVEL
+                                            1</span>
+                                        <i class="fas fa-shield-virus text-gray-500 text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white mb-2">방어형 (안정추구)</h3>
+                                    <div class="text-sm text-gray-400 mb-4 uppercase tracking-wider">주가 변동성 최소화</div>
+                                </div>
+
+                                <div onclick="selectRisk(this)"
+                                    class="risk-card p-6 rounded-xl cursor-group relative overflow-hidden selected">
+                                    <div class="absolute inset-0 bg-brand-purple/5"></div>
+                                    <div class="flex items-center justify-between mb-4 relative z-10">
+                                        <span
+                                            class="text-sm font-mono text-brand-purple border border-brand-purple/30 bg-brand-purple/10 px-3 py-1 rounded">LEVEL
+                                            2</span>
+                                        <i class="fas fa-balance-scale text-brand-purple text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white mb-2 relative z-10">중립형 (밸런스)</h3>
+                                    <div
+                                        class="text-sm text-brand-purple/80 mb-4 uppercase tracking-wider relative z-10">
+                                        성장
+                                        +
+                                        배당 균형</div>
+                                </div>
+
+                                <div onclick="selectRisk(this)"
+                                    class="risk-card p-6 rounded-xl cursor-group relative overflow-hidden">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <span
+                                            class="text-sm font-mono text-gray-400 border border-gray-600 px-3 py-1 rounded">LEVEL
+                                            3</span>
+                                        <i class="fas fa-rocket text-gray-500 text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white mb-2">공격형 (고수익)</h3>
+                                    <div class="text-sm text-gray-400 mb-4 uppercase tracking-wider">배당 수익 극대화</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 3. Portfolio Table -->
+                        <section class="glass-card rounded-xl overflow-hidden">
+                            <div class="p-8 border-b border-white/5 flex justify-between items-center">
+                                <h2
+                                    class="text-base font-bold text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-list-ul text-gray-500"></i> AI 추천 포트폴리오
+                                </h2>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-base text-center">
+                                    <thead class="text-sm uppercase bg-white/5 text-gray-400 font-mono tracking-wider">
+                                        <tr>
+                                            <th class="px-6 py-5 text-left">종목명 (티커)</th>
+                                            <th class="px-6 py-5">유형</th>
+                                            <th class="px-6 py-5">비중</th>
+                                            <th class="px-6 py-5">투자금액(₩)</th>
+                                            <th class="px-6 py-5">배당률</th>
+                                            <th class="px-6 py-5 text-brand-cyan">예상 월 배당(세후)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="portfolio-tbody" class="divide-y divide-white/5 font-mono text-sm">
+                                        <!-- AI Content Here -->
+                                        <tr>
+                                            <td colspan="6" class="py-12 text-gray-500 text-lg">
+                                                우측 '포트폴리오 생성하기' 버튼을 눌러주세요.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div
+                                    class="bg-black/30 p-5 text-center text-xs font-mono text-gray-500 border-t border-white/5 uppercase">
+                                    * 배당소득세(15.4% 또는 15%)를 제외한 예상 실수령액 기준입니다 • 실제 주가 및 환율에 따라 달라질 수 있습니다
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Column: Settings + Info (Span 4) -->
+                    <div class="lg:col-span-4 space-y-6">
+
+                        <!-- Combined Panel -->
+                        <div
+                            class="glass-card rounded-xl p-8 sticky top-24 border-t-2 border-t-brand-cyan max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar">
+                            <h2
+                                class="text-base font-bold text-white uppercase tracking-widest mb-10 flex items-center justify-between">
+                                <span>상세 설정</span>
+                                <i class="fas fa-sliders-h text-gray-400"></i>
+                            </h2>
+
+                            <!-- Market Selection -->
+                            <div class="mb-10">
+                                <label class="block text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">투자 대상
+                                    국가
+                                    (Market)</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="selectMarket(this, 'US')"
+                                        class="market-btn selected flex flex-col items-center justify-center p-3 rounded-xl border transition-all bg-brand-cyan/20 border-brand-cyan text-brand-cyan">
+                                        <span class="text-xl mb-1">🇺🇸</span>
+                                        <span class="text-xs font-bold">미국</span>
+                                    </button>
+                                    <button onclick="selectMarket(this, 'KR')"
+                                        class="market-btn flex flex-col items-center justify-center p-3 rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 transition-all">
+                                        <span class="text-xl mb-1">🇰🇷</span>
+                                        <span class="text-xs font-bold">한국</span>
+                                    </button>
+                                    <button onclick="selectMarket(this, 'MIX')"
+                                        class="market-btn flex flex-col items-center justify-center p-3 rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 transition-all">
+                                        <span class="text-xl mb-1">🌏</span>
+                                        <span class="text-xs font-bold">글로벌 혼합</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Amount Input -->
+                            <div class="mb-10">
+                                <label class="block text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">투자 가능
+                                    금액
+                                    (원금)</label>
+                                <div class="relative group">
+                                    <span class="absolute left-4 top-4 text-gray-500 text-lg">₩</span>
+                                    <input type="text" id="target-amount" value="100,000,000"
+                                        class="w-full bg-[#0a0a0a] border border-white/10 rounded-xl py-4 pl-10 pr-4 text-white focus:outline-none focus:border-brand-cyan focus:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all font-mono font-bold text-xl text-right group-hover:border-white/20">
+                                    <div
+                                        class="absolute -bottom-1 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-cyan to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mt-4">
+                                    <button onclick="setAmount('50,000,000')"
+                                        class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-300 transition-colors font-mono uppercase font-bold">5천만</button>
+                                    <button onclick="setAmount('100,000,000')"
+                                        class="px-4 py-2 bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30 rounded-lg text-xs transition-colors font-mono uppercase font-bold">1억</button>
+                                    <button onclick="setAmount('300,000,000')"
+                                        class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-300 transition-colors font-mono uppercase font-bold">3억</button>
+                                    <button onclick="setAmount('500,000,000')"
+                                        class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-300 transition-colors font-mono uppercase font-bold">5억</button>
+                                </div>
+                            </div>
+
+                            <!-- ETF Mode Option -->
+                            <div onclick="toggleEtfMode()"
+                                class="mb-10 flex items-center gap-3 p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                                <div id="etf-checkbox"
+                                    class="w-6 h-6 rounded-md border-2 border-gray-600 flex items-center justify-center transition-all group-hover:border-gray-400">
+                                    <i
+                                        class="fas fa-check text-black text-sm opacity-0 transition-opacity font-bold"></i>
+                                </div>
+                                <div>
+                                    <div
+                                        class="text-sm font-bold text-gray-300 group-hover:text-white transition-colors">
+                                        ETF ·
+                                        리츠 위주 구성</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">개별 종목 변동성이 부담스럽다면 추천</div>
+                                </div>
+                            </div>
+
+                            <!-- Optimization Method -->
+                            <div class="mb-12">
+                                <label class="block text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">최적화
+                                    전략</label>
+                                <div class="space-y-3">
+                                    <button
+                                        class="strategy-btn w-full flex items-center justify-between p-4 rounded-xl bg-brand-cyan/10 border border-brand-cyan/30 text-brand-cyan text-sm font-bold uppercase transition-all">
+                                        <span>배당 수익 극대화 (Yield Max)</span>
+                                        <i class="fas fa-check-circle text-lg"></i>
+                                    </button>
+                                    <button
+                                        class="strategy-btn w-full flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 text-sm font-bold uppercase transition-all">
+                                        <span>위험 균형 (Risk Parity)</span>
+                                        <i class="far fa-circle text-lg"></i>
+                                    </button>
+                                    <button
+                                        class="strategy-btn w-full flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 text-sm font-bold uppercase transition-all">
+                                        <span>변동성 최소화 (Low Vol)</span>
+                                        <i class="far fa-circle text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Generate Button -->
+                            <button id="generate-btn" onclick="generatePortfolio()"
+                                class="w-full bg-white text-black font-black py-5 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] active:scale-[0.98] transition-all uppercase tracking-widest flex items-center justify-center gap-3 group relative overflow-hidden text-lg">
+                                <span class="relative z-10">포트폴리오 생성하기</span>
+                                <i
+                                    class="fas fa-robot group-hover:translate-x-1 transition-transform relative z-10 text-xl"></i>
+                                <div
+                                    class="absolute inset-0 bg-brand-cyan mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                            </button>
+
+                            <div class="mt-10 pt-8 border-t border-white/5 space-y-4 font-mono text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400 font-bold">예상 월 수령액 (세후)</span>
+                                    <span id="summary-monthly" class="font-bold text-white text-xl">-</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400 font-bold">예상 연 배당률 (세전)</span>
+                                    <span id="summary-yield" class="font-bold text-brand-cyan text-lg">-</span>
+                                </div>
+                                <div class="flex items-center justify-between pt-3 border-t border-white/5 mt-3">
+                                    <span class="text-gray-500 font-medium">적용 환율</span>
+                                    <span id="exchange-rate-display" class="text-gray-500 font-bold">-</span>
+                                </div>
+                            </div>
+
+                            <!-- Merged Info Card -->
+                            <div
+                                class="mt-8 pt-6 border-t border-white/5 bg-brand-purple/5 -mx-8 px-8 pb-8 -mb-8 rounded-b-xl border-b border-white/5">
+                                <h3
+                                    class="text-brand-purple font-bold mb-4 flex items-center gap-2 text-sm uppercase tracking-widest">
+                                    <i class="fas fa-robot text-lg"></i> AI 분석 인사이트
+                                </h3>
+                                <p id="ai-insight-text" class="text-sm text-gray-300 leading-relaxed font-medium">
+                                    조건을 설정하고 '생성하기' 버튼을 누르면 AI가 맞춤형 전략을 분석해드립니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar Ad -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit-vertical bg-transparent border-none">
+                <div class="w-full">
+                    <div
+                        class="text-[10px] text-brand-cyan uppercase tracking-widest mb-3 font-bold text-center opacity-50">
+                        Recommended</div>
+                    <div class="ad-container overflow-hidden rounded-xl">
+                        <script src="https://ads-partners.coupang.com/g.js"></script>
+                        <script>
+                            new PartnersCoupang.G({ "id": 961294, "template": "carousel", "trackingCode": "AF1993837", "width": "180", "height": "600" });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+
+    <!-- Footer with Ad Notice -->
+    <footer class="border-t border-white/5 py-12 bg-black/50">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-[10px] text-gray-600 leading-relaxed font-medium">
+                이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.<br>
+                © 2026 VibeCodingLab. 모든 분석 결과는 투자 참고용이며 최종 책임은 투자자 본인에게 있습니다.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedTheme = '노후 연금';
+        let selectedRisk = '중립형 (밸런스)';
+        let selectedStrategy = '배당 수익 극대화 (Yield Max)';
+        let selectedMarket = 'US';
+        let etfMode = false;
+
+        function selectTheme(el) {
+            document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedTheme = el.querySelector('span').innerText;
+        }
+
+        function selectRisk(el) {
+            document.querySelectorAll('.risk-card').forEach(card => card.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedRisk = el.querySelector('h3').innerText;
+        }
+
+
+
+        function selectMarket(el, market) {
+            document.querySelectorAll('.market-btn').forEach(btn => {
+                btn.className = 'market-btn flex flex-col items-center justify-center p-3 rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 transition-all';
+            });
+            el.className = 'market-btn selected flex flex-col items-center justify-center p-3 rounded-xl border transition-all bg-brand-cyan/20 border-brand-cyan text-brand-cyan';
+            selectedMarket = market;
+        }
+
+        function toggleEtfMode() {
+            etfMode = !etfMode;
+            const checkbox = document.getElementById('etf-checkbox');
+            if (etfMode) {
+                checkbox.classList.remove('border-gray-600', 'group-hover:border-gray-400');
+                checkbox.classList.add('bg-brand-cyan', 'border-brand-cyan');
+                checkbox.querySelector('i').classList.remove('opacity-0');
+            } else {
+                checkbox.classList.add('border-gray-600', 'group-hover:border-gray-400');
+                checkbox.classList.remove('bg-brand-cyan', 'border-brand-cyan');
+                checkbox.querySelector('i').classList.add('opacity-0');
+            }
+        }
+
+        function setAmount(val) {
+            document.getElementById('target-amount').value = val;
+        }
+
+        document.querySelectorAll('.strategy-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.strategy-btn').forEach(b => {
+                    b.classList.remove('bg-brand-cyan/10', 'border-brand-cyan/30', 'text-brand-cyan');
+                    b.classList.add('bg-white/5', 'border-white/5', 'text-gray-400');
+                    b.querySelector('i').className = 'far fa-circle text-lg';
+                });
+                this.classList.remove('bg-white/5', 'border-white/5', 'text-gray-400');
+                this.classList.add('bg-brand-cyan/10', 'border-brand-cyan/30', 'text-brand-cyan');
+                this.querySelector('i').className = 'fas fa-check-circle text-lg';
+                selectedStrategy = this.querySelector('span').innerText;
+            });
+        });
+
+        async function generatePortfolio() {
+            const btn = document.getElementById('generate-btn');
+            const originalContent = btn.innerHTML;
+            const amount = document.getElementById('target-amount').value;
+
+            // Dev Mode Check
+            const urlParams = new URLSearchParams(window.location.search);
+            const devMode = urlParams.get('dev_mode') === 'vibecoding';
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin text-xl"></i> AI 분석 중...`;
+
+            try {
+                // Determine API URL based on dev_mode
+                let apiUrl = '/api/generate-portfolio';
+                if (devMode) apiUrl += '?dev_mode=vibecoding';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        theme: selectedTheme,
+                        risk: selectedRisk,
+                        amount: amount.replace(/,/g, ''),
+                        strategy: selectedStrategy,
+                        market: selectedMarket,
+                        etf_mode: etfMode,
+                        dev_mode: devMode
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || '오류가 발생했습니다.');
+                }
+
+                renderPortfolio(data);
+
+            } catch (error) {
+                alert('🚨 ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        }
+
+        function renderPortfolio(data) {
+            document.getElementById('summary-yield').innerText = data.summary.total_yield;
+            document.getElementById('summary-monthly').innerText = data.summary.monthly_income;
+            document.getElementById('ai-insight-text').innerHTML = data.summary.ai_insight;
+
+            if (data.summary.exchange_rate) {
+                document.getElementById('exchange-rate-display').innerText = data.summary.exchange_rate;
+            }
+
+            const tbody = document.getElementById('portfolio-tbody');
+            tbody.innerHTML = '';
+
+            data.portfolio.forEach(item => {
+                const row = `
+                <tr class="hover:bg-brand-cyan/5 transition-colors group">
+                    <td class="px-6 py-5 text-left">
+                        <div class="font-bold text-white text-base">${item.ticker}</div>
+                        <div class="text-xs text-gray-400 truncate max-w-[150px] font-medium">${item.name}</div>
+                    </td>
+                    <td class="px-6 py-5"><span class="bg-gray-800 text-gray-300 text-xs px-2.5 py-1.5 rounded border border-gray-600 font-bold">${item.type}</span></td>
+                    <td class="px-6 py-5 text-white font-bold">${item.weight}</td>
+                    <td class="px-6 py-5 text-gray-300 font-medium">${item.amount}</td>
+                    <td class="px-6 py-5 text-gray-300 font-medium">${item.yield}</td>
+                    <td class="px-6 py-5 text-brand-cyan font-bold shadow-[0_0_10px_rgba(0,240,255,0.1)] rounded-lg text-base">${item.expected_div}</td>
+                </tr>
+                <tr class="border-b border-white/5 bg-white/[0.02]">
+                     <td colspan="6" class="px-6 py-3 text-left text-xs text-gray-400 italic font-medium">
+                        💡 ${item.rationale}
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+    </script>
+    <div class="mobile-ad-banner">
+        <div class="mobile-ad-inner">
+            <script src="https://ads-partners.coupang.com/g.js"></script>
+            <script>
+                new PartnersCoupang.G({ "id": 964420, "template": "carousel", "trackingCode": "AF1993837", "width": "320", "height": "100" });
+            </script>
+        </div>
+    </div>
+
+    <script>
+        // Remove "RECOMMENDED" labels from Coupang ads (without hiding the ads themselves)
+        function removeRecommendedLabels() {
+            const allElements = document.querySelectorAll('*');
+            allElements.forEach(el => {
+                // Only target small text elements (not large containers)
+                const text = el.textContent ? el.textContent.trim() : '';
+                const hasOnlyRecommended = text.toUpperCase() === 'RECOMMENDED' && text.length < 20;
+
+                if (hasOnlyRecommended && el.children.length === 0) {
+                    // This is a leaf element with only "RECOMMENDED" text
+                    el.style.display = 'none';
+                    el.style.visibility = 'hidden';
+                    el.style.opacity = '0';
+                    el.style.height = '0';
+                    el.style.overflow = 'hidden';
+                }
+            });
+        }
+
+        // Run after page load with multiple delays
+        window.addEventListener('load', function () {
+            setTimeout(removeRecommendedLabels, 500);
+            setTimeout(removeRecommendedLabels, 1000);
+            setTimeout(removeRecommendedLabels, 2000);
+            setTimeout(removeRecommendedLabels, 3000);
+        });
+
+        // Watch for DOM changes (Coupang ads load dynamically)
+        const observer = new MutationObserver(function () {
+            setTimeout(removeRecommendedLabels, 100);
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+</body>
+
+</html>

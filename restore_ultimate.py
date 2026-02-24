@@ -1,0 +1,600 @@
+
+import os
+
+path = r'c:\Users\mjang\Downloads\Investment Vibecodinglab\templates\index.html'
+
+html_ultimate = """<!DOCTYPE html>
+<html lang="ko" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium AI Market Terminal | Mjang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Pretendard', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        brand: {
+                            bg: '#08080A', card: '#111114', border: '#1F1F23',
+                            primary: '#00F0FF', secondary: '#7000FF',
+                            success: '#00E676', danger: '#FF1744', warning: '#FFEA00'
+                        }
+                    },
+                    backgroundImage: {
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00F0FF 0%, #7000FF 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #08080A; color: #E2E2E7; -webkit-font-smoothing: antialiased; }
+        .glass-card { 
+            background: rgba(17, 17, 20, 0.8); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover { border-color: rgba(0, 240, 255, 0.25); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+        .score-pill { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 800; border: 1px solid transparent; }
+        .score-high { background: rgba(0, 230, 118, 0.1); color: #00E676; border-color: rgba(0, 230, 118, 0.2); }
+        .score-mid { background: rgba(255, 234, 0, 0.1); color: #FFEA00; border-color: rgba(255, 234, 0, 0.2); }
+        .tab-active { color: #00F0FF; border-bottom: 2px solid #00F0FF; text-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+        .tab-inactive { color: #52525B; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+
+<body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-6 py-3 flex justify-between items-center rounded-2xl border-white/5">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-accent-gradient rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/10">
+                <i class="fas fa-terminal text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white italic">AI <span class="text-brand-primary">Terminal</span></h1>
+                <div class="flex items-center gap-2 text-[10px] text-gray-500 font-mono">
+                    <span class="inline-block w-2 h-2 bg-brand-success rounded-full animate-pulse"></span>
+                    VERCEL LIVE v3.5 DEEP-SYNC
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-10">
+            <a onclick="switchTab('market')" id="nav-market" class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">Market Analysis</a>
+            <a onclick="switchTab('calendar')" id="nav-calendar" class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">Calendar</a>
+            <a onclick="switchTab('historical')" id="nav-hist" class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">Historical</a>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button class="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition border border-white/5"><i class="fas fa-bell text-gray-400"></i></button>
+            <button class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-xs hover:brightness-110 transition">MJANG CONNECT</button>
+        </div>
+    </nav>
+
+    <main class="px-4 pb-12">
+        <!-- Dashboard Tab -->
+        <div id="tab-market" class="tab-content transition-all duration-500">
+            <div class="grid grid-cols-12 gap-6">
+                <!-- LEFT CONTENT -->
+                <div class="col-span-12 lg:col-span-8 space-y-6">
+                    <!-- Featured Stock Core -->
+                    <div class="glass-card p-8 min-h-[900px] flex flex-col relative overflow-hidden">
+                        <!-- BG Glow -->
+                        <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-primary/5 rounded-full blur-[100px]"></div>
+                        
+                        <div class="flex justify-between items-start mb-8 relative z-10">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center border border-white/10">
+                                    <i class="fas fa-microchip text-3xl text-brand-primary animate-pulse-soft"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-4xl font-bold flex items-center gap-4">
+                                        <span id="main-ticker-name" class="text-glow-primary">NVDA</span>
+                                        <span id="main-full-name" class="text-gray-500 text-xl font-medium tracking-tight">NVIDIA Corporation</span>
+                                    </h2>
+                                    <div class="flex gap-4 mt-3">
+                                        <span id="ai-score-pill" class="score-pill score-high px-4 py-1">점수: 96 / 100</span>
+                                        <span id="ai-signal-pill" class="score-pill bg-white/5 text-gray-300 border-white/10 px-4 py-1">AI 적극 매수</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+                                <button onclick="changeInterval('1D')" class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1D</button>
+                                <button onclick="changeInterval('1W')" class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1W</button>
+                                <button onclick="changeInterval('1M')" class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black">1M</button>
+                                <button onclick="changeInterval('1Y')" class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1Y</button>
+                            </div>
+                        </div>
+
+                        <!-- Main Chart Area -->
+                        <div class="w-full h-[550px] rounded-2xl overflow-hidden mb-10 bg-black/40 border border-white/5 shadow-2xl relative" id="tradingview_container">
+                            <div id="tradingview_main" style="height:100%;width:100%"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        </div>
+
+                        <!-- Analysis Blocks -->
+                        <div class="space-y-8 relative z-10">
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">Market Cap</p>
+                                    <p id="detail-mkt-cap" class="font-mono font-bold text-lg">--</p>
+                                </div>
+                                <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">Vol Ratio</p>
+                                    <p id="detail-vol-ratio" class="font-mono font-bold text-lg text-brand-success">--</p>
+                                </div>
+                                <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">RSI (14)</p>
+                                    <p id="detail-rsi" class="font-mono font-bold text-lg">--</p>
+                                </div>
+                                <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">AI Score</p>
+                                    <p id="detail-score" class="font-mono font-bold text-lg text-brand-primary">--</p>
+                                </div>
+                                <div class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">Strength</p>
+                                    <p id="detail-signal-strength" class="font-mono font-bold text-lg text-brand-success">--</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="space-y-6">
+                                    <div class="p-6 bg-brand-secondary/10 rounded-2xl border border-brand-secondary/20 relative overflow-hidden">
+                                        <div class="absolute -top-10 -right-10 opacity-5"><i class="fas fa-brain text-8xl"></i></div>
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i class="fas fa-bolt text-brand-secondary"></i> AI Investment Insight</h4>
+                                        <p id="ai-insight" class="text-sm leading-relaxed text-gray-300 italic">데이터 동기화 중...</p>
+                                    </div>
+                                    <div class="p-6 bg-brand-danger/10 rounded-2xl border border-brand-danger/20">
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i class="fas fa-shield-alt text-brand-danger"></i> Risk Factors</h4>
+                                        <p id="ai-risk" class="text-sm leading-relaxed text-gray-400">데이터 동기화 중...</p>
+                                        <p id="ai-upside" class="mt-4 text-xs font-bold text-brand-success uppercase tracking-widest">+0% Potential Upside</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <div class="p-6 bg-gray-900/60 rounded-2xl border border-white/10">
+                                        <h4 class="text-sm font-bold mb-6 flex justify-between items-center">
+                                            <span>Valuation Spectrum</span>
+                                            <span class="text-[10px] font-mono text-gray-500 uppercase">DCF Target Model</span>
+                                        </h4>
+                                        <div class="h-1.5 w-full bg-gray-800 rounded-full mb-10 relative">
+                                            <div class="absolute inset-0 flex rounded-full overflow-hidden">
+                                                <div class="h-full bg-brand-danger/40 w-1/3 border-r border-black/20"></div>
+                                                <div class="h-full bg-brand-success/40 w-1/3 border-r border-black/20"></div>
+                                                <div class="h-full bg-brand-primary/40 w-1/3"></div>
+                                            </div>
+                                            <div id="price-marker" class="absolute top-4 left-[50%] flex flex-col items-center transition-all duration-700">
+                                                <div class="w-1 h-5 bg-white shadow-xl"></div>
+                                                <span id="current-price-label" class="text-xs mt-2 font-black text-white">$0.00</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between text-[11px] font-mono">
+                                            <div class="text-center"><p class="text-gray-500 mb-1">BEAR</p><p id="dcf-bear" class="text-white font-bold">--</p></div>
+                                            <div class="text-center"><p class="text-brand-primary mb-1">TARGET</p><p id="dcf-target" class="text-brand-primary font-black text-sm">--</p></div>
+                                            <div class="text-center"><p class="text-gray-500 mb-1">BULL</p><p id="dcf-bull" class="text-white font-bold">--</p></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-primary/30 transition">
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Strength</p><p id="swot-s" class="text-xs font-medium">--</p>
+                                        </div>
+                                        <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-danger/30 transition">
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Weakness</p><p id="swot-w" class="text-xs font-medium">--</p>
+                                        </div>
+                                        <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-success/30 transition">
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Opportunity</p><p id="swot-o" class="text-xs font-medium">--</p>
+                                        </div>
+                                        <div class="p-3 bg-white/5 rounded-xl text-center border border-white/5 hover:border-brand-warning/30 transition">
+                                            <p class="text-[9px] text-gray-500 font-bold mb-1 uppercase">SWOT Threats</p><p id="swot-t" class="text-xs font-medium">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Money Table RESTORED -->
+                    <div class="glass-card p-8 overflow-hidden shadow-2xl relative">
+                        <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-fire-alt text-8xl"></i></div>
+                        <div class="flex justify-between items-center mb-8 relative z-10">
+                            <h2 class="text-2xl font-bold flex items-center gap-3">
+                                <i class="fas fa-bolt text-brand-primary"></i> 
+                                Real-time Smart Money <span class="text-gray-500 font-medium">Top 10 Picks</span>
+                            </h2>
+                            <span class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">DEEP-ANALYSIS v4.0 ACTIVE</span>
+                        </div>
+                        <div class="overflow-x-auto scrollbar-hide relative z-10">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="text-[10px] text-gray-500 font-black uppercase tracking-widest border-b border-white/10">
+                                        <th class="px-6 py-4">RANK</th>
+                                        <th class="px-6 py-4">TICKER</th>
+                                        <th class="px-6 py-4">SECTOR</th>
+                                        <th class="px-6 py-4 text-center">AI SCORE</th>
+                                        <th class="px-6 py-4">STATUS</th>
+                                        <th class="px-6 py-4 text-right">PRICE</th>
+                                        <th class="px-6 py-4 text-right">CHANGE</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="smart-money-tbody" class="text-sm font-medium">
+                                    <!-- Dynamic Data -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDEBAR (The missing widgets) -->
+                <div class="col-span-12 lg:col-span-4 space-y-6">
+                    <!-- Technical Heatmap (TV Widget) -->
+                    <div class="glass-card p-6 h-[320px] overflow-hidden flex flex-col">
+                        <h2 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4 flex items-center gap-2">
+                             <i class="fas fa-layer-group text-brand-success"></i> Market Sector Flow
+                        </h2>
+                        <div class="flex-1 rounded-xl overflow-hidden grayscale-[0.3] hover:grayscale-0 transition">
+                            <!-- TradingView Widget BEGIN -->
+                            <div class="tradingview-widget-container h-full">
+                                <div class="tradingview-widget-container__widget h-full"></div>
+                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js" async>
+                                {
+                                    "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "kr", "showSymbolLogo": true
+                                }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Macro Analysis Panel -->
+                    <div class="glass-card p-7 bg-accent-gradient/5 border-brand-primary/10">
+                        <h2 class="text-base font-bold mb-6 flex items-center gap-3">
+                            <i class="fas fa-robot text-brand-primary"></i> AI Macro Outlook
+                        </h2>
+                        <div class="space-y-6">
+                            <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase">Sentiment Index</span>
+                                    <span id="macro-sentiment" class="text-xs font-mono text-brand-primary font-bold">GREED (78)</span>
+                                </div>
+                                <p id="macro-summary" class="text-sm font-bold leading-relaxed">시장 흐름을 분석 중입니다...</p>
+                            </div>
+                            <div class="space-y-3">
+                                <p class="text-[10px] font-black text-brand-primary uppercase tracking-widest">Key Findings</p>
+                                <ul id="macro-takeaways" class="space-y-2 text-xs text-gray-400">
+                                    <li class="flex items-center gap-3"><div class="w-1 h-1 rounded-full bg-brand-primary"></div>데이터 로딩 중...</li>
+                                </ul>
+                            </div>
+                            <div class="pt-6 border-t border-white/5 space-y-3">
+                                <p id="macro-outlook" class="text-xs text-gray-500 font-medium">전망 로딩 중...</p>
+                                <p id="macro-risk" class="text-xs text-brand-danger/70 font-medium italic">리스크 로딩 중...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mini Calendar -->
+                    <div class="glass-card p-6">
+                         <h2 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">Market Events</h2>
+                         <div id="calendar-mini-list" class="space-y-3">
+                             <div class="flex justify-center py-6"><span class="animate-pulse text-gray-600 text-xs">Fetching Events...</span></div>
+                         </div>
+                    </div>
+
+                    <!-- ETF Flow Monitor (Restored) -->
+                    <div class="glass-card p-7">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-[11px] font-black uppercase text-gray-500 tracking-widest">ETF Flow Monitor</h2>
+                            <div class="flex gap-1 bg-black/30 p-0.5 rounded-lg border border-white/5" id="etf-toggle-buttons">
+                                <button onclick="setETFFlowType('inflow')" id="etf-btn-inflow" class="px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter">Inflow</button>
+                                <button onclick="setETFFlowType('outflow')" id="etf-btn-outflow" class="px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter">Outflow</button>
+                            </div>
+                        </div>
+                        <div class="space-y-2" id="etf-flow-container">
+                            <p class="text-[10px] text-center text-gray-600 py-6 italic">Synchronizing Flows...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Tabs -->
+        <div id="tab-calendar" class="tab-content hidden glass-card p-8">
+             <div class="h-[700px] rounded-2xl overflow-hidden border border-white/5">
+                 <div class="tradingview-widget-container h-full">
+                     <div class="tradingview-widget-container__widget h-full"></div>
+                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                     { "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "kr", "importanceFilter": "0,1", "countryFilter": "us" }
+                     </script>
+                 </div>
+             </div>
+        </div>
+        <div id="tab-historical" class="tab-content hidden glass-card p-20 flex flex-col items-center justify-center text-center">
+             <i class="fas fa-history text-6xl text-brand-secondary mb-8 opacity-20"></i>
+             <h2 class="text-3xl font-bold mb-4">Historical Patterns Engine</h2>
+             <p class="text-gray-500 max-w-md mx-auto leading-relaxed uppercase tracking-tighter text-sm">과거의 승리 패턴을 현재로 불러오는 High-Performance 엔진이 백엔드 연동 중입니다.</p>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 py-12 mt-12 bg-black/40">
+        <div class="text-center">
+            <p class="text-[9px] text-gray-700 font-mono uppercase tracking-[.5rem]">Advanced Market Terminal System v3.5</p>
+            <p class="text-xs text-gray-500 mt-2">Built for <span class="text-brand-primary">MJANG</span></p>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'market',
+            symbols: { 'SPY': { price: 585.12, change: 0.5 }, 'QQQ': { price: 515.3, change: 1.1 } }
+        };
+
+        const smartMoneyData = [];
+        let initialLoadDone = false;
+
+        function switchTab(tabId) {
+            state.currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            const target = document.getElementById(`tab-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                // Ensure layout triggers for TV widgets
+                window.dispatchEvent(new Event('resize'));
+            }
+
+            document.querySelectorAll('nav a').forEach(a => {
+                a.classList.remove('tab-active');
+                a.classList.add('tab-inactive');
+            });
+            const navId = tabId === 'market' ? 'nav-market' : (tabId === 'calendar' ? 'nav-calendar' : 'nav-hist');
+            const activeNav = document.getElementById(navId);
+            if (activeNav) {
+                activeNav.classList.remove('tab-inactive');
+                activeNav.classList.add('tab-active');
+            }
+        }
+
+        async function loadSymbol(index) {
+            const data = smartMoneyData[index];
+            if (!data) return;
+
+            updateTradingView('D', data.ticker);
+
+            try {
+                const res = await fetch(`/api/us/realtime-prices?tickers=${data.ticker}`);
+                if (res.ok) {
+                    const priceData = await res.json();
+                    if (priceData[data.ticker]) { data.price = priceData[data.ticker].price; }
+                }
+            } catch (e) {}
+
+            document.getElementById('main-ticker-name').innerText = data.ticker;
+            document.getElementById('main-full-name').innerText = data.name;
+            document.getElementById('current-price-label').innerText = `$${data.price}`;
+
+            const fields = {
+                'detail-mkt-cap': data.mkt_cap, 'detail-vol-ratio': data.vol_ratio,
+                'detail-rsi': data.rsi, 'detail-score': data.score,
+                'detail-signal-strength': data.signal_strength, 'ai-insight': data.insight,
+                'ai-risk': data.risk, 'ai-upside': `${data.upside} UP Potential`,
+                'swot-s': data.swot_s, 'swot-w': data.swot_w, 'swot-o': data.swot_o, 'swot-t': data.swot_t,
+                'dcf-target': data.dcf_target, 'dcf-bear': data.dcf_bear, 'dcf-bull': data.dcf_bull
+            };
+
+            for (const [id, val] of Object.entries(fields)) {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val || '--';
+            }
+
+            const scorePill = document.getElementById('ai-score-pill');
+            if (scorePill) {
+                scorePill.innerText = `점수: ${data.score} / 100`;
+                scorePill.className = `score-pill ${data.score > 80 ? 'score-high' : 'score-mid'}`;
+            }
+            
+            const signalPill = document.getElementById('ai-signal-pill');
+            if (signalPill) {
+                signalPill.innerText = `AI ${data.signal}`;
+            }
+
+            if (data.dcf_bear && data.dcf_bull) {
+                const bear = parseFloat(data.dcf_bear.toString().replace('$', ''));
+                const bull = parseFloat(data.dcf_bull.toString().replace('$', ''));
+                if (!isNaN(bear) && !isNaN(bull)) {
+                    const pos = ((data.price - bear) / (bull - bear)) * 100;
+                    const marker = document.getElementById('price-marker');
+                    if (marker) marker.style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
+                }
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function injectSmartMoney() {
+            const tbody = document.getElementById('smart-money-tbody');
+            if (!tbody) return;
+            if (smartMoneyData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-20 text-center text-gray-600 font-mono italic">NO DATA FLOW DETECTED</td></tr>';
+                return;
+            }
+            tbody.innerHTML = smartMoneyData.map((item, index) => `
+                <tr onclick="loadSymbol(${index})" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
+                    <td class="px-6 text-gray-600 font-mono text-[10px]">${item.rank}</td>
+                    <td class="px-6"><span class="text-white font-bold group-hover:text-brand-primary transition">${item.ticker}</span></td>
+                    <td class="px-6 text-gray-500 text-xs">${item.sector}</td>
+                    <td class="px-6 text-center"><span class="score-pill ${item.score > 80 ? 'score-high' : 'score-mid'}">${item.score}</span></td>
+                    <td class="px-6 font-bold ${item.signal.includes('적극') ? 'text-brand-success' : 'text-brand-primary'} text-xs uppercase italic">${item.signal}</td>
+                    <td class="px-6 text-right font-mono text-gray-200">$${item.price}</td>
+                    <td class="px-6 text-right font-mono ${item.change >= 0 ? 'text-brand-success' : 'text-brand-danger'}">${item.change > 0 ? '+' : ''}${item.change}%</td>
+                </tr>
+            `).join('');
+        }
+
+        let currentTicker = "NASDAQ:NVDA";
+        function updateTradingView(res = 'D', ticker = null) {
+            if (ticker) {
+                const nasdaq = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD'].includes(ticker);
+                currentTicker = (nasdaq ? 'NASDAQ:' : 'NYSE:') + ticker;
+            }
+            const container = document.getElementById('tradingview_main');
+            if (!container) return;
+            container.innerHTML = '';
+            new TradingView.widget({
+                "autosize": true, "symbol": currentTicker, "interval": res, "timezone": "Etc/UTC",
+                "theme": "dark", "style": "1", "locale": "kr", "toolbar_bg": "#111114",
+                "enable_publishing": false, "container_id": "tradingview_main"
+            });
+        }
+
+        function changeInterval(int) {
+            const map = { '1D': '60', '1W': 'D', '1M': 'D', '1Y': '12M' };
+            updateTradingView(map[int] || 'D');
+            document.querySelectorAll('.glass-card button').forEach(btn => {
+                if (['1D', '1W', '1M', '1Y'].includes(btn.innerText)) {
+                    if (btn.innerText === int) {
+                        btn.className = "px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5";
+                    }
+                }
+            });
+        }
+
+        async function fetchData() {
+            try {
+                const res = await fetch(`/api/us/smart-money?t=${Date.now()}`);
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    smartMoneyData.length = 0;
+                    data.forEach((item, i) => {
+                        const price = parseFloat(item.price || item.current_price) || 0;
+                        const score = parseFloat(item.composite_score || item.score) || 0;
+                        smartMoneyData.push({
+                            ...item, rank: (i+1).toString().padStart(2, '0'),
+                            ticker: item.ticker || 'N/A', name: item.name || item.ticker,
+                            sector: item.sector || 'Etc', score: score,
+                            signal: item.grade ? item.grade.split(' ')[1] : (score > 80 ? '적극 매수' : '매수'),
+                            price: price, change: parseFloat(item.change) || 0,
+                            insight: item.insight || 'Analysis Ready.', risk: item.risk || 'No significant alerts.',
+                            upside: item.upside || '+0%'
+                        });
+                    });
+                }
+            } catch (e) { applyFallback(); }
+            finally {
+                injectSmartMoney();
+                if (!initialLoadDone && smartMoneyData.length > 0) { loadSymbol(0); initialLoadDone = true; }
+            }
+        }
+
+        function applyFallback() {
+            const fallback = [{ ticker: "NVDA", rank: "01", name: "NVIDIA", sector: "Tech", score: 96, signal: "적극 매수", price: 143.0, change: 8.5 }];
+            smartMoneyData.length = 0;
+            fallback.forEach(f => smartMoneyData.push({...f, insight: "Market Sync Mode.", risk: "Normal.", upside: "+15%"}));
+            injectSmartMoney();
+        }
+
+        let etfData = [];
+        let etfType = 'inflow';
+        async function fetchETFs() {
+            try {
+                const res = await fetch(`/api/us/etf-flows?t=${Date.now()}`);
+                if (res.ok) etfData = await res.json();
+            } catch (e) {}
+            finally { renderETFs(); }
+        }
+
+        function setETFFlowType(type) {
+            etfType = type;
+            const inBtn = document.getElementById('etf-btn-inflow');
+            const outBtn = document.getElementById('etf-btn-outflow');
+            if (type === 'inflow') {
+                inBtn.className = "px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter";
+                outBtn.className = "px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter";
+            } else {
+                outBtn.className = "px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter";
+                inBtn.className = "px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter";
+            }
+            renderETFs();
+        }
+
+        function renderETFs() {
+            const cont = document.getElementById('etf-flow-container');
+            if (!cont) return;
+            const filtered = etfData.filter(d => etfType === 'inflow' ? parseFloat(d.flow_score) >= 55 : parseFloat(d.flow_score) < 55)
+                                    .sort((a,b) => etfType === 'inflow' ? b.flow_score - a.flow_score : a.flow_score - b.flow_score);
+            
+            if (filtered.length === 0) { cont.innerHTML = '<p class="text-[10px] text-center text-gray-700 py-6 font-mono">NO FLOW DATA</p>'; return; }
+            cont.innerHTML = filtered.slice(0, 10).map(item => `
+                <div class="flex items-center justify-between p-3 hover:bg-white/[0.03] rounded-xl transition border-b border-white/[0.02]">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                             <span class="text-xs font-bold text-white">${item.ticker}</span>
+                             <span class="text-[8px] text-gray-600 font-black uppercase">${item.category || ''}</span>
+                        </div>
+                        <div class="flex gap-3 mt-1 text-[10px] font-bold font-mono">
+                             <span class="${item.flow_score >= 55 ? 'text-brand-success' : 'text-brand-danger'}">${item.flow_score >= 55 ? 'IN' : 'OUT'} ${item.flow_score}</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                         <span class="text-xs ${item.price_change_20d >= 0 ? 'text-brand-success' : 'text-brand-danger'} font-black">${item.price_change_20d >= 0 ? '+' : ''}${item.price_change_20d}%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function fetchAI() {
+            try {
+                const res = await fetch(`/api/us/macro-analysis?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('macro-sentiment').innerText = `${data.market_mood} (${data.mood_score})`;
+                    document.getElementById('macro-summary').innerText = `시장 심리 지수는 현재 ${data.market_mood} 단계입니다.`;
+                    document.getElementById('macro-takeaways').innerHTML = (data.key_takeaways || []).map(t => `<li class="flex items-center gap-3"><div class="w-1 h-1 rounded-full bg-brand-primary"></div>${t}</li>`).join('');
+                    document.getElementById('macro-outlook').innerText = `Outlook: ${data.sector_outlook}`;
+                    document.getElementById('macro-risk').innerText = `Risks: ${data.risk_factors}`;
+                }
+            } catch (e) {}
+        }
+
+        async function fetchCal() {
+            try {
+                const res = await fetch(`/api/us/economic-calendar?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.events && data.events.length > 0) {
+                        const cont = document.getElementById('calendar-mini-list');
+                        cont.innerHTML = data.events.slice(0, 4).map(ev => `
+                            <div class="p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition">
+                                <h4 class="text-xs font-bold text-gray-200">${ev.event}</h4>
+                                <div class="flex justify-between items-center mt-2 text-[9px] font-mono text-gray-500">
+                                    <span>${ev.date} ${ev.time}</span>
+                                    <span class="text-brand-primary font-bold">Fcst: ${ev.forecast}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (e) {}
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData(); fetchAI(); fetchCal(); fetchETFs();
+            setInterval(fetchData, 5 * 60 * 1000);
+            console.log("🚀 Terminal Redline v3.5 Online");
+        });
+    </script>
+</body>
+</html>
+"""
+
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(html_ultimate)
+
+print("SUCCESS: Ultimate Premium Recovery completed.")

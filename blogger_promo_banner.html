@@ -1,0 +1,363 @@
+<style>
+    /* --- VibeCodingLab Dual Banner Styles (Taller Version) --- */
+    :root {
+        --vibe-blue: #00F0FF;
+        --vibe-purple: #7000FF;
+        --vibe-dark: #111111;
+        --vibe-text: #ffffff;
+        --vibe-card-bg-left: linear-gradient(135deg, #1a1a1a 0%, #2d1b4e 100%);
+        --vibe-card-bg-right: linear-gradient(135deg, #1a1a1a 0%, #0d3b4f 100%);
+    }
+
+    /* Common Floating Banner - Height Increased to 360px */
+    .vibe-floating-banner {
+        position: fixed;
+        top: 150px;
+        width: 160px;
+        height: 360px;
+        /* Taller Height */
+        z-index: 9999;
+        background: var(--vibe-dark);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: none;
+        /* Mobile default hidden */
+    }
+
+    /* Left Banner (AI Creator) */
+    .vibe-floating-banner.left {
+        left: 20px;
+        border-image: linear-gradient(to bottom, var(--vibe-purple), transparent) 1;
+    }
+
+    /* Right Banner (Investment) */
+    .vibe-floating-banner.right {
+        right: 20px;
+        border-image: linear-gradient(to bottom, var(--vibe-blue), transparent) 1;
+    }
+
+    /* Mobile Bottom Anchor Banner */
+    .vibe-anchor-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        z-index: 9999;
+        background: rgba(17, 17, 17, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--vibe-blue);
+        display: block;
+        /* Default visible for mobile */
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Slider Animation */
+    .vibe-slider-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .vibe-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none !important;
+        text-align: center;
+        padding: 15px;
+        /* More padding due to height increase */
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .vibe-slide.active {
+        opacity: 1;
+    }
+
+    .vibe-slide:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Content Styling */
+    .vibe-card-bg {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* PC Specific - Big Icons & Text */
+    .vibe-floating-banner .vibe-icon {
+        font-size: 42px;
+        margin-bottom: 15px;
+    }
+
+    .vibe-floating-banner .vibe-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+
+    .vibe-floating-banner .vibe-desc {
+        font-size: 12px;
+        color: #aaa;
+        line-height: 1.4;
+        margin-bottom: 20px;
+        word-break: keep-all;
+    }
+
+    .vibe-floating-banner .vibe-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        transition: all 0.2s;
+    }
+
+    .vibe-floating-banner .vibe-slide:hover .vibe-btn {
+        background: white;
+        color: black;
+    }
+
+    /* Left Specific Colors */
+    .left .vibe-title {
+        color: var(--vibe-purple);
+    }
+
+    .left .vibe-card-bg {
+        background: var(--vibe-card-bg-left);
+    }
+
+    /* Right Specific Colors */
+    .right .vibe-title {
+        color: var(--vibe-blue);
+    }
+
+    .right .vibe-card-bg {
+        background: var(--vibe-card-bg-right);
+    }
+
+    /* Mobile Specific */
+    .vibe-anchor-banner .vibe-card-bg {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0 15px;
+    }
+
+    .vibe-anchor-banner .vibe-text-group {
+        text-align: left;
+    }
+
+    .vibe-anchor-banner .vibe-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: var(--vibe-blue);
+        display: block;
+    }
+
+    .vibe-anchor-banner .vibe-desc {
+        font-size: 11px;
+        color: #ccc;
+    }
+
+    .vibe-anchor-banner .vibe-btn {
+        background: var(--vibe-blue);
+        color: black;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 12px;
+        flex-shrink: 0;
+        margin-left: 10px;
+    }
+
+    /* Responsive Logic */
+    @media (min-width: 1100px) {
+
+        /* Show side banners on normal PC screens */
+        .vibe-floating-banner {
+            display: block !important;
+        }
+
+        .vibe-anchor-banner {
+            display: none !important;
+        }
+    }
+</style>
+
+<!-- 1. LEFT Banner: AI Creator Zone -->
+<div class="vibe-floating-banner left">
+    <div class="vibe-slider-container" id="vibeLeftSlider">
+        <a href="https://ai-genarate-image.vercel.app/" target="_blank" class="vibe-slide active">
+            <div class="vibe-card-bg">
+                <div class="vibe-icon">🎨</div>
+                <div class="vibe-title">AI 이미지 생성</div>
+                <div class="vibe-desc">상상하는 모든 것을<br>현실로 만드세요</div>
+                <div class="vibe-btn">그려보기 ▶</div>
+            </div>
+        </a>
+        <a href="https://youtube-thumbnail-rust.vercel.app/" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-icon">🖼️</div>
+                <div class="vibe-title">AI 썸네일 제작</div>
+                <div class="vibe-desc">유튜브 클릭률 200%<br>자동 썸네일 생성</div>
+                <div class="vibe-btn">제작하기 ▶</div>
+            </div>
+        </a>
+        <a href="https://ai-video-generator-gjcc.vercel.app/" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-icon">🎥</div>
+                <div class="vibe-title">AI 비디오 생성</div>
+                <div class="vibe-desc">대본만 있으면<br>영상 제작 끝!</div>
+                <div class="vibe-btn">영상 만들기 ▶</div>
+            </div>
+        </a>
+        <a href="https://ai-music-prompt-generator-gilt.vercel.app/" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-icon">🎵</div>
+                <div class="vibe-title">AI 음악 프롬프트</div>
+                <div class="vibe-desc">Suno/Udio 전용<br>최적 프롬프트 생성</div>
+                <div class="vibe-btn">작곡하기 ▶</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- 2. RIGHT Banner: Investment Zone -->
+<div class="vibe-floating-banner right">
+    <div class="vibe-slider-container" id="vibeRightSlider">
+        <a href="https://daniel17290221.github.io/report_us.html" target="_blank" class="vibe-slide active">
+            <div class="vibe-card-bg">
+                <div class="vibe-icon">🇺🇸</div>
+                <div class="vibe-title">미국 주식 리포트</div>
+                <div class="vibe-desc">매일 아침 배송되는<br>AI 프리미엄 분석</div>
+                <div class="vibe-btn">리포트 보기 ▶</div>
+            </div>
+        </a>
+        <a href="https://daniel17290221.github.io/report_kr.html" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-icon">🇰🇷</div>
+                <div class="vibe-title">한국 증시 마감</div>
+                <div class="vibe-desc">오늘장 수급 분석<br>내일 대응 전략</div>
+                <div class="vibe-btn">시황 보기 ▶</div>
+            </div>
+        </a>
+        <a href="https://us-market-ai-analyst.vercel.app/dividend" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-icon">💰</div>
+                <div class="vibe-title">배당 포트폴리오</div>
+                <div class="vibe-desc">AI가 직접 짜주는<br>월 배당 로드맵</div>
+                <div class="vibe-btn">설계 체험 ▶</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- 3. MOBILE Bottom Banner (Mixed) -->
+<div class="vibe-anchor-banner">
+    <div class="vibe-slider-container" id="vibeMobileSlider">
+        <a href="https://ai-genarate-image.vercel.app/" target="_blank" class="vibe-slide active">
+            <div class="vibe-card-bg">
+                <div class="vibe-text-group">
+                    <span class="vibe-title" style="color:var(--vibe-purple)">🎨 AI 이미지 생성기</span>
+                    <span class="vibe-desc">상상을 현실로 그리기</span>
+                </div>
+                <div class="vibe-btn">GO</div>
+            </div>
+        </a>
+        <a href="https://daniel17290221.github.io/report_us.html" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-text-group">
+                    <span class="vibe-title">🇺🇸 미국 주식 AI 리포트</span>
+                    <span class="vibe-desc">프리미엄 모닝 브리핑</span>
+                </div>
+                <div class="vibe-btn">보기</div>
+            </div>
+        </a>
+        <a href="https://youtube-thumbnail-rust.vercel.app/" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-text-group">
+                    <span class="vibe-title" style="color:var(--vibe-purple)">🖼️ AI 썸네일 제작</span>
+                    <span class="vibe-desc">클릭률 200% 상승 비법</span>
+                </div>
+                <div class="vibe-btn">GO</div>
+            </div>
+        </a>
+        <a href="https://daniel17290221.github.io/report_kr.html" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-text-group">
+                    <span class="vibe-title">🇰🇷 한국 증시 마감 시황</span>
+                    <span class="vibe-desc">수급 분석 및 내일 전략</span>
+                </div>
+                <div class="vibe-btn">보기</div>
+            </div>
+        </a>
+        <a href="https://ai-video-generator-gjcc.vercel.app/" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-text-group">
+                    <span class="vibe-title" style="color:var(--vibe-purple)">🎥 AI 비디오 생성기</span>
+                    <span class="vibe-desc">텍스트로 영상 만들기</span>
+                </div>
+                <div class="vibe-btn">GO</div>
+            </div>
+        </a>
+        <a href="https://us-market-ai-analyst.vercel.app/dividend" target="_blank" class="vibe-slide">
+            <div class="vibe-card-bg">
+                <div class="vibe-text-group">
+                    <span class="vibe-title">💰 배당 포트폴리오</span>
+                    <span class="vibe-desc">월 배당금 설계하기</span>
+                </div>
+                <div class="vibe-btn">체험</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<script>
+    (function () {
+        function startVibeSlider(elementId, interval) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            const slides = container.querySelectorAll('.vibe-slide');
+            if (slides.length === 0) return;
+
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, interval);
+        }
+
+        // Run immediately if DOM is ready, otherwise wait for load
+        var init = function () {
+            startVibeSlider('vibeLeftSlider', 4000);
+            startVibeSlider('vibeRightSlider', 5000);
+            startVibeSlider('vibeMobileSlider', 3500);
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+</script>

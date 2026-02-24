@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeCodingLab KR | 국내 주식 AI 분석</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Pretendard', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        brand: {
+                            bg: '#08080A', card: '#111114', border: '#1F1F23',
+                            primary: '#00F0FF', secondary: '#7000FF',
+                            success: '#00E676', danger: '#FF1744', warning: '#FFEA00'
+                        }
+                    },
+                    backgroundImage: {
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00F0FF 0%, #7000FF 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .nav-link.tab-active {
+            color: #00F0FF !important;
+            border-bottom: 2px solid #00F0FF;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .nav-link.tab-inactive {
+            color: #52525B !important;
+            border-bottom: 2px solid transparent;
+        }
+
+        body {
+            background-color: #08080A;
+            color: #E2E2E7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-card {
+            background: rgba(17, 17, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 240, 255, 0.25);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-active {
+            color: #00F0FF;
+            border-bottom: 2px solid #00F0FF;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .tab-inactive {
+            color: #52525B;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+</head>
+
+<body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay"
+        class="fixed inset-0 z-[100] bg-[#08080A] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-t-4 border-brand-primary rounded-full animate-spin"></div>
+            <div class="absolute inset-2 border-r-4 border-brand-secondary rounded-full animate-spin reverse-spin">
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-robot text-3xl text-white animate-pulse"></i>
+            </div>
+        </div>
+        <h2
+            class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary mb-2">
+            AI 시장 분석 시스템
+        </h2>
+        <p class="text-gray-400 font-mono text-sm typewriter">
+            최신 분석 데이터를 불러오고 있습니다...
+        </p>
+    </div>
+
+    <!-- Ticker Tape Widget (KOSPI/KOSDAQ) -->
+    <div class="bg-[#08080A] border-b border-white/5">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                        "symbols": [
+                            { "proName": "KRX:KOSPI", "title": "KOSPI" },
+                            { "proName": "KRX:KOSDAQ", "title": "KOSDAQ" },
+                            { "proName": "FX_IDC:USDKRW", "title": "USD/KRW" }
+                        ],
+                            "showSymbolLogo": true,
+                                "colorTheme": "dark",
+                                    "isTransparent": true,
+                                        "displayMode": "adaptive",
+                                            "locale": "kr"
+                    }
+                </script>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <nav
+        class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-4 md:px-6 py-3 flex flex-col lg:flex-row justify-between items-center rounded-2xl border-white/5 gap-4">
+        <div class="flex items-center justify-between w-full lg:w-auto">
+            <a href="https://land.vibe-coding-lab.com/" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 md:w-10 md:h-10 overflow-hidden rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/10 border border-white/10 bg-white">
+                    <img src="/assets/logo.jpg" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight text-white italic">Vibe<span
+                            class="text-brand-primary">CodingLab</span> <span
+                            class="text-[10px] text-gray-500 not-italic ml-1">KR</span></h1>
+                </div>
+            </a>
+
+            <!-- Mobile Hidden Spacer -->
+            <div class="flex lg:hidden w-[60px]"></div>
+        </div>
+
+        <div
+            class="flex flex-wrap items-center gap-x-3 gap-y-2 md:gap-8 justify-center lg:justify-start w-full lg:w-auto py-2 lg:py-0 border-t border-b lg:border-none border-white/5">
+            <a href="https://land.vibe-coding-lab.com/"
+                class="nav-link tab-inactive py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest cursor-pointer transition">홈</a>
+            <a onclick="switchTab('market')" id="nav-market"
+                class="nav-link tab-active py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest cursor-pointer transition">시장
+                분석</a>
+            <a onclick="switchTab('subscription')" id="nav-subscription"
+                class="nav-link tab-inactive py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest cursor-pointer transition">인사이트/유튜브</a>
+            <a href="https://land.vibe-coding-lab.com/report_kr.html"
+                onclick="window.location.href='https://land.vibe-coding-lab.com/report_kr.html'; return true;"
+                id="nav-report"
+                class="nav-link tab-inactive py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest cursor-pointer transition">데일리
+                리포트</a>
+            <div class="flex gap-2 ml-auto lg:ml-0">
+                <a href="https://us-market-ai-analyst.vercel.app/"
+                    class="py-1 text-[8px] md:text-[10px] bg-white/5 text-gray-400 px-2 md:px-3 rounded-full font-bold uppercase tracking-widest border border-white/10">
+                    미국 시장
+                </a>
+                <a href="https://us-market-ai-analyst.vercel.app/dividend"
+                    class="py-1 text-[8px] md:text-[10px] bg-brand-primary/10 text-brand-primary px-2 md:px-3 rounded-full font-bold uppercase tracking-widest border border-brand-primary/20">
+                    배당
+                </a>
+            </div>
+        </div>
+
+        <div class="hidden lg:block w-[140px]"></div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-full mx-auto px-4 pb-20">
+        <div id="tab-market" class="tab-content transition-all duration-500">
+            <!-- Market Summary Header -->
+            <!-- Market Summary Header (Removed by user request) -->
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Main Content Area (8 cols) -->
+                <div class="lg:col-span-8 space-y-6">
+                    <!-- Advanced Chart -->
+                    <!-- Advanced Chart with Unified Header -->
+                    <div class="glass-card p-4 md:p-6 h-[400px] md:h-[600px] flex flex-col">
+                        <!-- Chart Header -->
+                        <div class="flex justify-between items-center mb-4">
+                            <!-- Left: Ticker & Score -->
+                            <div class="flex items-center gap-4">
+                                <div class="flex flex-col">
+                                    <div class="flex items-center gap-2">
+                                        <h2 id="main-ticker-name" class="text-xl font-black text-white leading-tight">
+                                            KRX</h2>
+                                        <span id="main-ticker-symbol"
+                                            class="text-[10px] font-mono text-gray-500">000000</span>
+                                    </div>
+                                    <p id="main-full-name" class="text-[10px] text-gray-400 font-medium">Korea Exchange
+                                    </p>
+                                </div>
+                                <!-- AI Score Badge -->
+                                <div
+                                    class="hidden md:flex bg-brand-success/10 border border-brand-success/20 text-brand-success px-3 py-1 rounded-full text-[10px] font-bold items-center gap-2">
+                                    <i class="fas fa-robot"></i>
+                                    AI Score: <span id="main-ai-score">--</span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Chart Settings -->
+                            <div class="flex items-center gap-3">
+                                <!-- Indicators Toggle -->
+                                <div class="flex p-0.5 bg-white/5 rounded-lg border border-white/10 gap-1">
+                                    <button onclick="toggleIndicator('SMA')" id="btn-ind-SMA"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-500 hover:text-white transition">SMA</button>
+                                    <button onclick="toggleIndicator('RSI')" id="btn-ind-RSI"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-500 hover:text-white transition">RSI</button>
+                                    <button onclick="toggleIndicator('BB')" id="btn-ind-BB"
+                                        class="px-2 py-1 text-[9px] font-black uppercase rounded-md text-gray-500 hover:text-white transition">BB</button>
+                                </div>
+
+                                <!-- Interval Buttons -->
+                                <div id="interval-btn-group"
+                                    class="flex p-0.5 bg-white/5 rounded-lg border border-white/10">
+                                    <button id="btn-int-1D" onclick="changeInterval('1D')"
+                                        class="px-2 py-1 text-[9px] font-bold rounded-md bg-brand-primary text-black transition">1D</button>
+                                    <button id="btn-int-1W" onclick="changeInterval('1W')"
+                                        class="px-2 py-1 text-[9px] font-bold rounded-md text-gray-400 hover:text-white transition">1W</button>
+                                    <button id="btn-int-1M" onclick="changeInterval('1M')"
+                                        class="px-2 py-1 text-[9px] font-bold rounded-md text-gray-400 hover:text-white transition">1M</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart Container -->
+                        <div id="tradingview_main"
+                            class="flex-1 rounded-xl overflow-hidden border border-white/5 bg-[#08080A]">
+                            <div id="chart-loader"
+                                class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">
+                                차트를 구성 중입니다...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Analysis Panel (Insights, SWOT, DCF) -->
+                    <div class="glass-card p-8 bg-accent-gradient/5">
+                        <div class="flex flex-col lg:flex-row gap-8">
+                            <!-- Left: Insights & Risk -->
+                            <div class="flex-1 space-y-6">
+
+
+                                <div class="p-6 bg-brand-primary/5 rounded-2xl border border-brand-primary/20">
+                                    <h4 class="text-sm font-bold mb-3 flex items-center gap-2">
+                                        <i class="fas fa-lightbulb text-brand-primary"></i> AI 투자 분석 인사이트
+                                    </h4>
+                                    <p id="ai-insight" class="text-sm leading-relaxed text-gray-300">데이터를 분석 중입니다...</p>
+                                </div>
+
+                                <div class="p-6 bg-brand-danger/10 rounded-2xl border border-brand-danger/20">
+                                    <h4 class="text-sm font-bold mb-3 flex items-center gap-2">
+                                        <i class="fas fa-shield-alt text-brand-danger"></i> 핵심 리스크 요인
+                                    </h4>
+                                    <p id="ai-risk" class="text-sm leading-relaxed text-gray-400">분석 중...</p>
+                                    <p id="ai-upside"
+                                        class="mt-4 text-xs font-bold text-brand-success uppercase tracking-widest">+0%
+                                        예상 상승 여력</p>
+                                </div>
+                            </div>
+
+                            <!-- Right: DCF & SWOT -->
+                            <div class="w-full lg:w-[350px] space-y-6">
+                                <!-- DCF -->
+                                <div class="p-6 bg-gray-900/60 rounded-2xl border border-white/10">
+                                    <h4 class="text-sm font-bold mb-6 flex justify-between items-center">
+                                        <span>적정 주가 분석 (DCF)</span>
+                                        <span class="text-[10px] font-mono text-gray-500 uppercase">AI 모델</span>
+                                    </h4>
+                                    <div class="h-1.5 w-full bg-gray-800 rounded-full mb-6 relative mt-10">
+                                        <div class="absolute inset-0 flex rounded-full overflow-hidden">
+                                            <div class="h-full bg-brand-success/40 w-1/3 border-r border-black/20">
+                                            </div>
+                                            <div class="h-full bg-brand-primary/40 w-1/3 border-r border-black/20">
+                                            </div>
+                                            <div class="h-full bg-brand-danger/40 w-1/3"></div>
+                                        </div>
+                                        <div id="price-marker"
+                                            class="absolute bottom-1 left-[50%] flex flex-col items-center transition-all duration-700">
+                                            <span id="current-price-label"
+                                                class="text-[10px] mb-2 font-black text-white bg-black/80 px-2 py-0.5 rounded border border-white/20">0</span>
+                                            <div class="w-1 h-5 bg-white shadow-xl"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-[11px] font-mono">
+                                        <div class="text-center">
+                                            <p class="text-gray-500 mb-1">BEAR</p>
+                                            <p id="dcf-bear" class="text-white font-bold">--</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-brand-primary mb-1">FAIR VALUE</p>
+                                            <p id="dcf-target" class="text-brand-primary font-black text-sm">--</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-gray-500 mb-1">BULL</p>
+                                            <p id="dcf-bull" class="text-white font-bold">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SWOT -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div
+                                        class="p-3 bg-brand-success/5 rounded-xl text-center border border-brand-success/20">
+                                        <p class="text-[9px] text-brand-success font-black mb-1">강점 (S)</p>
+                                        <p id="swot-s" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                    <div
+                                        class="p-3 bg-brand-danger/5 rounded-xl text-center border border-brand-danger/20">
+                                        <p class="text-[9px] text-brand-danger font-black mb-1">약점 (W)</p>
+                                        <p id="swot-w" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                    <div
+                                        class="p-3 bg-brand-primary/5 rounded-xl text-center border border-brand-primary/20">
+                                        <p class="text-[9px] text-brand-primary font-black mb-1">기회 (O)</p>
+                                        <p id="swot-o" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                    <div
+                                        class="p-3 bg-brand-warning/5 rounded-xl text-center border border-brand-warning/20">
+                                        <p class="text-[9px] text-brand-warning font-black mb-1">위협 (T)</p>
+                                        <p id="swot-t" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top 10 Stock List -->
+                    <div class="glass-card p-8">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                            <div class="flex items-center gap-4">
+                                <h2 class="text-xl font-bold flex items-center gap-3">
+                                    <i class="fas fa-bolt text-brand-primary"></i> 실시간 시장 분석
+                                </h2>
+                                <span id="data-updated-time"
+                                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-2 py-0.5 rounded border border-white/5 animate-pulse">
+                                    Update: -
+                                </span>
+                            </div>
+                            <div class="flex p-1 bg-white/5 rounded-xl border border-white/10">
+                                <button onclick="switchMarketTab('leaders_kospi')" id="btn-mkt-leaders_kospi"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-brand-primary text-black transition-all">코스피
+                                    주도주</button>
+                                <button onclick="switchMarketTab('leaders_kosdaq')" id="btn-mkt-leaders_kosdaq"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">코스닥
+                                    주도주</button>
+                                <button onclick="switchMarketTab('gainers')" id="btn-mkt-gainers"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">급등주</button>
+                                <button onclick="switchMarketTab('volume')" id="btn-mkt-volume"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">거래량</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr
+                                        class="text-[10px] text-gray-500 font-black uppercase tracking-widest border-b border-white/10">
+                                        <th class="px-6 py-4">순위</th>
+                                        <th class="px-6 py-4">종목명</th>
+                                        <th class="px-6 py-4 text-center">섹터</th>
+                                        <th class="px-6 py-4 text-center">AI 점수</th>
+                                        <th class="px-6 py-4">분석 상태</th>
+                                        <th class="px-6 py-4 text-right">현재가</th>
+                                        <th class="px-6 py-4 text-right">등락율</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="smart-money-tbody" class="text-sm font-medium">
+                                    <!-- Dynamic Data -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar (4 cols) -->
+                <div class="lg:col-span-4 space-y-6">
+                    <!-- Sector Heatmap (Custom Card Design) -->
+                    <div class="glass-card p-6 h-[480px] flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xs font-black uppercase text-gray-400 tracking-wider">업종별 실시간 시황</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-success"></span>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">-3% ~
+                                    +3%</span>
+                            </div>
+                        </div>
+                        <div id="sector-heatmap-container"
+                            class="flex-1 grid grid-cols-2 gap-3 overflow-y-auto pr-1 scrollbar-hide">
+                            <!-- Sector Cards Loaded Dynamically -->
+                            <div class="col-span-2 flex flex-col items-center justify-center h-full opacity-20">
+                                <i class="fas fa-circle-notch animate-spin text-2xl mb-2"></i>
+                                <span class="text-[10px] uppercase font-black tracking-widest">분석 중...</span>
+                            </div>
+                        </div>
+
+                        <!-- Heatmap Legend -->
+                        <div class="mt-4 pt-4 border-t border-white/5">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[8px] font-black text-white/20">-3%</span>
+                                <span class="text-[8px] font-black text-white/20">0%</span>
+                                <span class="text-[8px] font-black text-white/20">+3%</span>
+                            </div>
+                            <div
+                                class="h-1 w-full rounded-full bg-gradient-to-r from-brand-danger via-gray-800 to-brand-success opacity-50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IPO & Schedule -->
+                    <div class="glass-card p-6 h-[400px] flex flex-col">
+                        <h3
+                            class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4 flex justify-between items-center">
+                            <span>IPO 및 공모주 청약 뉴스</span>
+                            <i class="fas fa-calendar-alt text-brand-primary"></i>
+                        </h3>
+                        <div id="kr-ipo-container" class="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-hide">
+                            <!-- IPO Items will load here -->
+                            <div class="animate-pulse space-y-2">
+                                <div class="h-10 bg-white/5 rounded-xl border border-white/5"></div>
+                                <div class="h-10 bg-white/5 rounded-xl border border-white/5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Market News -->
+                    <div class="glass-card p-6 h-[500px] flex flex-col">
+                        <h3
+                            class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4 flex justify-between items-center">
+                            <span>주요 증시 뉴스 (Google News)</span>
+                            <i class="fas fa-newspaper text-brand-primary"></i>
+                        </h3>
+                        <div id="kr-news-container" class="flex-1 overflow-y-auto pr-2 space-y-4 scrollbar-hide">
+                            <!-- News Items will load here -->
+                            <div class="animate-pulse space-y-4">
+                                <div class="h-4 bg-white/5 rounded w-3/4"></div>
+                                <div class="h-4 bg-white/5 rounded w-full"></div>
+                                <div class="h-4 bg-white/5 rounded w-5/6"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- TradingView Widget END -->
+            </div>
+        </div>
+        </div>
+        </div>
+        </div>
+
+        <!-- Insight/Youtube Tab (Placeholder) -->
+        <div id="tab-subscription" class="hidden space-y-6 animate-fade-in">
+            <div
+                class="glass-card p-20 flex flex-col items-center justify-center text-center min-h-[600px] relative overflow-hidden">
+                <div class="absolute inset-0 bg-brand-primary/5 blur-[100px] -z-10"></div>
+                <div
+                    class="w-24 h-24 bg-brand-primary/10 rounded-3xl flex items-center justify-center mb-8 border border-brand-primary/20 rotate-12 transition hover:rotate-0 duration-500">
+                    <i class="fas fa-rocket text-4xl text-brand-primary"></i>
+                </div>
+                <h3 class="text-3xl font-black text-white mb-4 tracking-tighter">SERVICE <span
+                        class="text-brand-primary italic">PREPARING</span></h3>
+                <p class="text-gray-400 max-w-sm leading-relaxed mb-10">
+                    AI 시장 브리핑과 주요 경제 유튜브 채널 연동 기능을 준비하고 있습니다.<br>더 풍부한 인사이트로 곧 찾아뵙겠습니다.
+                </p>
+                <div class="flex gap-4">
+                    <div
+                        class="px-4 py-2 bg-white/5 rounded-full border border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        #AI_Insights
+                    </div>
+                    <div
+                        class="px-4 py-2 bg-white/5 rounded-full border border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        #Economy_YouTube
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Daily Report (Hidden by Default) -->
+        <div id="tab-report" class="hidden space-y-6 animate-fade-in">
+            <div class="glass-card p-0 flex flex-col h-[85vh] overflow-hidden relative">
+                <div class="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center flex-shrink-0">
+                    <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
+                    <div class="flex gap-2">
+                        <button onclick="document.getElementById('reportFrame').contentWindow.location.reload();"
+                            class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
+                            <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
+                        </button>
+                        <a href="/api/kr/report" target="_blank"
+                            class="text-[10px] bg-white/10 text-white px-3 py-1 rounded hover:bg-white/20 transition">
+                            <i class="fas fa-external-link-alt mr-1"></i> 새 창
+                        </a>
+                    </div>
+                </div>
+                <iframe id="reportFrame" src="/api/kr/report" class="w-full flex-1 bg-white/5" frameborder="0"></iframe>
+            </div>
+        </div>
+
+    </main>
+
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'market',
+            currentMarketTab: 'leaders_kospi', // leaders_kospi, leaders_kosdaq, gainers, volume
+            smartMoneyData: [], // Currently displayed list
+            leaders_kospi: [],
+            leaders_kosdaq: [],
+            gainers: [],
+            volume: [],
+            indicators: {
+                SMA: false,
+                RSI: false,
+                BB: false
+            }
+        };
+
+        // Tab Switch Logic
+        function switchTab(tabName) {
+            console.log("Switching to tab:", tabName);
+            const tabs = ['market', 'subscription', 'report'];
+
+            // Hide all tab contents
+            tabs.forEach(t => {
+                const tab = document.getElementById(`tab-${t}`);
+                if (tab) tab.classList.add('hidden');
+            });
+
+            // Show selected tab content
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            // Update nav styles for links that have .nav-link class
+            document.querySelectorAll('.nav-link').forEach(nav => {
+                nav.classList.remove('tab-active');
+                nav.classList.add('tab-inactive', 'hover:text-white');
+            });
+
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                activeNav.classList.remove('tab-inactive', 'hover:text-white');
+                activeNav.classList.add('tab-active');
+            }
+
+            // Force refresh report when entering the report tab
+            if (tabName === 'report') {
+                const frame = document.getElementById('reportFrame');
+                if (frame) {
+                    const currentSrc = frame.src.split('?')[0];
+                    frame.src = `${currentSrc}?t=${Date.now()}`;
+                    console.log("Refreshing report frame with cache busting...");
+                }
+            }
+
+            window.dispatchEvent(new Event('resize'));
+        }
+
+
+        // --- Data Handling ---
+        async function renderSectorHeatmap(sectors) {
+            const container = document.getElementById('sector-heatmap-container');
+            if (!container) return;
+
+            if (!sectors || sectors.length === 0) {
+                container.innerHTML = '<div class="col-span-2 text-center text-gray-500 text-xs py-10 italic">섹터 정보를 불러올 수 없습니다.</div>';
+                return;
+            }
+
+            container.innerHTML = sectors.map(s => {
+                const isUp = s.change >= 0;
+                const absChange = Math.abs(s.change);
+
+                // Colors based on change intensity
+                let bgColor, borderClass, textIntensity;
+                if (isUp) {
+                    const intensity = Math.min(Math.floor(absChange * 30), 80);
+                    bgColor = `rgba(16, 185, 129, ${0.1 + (intensity / 100)})`;
+                    borderClass = 'border-brand-success/20';
+                    textIntensity = 'text-brand-success';
+                } else {
+                    const intensity = Math.min(Math.floor(absChange * 30), 80);
+                    bgColor = `rgba(239, 68, 68, ${0.1 + (intensity / 100)})`;
+                    borderClass = 'border-brand-danger/20';
+                    textIntensity = 'text-brand-danger';
+                }
+
+                return `
+                <div class="p-3.5 rounded-2xl border ${borderClass} transition-all duration-300 hover:translate-y-[-2px] group" 
+                     style="background: ${bgColor};">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[11px] font-black text-white/90 group-hover:text-white transition-colors">${s.sector}</span>
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] font-black ${textIntensity} flex items-center gap-1">
+                                <i class="fas ${isUp ? 'fa-caret-up' : 'fa-caret-down'}"></i>
+                                ${s.change_str}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-[7px] font-black text-white/30 uppercase tracking-widest">상위 종목</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${s.stocks.map(st => `
+                                <div class="flex flex-col">
+                                    <span class="text-[8px] font-bold text-white/80">${st.name}</span>
+                                    <span class="text-[7px] font-mono text-white/40">${st.change}</span>
+                                </div>
+                            `).join('<div class="w-[1px] h-3 bg-white/10 self-center"></div>')}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        async function fetchData() {
+            try {
+                // Combined fetch from optimized endpoint
+                const res = await fetch(`/api/kr/market-data?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Render News & IPO from unified response
+                    if (data.market_news) renderNews(data.market_news);
+                    if (data.ipo_news) renderIPO(data.ipo_news);
+
+                    // Update Last Update Time
+                    if (data.date) {
+                        const updateTimeEl = document.getElementById('data-updated-time');
+                        if (updateTimeEl) {
+                            // Format: "2026-01-30 16:11:43 KST" -> "01.30 16:11 기준"
+                            try {
+                                const parts = data.date.split(' ');
+                                if (parts.length >= 2) {
+                                    const datePart = parts[0].substring(5).replace('-', '.'); // 01.30
+                                    const timePart = parts[1].substring(0, 5); // 16:11
+                                    updateTimeEl.innerHTML = `<span class="text-brand-primary">●</span> ${datePart} ${timePart} 기준`;
+                                } else {
+                                    updateTimeEl.innerText = data.date;
+                                }
+                            } catch (e) {
+                                updateTimeEl.innerText = data.date;
+                            }
+                        }
+                    }
+
+                    // Parse structured data if available, else fallback to flat array (backward compatibility)
+                    if (data.leaders_kospi || data.gainers) {
+                        state.leaders_kospi = data.leaders_kospi || [];
+                        state.leaders_kosdaq = data.leaders_kosdaq || [];
+                        state.gainers = data.gainers || [];
+                        state.volume = data.volume || [];
+                        state.smartMoneyData = state.leaders_kospi; // Default view
+                    } else {
+                        state.smartMoneyData = data; // Legacy format
+                        state.leaders_kospi = data;
+                    }
+
+                    if (data.sector_heatmap) {
+                        renderSectorHeatmap(data.sector_heatmap);
+                    }
+
+                    switchMarketTab('leaders_kospi'); // Initial render
+
+                    // Initial Chart Load
+                    if (state.leaders_kospi.length > 0) {
+                        state.currentSymbol = state.leaders_kospi[0].symbol;
+                    }
+                    renderChart();
+
+                    // Hide Loading Overlay Faster
+                    const overlay = document.getElementById('loading-overlay');
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                        }, 300); // Faster fade
+                    }
+
+                    if (state.smartMoneyData.length > 0) {
+                        // Load first symbol details
+                        loadSymbol(0, true);
+                    }
+                } else {
+                    console.error("KR Data Fetch Failed");
+                    const overlay = document.getElementById('loading-overlay');
+                    if (overlay) overlay.style.display = 'none';
+                }
+            } catch (e) {
+                console.error("Failed to fetch KR data:", e);
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) overlay.style.display = 'none';
+            }
+        }
+
+        function switchMarketTab(tab) {
+            state.currentMarketTab = tab;
+
+            // Update Buttons
+            ['leaders_kospi', 'leaders_kosdaq', 'gainers', 'volume'].forEach(t => {
+                const btn = document.getElementById(`btn-mkt-${t}`);
+                if (btn) {
+                    if (t === tab) {
+                        btn.classList.add('bg-brand-primary', 'text-black');
+                        btn.classList.remove('text-gray-500', 'hover:text-white');
+                    } else {
+                        btn.classList.remove('bg-brand-primary', 'text-black');
+                        btn.classList.add('text-gray-500', 'hover:text-white');
+                    }
+                }
+            });
+
+            // Update Data Source
+            if (tab === 'leaders_kospi') state.smartMoneyData = state.leaders_kospi;
+            else if (tab === 'leaders_kosdaq') state.smartMoneyData = state.leaders_kosdaq;
+            else if (tab === 'gainers') state.smartMoneyData = state.gainers;
+            else if (tab === 'volume') state.smartMoneyData = state.volume;
+
+            injectSmartMoney(state.smartMoneyData);
+
+            // Auto-load first item of the new tab to sync AI details
+            // REMOVED based on user feedback: Do not auto-select or scroll. 
+            // if (state.smartMoneyData && state.smartMoneyData.length > 0) {
+            //    loadSymbol(0, true); 
+            // }
+        }
+
+        function injectSmartMoney(data) {
+            const tbody = document.getElementById('smart-money-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = data.map((item, index) => {
+                return `
+                <tr onclick="loadSymbol(${index})" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
+                    <td class="px-6 text-gray-600 font-mono text-[10px]">${item.rank}</td>
+                    <td class="px-6">
+                        <div class="flex flex-col">
+                            <span class="text-white font-bold group-hover:text-brand-primary transition">${item.name}</span>
+                            <span class="text-[10px] text-gray-500 font-mono">${item.symbol}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 text-center text-[10px] text-gray-500 font-bold uppercase">${item.sector || 'KRX'}</td>
+                    <td class="px-6 text-center">
+                        <span class="px-2 py-1 rounded text-[10px] font-bold ${item.score > 80 ? 'bg-brand-success/20 text-brand-success' : 'bg-brand-primary/20 text-brand-primary'}">
+                            ${item.score || '-'}
+                        </span>
+                    </td>
+                    <td class="px-6 font-bold ${item.signal && item.signal.includes('적극') ? 'text-brand-success' : 'text-brand-primary'} text-xs italic">
+                        ${item.signal || 'Hold'}
+                    </td>
+                    <td class="px-6 text-right font-mono text-gray-200">${item.price > 0 ? '₩' + item.price.toLocaleString() : '--'}</td>
+                    <td class="px-6 text-right font-mono ${item.change > 0 ? 'text-brand-success' : (item.change < 0 ? 'text-brand-danger' : 'text-gray-500')}">
+                        ${item.change !== 0 ? (item.change > 0 ? '+' : '') + item.change + '%' : '--'}
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        async function loadSymbol(index, skipChart = false) {
+            try {
+                const data = state.smartMoneyData[index];
+                if (!data) return;
+
+                // Update UI Elements
+                const safeSetText = (id, text, fallback = '-') => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerText = text || fallback;
+                };
+
+                safeSetText('main-ticker-name', data.name);
+                safeSetText('main-ticker-symbol', data.symbol);
+                safeSetText('main-full-name', data.name);
+                safeSetText('main-ai-score', data.score || '90');
+
+
+                safeSetText('current-price-label', data.price);
+
+                // AI Insights Helpers
+                const formatUpside = (val) => {
+                    if (!val || val === '-') return '-';
+                    if (String(val).includes('%')) return val;
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) return (num > 0 ? '+' : '') + num + '%';
+                    return val;
+                };
+
+                const formatKRW = (val) => {
+                    if (!val || val === '-' || val === 'N/A') return '-';
+                    const num = parseFloat(String(val).replace(/,/g, '').replace('원', ''));
+                    if (isNaN(num)) return val;
+                    return num.toLocaleString() + '원';
+                };
+
+                safeSetText('ai-insight', data.insight || '분석 데이터 대기중...');
+                safeSetText('ai-risk', data.risk || '-');
+                safeSetText('ai-upside', `${formatUpside(data.upside)} 예상 상승 여력`);
+
+                safeSetText('swot-s', data.swot_s || '-');
+                safeSetText('swot-w', data.swot_w || '-');
+                safeSetText('swot-o', data.swot_o || '-');
+                safeSetText('swot-t', data.swot_t || '-');
+
+                safeSetText('dcf-target', formatKRW(data.dcf_target));
+                safeSetText('dcf-bear', formatKRW(data.dcf_bear));
+                safeSetText('dcf-bull', formatKRW(data.dcf_bull));
+
+                // DCF Marker Position
+                if (data.dcf_bear && data.dcf_bull) {
+                    const bear = parseFloat(String(data.dcf_bear).replace(/,/g, '').replace('원', ''));
+                    const bull = parseFloat(String(data.dcf_bull).replace(/,/g, '').replace('원', ''));
+                    const current = parseFloat(String(data.price).replace(/,/g, '').replace('원', ''));
+                    if (!isNaN(bear) && !isNaN(bull) && !isNaN(current) && (bull - bear) !== 0) {
+                        const pos = ((current - bear) / (bull - bear)) * 100;
+                        const marker = document.getElementById('price-marker');
+                        if (marker) marker.style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
+                    }
+                }
+
+                // Update Chart
+                if (!skipChart) {
+                    state.currentSymbol = data.symbol;
+                    renderChart();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } catch (e) {
+                console.error("Error in loadSymbol:", e);
+            }
+        }
+
+        // --- Chart Configuration ---
+        state.chartProvider = 'custom';
+        state.currentSymbol = '005930';
+
+        function toggleIndicator(ind) {
+            state.indicators[ind] = !state.indicators[ind];
+            const btn = document.getElementById(`btn-ind-${ind}`);
+            if (state.indicators[ind]) {
+                btn.classList.add('bg-brand-primary/20', 'text-brand-primary');
+                btn.classList.remove('text-gray-500');
+            } else {
+                btn.classList.remove('bg-brand-primary/20', 'text-brand-primary');
+                btn.classList.add('text-gray-500');
+            }
+            renderChart();
+        }
+
+        let chartInstance = null;
+        let candleSeries = null;
+
+        function renderChart() {
+            const container = document.getElementById('tradingview_main');
+            if (!container) return;
+
+            const symbol = state.currentSymbol || '005930';
+            const res = state.currentInterval || 'D';
+
+            // Clean container
+            container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">차트 데이터 로드 중...</div>';
+            chartInstance = null;
+            candleSeries = null;
+
+            if (state.chartProvider === 'tv') {
+                updateTradingView(res, symbol);
+                return;
+            }
+
+            // Check if LightweightCharts is loaded
+            if (typeof LightweightCharts === 'undefined') {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full gap-4 text-center px-6">
+                        <i class="fas fa-exclamation-triangle text-amber-500 text-2xl"></i>
+                        <p class="text-gray-400 text-xs font-mono">차트 엔진을 불러오지 못했습니다.<br>새로고침을 하거나 TV 모드를 사용해 주세요.</p>
+                        <button onclick="location.reload()" class="px-4 py-2 bg-white/10 rounded-lg text-[10px] font-bold hover:bg-white/20">새로고침</button>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // Ensure dimensions are valid
+                const width = container.clientWidth || 800;
+                const height = container.clientHeight || 500;
+
+                // Create Custom Lightweight Chart
+                const chartOptions = {
+                    layout: {
+                        background: { color: '#08080A' },
+                        textColor: '#D9D9D9',
+                    },
+                    grid: {
+                        vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
+                        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
+                    },
+                    rightPriceScale: { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                    timeScale: { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                    width: width,
+                    height: height,
+                    crosshair: {
+                        mode: LightweightCharts.CrosshairMode.Normal,
+                    },
+                };
+
+                container.innerHTML = ''; // Clear for real injection
+                chartInstance = LightweightCharts.createChart(container, chartOptions);
+
+                candleSeries = chartInstance.addCandlestickSeries({
+                    upColor: '#FF1744',
+                    downColor: '#00F0FF',
+                    borderDownColor: '#00F0FF',
+                    borderUpColor: '#FF1744',
+                    wickDownColor: '#00F0FF',
+                    wickUpColor: '#FF1744',
+                });
+
+                fetchChartData(symbol);
+
+                // Resize observer to handle container changes
+                const resizeObserver = new ResizeObserver(entries => {
+                    if (chartInstance && entries.length > 0) {
+                        const { width, height } = entries[0].contentRect;
+                        if (width > 0 && height > 0) {
+                            chartInstance.applyOptions({ width, height });
+                        }
+                    }
+                });
+                resizeObserver.observe(container);
+
+            } catch (err) {
+                console.error("Chart initialization error:", err);
+                container.innerHTML = `<div class="flex items-center justify-center h-full text-red-500 font-mono text-[10px]">초기화 오류: ${err.message}</div>`;
+            }
+        }
+
+        async function fetchChartData(symbol) {
+            const container = document.getElementById('tradingview_main');
+            try {
+                const cleanSym = String(symbol).padStart(6, '0');
+                const response = await fetch(`/api/chart-data?symbol=${cleanSym}&market=KR`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0 && candleSeries) {
+                        candleSeries.setData(data);
+
+                        // Indicators Calculation
+                        if (state.indicators.SMA) {
+                            const smaData = calculateSMA(data, 20);
+                            const smaLine = chartInstance.addLineSeries({ color: '#FFEA00', lineWidth: 1, title: 'SMA 20' });
+                            smaLine.setData(smaData);
+                        }
+
+                        if (state.indicators.BB) {
+                            const bb = calculateBB(data, 20, 2);
+                            const upper = chartInstance.addLineSeries({ color: 'rgba(255, 255, 255, 0.2)', lineWidth: 1, lineStyle: 2 });
+                            const lower = chartInstance.addLineSeries({ color: 'rgba(255, 255, 255, 0.2)', lineWidth: 1, lineStyle: 2 });
+                            upper.setData(bb.upper);
+                            lower.setData(bb.lower);
+                        }
+
+                        chartInstance.timeScale().fitContent();
+                    } else {
+                        if (container) container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">데이터를 찾을 수 없습니다 (No Data)</div>';
+                    }
+                } else {
+                    if (container) container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-mono text-xs">서버 응답 오류 (Server Error)</div>';
+                }
+            } catch (e) {
+                console.error("Chart data error:", e);
+            }
+        }
+
+        function calculateSMA(data, count) {
+            const result = [];
+            for (let i = count - 1; i < data.length; i++) {
+                let sum = 0;
+                for (let j = 0; j < count; j++) {
+                    sum += data[i - j].close;
+                }
+                result.push({ time: data[i].time, value: sum / count });
+            }
+            return result;
+        }
+
+        function calculateBB(data, count, stdDev) {
+            const upper = [];
+            const lower = [];
+            for (let i = count - 1; i < data.length; i++) {
+                let sum = 0;
+                for (let j = 0; j < count; j++) sum += data[i - j].close;
+                const avg = sum / count;
+                let sqDiffSum = 0;
+                for (let j = 0; j < count; j++) sqDiffSum += Math.pow(data[i - j].close - avg, 2);
+                const dev = Math.sqrt(sqDiffSum / count);
+                upper.push({ time: data[i].time, value: avg + (stdDev * dev) });
+                lower.push({ time: data[i].time, value: avg - (stdDev * dev) });
+            }
+            return { upper, lower };
+        }
+
+        function updateTradingView(res = 'D', symbol = null) {
+            let tvSymbol = "KRX:KOSPI";
+            if (symbol) {
+                let cleanSymbol = String(symbol).trim().padStart(6, '0');
+                tvSymbol = `KRX:${cleanSymbol}`;
+            }
+
+            const container = document.getElementById('tradingview_main');
+            if (!container) return;
+
+            container.innerHTML = '<div class="tradingview-widget-container" style="width:100%;height:100%"><div id="tv-widget" style="width:100%;height:100%"></div></div>';
+
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+            script.async = true;
+
+            const config = {
+                "autosize": true,
+                "symbol": tvSymbol,
+                "interval": res === '60' ? 'D' : res,
+                "timezone": "Asia/Seoul",
+                "theme": "dark",
+                "style": "1",
+                "locale": "kr",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "calendar": false,
+                "support_host": "https://www.tradingview.com"
+            };
+
+            script.innerHTML = JSON.stringify(config);
+            container.querySelector('.tradingview-widget-container').appendChild(script);
+        }
+
+        function changeInterval(int) {
+            const map = { '1D': '60', '1W': 'D', '1M': 'D' };
+            state.currentInterval = map[int] || 'D';
+
+            // UI Buttons
+            ['1D', '1W', '1M'].forEach(b => {
+                const btn = document.getElementById(`btn-int-${b}`);
+                if (btn) {
+                    if (b === int) {
+                        btn.classList.add('bg-brand-primary', 'text-black');
+                        btn.classList.remove('text-gray-400', 'hover:text-white');
+                    } else {
+                        btn.classList.remove('bg-brand-primary', 'text-black');
+                        btn.classList.add('text-gray-400', 'hover:text-white');
+                    }
+                }
+            });
+
+            if (state.chartProvider === 'tv') renderChart();
+        }
+
+        // Initialize
+        // --- News & IPO Fetching ---
+        function renderNews(news) {
+            const container = document.getElementById('kr-news-container');
+            if (!container) return;
+            if (!news || news.length === 0) {
+                container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-10">현재 뉴스가 없습니다.</p>';
+                return;
+            }
+            container.innerHTML = news.map(item => `
+                <a href="${item.url}" target="_blank" class="block p-4 bg-white/5 rounded-xl border border-white/5 hover:border-brand-primary/30 transition group">
+                    <h4 class="text-xs font-bold text-gray-200 group-hover:text-brand-primary transition leading-relaxed mb-1">${item.title}</h4>
+                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
+                        <span class="text-[9px] text-brand-primary font-black uppercase tracking-tighter">${item.source}</span>
+                        <span class="text-[9px] text-gray-600 font-mono">${item.date}</span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        async function fetchNews() {
+            try {
+                const res = await fetch('/api/kr/news');
+                if (res.ok) {
+                    const news = await res.json();
+                    renderNews(news);
+                }
+            } catch (e) {
+                console.error("News fetch failed:", e);
+                const container = document.getElementById('kr-news-container');
+                if (container) container.innerHTML = '<p class="text-[10px] text-brand-danger text-center py-4">뉴스 로드 실패</p>';
+            }
+        }
+
+        function renderIPO(data) {
+            const container = document.getElementById('kr-ipo-container');
+            if (!container) return;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="text-[10px] text-gray-500 text-center py-4">일정 정보가 없습니다.</p>';
+                return;
+            }
+            container.innerHTML = data.map(item => `
+                <a href="${item.url || '#'}" target="_blank" class="block p-3 bg-white/5 rounded-xl border border-white/5 flex justify-between items-center transition hover:border-brand-primary/30 group mb-2">
+                    <div class="flex-1 pr-2">
+                        <p class="text-[11px] font-bold text-gray-200 group-hover:text-brand-primary transition line-clamp-2 leading-tight">${item.name || item.title || '일정'}</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[8px] px-1 py-0.5 rounded bg-brand-primary/10 text-brand-primary font-black uppercase">${item.status || '공시'}</span>
+                            <span class="text-[9px] text-gray-500">${item.manager || '네이버금융'}</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono font-black text-gray-400 whitespace-nowrap ml-2">${item.date || ''}</span>
+                </a>
+            `).join('');
+        }
+
+        async function fetchIPO() {
+            try {
+                const res = await fetch('/api/kr/ipo');
+                if (res.ok) {
+                    const data = await res.json();
+                    renderIPO(data);
+                }
+            } catch (e) {
+                console.error("IPO fetch failed:", e);
+                const container = document.getElementById('kr-ipo-container');
+                if (container) container.innerHTML = '<p class="text-[10px] text-brand-danger text-center">정보 로드 실패</p>';
+            }
+        }
+
+        // Initialize Everything
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            renderChart();
+            setInterval(fetchData, 5 * 60 * 1000);
+
+            // Safety timeout: Dismiss loading overlay after 3 seconds regardless of fetch status
+            // Reduced from 5s to 3s because backend is now optimized with batch fetches
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay && overlay.style.display !== 'none') {
+                    console.warn("Safety trigger: Hiding loading overlay due to timeout.");
+                    overlay.style.opacity = '0';
+                    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                }
+            }, 3000);
+
+            console.log("🚀 KR Market Dashboard Online");
+        });
+    </script>
+</body>
+
+</html>

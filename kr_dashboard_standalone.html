@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeCodingLab KR Dashboard (Standalone)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Pretendard', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        brand: {
+                            bg: '#08080A', card: '#111114', border: '#1F1F23',
+                            primary: '#00F0FF', secondary: '#7000FF',
+                            success: '#00E676', danger: '#FF1744', warning: '#FFEA00'
+                        }
+                    },
+                    backgroundImage: {
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00F0FF 0%, #7000FF 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #08080A;
+            color: #E2E2E7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-card {
+            background: rgba(17, 17, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 240, 255, 0.25);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-active {
+            color: #00F0FF;
+            border-bottom: 2px solid #00F0FF;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .tab-inactive {
+            color: #52525B;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Ticker Tape Widget -->
+    <div class="bg-[#08080A] border-b border-white/5">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                        "symbols": [
+                            { "proName": "TVC:KOSPI", "title": "코스피" },
+                            { "proName": "TVC:KOSDAQ", "title": "코스닥" },
+                            { "proName": "FX_IDC:USDKRW", "title": "원달러 환율" },
+                            { "proName": "FOREXCOM:SPX500", "title": "S&P 500" },
+                            { "proName": "FOREXCOM:NSXUSD", "title": "나스닥 100" }
+                        ],
+                            "showSymbolLogo": true,
+                                "colorTheme": "dark",
+                                    "isTransparent": true,
+                                        "displayMode": "adaptive",
+                                            "locale": "kr"
+                    }
+                </script>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <nav
+        class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-6 py-3 flex justify-between items-center rounded-2xl border-white/5">
+        <div class="flex items-center gap-4">
+            <div
+                class="w-10 h-10 overflow-hidden rounded-xl flex items-center justify-center border border-white/10 bg-brand-primary/10">
+                <i class="fas fa-chart-line text-brand-primary text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white italic">Vibe<span
+                        class="text-brand-primary">CodingLab</span> <span
+                        class="text-[10px] text-gray-500 not-italic ml-1">KR STANDALONE</span></h1>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-10">
+            <a onclick="switchTab('market')" id="nav-market"
+                class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">시장 분석</a>
+            <span class="text-[10px] text-gray-600">OFFLINE MODE</span>
+        </div>
+
+        <div class="flex flex-col items-end gap-1">
+            <span
+                class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">KOREA
+                MARKET v1.1</span>
+            <span id="clock" class="text-[9px] font-mono text-brand-primary/60 px-2 italic">--:-- KST</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-[1600px] mx-auto px-4 pb-20">
+        <div id="tab-market" class="space-y-6 animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Main Content Area (8 cols) -->
+                <div class="lg:col-span-8 space-y-6">
+                    <!-- Advanced Chart -->
+                    <div class="glass-card p-6 h-[600px] relative">
+                        <div class="absolute top-4 right-6 z-10 flex gap-2">
+                            <button onclick="changeInterval('1D')"
+                                class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black transition">1D</button>
+                            <button onclick="changeInterval('1W')"
+                                class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5 transition">1W</button>
+                            <button onclick="changeInterval('1M')"
+                                class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5 transition">1M</button>
+                        </div>
+                        <div id="tradingview_main" class="h-full w-full rounded-xl overflow-hidden"></div>
+                    </div>
+
+                    <!-- Detailed Analysis Panel -->
+                    <div class="glass-card p-8 bg-accent-gradient/5">
+                        <div class="flex flex-col lg:flex-row gap-8">
+                            <div class="flex-1 space-y-6">
+                                <div class="flex items-center gap-4 mb-2">
+                                    <div
+                                        class="w-12 h-12 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center">
+                                        <i class="fas fa-microchip text-brand-primary text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h2 id="main-ticker-name" class="text-2xl font-black text-white leading-tight">
+                                            삼성전자</h2>
+                                        <p id="main-full-name" class="text-xs text-gray-500 font-medium">Samsung
+                                            Electronics</p>
+                                    </div>
+                                </div>
+                                <div class="p-6 bg-brand-primary/5 rounded-2xl border border-brand-primary/20">
+                                    <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i
+                                            class="fas fa-lightbulb text-brand-primary"></i> AI 투자 분석 인사이트</h4>
+                                    <p id="ai-insight" class="text-sm leading-relaxed text-gray-300">데이터 로딩 중...</p>
+                                </div>
+                                <div class="p-6 bg-brand-danger/10 rounded-2xl border border-brand-danger/20">
+                                    <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i
+                                            class="fas fa-shield-alt text-brand-danger"></i> 핵심 리스크 요인</h4>
+                                    <p id="ai-risk" class="text-sm leading-relaxed text-gray-400">로딩 중...</p>
+                                    <p id="ai-upside"
+                                        class="mt-4 text-xs font-bold text-brand-success uppercase tracking-widest">+0%
+                                        예상 상승 여력</p>
+                                </div>
+                            </div>
+
+                            <div class="w-full lg:w-[350px] space-y-6">
+                                <div class="p-6 bg-gray-900/60 rounded-2xl border border-white/10">
+                                    <h4 class="text-sm font-bold mb-6 flex justify-between items-center"><span>적정 주가 분석
+                                            (DCF)</span></h4>
+                                    <div class="h-1.5 w-full bg-gray-800 rounded-full mb-6 relative mt-10">
+                                        <div class="absolute inset-0 flex rounded-full overflow-hidden">
+                                            <div class="h-full bg-brand-success/40 w-1/3 border-r border-black/20">
+                                            </div>
+                                            <div class="h-full bg-brand-primary/40 w-1/3 border-r border-black/20">
+                                            </div>
+                                            <div class="h-full bg-brand-danger/40 w-1/3"></div>
+                                        </div>
+                                        <div id="price-marker"
+                                            class="absolute bottom-1 left-[50%] flex flex-col items-center transition-all duration-700">
+                                            <span id="current-price-label"
+                                                class="text-[10px] mb-2 font-black text-white bg-black/80 px-2 py-0.5 rounded border border-white/20">0</span>
+                                            <div class="w-1 h-5 bg-white shadow-xl"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-[11px] font-mono">
+                                        <div class="text-center">
+                                            <p class="text-gray-500 mb-1">BEAR</p>
+                                            <p id="dcf-bear" class="text-white font-bold">--</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-brand-primary mb-1">FAIR VALUE</p>
+                                            <p id="dcf-target" class="text-brand-primary font-black text-sm">--</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-gray-500 mb-1">BULL</p>
+                                            <p id="dcf-bull" class="text-white font-bold">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div
+                                        class="p-3 bg-brand-success/5 rounded-xl text-center border border-brand-success/20">
+                                        <p class="text-[9px] text-brand-success font-black mb-1">강점 (S)</p>
+                                        <p id="swot-s" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                    <div
+                                        class="p-3 bg-brand-danger/5 rounded-xl text-center border border-brand-danger/20">
+                                        <p class="text-[9px] text-brand-danger font-black mb-1">약점 (W)</p>
+                                        <p id="swot-w" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                    <div
+                                        class="p-3 bg-brand-primary/5 rounded-xl text-center border border-brand-primary/20">
+                                        <p class="text-[9px] text-brand-primary font-black mb-1">기회 (O)</p>
+                                        <p id="swot-o" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                    <div
+                                        class="p-3 bg-brand-warning/5 rounded-xl text-center border border-brand-warning/20">
+                                        <p class="text-[9px] text-brand-warning font-black mb-1">위협 (T)</p>
+                                        <p id="swot-t" class="text-[10px] text-gray-300">--</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top 10 Table -->
+                    <div class="glass-card p-8">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                            <h2 class="text-xl font-bold flex items-center gap-3">
+                                <i class="fas fa-bolt text-brand-primary"></i> 실시간 주도주 분석
+                            </h2>
+                            <div class="flex p-1 bg-white/5 rounded-xl border border-white/10">
+                                <button onclick="filterMarket('ALL')" id="btn-mkt-all"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-brand-primary text-black transition-all">전체</button>
+                                <button onclick="filterMarket('KOSPI')" id="btn-mkt-kospi"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">KOSPI</button>
+                                <button onclick="filterMarket('KOSDAQ')" id="btn-mkt-kosdaq"
+                                    class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-gray-500 hover:text-white transition-all">KOSDAQ</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr
+                                        class="text-[10px] text-gray-500 font-black uppercase tracking-widest border-b border-white/10">
+                                        <th class="px-6 py-4">순위</th>
+                                        <th class="px-6 py-4">종목명</th>
+                                        <th class="px-6 py-4 text-center">시장</th>
+                                        <th class="px-6 py-4 text-center">AI 점수</th>
+                                        <th class="px-6 py-4 text-right">현재가</th>
+                                        <th class="px-6 py-4 text-right">등락율</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="smart-money-tbody" class="text-sm font-medium"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="lg:col-span-4 space-y-6">
+                    <!-- Stock Heatmap -->
+                    <div class="glass-card p-6 h-[400px] flex flex-col">
+                        <h3 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">국내 주식 실시간 맵</h3>
+                        <div class="flex-1 rounded-xl overflow-hidden">
+                            <div class="tradingview-widget-container h-full w-full">
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
+                                    async>
+                                        {
+                                            "exchanges": ["KRX"],
+                                                "dataSource": "KRX",
+                                                    "grouping": "sector",
+                                                        "blockSize": "market_cap",
+                                                            "blockColor": "change",
+                                                                "locale": "kr",
+                                                                    "symbolUrl": "",
+                                                                        "colorTheme": "dark",
+                                                                            "hasTopBar": false,
+                                                                                "isTransparent": true,
+                                                                                    "hasSymbolTooltip": true,
+                                                                                        "width": "100%",
+                                                                                            "height": "100%"
+                                        }
+                                    </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IPO Subscription -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">유상 청약 및 공모주 일정</h3>
+                        <div class="space-y-3">
+                            <div
+                                class="p-3 bg-white/5 rounded-xl border border-white/10 flex justify-between items-center transition hover:bg-white/10 cursor-pointer">
+                                <div>
+                                    <p class="text-[11px] font-bold text-brand-primary">샘플 소프트웨어 (청약중)</p>
+                                    <p class="text-[9px] text-gray-500">한국투자증권 | 12,000원</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-[10px] text-gray-600"></i>
+                            </div>
+                            <div
+                                class="p-3 bg-white/5 rounded-xl border border-white/10 flex justify-between items-center transition hover:bg-white/10 cursor-pointer">
+                                <div>
+                                    <p class="text-[11px] font-bold text-white">바이브코딩 테크 (D-3)</p>
+                                    <p class="text-[9px] text-gray-500">미래에셋증권 | 25,000원</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-[10px] text-gray-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-time News -->
+                    <div class="glass-card p-6 h-[500px] flex flex-col">
+                        <h3 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">실시간 마켓 뉴스 (국문)</h3>
+                        <div id="kr-news-container" class="flex-1 overflow-y-auto pr-2 space-y-4 scrollbar-hide">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const mockData = [
+            { "rank": "01", "symbol": "005930", "name": "삼성전자", "sector": "KOSPI", "score": 92.5, "signal": "적극 매수", "price": "162,400", "change": 1.82, "insight": "DRAM 가격 반등과 HBM3E 공급 확대가 실적 개선을 견인할 것으로 예상됩니다.", "risk": "글로벌 스마트폰 수요 둔화.", "upside": "+25%", "swot_s": "글로벌 메모리 1위", "swot_w": "HBM 격차 축소 우려", "swot_o": "AI 서버 수요 폭증", "swot_t": "공급망 불안정", "dcf_target": "205,000", "dcf_bear": "140,000", "dcf_bull": "240,000" },
+            { "rank": "02", "symbol": "000660", "name": "SK하이닉스", "sector": "KOSPI", "score": 88.2, "signal": "적극 매수", "price": "841,000", "change": 5.12, "insight": "NVIDIA향 HBM 공급 독점적 지위가 유지되며 AI 모멘텀 수혜.", "risk": "높은 변동성.", "upside": "+18%", "swot_s": "HBM 기술 우위", "swot_w": "비메모리 취약", "swot_o": "AI 반도체 성장", "swot_t": "경쟁 가속화", "dcf_target": "990,000", "dcf_bear": "720,000", "dcf_bull": "1,150,000" },
+            { "rank": "03", "symbol": "373220", "name": "LG에너지솔루션", "sector": "KOSPI", "score": 81.5, "signal": "매수", "price": "431,000", "change": 5.51, "insight": "북미 IRA 보조금 수혜 확대.", "risk": "전기차 수요 정체.", "upside": "+12%", "swot_s": "북미 공급망 선점", "swot_w": "LFP 경쟁 심화", "swot_o": "북미 공장 가동", "swot_t": "보조금 정책 변화", "dcf_target": "485,000", "dcf_bear": "380,000", "dcf_bull": "520,000" },
+            { "rank": "04", "symbol": "005380", "name": "현대차", "sector": "KOSPI", "score": 79.2, "signal": "매수", "price": "492,500", "change": 0.82, "insight": "SUV 및 하이브리드 고수익 차량 중심 믹스 개선.", "risk": "글로벌 경기 둔화.", "upside": "+15%", "swot_s": "하이브리드 경쟁력", "swot_w": "전기차 전환 속도", "swot_o": "인도 법인 IPO", "swot_t": "환율 변동성", "dcf_target": "550,000", "dcf_bear": "420,000", "dcf_bull": "600,000" },
+            { "rank": "05", "symbol": "068270", "name": "셀트리온", "sector": "KOSPI", "score": 77.8, "signal": "매수", "price": "218,500", "change": 3.31, "insight": "짐펜트라 미국 출시 및 바이오시밀러 점유율 확대.", "risk": "신약 승인 지연 리스크.", "upside": "+20%", "swot_s": "바이오시밀러 지배력", "swot_w": "높은 R&D 비용", "swot_o": "신약 파이프라인", "swot_t": "규제 환경 변화", "dcf_target": "270,000", "dcf_bear": "180,000", "dcf_bull": "310,000" },
+            { "rank": "06", "symbol": "000270", "name": "기아", "sector": "KOSPI", "score": 76.5, "signal": "매수", "price": "149,700", "change": -2.48, "insight": "전기차 라인업 확대 및 주주환원 정책 강화.", "risk": "피크아웃 우려.", "upside": "+12%", "swot_s": "디자인 경쟁력", "swot_w": "노사 리스크", "swot_o": "PBV 시장 선점", "swot_t": "글로벌 경쟁 심화", "dcf_target": "180,000", "dcf_bear": "120,000", "dcf_bull": "210,000" },
+            { "rank": "07", "symbol": "005490", "name": "POSCO홀딩스", "sector": "KOSPI", "score": 75.1, "signal": "매수", "price": "378,000", "change": 5.15, "insight": "철강 업황 회복 및 리튬 신사업 가치 부각.", "risk": "경기 민감도.", "upside": "+15%", "swot_s": "밸류체인 통합", "swot_w": "본업 실적 둔화", "swot_o": "이차전지 소재 성장", "swot_t": "중국 철강 공세", "dcf_target": "450,000", "dcf_bear": "320,000", "dcf_bull": "520,000" },
+            { "rank": "08", "symbol": "035420", "name": "NAVER", "sector": "KOSPI", "score": 74.3, "signal": "관망", "price": "277,500", "change": -1.42, "insight": "AI 고도화 및 광고/커머스 수익성 개선.", "risk": "규제 리스크.", "upside": "+10%", "swot_s": "플랫폼 지배력", "swot_w": "글로벌 점유율", "swot_o": "생성형 AI 사업", "swot_t": "C-커머스 공세", "dcf_target": "320,000", "dcf_bear": "240,000", "dcf_bull": "380,000" },
+            { "rank": "09", "symbol": "105560", "name": "KB금융", "sector": "KOSPI", "score": 72.8, "signal": "관망", "price": "137,900", "change": -3.57, "insight": "금리 하락기 순이자마진 방어 및 주주환원 확대.", "risk": "금리 하락 우려.", "upside": "+8%", "swot_s": "자본 건전성", "swot_w": "대출 성장 정체", "swot_o": "밸류업 프로그램", "swot_t": "부동산 PF 리스크", "dcf_target": "160,000", "dcf_bear": "110,000", "dcf_bull": "185,000" },
+            { "rank": "10", "symbol": "055550", "name": "신한지주", "sector": "KOSPI", "score": 71.5, "signal": "관망", "price": "83,800", "change": -2.67, "insight": "비은행 부문 경쟁력 강화 및 디지털 전환 가속.", "risk": "연체율 상승.", "upside": "+10%", "swot_s": "포트폴리오 다각화", "swot_w": "기업금융 경쟁", "swot_o": "비용 효율화", "swot_t": "금융 규제 강화", "dcf_target": "100,000", "dcf_bear": "70,000", "dcf_bull": "120,000" },
+            { "rank": "01", "symbol": "091990", "name": "셀트리온헬스케어", "sector": "KOSDAQ", "score": 85.5, "signal": "적극 매수", "price": "75,000", "change": 2.10, "insight": "합병 이후 시너지 효과 가시화.", "risk": "시장 경쟁 과열.", "upside": "+15%", "swot_s": "글로벌 유통망", "swot_w": "수익성 변동성", "swot_o": "직판 체제 강화", "swot_t": "후발주자 진입", "dcf_target": "90,000", "dcf_bear": "65,000", "dcf_bull": "105,000" },
+            { "rank": "02", "symbol": "247540", "name": "에코프로비엠", "sector": "KOSDAQ", "score": 82.1, "signal": "매수", "price": "280,000", "change": 4.50, "insight": "양극재 생산 능력 확대 및 수직 계열화 강점.", "risk": "리튬 가격 변동.", "upside": "+20%", "swot_s": "하이니켈 기술력", "swot_w": "고평가 논란", "swot_o": "해외 공장 증설", "swot_t": "원료 확보 경쟁", "dcf_target": "350,000", "dcf_bear": "220,000", "dcf_bull": "420,000" },
+            { "rank": "03", "symbol": "086520", "name": "에코프로", "sector": "KOSDAQ", "score": 80.4, "signal": "매수", "price": "105,000", "change": 3.20, "insight": "지주사로서의 자회사 지분 가치 부각.", "risk": "자회사 실적 연동.", "upside": "+10%", "swot_s": "밸류체인 통합", "swot_w": "지배구조 리스크", "swot_o": "폐배터리 재활용", "swot_t": "기술 트렌드 변화", "dcf_target": "130,000", "dcf_bear": "85,000", "dcf_bull": "155,000" },
+            { "rank": "04", "symbol": "066970", "name": "엘앤에프", "sector": "KOSDAQ", "score": 78.9, "signal": "매수", "price": "160,000", "change": 1.50, "insight": "테슬라 직납 비중 확대 기대.", "risk": "고정비 부담.", "upside": "+18%", "swot_s": "고객사 다변화", "swot_w": "원재료 수급", "swot_o": "음극재 사업 진출", "swot_t": "경쟁사 증설", "dcf_target": "200,000", "dcf_bear": "130,000", "dcf_bull": "240,000" },
+            { "rank": "05", "symbol": "293490", "name": "카카오게임즈", "sector": "KOSDAQ", "score": 75.2, "signal": "관망", "price": "24,000", "change": -0.50, "insight": "신작 라인업 출시 일정 지연.", "risk": "기존 게임 매출 감소.", "upside": "+8%", "swot_s": "퍼블리싱 능력", "swot_w": "자체 IP 부족", "swot_o": "글로벌 시장 확장", "swot_t": "신작 흥행 불확실성", "dcf_target": "28,000", "dcf_bear": "20,000", "dcf_bull": "35,000" },
+            { "rank": "06", "symbol": "277810", "name": "레인보우로보틱스", "sector": "KOSDAQ", "score": 74.5, "signal": "매수", "price": "155,000", "change": 2.80, "insight": "삼성전자와의 협력 강화 및 로봇 라인업 확대.", "risk": "수익성 가시화 시점.", "upside": "+25%", "swot_s": "독보적 기술력", "swot_w": "매출 규모 한계", "swot_o": "로봇 시장 개화", "swot_t": "글로벌 경쟁 가속", "dcf_target": "200,000", "dcf_bear": "130,000", "dcf_bull": "250,000" },
+            { "rank": "07", "symbol": "121440", "name": "파마리서치", "sector": "KOSDAQ", "score": 73.2, "signal": "매수", "price": "180,000", "change": 1.50, "insight": "리쥬란 글로벌 수출 확대 및 실적 견조.", "risk": "제네릭 공세 우려.", "upside": "+15%", "swot_s": "에스테틱 지배력", "swot_w": "내수 의존도", "swot_o": "글로벌 시장 확대", "swot_t": "신규 경쟁자 진입", "dcf_target": "220,000", "dcf_bear": "160,000", "dcf_bull": "260,000" },
+            { "rank": "08", "symbol": "145020", "name": "휴젤", "sector": "KOSDAQ", "score": 72.5, "signal": "매수", "price": "250,000", "change": 0.80, "insight": "톡신 미국 시장 진출 본격화.", "risk": "법적 리스크.", "upside": "+12%", "swot_s": "톡신 시장 지위", "swot_w": "균주 출처 논란", "swot_o": "미국 수출 증대", "swot_t": "톡신 가격 경쟁", "dcf_target": "300,000", "dcf_bear": "220,000", "dcf_bull": "360,000" },
+            { "rank": "09", "symbol": "214150", "name": "클래시스", "sector": "KOSDAQ", "score": 71.8, "signal": "매수", "price": "55,000", "change": 3.10, "insight": "슈링크 유니버스 해외 매출 비중 상승.", "risk": "소모품 교체 주기.", "upside": "+15%", "swot_s": "높은 수익성", "swot_w": "기술 모방 리스크", "swot_o": "해외 인지도 상승", "swot_t": "미용 기기 경쟁", "dcf_target": "65,000", "dcf_bear": "48,000", "dcf_bull": "75,000" },
+            { "rank": "10", "symbol": "403490", "name": "HPSP", "sector": "KOSDAQ", "score": 70.5, "signal": "관망", "price": "42,000", "change": -1.20, "instruction": "고압 수소 열처리 장비 독점적 지위.", "insight": "반도체 미세화 공정 증가 수혜.", "risk": "대체 기술 출현.", "upside": "+10%", "swot_s": "독점적 기술", "swot_w": "단일 제품 의존", "swot_o": "파운드리 투자 확대", "swot_t": "특허 분쟁 리스크", "dcf_target": "50,000", "dcf_bear": "35,000", "dcf_bull": "60,000" }
+        ];
+
+        const mockNews = [
+            { "title": "코스피, 기관 매수세에 반등 성공... 2,500선 안착 시도", "source": "연합뉴스", "date": "2026.01.29", "summary": "금일 코스피는 기관의 강력한 순매수에 힘입어 장중 반등을 시작했습니다. 반도체와 금융주의 강세가 지수를 견인하고 있습니다." },
+            { "title": "삼성전자, HBM3E 12단 양산 본격화... 수익성 개선 기대", "source": "매일경제", "date": "2026.01.29", "summary": "삼성전자가 차세대 고대역폭 메모리 양산 일정을 앞당기며 글로벌 시장 점유율 확대에 나섰습니다. 전문가들은 수익성 대폭 개선을 기대하고 있습니다." },
+            { "title": "2차전지주, 리튬 가격 바닥 확인 분석에 전반적 강세", "source": "한국경제", "date": "2026.01.29", "summary": "원자재 가격 안정화 조짐에 따라 그간 낙폭이 컸던 2차전지 관련주들이 일제히 오름세를 보이고 있습니다. 수급 개선이 뚜렷합니다." },
+            { "title": "금리 인하 기대감에 건설·금융주 동반 상승 흐름", "source": "머니투데이", "date": "2026.01.28", "summary": "매크로 지표 호조로 인한 금리 인하 기대감이 시장 전반에 확산되며, 정책 수혜주들의 거래량이 급증하고 있습니다." },
+            { "title": "반도체 장비주, 글로벌 기술주 훈풍에 신고가 경신 속출", "source": "이데일리", "date": "2026.01.28", "summary": "엔비디아 등 글로벌 테크 기업들의 호실적 발표가 국내 소부장 기업들에게도 긍정적인 영향을 미치며 역사적 신고가를 기록 중입니다." }
+        ];
+
+        function injectNews() {
+            const container = document.getElementById('kr-news-container');
+            container.innerHTML = mockNews.map(item => `
+                <div class="p-4 bg-white/5 rounded-xl border border-white/5 hover:border-brand-primary/30 transition group cursor-pointer">
+                    <h4 class="text-xs font-bold text-gray-200 group-hover:text-brand-primary transition mb-2 leading-relaxed">${item.title}</h4>
+                    <p class="text-[10px] text-gray-500 mb-3 leading-normal line-clamp-2">${item.summary}</p>
+                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5 text-[9px]">
+                        <div class="flex items-center gap-2">
+                            <span class="text-brand-primary font-black uppercase tracking-tighter">${item.source}</span>
+                            <span class="w-1 h-1 bg-gray-700 rounded-full"></span>
+                            <span class="text-gray-600 font-mono">${item.date}</span>
+                        </div>
+                        <i class="fas fa-external-link-alt text-[8px] text-gray-600 group-hover:text-brand-primary transition"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(t) { window.dispatchEvent(new Event('resize')); }
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleTimeString('ko-KR') + " KST";
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        function filterMarket(mkt) {
+            ['all', 'kospi', 'kosdaq'].forEach(id => {
+                const btn = document.getElementById(`btn-mkt-${id}`);
+                if (btn) {
+                    if (id.toUpperCase() === mkt) { btn.classList.add('bg-brand-primary', 'text-black'); btn.classList.remove('text-gray-500', 'hover:text-white'); }
+                    else { btn.classList.remove('bg-brand-primary', 'text-black'); btn.classList.add('text-gray-500', 'hover:text-white'); }
+                }
+            });
+            const filtered = mkt === 'ALL' ? mockData : mockData.filter(s => s.sector === mkt);
+            const limit = mkt === 'ALL' ? 20 : 10;
+            injectData(filtered.slice(0, limit));
+        }
+
+        function injectData(data) {
+            const tbody = document.getElementById('smart-money-tbody');
+            tbody.innerHTML = data.map((item) => {
+                const globalIdx = mockData.findIndex(s => s.symbol === item.symbol);
+                return `
+                <tr onclick="loadSymbol(${globalIdx})" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
+                    <td class="px-6 text-gray-600 font-mono text-[10px]">${item.rank}</td>
+                    <td class="px-6"><div class="flex flex-col"><span class="text-white font-bold group-hover:text-brand-primary transition">${item.name}</span><span class="text-[10px] text-gray-500 font-mono">${item.symbol}</span></div></td>
+                    <td class="px-6 text-center text-[10px] text-gray-500 font-bold">${item.sector}</td>
+                    <td class="px-6 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${item.score > 80 ? 'bg-brand-success/20 text-brand-success' : 'bg-brand-primary/20 text-brand-primary'}">${item.score}</span></td>
+                    <td class="px-6 text-right font-mono text-gray-200">₩${item.price}</td>
+                    <td class="px-6 text-right font-mono ${item.change >= 0 ? 'text-brand-success' : 'text-brand-danger'}">${item.change > 0 ? '+' : ''}${item.change}%</td>
+                </tr>
+            `}).join('');
+        }
+
+        function loadSymbol(index) {
+            const data = mockData[index];
+            updateTradingView('D', data.symbol);
+            document.getElementById('main-ticker-name').innerText = data.name;
+            document.getElementById('main-full-name').innerText = data.name + " (" + data.symbol + ")";
+            document.getElementById('current-price-label').innerText = data.price;
+            document.getElementById('ai-insight').innerText = data.insight;
+            document.getElementById('ai-risk').innerText = data.risk;
+            document.getElementById('ai-upside').innerText = `${data.upside} 예상 상승 여력`;
+            document.getElementById('swot-s').innerText = data.swot_s;
+            document.getElementById('swot-w').innerText = data.swot_w;
+            document.getElementById('swot-o').innerText = data.swot_o;
+            document.getElementById('swot-t').innerText = data.swot_t;
+            document.getElementById('dcf-target').innerText = data.dcf_target;
+            document.getElementById('dcf-bear').innerText = data.dcf_bear;
+            document.getElementById('dcf-bull').innerText = data.dcf_bull;
+
+            if (data.dcf_bear && data.dcf_bull) {
+                const bear = parseFloat(data.dcf_bear.replace(/,/g, ''));
+                const bull = parseFloat(data.dcf_bull.replace(/,/g, ''));
+                const current = parseFloat(data.price.replace(/,/g, ''));
+                const pos = ((current - bear) / (bull - bear)) * 100;
+                document.getElementById('price-marker').style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        let currentSymbol = "TVC:KOSPI";
+        function updateTradingView(res = 'D', symbol = null) {
+            if (symbol) currentSymbol = "KRX:" + symbol;
+            const container = document.getElementById('tradingview_main');
+            container.innerHTML = '';
+            new TradingView.widget({
+                "autosize": true, "symbol": currentSymbol, "interval": res, "timezone": "Asia/Seoul",
+                "theme": "dark", "style": "1", "locale": "kr", "enable_publishing": false, "container_id": "tradingview_main"
+            });
+        }
+
+        function changeInterval(int) {
+            const map = { '1D': '60', '1W': 'D', '1M': 'D' };
+            updateTradingView(map[int] || 'D');
+        }
+
+        filterMarket('ALL');
+        loadSymbol(0);
+        injectNews();
+    </script>
+</body>
+
+</html>

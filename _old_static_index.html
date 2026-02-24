@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeCodingLab | AI Market Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Pretendard', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        brand: {
+                            bg: '#08080A', card: '#111114', border: '#1F1F23',
+                            primary: '#00F0FF', secondary: '#7000FF',
+                            success: '#00E676', danger: '#FF1744', warning: '#FFEA00'
+                        }
+                    },
+                    backgroundImage: {
+                        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)',
+                        'accent-gradient': 'linear-gradient(90deg, #00F0FF 0%, #7000FF 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #08080A;
+            color: #E2E2E7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-card {
+            background: rgba(17, 17, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 240, 255, 0.25);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .score-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            border: 1px solid transparent;
+        }
+
+        .score-high {
+            background: rgba(0, 230, 118, 0.1);
+            color: #00E676;
+            border-color: rgba(0, 230, 118, 0.2);
+        }
+
+        .score-mid {
+            background: rgba(255, 234, 0, 0.1);
+            color: #FFEA00;
+            border-color: rgba(255, 234, 0, 0.2);
+        }
+
+        .tab-active {
+            color: #00F0FF;
+            border-bottom: 2px solid #00F0FF;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .tab-inactive {
+            color: #52525B;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Loading Overlay Style */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 8, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #FFF;
+            border-bottom-color: #00F0FF;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            margin-top: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 0.2rem;
+            color: #00F0FF;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen selection:bg-brand-primary/30">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <span class="loader"></span>
+        <div class="loading-text italic font-bold">AI DATA SYNCING...</div>
+        <div class="text-gray-600 text-[10px] mt-4 font-mono">시장 분석 데이터를 동기화하고 있습니다</div>
+    </div>
+
+    <!-- Ticker Tape Widget -->
+    <div class="bg-[#08080A] border-b border-white/5">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                        "symbols": [
+                            { "proName": "FOREXCOM:SPX500", "title": "S&P 500" },
+                            { "proName": "FOREXCOM:NSXUSD", "title": "Nasdaq 100" },
+                            { "proName": "CME_MINI:ES1!", "title": "S&P 500 Futures" },
+                            { "proName": "COMEX:GC1!", "title": "Gold" },
+                            { "proName": "NYMEX:CL1!", "title": "Crude Oil" },
+                            { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" },
+                            { "proName": "BINANCE:ETHUSDT", "title": "Ethereum" }
+                        ],
+                            "showSymbolLogo": true,
+                                "colorTheme": "dark",
+                                    "isTransparent": true,
+                                        "displayMode": "adaptive",
+                                            "locale": "kr"
+                    }
+                </script>
+        </div>
+    </div>
+    <!-- Header -->
+    <nav
+        class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-6 py-3 flex justify-between items-center rounded-2xl border-white/5">
+        <a href="https://land.vibe-coding-lab.com/" class="flex items-center gap-4 hover:opacity-80 transition">
+            <div
+                class="w-10 h-10 overflow-hidden rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/10 border border-white/10 bg-white">
+                <img src="/assets/logo.jpg" class="w-full h-full object-cover">
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white italic">Vibe<span
+                        class="text-brand-primary">CodingLab</span></h1>
+            </div>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-8">
+            <a href="https://land.vibe-coding-lab.com/"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">홈</a>
+            <a onclick="switchTab('market')" id="nav-market"
+                class="tab-active py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition">시장 분석</a>
+            <a onclick="switchTab('calendar')" id="nav-calendar"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">경제
+                일정</a>
+            <a onclick="switchTab('report')" id="nav-report"
+                class="tab-inactive py-1 text-xs font-bold uppercase tracking-widest cursor-pointer transition hover:text-white">데일리
+                리포트</a>
+            <a href="https://us-market-ai-analyst.vercel.app/kr"
+                class="tab-inactive py-1 text-[10px] bg-brand-primary/10 text-brand-primary px-3 rounded-full font-bold uppercase tracking-widest cursor-pointer transition border border-brand-primary/20 hover:bg-brand-primary hover:text-black ml-4">
+                한국 시장 <span class="ml-1 opacity-70">NEW</span>
+            </a>
+            <a href="https://us-market-ai-analyst.vercel.app/dividend"
+                class="tab-inactive py-1 text-[10px] bg-brand-primary/10 text-brand-primary px-3 rounded-full font-bold uppercase tracking-widest cursor-pointer transition border border-brand-primary/20 hover:bg-brand-primary hover:text-black ml-2">
+                배당 포트폴리오 <span class="ml-1 opacity-70">BETA</span>
+            </a>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="flex flex-col items-end gap-1">
+                <span
+                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                    US MARKET v1.5
+                </span>
+                <span id="clock" class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
+                    --:-- EST
+                </span>
+            </div>
+            <button
+                class="bg-brand-primary text-black font-bold px-4 py-1.5 rounded-lg text-[10px] hover:brightness-110 transition flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>
+                실시간 데이터 연결됨</button>
+        </div>
+    </nav>
+
+    <main class="px-4 pb-12">
+        <!-- Dashboard Tab -->
+        <div id="tab-market" class="tab-content transition-all duration-500">
+            <div class="grid grid-cols-12 gap-6">
+                <!-- LEFT CONTENT -->
+                <div class="col-span-12 lg:col-span-8 space-y-6">
+                    <!-- Featured Stock Core -->
+                    <div class="glass-card p-8 min-h-[900px] flex flex-col relative overflow-hidden">
+                        <!-- BG Glow -->
+                        <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-primary/5 rounded-full blur-[100px]">
+                        </div>
+
+                        <div class="flex justify-between items-start mb-8 relative z-10">
+                            <div class="flex items-center gap-5">
+                                <div>
+                                    <h2 class="text-4xl font-bold flex items-center gap-4">
+                                        <span id="main-ticker-name" class="text-glow-primary">NVDA</span>
+                                        <span id="main-full-name"
+                                            class="text-gray-500 text-xl font-medium tracking-tight">NVIDIA
+                                            Corporation</span>
+                                    </h2>
+                                    <div class="flex gap-4 mt-3">
+                                        <span id="ai-score-pill" class="score-pill score-high px-4 py-1">AI 점수: 96 /
+                                            100</span>
+                                        <span id="ai-signal-pill"
+                                            class="score-pill bg-white/5 text-gray-300 border-white/10 px-4 py-1">AI 적극
+                                            매수</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+                                <button onclick="changeInterval('1D')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1D</button>
+                                <button onclick="changeInterval('1W')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1W</button>
+                                <button onclick="changeInterval('1M')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black">1M</button>
+                                <button onclick="changeInterval('1Y')"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5">1Y</button>
+                            </div>
+                        </div>
+
+                        <!-- Main Chart Area -->
+                        <div class="w-full h-[550px] rounded-2xl overflow-hidden mb-10 bg-black/40 border border-white/5 shadow-2xl relative"
+                            id="tradingview_container">
+                            <div id="tradingview_main" style="height:100%;width:100%"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        </div>
+
+                        <!-- Analysis Blocks -->
+                        <div class="space-y-8 relative z-10">
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">시가 총액</p>
+                                    <p id="detail-mkt-cap" class="font-mono font-bold text-lg">--</p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">거래량 비율</p>
+                                    <p id="detail-vol-ratio" class="font-mono font-bold text-lg text-brand-success">--
+                                    </p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">RSI (14)</p>
+                                    <p id="detail-rsi" class="font-mono font-bold text-lg">--</p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">AI Score</p>
+                                    <p id="detail-score" class="font-mono font-bold text-lg text-brand-primary">--</p>
+                                </div>
+                                <div
+                                    class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">신호 강도</p>
+                                    <p id="detail-signal-strength"
+                                        class="font-mono font-bold text-lg text-brand-success">--</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="space-y-6">
+                                    <div
+                                        class="p-6 bg-brand-secondary/10 rounded-2xl border border-brand-secondary/20 relative overflow-hidden">
+                                        <div class="absolute -top-10 -right-10 opacity-5"><i
+                                                class="fas fa-brain text-8xl"></i></div>
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i
+                                                class="fas fa-bolt text-brand-secondary"></i> AI 투자 분석 인사이트</h4>
+                                        <p id="ai-insight" class="text-sm leading-relaxed text-gray-300 italic">데이터 동기화
+                                            중...</p>
+                                    </div>
+                                    <div class="p-6 bg-brand-danger/10 rounded-2xl border border-brand-danger/20">
+                                        <h4 class="text-sm font-bold mb-3 flex items-center gap-2"><i
+                                                class="fas fa-shield-alt text-brand-danger"></i> 핵심 리스크 요인</h4>
+                                        <p id="ai-risk" class="text-sm leading-relaxed text-gray-400">데이터 동기화 중...</p>
+                                        <p id="ai-upside"
+                                            class="mt-4 text-xs font-bold text-brand-success uppercase tracking-widest">
+                                            +0% 예상 상승 여력</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <div class="p-6 bg-gray-900/60 rounded-2xl border border-white/10">
+                                        <h4 class="text-sm font-bold mb-6 flex justify-between items-center">
+                                            <span>적정 주가 분석 (DCF)</span>
+                                            <span class="text-[10px] font-mono text-gray-500 uppercase">AI 적정가 모델</span>
+                                        </h4>
+                                        <div class="h-1.5 w-full bg-gray-800 rounded-full mb-6 relative mt-10">
+                                            <div class="absolute inset-0 flex rounded-full overflow-hidden">
+                                                <div class="h-full bg-brand-success/40 w-1/3 border-r border-black/20">
+                                                </div>
+                                                <div class="h-full bg-brand-primary/40 w-1/3 border-r border-black/20">
+                                                </div>
+                                                <div class="h-full bg-brand-danger/40 w-1/3"></div>
+                                            </div>
+                                            <div id="price-marker"
+                                                class="absolute bottom-1 left-[50%] flex flex-col items-center transition-all duration-700">
+                                                <span id="current-price-label"
+                                                    class="text-[10px] mb-2 font-black text-white bg-black/80 px-2 py-0.5 rounded border border-white/20">$0.00</span>
+                                                <div class="w-1 h-5 bg-white shadow-xl"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between text-[11px] font-mono">
+                                            <div class="text-center">
+                                                <p class="text-gray-500 mb-1">BEAR</p>
+                                                <p id="dcf-bear" class="text-white font-bold">--</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <p class="text-brand-primary mb-1">FAIR VALUE</p>
+                                                <p id="dcf-target" class="text-brand-primary font-black text-sm">--</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <p class="text-gray-500 mb-1">BULL</p>
+                                                <p id="dcf-bull" class="text-white font-bold">--</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div
+                                            class="p-3 bg-brand-success/5 rounded-xl text-center border border-brand-success/20 hover:bg-brand-success/10 transition">
+                                            <p
+                                                class="text-[9px] text-brand-success font-black mb-1 uppercase tracking-widest">
+                                                강점 (S)</p>
+                                            <p id="swot-s" class="text-[11px] font-medium text-gray-200">--</p>
+                                        </div>
+                                        <div
+                                            class="p-3 bg-brand-danger/5 rounded-xl text-center border border-brand-danger/20 hover:bg-brand-danger/10 transition">
+                                            <p
+                                                class="text-[9px] text-brand-danger font-black mb-1 uppercase tracking-widest">
+                                                약점 (W)</p>
+                                            <p id="swot-w" class="text-[11px] font-medium text-gray-200">--</p>
+                                        </div>
+                                        <div
+                                            class="p-3 bg-brand-primary/5 rounded-xl text-center border border-brand-primary/20 hover:bg-brand-primary/10 transition">
+                                            <p
+                                                class="text-[9px] text-brand-primary font-black mb-1 uppercase tracking-widest">
+                                                기회 (O)</p>
+                                            <p id="swot-o" class="text-[11px] font-medium text-gray-200">--</p>
+                                        </div>
+                                        <div
+                                            class="p-3 bg-brand-warning/5 rounded-xl text-center border border-brand-warning/20 hover:bg-brand-warning/10 transition">
+                                            <p
+                                                class="text-[9px] text-brand-warning font-black mb-1 uppercase tracking-widest">
+                                                위협 (T)</p>
+                                            <p id="swot-t" class="text-[11px] font-medium text-gray-200">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Money Table RESTORED -->
+                    <div class="glass-card p-8 overflow-hidden shadow-2xl relative">
+                        <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-fire-alt text-8xl"></i></div>
+                        <div class="flex justify-between items-center mb-8 relative z-10">
+                            <h2 class="text-2xl font-bold flex items-center gap-3">
+                                <i class="fas fa-bolt text-brand-primary"></i>
+                                실시간 스마트 머니 <span class="text-gray-500 font-medium">Top 10 추천주</span>
+                            </h2>
+                            <div class="flex flex-col items-end gap-1">
+                                <span
+                                    class="text-[10px] font-mono text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                    DEEP-ANALYSIS v4.1 (Home Added)
+                                </span>
+                                <span id="data-update-time"
+                                    class="text-[9px] font-mono text-brand-primary/60 px-2 italic">
+                                    데이터 동기화 중...
+                                </span>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto scrollbar-hide relative z-10">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr
+                                        class="text-[10px] text-gray-500 font-black uppercase tracking-widest border-b border-white/10">
+                                        <th class="px-6 py-4">순위</th>
+                                        <th class="px-6 py-4">티커</th>
+                                        <th class="px-6 py-4">섹터</th>
+                                        <th class="px-6 py-4 text-center">AI 점수</th>
+                                        <th class="px-6 py-4">분석 상태</th>
+                                        <th class="px-6 py-4 text-right">현재가</th>
+                                        <th class="px-6 py-4 text-right">등락율</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="smart-money-tbody" class="text-sm font-medium">
+                                    <!-- Dynamic Data -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDEBAR (The missing widgets) -->
+                <div class="col-span-12 lg:col-span-4 space-y-6">
+                    <!-- Market Heatmap (Treemap) -->
+                    <div class="glass-card p-6 h-[500px] overflow-hidden flex flex-col">
+                        <h2
+                            class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4 flex items-center gap-2">
+                            <i class="fas fa-th-large text-brand-success"></i> 실시간 시장 맵 (S&P 500)
+                        </h2>
+                        <div class="flex-1 rounded-xl overflow-hidden">
+                            <div class="tradingview-widget-container h-full">
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
+                                    async>
+                                        {
+                                            "exchanges": [],
+                                                "dataSource": "S&P500",
+                                                    "grouping": "sector",
+                                                        "blockSize": "market_cap",
+                                                            "blockColor": "change",
+                                                                "locale": "kr",
+                                                                    "symbolUrl": "",
+                                                                        "colorTheme": "dark",
+                                                                            "hasTopBar": false,
+                                                                                "isDatasetEnabled": false,
+                                                                                    "isTransparent": true,
+                                                                                        "hasSymbolTooltip": true,
+                                                                                            "width": "100%",
+                                                                                                "height": "100%"
+                                        }
+                                    </script>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Macro Analysis Panel -->
+                    <div class="glass-card p-7 bg-accent-gradient/5 border-brand-primary/10">
+                        <h2 class="text-base font-bold mb-6 flex items-center gap-3">
+                            <i class="fas fa-robot text-brand-primary"></i> AI 거시 경제 전망
+                        </h2>
+                        <div class="space-y-6">
+                            <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase">시장 심리 지수</span>
+                                    <span id="macro-sentiment"
+                                        class="text-xs font-mono text-brand-primary font-bold">GREED (78)</span>
+                                </div>
+                                <p id="macro-summary" class="text-sm font-bold leading-relaxed">시장 흐름을 분석 중입니다...</p>
+                            </div>
+                            <div class="space-y-3">
+                                <p class="text-[10px] font-black text-brand-primary uppercase tracking-widest">핵심 분석 결과
+                                </p>
+                                <ul id="macro-takeaways" class="space-y-2 text-xs text-gray-400">
+                                    <li class="flex items-center gap-3">
+                                        <div class="w-1 h-1 rounded-full bg-brand-primary"></div>데이터 로딩 중...
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="pt-6 border-t border-white/5 space-y-3">
+                                <p id="macro-outlook" class="text-xs text-gray-500 font-medium">전망 로딩 중...</p>
+                                <p id="macro-risk" class="text-xs text-brand-danger/70 font-medium italic">리스크 로딩 중...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mini 경제 일정 -->
+                    <div class="glass-card p-6 h-[400px] flex flex-col">
+                        <h2 class="text-xs font-black uppercase text-gray-500 tracking-wider mb-4">주요 경제 일정</h2>
+                        <div class="flex-1 rounded-xl overflow-hidden relative">
+                            <div class="tradingview-widget-container h-full">
+                                <div class="tradingview-widget-container__widget h-full"></div>
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                                        {
+                                            "colorTheme": "dark",
+                                                "isTransparent": true,
+                                                    "width": "100%",
+                                                        "height": "100%",
+                                                            "locale": "kr",
+                                                                "importanceFilter": "-1,0,1",
+                                                                    "countryFilter": "us"
+                                        }
+                                    </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ETF 실시간 히트맵 (TradingView ETF Heatmap) -->
+                    <div class="glass-card p-6 h-[600px] flex flex-col">
+                        <h2
+                            class="text-xs font-black uppercase text-gray-500 tracking-widest mb-4 flex items-center gap-2">
+                            <i class="fas fa-th-large text-brand-success"></i> ETF 실시간 히트맵
+                        </h2>
+                        <div class="flex-1 rounded-xl overflow-hidden relative">
+                            <div class="tradingview-widget-container h-full">
+                                <div class="tradingview-widget-container__widget h-full"></div>
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-etf-heatmap.js"
+                                    async>
+                                        {
+                                            "dataSource": "AllUSEtf",
+                                                "blockSize": "volume",
+                                                    "blockColor": "change",
+                                                        "grouping": "asset_class",
+                                                            "locale": "kr",
+                                                                "symbolUrl": "",
+                                                                    "colorTheme": "dark",
+                                                                        "hasTopBar": false,
+                                                                            "isDataSetEnabled": false,
+                                                                                "isZoomEnabled": true,
+                                                                                    "hasSymbolTooltip": true,
+                                                                                        "isMonoSize": false,
+                                                                                            "width": "100%",
+                                                                                                "height": "100%"
+                                        }
+                                    </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Tabs -->
+        <div id="tab-calendar" class="tab-content hidden glass-card p-8">
+            <div class="h-[700px] rounded-2xl overflow-hidden border border-white/5">
+                <div class="tradingview-widget-container h-full">
+                    <div class="tradingview-widget-container__widget h-full"></div>
+                    <script type="text/javascript"
+                        src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                            { "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "kr", "importanceFilter": "0,1", "countryFilter": "us" }
+                        </script>
+                </div>
+            </div>
+        </div>
+        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden h-[85vh] relative flex flex-col">
+            <div class="p-4 bg-white/5 border-b border-white/5 flex flex-col gap-1 flex-shrink-0">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
+                    <button
+                        onclick="const frame = document.getElementById('report-iframe'); const url = new URL(frame.src, window.location.href); url.searchParams.set('t', Date.now()); frame.src = url.href;"
+                        class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
+                        <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
+                    </button>
+                </div>
+                <div id="report-debug-info" class="text-[9px] text-gray-600 font-mono"></div>
+            </div>
+            <iframe id="report-iframe" src="" class="w-full flex-1 border-none bg-[#0d1117]" loading="lazy"></iframe>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 py-12 mt-12 bg-black/40">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="flex flex-col items-center gap-4">
+                <div class="text-center">
+                    <p class="text-[10px] text-gray-700 font-mono uppercase tracking-[.5rem] mb-2">Developed by</p>
+                    <h3 class="text-2xl font-black text-white tracking-widest">Vibe<span
+                            class="text-brand-primary">CodingLab</span></h3>
+                </div>
+
+                <div class="max-w-2xl text-center space-y-4 pt-4 border-t border-white/5">
+                    <p class="text-[10px] text-white/80 leading-relaxed">
+                        <span class="text-brand-warning font-bold">[면책조항]</span> 본 시스템에서 제공하는 모든 정보(종목 분석, AI 점수, 적정 주가
+                        등)는 데이터 기반의 참고 사항일 뿐, 최종 투자 판단의 책임은 투자자 본인에게 있습니다. 과거의 성과가 미래의 수익을 보장하지 않으며, 시스템 오류나 데이터 지연이 발생할
+                        수 있으므로 실제 매매 시에는 반드시 공식 금융 채널을 통해 재확인하시기 바랍니다.
+                    </p>
+                    <p class="text-[9px] text-gray-600 font-mono">© 2026 VibeCodingLab. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'market',
+            symbols: { 'SPY': { price: 585.12, change: 0.5 }, 'QQQ': { price: 515.3, change: 1.1 } }
+        };
+
+        const smartMoneyData = [];
+        let initialLoadDone = false;
+
+        function switchTab(tabId) {
+            state.currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            const target = document.getElementById(`tab-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                // Ensure layout triggers for TV widgets
+                window.dispatchEvent(new Event('resize'));
+            }
+
+            document.querySelectorAll('nav a').forEach(a => {
+                a.classList.remove('tab-active');
+                a.classList.add('tab-inactive');
+            });
+            const navId = tabId === 'market' ? 'nav-market' : (tabId === 'calendar' ? 'nav-calendar' : 'nav-report');
+            const activeNav = document.getElementById(navId);
+            if (activeNav) {
+                activeNav.classList.remove('tab-inactive');
+                activeNav.classList.add('tab-active');
+            }
+
+            if (tabId === 'report') {
+                const reportFrame = document.getElementById('report-iframe');
+                if (reportFrame) {
+                    const currentSrc = reportFrame.getAttribute('src');
+                    // Aggressive check: if src is empty, current URL, or null
+                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc === "#") {
+                        if (window.location.protocol === 'file:') {
+                            const path = window.location.pathname;
+                            const isTemplate = path.includes('/templates/');
+                            const reportPath = isTemplate
+                                ? '../us_market/us_market_morning_report.html'
+                                : 'us_market/us_market_morning_report.html';
+
+                            console.warn("Attempting to load report from:", reportPath);
+                            reportFrame.src = reportPath;
+
+                            // Visual debug feedback
+                            const debugEl = document.getElementById('report-debug-info');
+                            if (debugEl) debugEl.innerText = "로드 시도 경로: " + reportPath;
+                        } else {
+                            reportFrame.src = '/daily-report';
+                        }
+                    }
+                }
+            }
+        }
+
+        async function loadSymbol(index) {
+            const data = smartMoneyData[index];
+            if (!data) return;
+
+            // Debug alert removed
+            console.log("DEBUG: Loading symbol", data.ticker, "Exchange:", data.exchange);
+
+            let finalExchange = data.exchange || 'NYSE';
+            // Force NASDAQ for known tickers if data is missing or default
+            const nasdaqTickers = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD', 'STX', 'KLAC', 'BKR'];
+            if (nasdaqTickers.includes(data.ticker)) {
+                finalExchange = 'NASDAQ';
+            }
+
+            const fullSymbol = `${finalExchange}:${data.ticker}`;
+            updateTradingView('D', null, fullSymbol);
+
+            try {
+                const res = await fetch(`/api/us/realtime-prices?tickers=${data.ticker}`);
+                if (res.ok) {
+                    const priceData = await res.json();
+                    if (priceData[data.ticker]) { data.price = priceData[data.ticker].price; }
+                }
+            } catch (e) { }
+
+            document.getElementById('main-ticker-name').innerText = data.ticker;
+            document.getElementById('main-full-name').innerText = data.name;
+            document.getElementById('current-price-label').innerText = `$${data.price}`;
+
+            const fields = {
+                'detail-mkt-cap': data.mkt_cap, 'detail-vol-ratio': data.vol_ratio,
+                'detail-rsi': data.rsi, 'detail-score': data.score,
+                'detail-signal-strength': data.signal_strength, 'ai-insight': data.insight,
+                'ai-risk': data.risk, 'ai-upside': `${data.upside} 상승 여력`,
+                'swot-s': data.swot_s, 'swot-w': data.swot_w, 'swot-o': data.swot_o, 'swot-t': data.swot_t,
+                'dcf-target': data.dcf_target, 'dcf-bear': data.dcf_bear, 'dcf-bull': data.dcf_bull
+            };
+
+            // Debug alert removed
+
+            const logoEl = document.getElementById('main-ticker-logo');
+            if (logoEl) {
+                // Reset to avoid showing previous logo while loading
+                logoEl.src = '';
+
+                const base = "https://s3-symbol-logo.tradingview.com/";
+                const ticker = data.ticker.toLowerCase();
+                const nameSlug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+                // Strategy: Try Ticker -> Try mapped Ticker -> Try Name Slug -> Fallback
+                const logoMap = {
+                    'nvda': 'nvidia', 'tsla': 'tesla', 'aapl': 'apple', 'msft': 'microsoft',
+                    'amzn': 'amazon', 'meta': 'meta-platforms', 'googl': 'alphabet',
+                    'avgo': 'broadcom', 'amd': 'advanced-micro-devices', 'cost': 'costco-wholesale',
+                    'nflx': 'netflix', 'adbe': 'adobe', 'crm': 'salesforce', 'intc': 'intel',
+                    'qcom': 'qualcomm', 'txn': 'texas-instruments', 'pypl': 'paypal',
+                    'nee': 'nextera-energy', 'cvs': 'cvs-health', 'elv': 'elevance-health',
+                    'bkr': 'baker-hughes', 'syy': 'sysco', 'ppg': 'ppg-industries',
+                    'tsn': 'tyson-foods', 'pnr': 'pentair', 'klac': 'kla'
+                };
+
+                const primaryUrl = `${base}${logoMap[ticker] || ticker}--big.svg`;
+                const fallbackUrl = `${base}${nameSlug}--big.svg`;
+                const fallbackUrl2 = `${base}${ticker}.svg`; // Try without --big
+
+                logoEl.onerror = function () {
+                    if (this.src === primaryUrl) {
+                        this.src = fallbackUrl;
+                    } else if (this.src === fallbackUrl) {
+                        this.src = fallbackUrl2;
+                    } else {
+                        // Final fallback: Use a generic placeholder or hide
+                        this.style.display = 'none';
+                        const parent = this.parentElement;
+                        if (parent) {
+                            // potential fallback icon injection if needed
+                        }
+                    }
+                };
+                logoEl.style.display = 'block';
+                logoEl.src = primaryUrl;
+                logoEl.alt = data.name;
+            }
+
+            for (const [id, val] of Object.entries(fields)) {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val || '--';
+            }
+            // Dynamic Upside Calculation
+            const targetPrice = parseFloat(data.dcf_target.toString().replace('$', ''));
+            const currentPrice = parseFloat(data.price);
+            if (!isNaN(targetPrice) && !isNaN(currentPrice) && currentPrice > 0) {
+                const calculatedUpside = ((targetPrice - currentPrice) / currentPrice * 100).toFixed(1);
+                const upsideEl = document.getElementById('ai-upside');
+                if (upsideEl) {
+                    upsideEl.innerText = `${calculatedUpside > 0 ? '+' : ''}${calculatedUpside}% 예상 상승 여력`;
+                    upsideEl.className = `mt-4 text-xs font-bold ${calculatedUpside > 0 ? 'text-brand-success' : 'text-brand-danger'} uppercase tracking-widest`;
+                }
+            } else {
+                document.getElementById('ai-upside').innerText = `${data.upside} 상승 여력`;
+            }
+
+
+            const scorePill = document.getElementById('ai-score-pill');
+            if (scorePill) {
+                scorePill.innerText = `AI 점수: ${data.score} / 100`;
+                scorePill.className = `score-pill ${data.score > 80 ? 'score-high' : 'score-mid'}`;
+            }
+
+            const signalPill = document.getElementById('ai-signal-pill');
+            if (signalPill) {
+                signalPill.innerText = `AI ${data.signal}`;
+            }
+
+            if (data.dcf_bear && data.dcf_bull) {
+                const bear = parseFloat(data.dcf_bear.toString().replace('$', ''));
+                const bull = parseFloat(data.dcf_bull.toString().replace('$', ''));
+                if (!isNaN(bear) && !isNaN(bull)) {
+                    const pos = ((data.price - bear) / (bull - bear)) * 100;
+                    const marker = document.getElementById('price-marker');
+                    if (marker) marker.style.left = `${Math.min(Math.max(pos, 5), 95)}%`;
+                }
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function injectSmartMoney() {
+            const tbody = document.getElementById('smart-money-tbody');
+            if (!tbody) return;
+            if (smartMoneyData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-20 text-center text-gray-600 font-mono italic">데이터를 불러오는 중입니다...</td></tr>';
+                return;
+            }
+            tbody.innerHTML = smartMoneyData.map((item, index) => `
+                <tr onclick="loadSymbol(${index})" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
+                    <td class="px-6 text-gray-600 font-mono text-[10px]">${item.rank}</td>
+                    <td class="px-6"><span class="text-white font-bold group-hover:text-brand-primary transition">${item.ticker}</span></td>
+                    <td class="px-6 text-gray-500 text-xs">${item.sector}</td>
+                    <td class="px-6 text-center"><span class="score-pill ${item.score > 80 ? 'score-high' : 'score-mid'}">${item.score}</span></td>
+                    <td class="px-6 font-bold ${item.signal.includes('적극') ? 'text-brand-success' : 'text-brand-primary'} text-xs uppercase italic">${item.signal}</td>
+                    <td class="px-6 text-right font-mono text-gray-200">$${item.price}</td>
+                    <td class="px-6 text-right font-mono ${item.change >= 0 ? 'text-brand-success' : 'text-brand-danger'}">${item.change > 0 ? '+' : ''}${item.change}%</td>
+                </tr>
+            `).join('');
+        }
+
+        let currentTicker = "NASDAQ:NVDA";
+        function updateTradingView(res = 'D', ticker = null, fullSymbol = null) {
+            console.log("DEBUG: updateTradingView called with symbol:", fullSymbol, "ticker:", ticker);
+            if (fullSymbol) {
+                currentTicker = fullSymbol;
+            } else if (ticker) {
+                const nasdaq = ['NVDA', 'TSLA', 'AAPL', 'MSFT', 'AVGO', 'META', 'AMZN', 'GOOGL', 'AMD', 'STX', 'KLAC', 'BKR'].includes(ticker);
+                currentTicker = (nasdaq ? 'NASDAQ:' : 'NYSE:') + ticker;
+            }
+            const container = document.getElementById('tradingview_main');
+            if (!container) return;
+            container.innerHTML = '';
+            new TradingView.widget({
+                "autosize": true, "symbol": currentTicker, "interval": res, "timezone": "Etc/UTC",
+                "theme": "dark", "style": "1", "locale": "kr", "toolbar_bg": "#111114",
+                "enable_publishing": false, "container_id": "tradingview_main"
+            });
+        }
+
+        function changeInterval(int) {
+            const map = { '1D': '60', '1W': 'D', '1M': 'D', '1Y': '12M' };
+            updateTradingView(map[int] || 'D');
+            document.querySelectorAll('.glass-card button').forEach(btn => {
+                if (['1D', '1W', '1M', '1Y'].includes(btn.innerText)) {
+                    if (btn.innerText === int) {
+                        btn.className = "px-3 py-1.5 text-[10px] font-bold rounded-lg bg-brand-primary text-black";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-[10px] font-bold rounded-lg hover:bg-white/5";
+                    }
+                }
+            });
+        }
+
+        async function fetchData() {
+            console.log("🔍 Fetching Smart Money data...");
+            try {
+                const res = await fetch(`/api/us/smart-money?t=${Date.now()}`);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const data = await res.json();
+                console.log("DEBUG: Raw data from API:", data);
+                if (data && data.length > 0) {
+                    smartMoneyData.length = 0;
+                    data.forEach((item, i) => {
+                        const price = parseFloat(item.price || item.current_price) || 0;
+                        const score = parseFloat(item.composite_score || item.score) || 0;
+                        smartMoneyData.push({
+                            ...item, rank: (i + 1).toString().padStart(2, '0'),
+                            ticker: item.ticker || 'N/A', name: item.name || item.ticker,
+                            sector: item.sector || '기타', exchange: item.exchange || 'NYSE',
+                            score: score,
+                            signal: item.grade ? item.grade.split(' ')[1] : (score > 80 ? '적극 매수' : '매수'),
+                            price: price, change: parseFloat(item.change) || 0,
+                            insight: item.insight || '분석 완료.',
+                            risk: item.risk || '특이사항 없습니다.',
+                            upside: item.upside || '+0%',
+                            mkt_cap: item.mkt_cap || 'N/A',
+                            vol_ratio: item.vol_ratio || '1.0x',
+                            rsi: item.rsi || '50.0',
+                            signal_strength: item.signal_strength || (score > 80 ? '강력' : '보통'),
+                            swot_s: item.swot_s || '-',
+                            swot_w: item.swot_w || '-',
+                            swot_o: item.swot_o || '-',
+                            swot_t: item.swot_t || '-',
+                            dcf_target: item.dcf_target || `$${(price * 1.1).toFixed(2)}`,
+                            dcf_bear: item.dcf_bear || `$${(price * 0.9).toFixed(2)}`,
+                            dcf_bull: item.dcf_bull || `$${(price * 1.3).toFixed(2)}`
+                        });
+                    });
+
+                    // Update timestamp
+                    const now = new Date();
+                    const timestamp = `${now.getMonth() + 1}/${now.getDate()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    const timeEl = document.getElementById('data-update-time');
+                    if (timeEl) timeEl.innerText = `Last Updated: ${timestamp}`;
+                }
+            } catch (e) { applyFallback(); }
+            finally {
+                injectSmartMoney();
+                if (!initialLoadDone && smartMoneyData.length > 0) { loadSymbol(0); initialLoadDone = true; }
+            }
+        }
+
+        function applyFallback() {
+            const fallback = [{ ticker: "NVDA", rank: "01", name: "NVIDIA", sector: "Tech", score: 96, signal: "적극 매수", price: 143.0, change: 8.5 }];
+            smartMoneyData.length = 0;
+            fallback.forEach(f => smartMoneyData.push({ ...f, insight: "시장 데이터 동기화 모드입니다.", risk: "정상 범위입니다.", upside: "+15%" }));
+            injectSmartMoney();
+        }
+
+        let etfData = [];
+        let etfType = 'inflow';
+        async function fetchETFs() {
+            try {
+                const res = await fetch(`/api/us/etf-flows?t=${Date.now()}`);
+                if (res.ok) etfData = await res.json();
+            } catch (e) { }
+            finally { renderETFs(); }
+        }
+
+        function setETFFlowType(type) {
+            etfType = type;
+            const inBtn = document.getElementById('etf-btn-inflow');
+            const outBtn = document.getElementById('etf-btn-outflow');
+            if (type === 'inflow') {
+                inBtn.className = "px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter";
+                outBtn.className = "px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter";
+            } else {
+                outBtn.className = "px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-tighter";
+                inBtn.className = "px-3 py-1 text-gray-500 rounded-md text-[9px] font-black uppercase tracking-tighter";
+            }
+            renderETFs();
+        }
+
+        function renderETFs() {
+            const cont = document.getElementById('etf-flow-container');
+            if (!cont) return;
+            const filtered = etfData.filter(d => etfType === 'inflow' ? parseFloat(d.flow_score) >= 55 : parseFloat(d.flow_score) < 55)
+                .sort((a, b) => etfType === 'inflow' ? b.flow_score - a.flow_score : a.flow_score - b.flow_score);
+
+            if (filtered.length === 0) { cont.innerHTML = '<p class="text-[10px] text-center text-gray-700 py-6 font-mono">동기화된 데이터 없음</p>'; return; }
+            cont.innerHTML = filtered.slice(0, 10).map(item => `
+                <div class="flex items-center justify-between p-3 hover:bg-white/[0.03] rounded-xl transition border-b border-white/[0.02]">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                             <span class="text-xs font-bold text-white">${item.ticker}</span>
+                             <span class="text-[8px] text-gray-600 font-black uppercase">${item.category || ''}</span>
+                        </div>
+                        <div class="flex gap-3 mt-1 text-[10px] font-bold font-mono">
+                             <span class="${item.flow_score >= 55 ? 'text-brand-success' : 'text-brand-danger'}">${item.flow_score >= 55 ? 'IN' : 'OUT'} ${item.flow_score}</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                         <span class="text-xs ${item.price_change_20d >= 0 ? 'text-brand-success' : 'text-brand-danger'} font-black">${item.price_change_20d >= 0 ? '+' : ''}${item.price_change_20d}%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function fetchAI() {
+            try {
+                const res = await fetch(`/api/us/macro-analysis?t=${Date.now()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('macro-sentiment').innerText = `${data.market_mood} (${data.mood_score})`;
+                    document.getElementById('macro-summary').innerText = `현재 시장 심리는 ${data.market_mood}  단계입니다.`;
+                    document.getElementById('macro-takeaways').innerHTML = (data.key_takeaways || []).map(t => `<li class="flex items-center gap-3"><div class="w-1 h-1 rounded-full bg-brand-primary"></div>${t}</li>`).join('');
+                    document.getElementById('macro-outlook').innerText = `전망: ${data.sector_outlook}`;
+                    document.getElementById('macro-risk').innerText = `리스크: ${data.risk_factors}`;
+                }
+            } catch (e) { }
+        }
+
+        function updateClock() {
+            const options = {
+                timeZone: 'America/New_York',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+            const timeString = new Intl.DateTimeFormat('en-US', options).format(new Date());
+            const clockEl = document.getElementById('clock');
+            if (clockEl) clockEl.textContent = timeString + " EST";
+        }
+        setInterval(updateClock, 60000);
+        updateClock();
+
+        async function fetchCal() {
+            // Replaced with dynamic TradingView sidebar widget for better reliability
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log("🚀 Initializing Dashboard...");
+            // Run all fetches
+            await Promise.allSettled([
+                fetchData(),
+                fetchAI(),
+                fetchETFs()
+            ]);
+
+            // Hide overlay with a small delay for smoothness
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    overlay.style.visibility = 'hidden';
+                    setTimeout(() => overlay.remove(), 600);
+                }
+            }, 500);
+
+            // Safety fallback: if overlay is still there after 5 seconds, force remove
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) overlay.remove();
+            }, 5000);
+
+            setInterval(fetchData, 5 * 60 * 1000);
+            updateClock();
+            console.log("🚀 Terminal Redline v4.1 Online");
+        });
+    </script>
+</body>
+
+</html>
