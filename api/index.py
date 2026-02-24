@@ -619,7 +619,7 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
     try:
         # Use direct REST API to avoid heavy SDK dependencies (>250MB limit)
         # Use latest stable model endpoint
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={AI_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {"response_mime_type": "application/json"}

@@ -23,7 +23,7 @@ class XMarketAgent:
         # Google Gemini setup
         self.gemini_key = os.getenv("GOOGLE_API_KEY")
         genai.configure(api_key=self.gemini_key)
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.model = genai.GenerativeModel('gemini-2.0-flash')
         
         # Twitter Client (v2)
         try:
