@@ -657,8 +657,12 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
         print(f"DEBUG: Gemini AI Analysis Error (Parsing or request): {e}")
         return results
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    # 만약 루트로 POST 요청(ACP 등)이 들어오면 핸들러로 전달
+    if request.method == 'POST':
+        return virtuals_acp_handler()
+        
     resp = make_response(render_template('index.html'))
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
     resp.headers['Pragma'] = 'no-cache'
@@ -1438,66 +1442,83 @@ def generate_portfolio():
         print(f"AI Generation Error: {e}")
         return jsonify({"error": "AI Error", "message": f"분석 중 오류 발생: {str(e)}"}), 500
 # --- Virtuals Protocol ACP Endpoint ---
+# --- Virtuals Protocol ACP Endpoint ---
 @app.route('/api/acp', methods=['GET', 'POST'])
 def virtuals_acp_handler():
+    # Vercel 로그에서 즉시 식별 가능하도록 강조 표시
+    print("\n" + "="*50)
+    print("!!! ACP ATTEMPT DETECTED !!!")
+    print(f"Method: {request.method}")
+    print(f"Path: {request.path}")
+    print("="*50 + "\n")
+
     if request.method == 'GET':
-        return jsonify({"status": "online", "agent": "Omni Alpha ($OMNI)"})
+        return jsonify({
+            "status": "online", 
+            "agent": "Omni Alpha ($OMNI)",
+            "capabilities": ["market_analysis", "chat"]
+        })
 
     try:
-        data = request.json or {}
-        job_id = data.get('id', 'unknown_id')
-        # Ensure method is handled case-insensitively
-        method = str(data.get('method', 'ping')).lower()
+        # JSON 파싱 실패 대비
+        try:
+            data = request.get_json(force=True, silent=True) or {}
+        except:
+            data = {}
+            
+        print(f"DEBUG ACP Payload: {json.dumps(data)}")
+        
+        job_id = data.get('id', 'no-id')
+        method = str(data.get('method', '')).lower()
         params = data.get('params', {})
         
-        print(f"ACP Job Received: {job_id}, Method: {method}")
+        api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
 
-        if method == 'full_market_analysis_report' or method == 'full':
-            ticker = params.get('ticker', 'BTC-USD').upper()
+        # 분석 및 채팅 관련 다양한 메소드명 대응 (BTC 요청 포함)
+        analysis_keywords = ['analysis', 'report', 'chat', 'message', 'generate', 'ask', 'btc']
+        is_analysis_req = any(kw in method for kw in analysis_keywords) or not method
+        
+        text_response = ""
+        if is_analysis_req:
+            ticker = params.get('ticker', params.get('symbol', params.get('query', 'BTC-USD'))).upper()
+            if ticker == 'BTC': ticker = 'BTC-USD'
+            
+            # 컨텍스트 기반 AI 분석 생성
+            macro_context = ""
             try:
-                prompt = f"Provide a brief market analysis for {ticker}."
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
-                resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=8)
-                
-                if resp.status_code == 200:
-                    result_json = resp.json()
-                    text = result_json['candidates'][0]['content']['parts'][0]['text']
-                    # EXACT Correct format from Guide: No 'result' wrapper
-                    return jsonify({
-                        "id": job_id,
-                        "type": "object",
-                        "value": {
-                            "job_id": job_id,
-                            "analysis_report": text
-                        }
-                    })
-                else:
-                    print(f"Gemini API Error: {resp.status_code}")
-            except Exception as api_err:
-                print(f"Gemini Call failed: {api_err}")
-                
-        # Robust Fallback using exact Top-level type-value format
-        return jsonify({
-            "id": job_id,
-            "type": "object",
-            "value": {
-                "job_id": job_id,
-                "status": "success", 
-                "message": f"Omni Alpha processed {method} for {params.get('ticker', 'default')}",
-                "timestamp": str(datetime.now())
+                macro_data = load_json('us_macro_analysis.json')
+                if macro_data:
+                    macro_context = f"\n[Market Context] Mood: {macro_data.get('market_mood', 'N/A')}"
+            except: pass
+            
+            prompt = f"Analyze {ticker} in a sassy, high-conviction style. {macro_context}"
+            
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+            payload = {"contents": [{"parts": [{"text": prompt}]}]}
+            
+            resp = requests.post(url, json=payload, timeout=12)
+            if resp.status_code == 200:
+                text_response = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
+            else:
+                text_response = f"Matrix error: {resp.status_code}. But $OMNI is still watching."
+
+            # Virtuals Protocol 호환 응답
+            result = {
+                "id": job_id, 
+                "result": {
+                    "status": "success",
+                    "analysis_report": text_response,
+                    "response": text_response,
+                    "message": text_response
+                }
             }
-        })
+            print(f"DEBUG ACP Success Response ID: {job_id}")
+            return jsonify(result)
+        
+        return jsonify({"error": f"Method {method} not supported"}), 404
     except Exception as e:
-        # Final safety net with exact Top-level type-value format
-        return jsonify({
-            "id": job_id,
-            "type": "object",
-            "value": {
-                "job_id": job_id,
-                "status": "partial_success", 
-                "error": str(e)
-            }
-        }), 200
+        print(f"ACP Critical Error: {str(e)}")
+        return jsonify({"error": "Agent Error", "details": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

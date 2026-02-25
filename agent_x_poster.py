@@ -158,6 +158,31 @@ class XMarketAgent:
                  print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
         return False
 
+    def post_custom_tweet(self, text):
+        """Posts custom text directly to X"""
+        if not text: return False
+        try:
+            if len(text) > 280:
+                text = text[:277] + "..."
+            
+            # Log for safety
+            log_dir = "logs"
+            if not os.path.exists(log_dir): os.makedirs(log_dir)
+            log_path = os.path.join(log_dir, "tweet_history.log")
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write(f"[{datetime.now()}] CUSTOM_CONTENT: {text}\n")
+
+            if self.client:
+                response = self.client.create_tweet(text=text)
+                print(f"[{datetime.now()}] CUSTOM BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
+                return True
+            else:
+                print(f"[{datetime.now()}] Simulation Mode: {text}")
+                return True
+        except Exception as e:
+            print(f"[{datetime.now()}] Custom Dispatch FAILED: {e}", flush=True)
+            return False
+
 if __name__ == "__main__":
     agent = XMarketAgent()
     agent.post_tweet()
