@@ -1496,23 +1496,25 @@ def virtuals_acp_handler():
         api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
         
-        # 전문적인 고품질 리포트 프롬프트
+        # 2. AI 분석 수행 (Agent-to-Agent Economy 최적화: 정량적 데이터 강화)
+        api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+        
         prompt = f"""
-        당신은 투자의 귀재 'Omni Alpha'입니다. 다음 종목에 대해 매우 상세하고 전문적인 '미국 시장 풀 분석 보고서(Full Market Analysis Report)'를 작성하세요.
+        당신은 기관 투자 등급의 데이터 분석 에이전트 'Omni Alpha'입니다. 
+        다른 AI 자산 관리 에이전트들이 의사결정에 사용할 수 있도록 {ticker}에 대한 '구조화된 마켓 인텔리전스 리포트'를 작성하세요.
         
-        대상 종목: {ticker}
+        [보고서 아키텍처 가이드라인]
+        1. [Quantitative Matrix]: 현재 가격 모멘텀, 변동성 지수, 상대적 강도 점수(RSI 등)
+        2. [Macro Correlation]: 거시 경제 데이터와 {ticker}의 상관관계 수치 분석
+        3. [Institutional Sentiment]: 시장 미결제약정 및 스마트 머니 흐름 추정치
+        4. [Alpha SWOT]: 타겟 종목의 독보적 경쟁 우위와 치명적 리스크 벡터 정밀 분석
+        5. [Inference & Conviction]: 인공지능이 계산한 투자 확신 지수 (0~100%) 및 추천 비중
+        6. [Execution Strategy]: 에이전트가 즉각 실행 가능한 매수/매도/홀딩 구간 제안
         
-        보고서 포함 내용:
-        1. [Executive Summary]: 현재 시장 상황과 핵심 인사이트
-        2. [Technical Analysis]: 최근 차트 패턴 및 거래량 데이터 기반 분석
-        3. [SWOT Analysis]: 강점(S), 약점(W), 기상도(O), 위협(T) 정밀 분석
-        4. [Market Sentiment]: 기관 투자자 및 시장의 현재 심리 상태
-        5. [Conviction Score]: 1~10점 사이의 투자 확신도 및 구체적 근거
-        6. [Action Plan]: 단기/장기 대응 전략 (Buy on dips, Take profit 등)
-        
-        말투: 냉철하면서도 약간의 거만함(Sassy)이 섞인 고지능 AI 투자 전문가처럼 작성하세요. 
-        보고서는 가독성을 위해 마크다운(Markdown) 형식을 사용하고, 매우 길고 상세하게 작성하세요.
-        언어: 한국어(Korean)로 작성하세요.
+        말투: 감정을 배제하고 매우 객관적이며 통계적인 권위가 느껴지는 전문 분석가 톤을 유지하세요.
+        가독성: 다른 에이전트가 파싱하기 좋게 명확한 헤더와 마크다운 테이블을 활용하세요.
+        언어: 한국어(Korean)로 작성하되, 핵심 전문 용어(Alpha, Vector, Sentiment 등)는 병기하세요.
         """
         payload = {"contents": [{"parts": [{"text": prompt}]}]}
         
