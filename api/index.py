@@ -1496,25 +1496,49 @@ def virtuals_acp_handler():
         api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
         
-        # 2. AI 분석 수행 (Agent-to-Agent Economy 최적화: 정량적 데이터 강화)
+        # 2. 실시간 데이터 가져오기 (데이터 정확성 확보)
+        realtime_data_context = ""
+        try:
+            # 야후 파이낸스 호출 (429 차단 시 대비)
+            price_url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1m&range=1d"
+            price_resp = requests.get(price_url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}, timeout=5)
+            
+            if price_resp.status_code == 200:
+                p_data = price_resp.json()['chart']['result'][0]['meta']
+                curr_price = p_data.get('regularMarketPrice')
+                prev_close = p_data.get('previousClose')
+                change_pct = ((curr_price - prev_close) / prev_close * 100) if prev_close else 0
+                realtime_data_context = f"\n[Real-time Source: Yahoo Finance] Current Price: ${curr_price:,.2f} ({change_pct:+.2f}%)"
+            elif price_resp.status_code == 429:
+                print(f"!!! Yahoo Finance Rate Limited (429) for {ticker} !!!")
+                realtime_data_context = "\n[Notice] Real-time data source is temporarily capped. Please use your internal knowledge for very recent estimates."
+            else:
+                realtime_data_context = f"\n[Notice] External data feed returned status {price_resp.status_code}. Using general market trends."
+        except Exception as data_err:
+            print(f"Data Fetch Error: {str(data_err)}")
+            realtime_data_context = "\n[Notice] Real-time feed unavailable. Reverting to AI-centric analysis."
+
+        # 3. AI 분석 수행 (데이터 가용성에 따른 유연한 대응)
         api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
         
         prompt = f"""
         당신은 기관 투자 등급의 데이터 분석 에이전트 'Omni Alpha'입니다. 
-        다른 AI 자산 관리 에이전트들이 의사결정에 사용할 수 있도록 {ticker}에 대한 '구조화된 마켓 인텔리전스 리포트'를 작성하세요.
+         {ticker}에 대한 '구조화된 마켓 인텔리전스 리포트'를 작성하세요.
         
-        [보고서 아키텍처 가이드라인]
-        1. [Quantitative Matrix]: 현재 가격 모멘텀, 변동성 지수, 상대적 강도 점수(RSI 등)
-        2. [Macro Correlation]: 거시 경제 데이터와 {ticker}의 상관관계 수치 분석
-        3. [Institutional Sentiment]: 시장 미결제약정 및 스마트 머니 흐름 추정치
-        4. [Alpha SWOT]: 타겟 종목의 독보적 경쟁 우위와 치명적 리스크 벡터 정밀 분석
-        5. [Inference & Conviction]: 인공지능이 계산한 투자 확신 지수 (0~100%) 및 추천 비중
-        6. [Execution Strategy]: 에이전트가 즉각 실행 가능한 매수/매도/홀딩 구간 제안
+        [참고 데이터]: {realtime_data_context}
         
-        말투: 감정을 배제하고 매우 객관적이며 통계적인 권위가 느껴지는 전문 분석가 톤을 유지하세요.
-        가독성: 다른 에이전트가 파싱하기 좋게 명확한 헤더와 마크다운 테이블을 활용하세요.
-        언어: 한국어(Korean)로 작성하되, 핵심 전문 용어(Alpha, Vector, Sentiment 등)는 병기하세요.
+        주의사항:
+        - 만약 데이터 소스에 가격이 명시되어 있다면 그 수치를 절대적으로 신뢰하세요.
+        - 만약 데이터 소스가 일시 중단된(Capped) 상태라면, 당신이 알고 있는 최근 24시간 내의 시장 흐름을 바탕으로 분석하되 '추정치'임을 밝히세요.
+        
+        [보고서 아키텍처]
+        1. [Quantitative Matrix]: 현재가 기준의 모멘텀 및 기술적 지표 분석
+        2. [Alpha SWOT]: {ticker}의 독보적 강점과 현재 시점의 핵심 리스크
+        3. [Inference & Conviction]: 투자 확신 지수 (0~100%) 및 추천 사이클
+        4. [Execution Strategy]: 전략적 매수/매도 구간 제안
+        
+        말투: 전문적, 분석적. (한국어로 작성)
         """
         payload = {"contents": [{"parts": [{"text": prompt}]}]}
         
