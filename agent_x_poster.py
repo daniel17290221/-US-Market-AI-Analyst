@@ -4,9 +4,10 @@ import time
 import random
 import tweepy
 import google.generativeai as genai
-# import yfinance as yf # Removed for Vercel
+# import yfinance as yf (Removed for stability)
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -22,23 +23,50 @@ class XMarketAgent:
         
         # Google Gemini setup
         self.gemini_key = os.getenv("GOOGLE_API_KEY")
-        genai.configure(api_key=self.gemini_key)
-        self.model = genai.GenerativeModel('gemini-2.0-flash')
+        if self.gemini_key:
+            genai.configure(api_key=self.gemini_key)
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
+        else:
+            self.model = None
         
         # Twitter Client (v2)
         try:
-            self.client = tweepy.Client(
-                consumer_key=self.api_key,
-                consumer_secret=self.api_secret,
-                access_token=self.access_token,
-                access_token_secret=self.access_secret
-            )
-            print(f"[{datetime.now()}] Successfully initialized X Client (v2)", flush=True)
+            if self.api_key:
+                self.client = tweepy.Client(
+                    consumer_key=self.api_key,
+                    consumer_secret=self.api_secret,
+                    access_token=self.access_token,
+                    access_token_secret=self.access_secret
+                )
+                print(f"[{datetime.now()}] Successfully initialized X Client (v2)", flush=True)
+            else:
+                self.client = None
+                print(f"[{datetime.now()}] X API Credentials missing. Running in Simulation mode.", flush=True)
         except Exception as e:
             print(f"[{datetime.now()}] Error initializing X Client: {e}", flush=True)
 
+    def _fetch_yahoo_data(self, symbol):
+        """Helper to fetch price data from Yahoo API without yfinance"""
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d"
+        try:
+            resp = requests.get(url, headers=headers, timeout=5)
+            if resp.status_code == 200:
+                data = resp.json()
+                result = data.get('chart', {}).get('result')
+                if result:
+                    meta = result[0].get('meta', {})
+                    price = meta.get('regularMarketPrice')
+                    prev_close = meta.get('chartPreviousClose', meta.get('previousClose'))
+                    if price is not None and prev_close is not None:
+                        change_pct = ((price - prev_close) / prev_close) * 100 if prev_close != 0 else 0.0
+                        return price, change_pct
+            return None, None
+        except Exception:
+            return None, None
+
     def fetch_realtime_market_data(self):
-        """Fetches real-time macro data using yfinance"""
+        """Fetches real-time macro data using REST API"""
         print(f"[{datetime.now()}] Fetching real-time market metrics from the Matrix...", flush=True)
         tickers = {
             "US 10Y Yield": "^TNX",
@@ -51,21 +79,15 @@ class XMarketAgent:
         
         market_stats = {}
         for name, ticker in tickers.items():
-            try:
-                data = yf.Ticker(ticker)
-                hist = data.history(period="5d") # Increased period to ensure data
-                if len(hist) >= 2:
-                    current_price = hist['Close'].iloc[-1]
-                    prev_price = hist['Close'].iloc[-2]
-                    change = ((current_price - prev_price) / prev_price) * 100
-                    market_stats[name] = {
-                        "price": round(float(current_price), 2),
-                        "change_pct": round(float(change), 2)
-                    }
-                else:
-                    print(f" - Insufficient data for {name}")
-            except Exception as e:
-                print(f" - Failed to fetch {name}: {e}")
+            price, change = self._fetch_yahoo_data(ticker)
+            if price is not None:
+                market_stats[name] = {
+                    "price": round(float(price), 2),
+                    "change_pct": round(float(change), 2)
+                }
+            else:
+                print(f" - Failed to fetch {name}")
+                market_stats[name] = {"price": "N/A", "change_pct": 0.0}
         
         return market_stats
 
@@ -129,9 +151,8 @@ class XMarketAgent:
                     f.write(f"[{datetime.now()}] CONTENT: {tweet_text}\n")
 
                 print(f"[{datetime.now()}] Content logged to {log_path}", flush=True)
-                # response = self.client.create_tweet(text=tweet_text) # Commented out until API limit reset
-                # print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
-                print(f"[{datetime.now()}] [DRY RUN] Would have posted: {tweet_text}", flush=True)
+                response = self.client.create_tweet(text=tweet_text)
+                print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
                 return True
             except Exception as e:
                  print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
