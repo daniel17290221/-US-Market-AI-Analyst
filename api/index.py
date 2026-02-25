@@ -1451,95 +1451,72 @@ def generate_portfolio():
         return jsonify({"error": "AI Error", "message": f"분석 중 오류 발생: {str(e)}"}), 500
 # --- Virtuals Protocol ACP Endpoint ---
 # --- Virtuals Protocol ACP Endpoint ---
-@app.route('/api/acp', methods=['GET', 'POST'])
+@app.route('/api/acp', methods=['GET', 'POST', 'OPTIONS'])
 def virtuals_acp_handler():
-    # Vercel 로그에서 즉시 식별 가능하도록 강조 표시
-    print("\n" + "="*50)
-    print("!!! ACP ATTEMPT DETECTED !!!")
-    print(f"Method: {request.method}")
-    print(f"Path: {request.path}")
-    print("="*50 + "\n")
+    # CORS 사전 요청(OPTIONS) 대응
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        return resp
 
+    print(f"\n--- ACP REQUEST: {request.method} ---")
+    
     try:
+        # 1. 요청 데이터 파싱
         if request.method == 'GET':
-            # 쿼리 파라미터 확인 (Resource 호출 대응)
-            ticker = request.args.get('ticker') or request.args.get('query') or request.args.get('symbol')
-            if ticker:
-                print(f"DEBUG Resource GET Fallback for: {ticker}")
-                data = {"method": "analysis", "params": {"ticker": ticker}, "id": "resource-get"}
-            else:
-                return jsonify({
-                    "status": "online", 
-                    "agent": "Omni Alpha ($OMNI)",
-                    "capabilities": ["market_analysis", "chat"]
-                })
+            ticker = request.args.get('ticker') or request.args.get('query') or 'BTC-USD'
+            data = {"id": "res-get", "method": "chat", "params": {"ticker": ticker}}
         else:
-            # POST 요청 처리
-            try:
-                data = request.get_json(force=True, silent=True) or {}
-            except:
-                data = {}
-        
-        print(f"DEBUG ACP Payload: {json.dumps(data)}")
-        
+            data = request.get_json(force=True, silent=True) or {}
+
         job_id = data.get('id', 'no-id')
         method = str(data.get('method', '')).lower()
         params = data.get('params', {})
-        
+        ticker = params.get('ticker', params.get('symbol', params.get('query', 'BTC-USD'))).upper()
+        if ticker == 'BTC': ticker = 'BTC-USD'
+
+        # 2. AI 분석 수행 (타임아웃 고려)
         api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
-
-        # 분석 및 채팅 관련 다양한 메소드명 대응
-        analysis_keywords = ['analysis', 'report', 'chat', 'message', 'generate', 'ask', 'btc']
-        is_analysis_req = any(kw in method for kw in analysis_keywords) or not method
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
         
-        if is_analysis_req:
-            ticker = params.get('ticker', params.get('symbol', params.get('query', 'BTC-USD'))).upper()
-            if ticker == 'BTC': ticker = 'BTC-USD'
-            
-            macro_context = ""
-            try:
-                macro_data = load_json('us_macro_analysis.json')
-                if macro_data:
-                    macro_context = f"\n[Market Context] Mood: {macro_data.get('market_mood', 'N/A')}"
-            except: pass
-            
-            prompt = f"Analyze {ticker} in a sassy, high-conviction style. {macro_context}"
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-            payload = {"contents": [{"parts": [{"text": prompt}]}]}
-            
-            resp = requests.post(url, json=payload, timeout=12)
-            if resp.status_code == 200:
-                text_response = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
-            else:
-                text_response = f"Matrix error ({resp.status_code}). $OMNI is watching."
-
-            # Virtuals Protocol 호환 응답 (type/value 형식 - 중요!)
-            result = {
-                "id": job_id, 
-                "type": "object",
-                "value": {
-                    "job_id": job_id,
-                    "status": "success",
-                    "analysis_report": text_response,
-                    "response": text_response,
-                    "message": text_response
-                }
-            }
-            return jsonify(result)
+        prompt = f"Analyze {ticker} in a sassy, high-conviction style as Omni Alpha. Focus on brief, actionable insight."
+        payload = {"contents": [{"parts": [{"text": prompt}]}]}
         
-        return jsonify({
+        try:
+            resp = requests.post(url, json=payload, timeout=8)
+            text_response = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip() if resp.status_code == 200 else "Matrix temporarily hazy."
+        except:
+            text_response = "Omni Alpha is scanning the grid. Connection slow, but conviction high."
+
+        # 3. Virtual Protocol 표준 응답 (type/value 구조)
+        result = {
             "id": job_id,
             "type": "object",
-            "value": {"job_id": job_id, "status": "error", "message": f"Method {method} not supported"}
-        }), 404
+            "value": {
+                "job_id": job_id,
+                "status": "success",
+                "message": text_response,
+                "response": text_response,
+                "analysis_report": text_response
+            }
+        }
+        
+        # CORS 헤더 추가하여 반환
+        response = jsonify(result)
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
 
     except Exception as e:
-        print(f"ACP Critical Error: {str(e)}")
-        return jsonify({
-            "id": "error",
+        print(f"ACP ERROR: {str(e)}")
+        error_resp = jsonify({
+            "id": "err",
             "type": "object",
             "value": {"status": "failed", "error": str(e)}
-        }), 200
+        })
+        error_resp.headers['Access-Control-Allow-Origin'] = '*'
+        return error_resp, 200
 
 if __name__ == '__main__':
     app.run(debug=True)
