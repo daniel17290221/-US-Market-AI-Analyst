@@ -49,6 +49,14 @@ app = Flask(__name__,
             static_folder=os.path.join(BASE_DIR, 'assets'),
             static_url_path='/assets')
 
+# CORS 허용 (Virtual Protocol 대시보드 연동용)
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
 # --- Persistent Knowledge: Major KR Analysis ---
 MAJOR_ANALYSIS_KR = {
     "005930": {
