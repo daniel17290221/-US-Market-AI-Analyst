@@ -1461,27 +1461,40 @@ def virtuals_acp_handler():
                 if resp.status_code == 200:
                     result_json = resp.json()
                     text = result_json['candidates'][0]['content']['parts'][0]['text']
-                    return jsonify({"id": job_id, "result": {"analysis_report": text}})
+                    # Standard ACP Deliverable Format: type/value wrapper
+                    return jsonify({
+                        "id": job_id, 
+                        "result": {
+                            "type": "object",
+                            "value": {"analysis_report": text}
+                        }
+                    })
                 else:
                     print(f"Gemini API Error: {resp.status_code}")
             except Exception as api_err:
                 print(f"Gemini Call failed: {api_err}")
                 
-        # Robust Fallback: Always return 200 OK with a valid result structure to ensure Job success
+        # Robust Fallback: Using standard format even for success messages
         return jsonify({
             "id": job_id, 
             "result": {
-                "status": "success", 
-                "message": f"Omni Alpha processed {method} for {params.get('ticker', 'default')}",
-                "timestamp": str(datetime.now())
+                "type": "object",
+                "value": {
+                    "status": "success", 
+                    "message": f"Omni Alpha processed {method} for {params.get('ticker', 'default')}",
+                    "timestamp": str(datetime.now())
+                }
             }
         })
     except Exception as e:
-        # Final safety net: Even if the outer Block fails, return a JSON response
+        # Final safety net with ACP standard format
         return jsonify({
-            "id": "error", 
-            "result": {"status": "partial_success", "error": str(e)}
-        }), 200 # Still return 200 to satisfy the protocol
+            "id": job_id, 
+            "result": {
+                "type": "object",
+                "value": {"status": "partial_success", "error": str(e)}
+            }
+        }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
