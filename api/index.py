@@ -1517,10 +1517,17 @@ def virtuals_acp_handler():
         payload = {"contents": [{"parts": [{"text": prompt}]}]}
         
         try:
-            resp = requests.post(url, json=payload, timeout=12)
-            text_response = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip() if resp.status_code == 200 else "Matrix temporarily hazy."
-        except:
+            resp = requests.post(url, json=payload, timeout=15) # 타임아웃 15초로 연장
+            if resp.status_code == 200:
+                text_response = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
+                print(f"\n--- [DEBUG] Report Generated Successfully for {ticker} ---")
+                print(f"Content Preview: {text_response[:100]}...\n")
+            else:
+                text_response = f"Matrix error ({resp.status_code}). Omni Alpha is temporarily recalibrating."
+                print(f"!!! AI Error: {resp.status_code} - {resp.text}")
+        except Exception as ai_err:
             text_response = "Omni Alpha is scanning the grid. Connection slow, but conviction high."
+            print(f"!!! AI Timeout/Network Error: {str(ai_err)}")
 
         # 3. Virtual Protocol 표준 응답 (공유해주신 Schema와 100% 일치)
         result = {
