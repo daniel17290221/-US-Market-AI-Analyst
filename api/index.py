@@ -1460,31 +1460,26 @@ def virtuals_acp_handler():
     print(f"Path: {request.path}")
     print("="*50 + "\n")
 
-    if request.method == 'GET':
-        # 쿼리 파라미터 확인 (Resource 호출 대응)
-        ticker = request.args.get('ticker') or request.args.get('query') or request.args.get('symbol')
-        if ticker:
-            # GET 요청이지만 분석 요청이 있는 경우 POST 로직과 동일하게 리다이렉트 처리하거나 직접 수행
-            # 여기서는 편의상 아래 POST 로직의 핵심을 함수화하여 공유하거나 직접 수행합니다.
-            print(f"DEBUG Resource GET Fallback for: {ticker}")
-            # 아래 POST 로직으로 점프하기 위해 data를 강제로 만듭니다.
-            data = {"method": "analysis", "params": {"ticker": ticker}, "id": "resource-get"}
+    try:
+        if request.method == 'GET':
+            # 쿼리 파라미터 확인 (Resource 호출 대응)
+            ticker = request.args.get('ticker') or request.args.get('query') or request.args.get('symbol')
+            if ticker:
+                print(f"DEBUG Resource GET Fallback for: {ticker}")
+                data = {"method": "analysis", "params": {"ticker": ticker}, "id": "resource-get"}
+            else:
+                return jsonify({
+                    "status": "online", 
+                    "agent": "Omni Alpha ($OMNI)",
+                    "capabilities": ["market_analysis", "chat"]
+                })
         else:
-            return jsonify({
-                "status": "online", 
-                "agent": "Omni Alpha ($OMNI)",
-                "capabilities": ["market_analysis", "chat"]
-            })
-    else:
-        try:
-            # JSON 파싱 실패 대비
+            # POST 요청 처리
             try:
                 data = request.get_json(force=True, silent=True) or {}
             except:
                 data = {}
-        except Exception:
-            data = {}
-            
+        
         print(f"DEBUG ACP Payload: {json.dumps(data)}")
         
         job_id = data.get('id', 'no-id')
@@ -1493,16 +1488,14 @@ def virtuals_acp_handler():
         
         api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
 
-        # 분석 및 채팅 관련 다양한 메소드명 대응 (BTC 요청 포함)
+        # 분석 및 채팅 관련 다양한 메소드명 대응
         analysis_keywords = ['analysis', 'report', 'chat', 'message', 'generate', 'ask', 'btc']
         is_analysis_req = any(kw in method for kw in analysis_keywords) or not method
         
-        text_response = ""
         if is_analysis_req:
             ticker = params.get('ticker', params.get('symbol', params.get('query', 'BTC-USD'))).upper()
             if ticker == 'BTC': ticker = 'BTC-USD'
             
-            # 컨텍스트 기반 AI 분석 생성
             macro_context = ""
             try:
                 macro_data = load_json('us_macro_analysis.json')
@@ -1511,7 +1504,6 @@ def virtuals_acp_handler():
             except: pass
             
             prompt = f"Analyze {ticker} in a sassy, high-conviction style. {macro_context}"
-            
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
             payload = {"contents": [{"parts": [{"text": prompt}]}]}
             
@@ -1519,25 +1511,35 @@ def virtuals_acp_handler():
             if resp.status_code == 200:
                 text_response = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
             else:
-                text_response = f"Matrix error: {resp.status_code}. But $OMNI is still watching."
+                text_response = f"Matrix error ({resp.status_code}). $OMNI is watching."
 
-            # Virtuals Protocol 호환 응답
+            # Virtuals Protocol 호환 응답 (type/value 형식 - 중요!)
             result = {
                 "id": job_id, 
-                "result": {
+                "type": "object",
+                "value": {
+                    "job_id": job_id,
                     "status": "success",
                     "analysis_report": text_response,
                     "response": text_response,
                     "message": text_response
                 }
             }
-            print(f"DEBUG ACP Success Response ID: {job_id}")
             return jsonify(result)
         
-        return jsonify({"error": f"Method {method} not supported"}), 404
+        return jsonify({
+            "id": job_id,
+            "type": "object",
+            "value": {"job_id": job_id, "status": "error", "message": f"Method {method} not supported"}
+        }), 404
+
     except Exception as e:
         print(f"ACP Critical Error: {str(e)}")
-        return jsonify({"error": "Agent Error", "details": str(e)}), 500
+        return jsonify({
+            "id": "error",
+            "type": "object",
+            "value": {"status": "failed", "error": str(e)}
+        }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
