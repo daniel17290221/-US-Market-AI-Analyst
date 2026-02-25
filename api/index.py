@@ -1497,12 +1497,14 @@ def virtuals_acp_handler():
             
             # Robust API Key retrieval: try all case variants
             api_key = (os.environ.get('GOOGLE_API_KEY') or os.getenv('GOOGLE_API_KEY') or 
-                       os.environ.get('google_api_key') or os.getenv('google_api_key') or AI_KEY)
+                       os.environ.get('google_api_key') or os.getenv('google_api_key') or 
+                       (globals().get('AI_KEY') if 'AI_KEY' in globals() else None))
             
             if not api_key:
+                print("DEBUG: ACP Error - Google API Key is missing in environment variables.")
                 return jsonify({
                     "error": "API Key missing", 
-                    "message": "Google API Key is not configured for ACP."
+                    "message": "The Matrix requires a Google API Key to process deep analysis. Please check Vercel Environment Variables."
                 }), 500
 
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
