@@ -1446,12 +1446,13 @@ def virtuals_acp_handler():
     try:
         data = request.json or {}
         job_id = data.get('id', 'unknown_id')
-        method = data.get('method', 'ping')
+        # Ensure method is handled case-insensitively
+        method = str(data.get('method', 'ping')).lower()
         params = data.get('params', {})
         
         print(f"ACP Job Received: {job_id}, Method: {method}")
 
-        if method == 'full_market_analysis_report':
+        if method == 'full_market_analysis_report' or method == 'full':
             ticker = params.get('ticker', 'BTC-USD').upper()
             try:
                 prompt = f"Provide a brief market analysis for {ticker}."
@@ -1461,12 +1462,13 @@ def virtuals_acp_handler():
                 if resp.status_code == 200:
                     result_json = resp.json()
                     text = result_json['candidates'][0]['content']['parts'][0]['text']
-                    # Standard ACP Deliverable Format: type/value wrapper
+                    # EXACT Correct format from Guide: No 'result' wrapper
                     return jsonify({
-                        "id": job_id, 
-                        "result": {
-                            "type": "object",
-                            "value": {"analysis_report": text}
+                        "id": job_id,
+                        "type": "object",
+                        "value": {
+                            "job_id": job_id,
+                            "analysis_report": text
                         }
                     })
                 else:
@@ -1474,25 +1476,26 @@ def virtuals_acp_handler():
             except Exception as api_err:
                 print(f"Gemini Call failed: {api_err}")
                 
-        # Robust Fallback: Using standard format even for success messages
+        # Robust Fallback using exact Top-level type-value format
         return jsonify({
-            "id": job_id, 
-            "result": {
-                "type": "object",
-                "value": {
-                    "status": "success", 
-                    "message": f"Omni Alpha processed {method} for {params.get('ticker', 'default')}",
-                    "timestamp": str(datetime.now())
-                }
+            "id": job_id,
+            "type": "object",
+            "value": {
+                "job_id": job_id,
+                "status": "success", 
+                "message": f"Omni Alpha processed {method} for {params.get('ticker', 'default')}",
+                "timestamp": str(datetime.now())
             }
         })
     except Exception as e:
-        # Final safety net with ACP standard format
+        # Final safety net with exact Top-level type-value format
         return jsonify({
-            "id": job_id, 
-            "result": {
-                "type": "object",
-                "value": {"status": "partial_success", "error": str(e)}
+            "id": job_id,
+            "type": "object",
+            "value": {
+                "job_id": job_id,
+                "status": "partial_success", 
+                "error": str(e)
             }
         }), 200
 
