@@ -11,12 +11,8 @@ import csv
 import logging
 import requests
 from datetime import datetime, timedelta
-import yfinance as yf
+# import yfinance as yf (Removed for Vercel stability)
 from dotenv import load_dotenv
-try:
-    from google import genai
-except ImportError:
-    import google.generativeai as genai
 
 load_dotenv()
 
@@ -157,16 +153,9 @@ class USDailyReportGenerator:
                         ticker_sym = clean_row.get('ticker')
                         if ticker_sym:
                             try:
-                                # Fetch live price to ensure "current" data
-                                t = yf.Ticker(ticker_sym)
-                                hist = t.history(period="3d")
-                                if not hist.empty and len(hist) >= 1:
-                                    price = hist['Close'].iloc[-1]
-                                    if len(hist) >= 2:
-                                        prev_close = hist['Close'].iloc[-2]
-                                        change_pct = (price - prev_close) / prev_close * 100
-                                    else:
-                                        change_pct = 0.0
+                                # Fetch live price using the helper to avoid yfinance dependency
+                                price, change_pct = self._fetch_yahoo_data(ticker_sym)
+                                if price is not None:
                                     clean_row['price'] = f"{price:,.2f}"
                                     clean_row['change'] = f"{change_pct:+.2f}%"
                             except Exception as price_e:
