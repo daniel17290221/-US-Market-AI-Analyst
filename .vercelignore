@@ -6,7 +6,12 @@
 **/.git/**
 us_market/us_daily_prices.csv
 us_market/history/
-KR_Market_Analyst/history/
+KR_Market_Analyst/
+agent_x_poster.py
+app_local.py
+test_*.py
+debug_*.py
+requirements_local.txt
 *.pyc
 __pycache__/
 .env
@@ -19,3 +24,12 @@ standalone_dashboard.html
 kr_dashboard_standalone.html
 debug_*.txt
 debug_*.json
+# Heavy analysis scripts
+us_market/analyze_13f.py
+us_market/analyze_etf_flows.py
+us_market/create_us_daily_prices.py
+us_market/insider_tracker.py
+us_market/options_flow.py
+us_market/portfolio_risk.py
+us_market/sector_heatmap.py
+us_market/smart_money_screener_v2.py
