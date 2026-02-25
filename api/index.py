@@ -1477,15 +1477,19 @@ def virtuals_acp_handler():
     try:
         # 1. 요청 데이터 파싱
         if request.method == 'GET':
-            ticker = request.args.get('ticker') or request.args.get('query') or 'BTC-USD'
+            ticker = request.args.get('ticker') or request.args.get('query') or request.args.get('symbol') or 'BTC-USD'
             data = {"id": "res-get", "method": "chat", "params": {"ticker": ticker}}
         else:
             data = request.get_json(force=True, silent=True) or {}
 
-        job_id = data.get('id', 'no-id')
+        # id와 ticker 추출 로직 강화
+        job_id = data.get('id', data.get('job_id', 'no-id'))
         method = str(data.get('method', '')).lower()
+        
+        # params 내부 또는 최상위 레벨에서 ticker/symbol/query 탐색
         params = data.get('params', {})
-        ticker = params.get('ticker', params.get('symbol', params.get('query', 'BTC-USD'))).upper()
+        ticker = params.get('ticker', params.get('symbol', params.get('query', 
+                 data.get('ticker', data.get('symbol', data.get('query', 'BTC-USD')))))).upper()
         if ticker == 'BTC': ticker = 'BTC-USD'
 
         # 2. AI 분석 수행 (타임아웃 고려)
