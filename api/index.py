@@ -1501,15 +1501,11 @@ def virtuals_acp_handler():
         except:
             text_response = "Omni Alpha is scanning the grid. Connection slow, but conviction high."
 
-        # 3. Virtual Protocol 표준 응답 (type/value 구조)
+        # 3. Virtual Protocol 표준 응답 (공유해주신 Schema와 100% 일치)
         result = {
             "id": job_id,
             "type": "object",
             "value": {
-                "job_id": job_id,
-                "status": "success",
-                "message": text_response,
-                "response": text_response,
                 "analysis_report": text_response
             }
         }
