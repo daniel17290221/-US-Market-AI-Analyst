@@ -15,19 +15,31 @@ load_dotenv()
 # Build: 2026-02-10 15:32 (KST) - Case-insensitive API Key Fix
 AI_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key")
 
-# Adjust path for Vercel subdirectory deployment
-# BASE_DIR should be the root of the project (where templates and us_market are)
-# In Vercel, this is usually the parent of 'api/'
 # Robust path resolution
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
-try:
-    import us_market
-    DATA_DIR = os.path.dirname(us_market.__file__)
-except:
-    DATA_DIR = os.path.join(BASE_DIR, 'us_market')
+# Robust data directory resolution (Handles nested folder structures)
+def get_data_dir(name):
+    # Try multiple common patterns
+    paths = [
+        os.path.join(BASE_DIR, name, name), # Nested like 'us_market/us_market'
+        os.path.join(BASE_DIR, name),       # Standard like 'us_market/'
+        os.path.join(os.path.dirname(__file__), '..', name, name),
+        os.path.join(os.path.dirname(__file__), '..', name)
+    ]
+    for p in paths:
+        if os.path.isdir(p):
+            # Check for key markers (csv, json)
+            if any(f.endswith('.json') or f.endswith('.csv') for f in os.listdir(p)):
+                print(f"DEBUG: Found {name} data at {p}")
+                return p
+    print(f"DEBUG: Falling back to default data dir for {name}")
+    return os.path.join(BASE_DIR, name)
+
+DATA_DIR = get_data_dir('us_market')
+KR_DATA_DIR = get_data_dir('KR_Market_Analyst')
 
 # from us_market.daily_report_generator import USDailyReportGenerator (Moved inside function)
 
@@ -710,12 +722,10 @@ def dividend_portfolio():
 
 @app.route('/api/kr/report')
 def get_kr_report():
-    # Attempt 1: Root-based absolute path
-    path1 = os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
-    # Attempt 2: Alternative root (some environments use a different base)
-    path2 = os.path.join(os.getcwd(), 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
-    # Attempt 3: Deep relative from api/ folder
-    path3 = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    # Attempt 1: Dynamic KR_DATA_DIR based path
+    path1 = os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html')
+    path2 = os.path.join(KR_DATA_DIR, 'kr_market_daily_report.html')
+    path3 = os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
     
     report_path = None
     for p in [path1, path2, path3]:
@@ -856,14 +866,18 @@ def fetch_google_news_rss(query):
 @app.route('/api/kr/market-data')
 def get_kr_market_data():
     # Load all stocks from daily data
-    kr_data_path = os.path.join(BASE_DIR, 'KR_Market_Analyst/kr_market/kr_daily_data.json')
+    # Dynamic search for kr_daily_data.json
+    kr_data_path = os.path.join(KR_DATA_DIR, 'kr_market', 'kr_daily_data.json')
+    if not os.path.exists(kr_data_path):
+        kr_data_path = os.path.join(KR_DATA_DIR, 'kr_daily_data.json')
+    
     kr_data = {}
     if os.path.exists(kr_data_path):
         try:
             with open(kr_data_path, 'r', encoding='utf-8') as f:
                 kr_data = json.load(f)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"DEBUG: KR Data Load Error: {e}")
     
     # Load Lists from JSON (Defaulting to empty if missing)
     leaders_kospi = kr_data.get('leaders_kospi', [])
