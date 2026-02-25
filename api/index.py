@@ -1446,9 +1446,9 @@ def virtuals_acp_handler():
     try:
         data = request.json
         job_id, method, params = data.get('id'), data.get('method'), data.get('params', {})
-        if method == 'full_market_analysis_report':
             ticker = params.get('ticker', 'BTC-USD').upper()
-            prompt = f"Provide a brief, professional market analysis for {ticker}."
+            # Optimized Gemini prompt for Vercel stability (No yfinance needed)
+            prompt = f"Provide a concise, sassy market analysis for ticker: {ticker} (Omni Alpha style)."
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
             resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=8)
             if resp.status_code == 200:
