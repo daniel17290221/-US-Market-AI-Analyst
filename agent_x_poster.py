@@ -4,8 +4,8 @@ import time
 import random
 import tweepy
 import google.generativeai as genai
-import yfinance as yf
-from datetime import datetime
+# import yfinance as yf # Removed for Vercel
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 # Load environment variables
