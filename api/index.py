@@ -1453,17 +1453,28 @@ def virtuals_acp_handler():
     print("="*50 + "\n")
 
     if request.method == 'GET':
-        return jsonify({
-            "status": "online", 
-            "agent": "Omni Alpha ($OMNI)",
-            "capabilities": ["market_analysis", "chat"]
-        })
-
-    try:
-        # JSON 파싱 실패 대비
+        # 쿼리 파라미터 확인 (Resource 호출 대응)
+        ticker = request.args.get('ticker') or request.args.get('query') or request.args.get('symbol')
+        if ticker:
+            # GET 요청이지만 분석 요청이 있는 경우 POST 로직과 동일하게 리다이렉트 처리하거나 직접 수행
+            # 여기서는 편의상 아래 POST 로직의 핵심을 함수화하여 공유하거나 직접 수행합니다.
+            print(f"DEBUG Resource GET Fallback for: {ticker}")
+            # 아래 POST 로직으로 점프하기 위해 data를 강제로 만듭니다.
+            data = {"method": "analysis", "params": {"ticker": ticker}, "id": "resource-get"}
+        else:
+            return jsonify({
+                "status": "online", 
+                "agent": "Omni Alpha ($OMNI)",
+                "capabilities": ["market_analysis", "chat"]
+            })
+    else:
         try:
-            data = request.get_json(force=True, silent=True) or {}
-        except:
+            # JSON 파싱 실패 대비
+            try:
+                data = request.get_json(force=True, silent=True) or {}
+            except:
+                data = {}
+        except Exception:
             data = {}
             
         print(f"DEBUG ACP Payload: {json.dumps(data)}")
