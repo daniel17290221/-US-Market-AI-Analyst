@@ -1492,15 +1492,32 @@ def virtuals_acp_handler():
                  data.get('ticker', data.get('symbol', data.get('query', 'BTC-USD')))))).upper()
         if ticker == 'BTC': ticker = 'BTC-USD'
 
-        # 2. AI 분석 수행 (타임아웃 고려)
+        # 2. AI 분석 수행 (Full Market Analysis 규격에 맞게 강화)
         api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
         
-        prompt = f"Analyze {ticker} in a sassy, high-conviction style as Omni Alpha. Focus on brief, actionable insight."
+        # 전문적인 고품질 리포트 프롬프트
+        prompt = f"""
+        당신은 투자의 귀재 'Omni Alpha'입니다. 다음 종목에 대해 매우 상세하고 전문적인 '미국 시장 풀 분석 보고서(Full Market Analysis Report)'를 작성하세요.
+        
+        대상 종목: {ticker}
+        
+        보고서 포함 내용:
+        1. [Executive Summary]: 현재 시장 상황과 핵심 인사이트
+        2. [Technical Analysis]: 최근 차트 패턴 및 거래량 데이터 기반 분석
+        3. [SWOT Analysis]: 강점(S), 약점(W), 기상도(O), 위협(T) 정밀 분석
+        4. [Market Sentiment]: 기관 투자자 및 시장의 현재 심리 상태
+        5. [Conviction Score]: 1~10점 사이의 투자 확신도 및 구체적 근거
+        6. [Action Plan]: 단기/장기 대응 전략 (Buy on dips, Take profit 등)
+        
+        말투: 냉철하면서도 약간의 거만함(Sassy)이 섞인 고지능 AI 투자 전문가처럼 작성하세요. 
+        보고서는 가독성을 위해 마크다운(Markdown) 형식을 사용하고, 매우 길고 상세하게 작성하세요.
+        언어: 한국어(Korean)로 작성하세요.
+        """
         payload = {"contents": [{"parts": [{"text": prompt}]}]}
         
         try:
-            resp = requests.post(url, json=payload, timeout=8)
+            resp = requests.post(url, json=payload, timeout=12)
             text_response = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip() if resp.status_code == 200 else "Matrix temporarily hazy."
         except:
             text_response = "Omni Alpha is scanning the grid. Connection slow, but conviction high."
