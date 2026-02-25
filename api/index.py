@@ -1437,54 +1437,26 @@ def generate_portfolio():
     except Exception as e:
         print(f"AI Generation Error: {e}")
         return jsonify({"error": "AI Error", "message": f"분석 중 오류 발생: {str(e)}"}), 500
-
 # --- Virtuals Protocol ACP Endpoint ---
 @app.route('/api/acp', methods=['GET', 'POST'])
 def virtuals_acp_handler():
-    """
-    Handles Virtuals Protocol ACP Job Requests.
-    Using existing working patterns for Vercel deployment.
-    """
     if request.method == 'GET':
-        return jsonify({
-            "status": "online",
-            "agent": "Omni Alpha ($OMNI)",
-            "version": "1.0.0"
-        })
+        return jsonify({"status": "online", "agent": "Omni Alpha ($OMNI)"})
 
     try:
         data = request.json
-        job_id = data.get('id')
-        method = data.get('method')
-        params = data.get('params', {})
-        
+        job_id, method, params = data.get('id'), data.get('method'), data.get('params', {})
         if method == 'full_market_analysis_report':
             ticker = params.get('ticker', 'BTC-USD').upper()
-            
-            # Using simple requests call to Gemini (Proven working on Vercel)
-            # Use the existing AI_KEY from top of file
-            api_key = AI_KEY
-            if not api_key:
-                return jsonify({"error": "Config Error"}), 500
-
-            prompt = f"Provide a concise, sassy market analysis for ticker: {ticker} (Omni Alpha style)."
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-            payload = {"contents": [{"parts": [{"text": prompt}]}]}
-            
-            analysis_text = "Analysis pending matrix sync..."
-            resp = requests.post(url, json=payload, timeout=8)
+            prompt = f"Provide a brief, professional market analysis for {ticker}."
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
+            resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=8)
             if resp.status_code == 200:
-                res_data = resp.json()
-                analysis_text = res_data['candidates'][0]['content']['parts'][0]['text']
-
-            return jsonify({
-                "id": job_id,
-                "result": {"analysis_report": analysis_text}
-            })
-            
-        return jsonify({"error": "Method not found"}), 404
-    except Exception:
-        return jsonify({"error": "Internal Processing Error"}), 500
+                text = resp.json()['candidates'][0]['content']['parts'][0]['text']
+                return jsonify({"id": job_id, "result": {"analysis_report": text}})
+        return jsonify({"error": "Not Found"}), 404
+    except:
+        return jsonify({"error": "Internal Error"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
