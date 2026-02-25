@@ -1439,5 +1439,100 @@ def generate_portfolio():
         return jsonify({"error": "AI Error", "message": f"분석 중 오류 발생: {str(e)}"}), 500
 
 # Vercel Build Trigger: Syncing latest repository changes (Last Update: 2026-02-09)
+# --- Virtuals Protocol ACP Endpoint ---
+
+@app.route('/api/acp', methods=['GET', 'POST'])
+def virtuals_acp_handler():
+    """
+    Handles Virtuals Protocol ACP Job Requests.
+    Fulfills the 'Graduation' mission by providing automated market reports.
+    """
+    if request.method == 'GET':
+        return jsonify({
+            "status": "online",
+            "agent": "Omni Alpha ($OMNI)",
+            "version": "1.0.0",
+            "capabilities": ["full_market_analysis_report"],
+            "description": "Ready to serve the Matrix with high-fidelity intelligence."
+        })
+
+    try:
+        data = request.json
+        print(f"DEBUG: Received ACP Job Request: {json.dumps(data)}")
+        
+        job_id = data.get('id')
+        method = data.get('method')
+        params = data.get('params', {})
+        
+        if method == 'full_market_analysis_report':
+            ticker = params.get('ticker', 'BTC-USD').upper()
+            
+            # 1. Fetch real-time data for the requested ticker
+            import yfinance as yf
+            stock = yf.Ticker(ticker)
+            hist = stock.history(period="5d")
+            
+            price_info = "Data unavailable"
+            if len(hist) >= 1:
+                curr = hist['Close'].iloc[-1]
+                price_info = f"Current Price: {round(curr, 2)}"
+            
+            # 2. Generate specialized AI Report using Gemini REST
+            prompt = f"""
+            Role: You are 'Omni Alpha ($OMNI)', the Global All-Weather AI Fund Manager.
+            Task: Provide a high-fidelity 'Full Market Analysis Report' for the ticker: {ticker}.
+            
+            [Target Asset]
+            Ticker: {ticker}
+            {price_info}
+            
+            [Report Layout]
+            1. Executive Summary: Sassy & Professional (Elon Musk style).
+            2. Matrix Correlation: How it fits in the current macro environment.
+            3. Risk/Reward Rating: (0-100%).
+            4. Strategic Move: BUY, HOLD, or REBALANCE.
+            
+            Language: Professional Global English.
+            """
+            
+            # Robust API Key retrieval: try all case variants
+            api_key = (os.environ.get('GOOGLE_API_KEY') or os.getenv('GOOGLE_API_KEY') or 
+                       os.environ.get('google_api_key') or os.getenv('google_api_key') or AI_KEY)
+            
+            if not api_key:
+                return jsonify({
+                    "error": "API Key missing", 
+                    "message": "Google API Key is not configured for ACP."
+                }), 500
+
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}]
+            }
+            
+            analysis_text = "Matrix sync failed. Retrying..."
+            try:
+                resp = requests.post(url, json=payload, timeout=10)
+                if resp.status_code == 200:
+                    res_json = resp.json()
+                    analysis_text = res_json['candidates'][0]['content']['parts'][0]['text']
+            except Exception as e:
+                print(f"DEBUG: ACP Gemini Error: {e}")
+
+            # 3. Format response for Virtuals Protocol
+            return jsonify({
+                "id": job_id,
+                "result": {
+                    "analysis_report": analysis_text
+                }
+            })
+            
+        return jsonify({"error": "Method not found"}), 404
+        
+    except Exception as e:
+        print(f"DEBUG: ACP Handler Exception: {e}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
+    # Local Test: python api/index.py
     app.run(debug=True, port=5000)
