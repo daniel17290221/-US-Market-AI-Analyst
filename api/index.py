@@ -49,6 +49,17 @@ app = Flask(__name__,
             static_folder=os.path.join(BASE_DIR, 'assets'),
             static_url_path='/assets')
 
+# 전역 요청 추적기 (Vercel 로그 확인용)
+@app.before_request
+def debug_all_requests():
+    # 모든 ACP 관련 경로나 POST 요청을 감시
+    path = request.path.lower()
+    if 'acp' in path or request.method == 'POST':
+        print("\n" + "!"*60)
+        print(f"!!! ACP DETECTED: {request.method} {request.path} !!!")
+        print(f"!!! From: {request.remote_addr} | Payload Type: {request.content_type} !!!")
+        print("!"*60 + "\n")
+
 # CORS 허용 (Virtual Protocol 대시보드 연동용)
 @app.after_request
 def after_request(response):
