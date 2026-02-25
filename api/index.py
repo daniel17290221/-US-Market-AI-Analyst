@@ -1445,17 +1445,22 @@ def virtuals_acp_handler():
 
     try:
         data = request.json
-        job_id, method, params = data.get('id'), data.get('method'), data.get('params', {})
+        job_id = data.get('id')
+        method = data.get('method')
+        params = data.get('params', {})
+        
+        if method == 'full_market_analysis_report':
             ticker = params.get('ticker', 'BTC-USD').upper()
-            # Optimized Gemini prompt for Vercel stability (No yfinance needed)
-            prompt = f"Provide a concise, sassy market analysis for ticker: {ticker} (Omni Alpha style)."
+            prompt = f"Provide a brief market analysis for {ticker}."
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
             resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=8)
             if resp.status_code == 200:
                 text = resp.json()['candidates'][0]['content']['parts'][0]['text']
                 return jsonify({"id": job_id, "result": {"analysis_report": text}})
-        return jsonify({"error": "Not Found"}), 404
-    except:
+        
+        return jsonify({"error": "Method not found"}), 404
+    except Exception as e:
+        print(f"ACP Error: {e}")
         return jsonify({"error": "Internal Error"}), 500
 
 if __name__ == '__main__':
