@@ -1658,5 +1658,47 @@ def virtuals_validator_handler():
     except Exception as e:
         return jsonify({"id": "err", "type": "object", "value": {"error": str(e)}}), 200
 
+# --- Social-ACP: Omni Marketer Endpoint ---
+@app.route('/api/acp/social', methods=['GET', 'POST', 'OPTIONS'])
+def virtuals_social_handler():
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        return resp
+
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        job_id = data.get('id', 'social-id')
+        params = data.get('params', {})
+        content = params.get('content', '')
+
+        if not content:
+            return jsonify({"error": "No content provided"}), 400
+
+        # Import and use the existing X posting logic
+        try:
+            from agent_x_poster import XMarketAgent
+            agent = XMarketAgent()
+            success = agent.post_custom_tweet(content)
+            status = "success" if success else "failed"
+        except Exception as e:
+            print(f"Social Post Error: {str(e)}")
+            status = "failed"
+            content = f"Error: {str(e)}"
+
+        return jsonify({
+            "id": job_id,
+            "type": "object",
+            "value": {
+                "status": status,
+                "message": "Broadcast completed" if status == "success" else f"Broadcast failed: {content}"
+            }
+        })
+
+    except Exception as e:
+        return jsonify({"id": "err", "type": "object", "value": {"error": str(e)}}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)

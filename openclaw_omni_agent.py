@@ -8,7 +8,7 @@ from virtuals_sdk.game import Agent, Worker, Function  # Assuming virtuals-sdk i
 load_dotenv()
 
 # --- Config ---
-BASE_URL = "https://your-vercel-app.vercel.app"  # Update with your actual Vercel URL
+BASE_URL = "https://us-market-ai-analyst.vercel.app"  # 도메인만 입력 (뒤에 /api/acp 자동 붙음)
 AI_KEY = os.getenv("GOOGLE_API_KEY")
 
 # --- Functions ---
