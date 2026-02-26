@@ -177,8 +177,8 @@ class XMarketAgent:
                 print(f"[{datetime.now()}] CUSTOM BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
                 return True
             else:
-                print(f"[{datetime.now()}] Simulation Mode: {text}")
-                return True
+                print(f"[{datetime.now()}] Error: X API credentials missing on server. Skipping broadcast.", flush=True)
+                return False
         except Exception as e:
             print(f"[{datetime.now()}] Custom Dispatch FAILED: {e}", flush=True)
             return False
