@@ -58,5 +58,34 @@ jobs:
           else
             echo "No changes to commit."
           fi
-          # 🔥 Trigger Vercel Deployment with verbose logging
+
+      - name: Deploy to MAIN Domain Repository (GitHub Pages)
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          # 1. Clone the target repository
+          git clone https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/daniel17290221/daniel17290221.github.io.git main_repo
+          
+          # 2. Add/Verify ads.txt
+          if [ -f "ads.txt" ]; then
+            cp ads.txt main_repo/ads.txt
+          fi
+          
+          # 3. Copy reports
+          find us_market -name "us_market_morning_report.html" -exec cp {} main_repo/report_us.html \;
+          find KR_Market_Analyst -name "kr_market_daily_report.html" -exec cp {} main_repo/report_kr.html \;
+          
+          # 4. Commit and Push
+          cd main_repo
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add .
+          if git commit -m "auto: Update KR AI Report from workflow"; then
+            git push origin main --force
+          else
+            echo "No changes for main repo"
+          fi
+
+      - name: Trigger Vercel Deployment
+        run: |
           curl -v -X POST "https://api.vercel.com/v1/integrations/deploy/prj_hYHnViRFvIuQoGJqQ7pgRUXWv78P/1sZQeXELu7"
