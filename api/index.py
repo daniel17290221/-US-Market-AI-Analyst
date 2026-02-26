@@ -1593,5 +1593,70 @@ def virtuals_acp_handler():
         error_resp.headers['Access-Control-Allow-Origin'] = '*'
         return error_resp, 200
 
+# --- Sub-ACP: Omni Validator Endpoint ---
+@app.route('/api/acp/validator', methods=['GET', 'POST', 'OPTIONS'])
+def virtuals_validator_handler():
+    # CORS 사전 요청 대응
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        return resp
+
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        job_id = data.get('id', 'val-id')
+        params = data.get('params', {})
+        ticker = params.get('ticker', 'BTC-USD').upper()
+        if ticker == 'BTC': ticker = 'BTC-USD'
+
+        # 1. 기술적 지표 분석 (간이 로직)
+        tech_context = ""
+        try:
+            # 5일치 데이터를 가져와서 모멘텀 계산
+            hist_url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d&range=5d"
+            hist_resp = requests.get(hist_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
+            if hist_resp.status_code == 200:
+                closes = hist_resp.json()['chart']['result'][0]['indicators']['quote'][0]['close']
+                curr = closes[-1]
+                prev = closes[-2]
+                ma5 = sum(closes) / len(closes)
+                momentum = "UP" if curr > prev else "DOWN"
+                trend = "BULLISH" if curr > ma5 else "BEARISH"
+                tech_context = f"Trend: {trend}, Momentum: {momentum}, Price vs MA5: {((curr/ma5)-1)*100:+.2f}%"
+        except:
+            tech_context = "Technical grid scanning paused."
+
+        # 2. 검증 AI 분석
+        api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key") or AI_KEY
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+        
+        prompt = f"""
+        당신은 시장 데이터 검증 전문가 'Omni Validator'입니다.
+        데이터 소스: {tech_context}
+        
+        {ticker}에 대한 위 기술적 지표를 바탕으로 메인 분석가의 낙관론/매도론을 검증하세요.
+        - [Technical Verification]: 지표 기반의 팩트 체크
+        - [Risk Probability]: 현재 진입 시의 손실 확률 (0~100%)
+        - [Validator Verdict]: 검증 통과 여부 및 짧은 코멘트
+        
+        말투: 냉철함, 보수적. (한국어로 작성)
+        """
+        
+        ai_resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=10)
+        text = ai_resp.json()['candidates'][0]['content']['parts'][0]['text'] if ai_resp.status_code == 200 else "Validator offline."
+
+        return jsonify({
+            "id": job_id,
+            "type": "object",
+            "value": {
+                "validation_report": text
+            }
+        })
+
+    except Exception as e:
+        return jsonify({"id": "err", "type": "object", "value": {"error": str(e)}}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)
