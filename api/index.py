@@ -1749,5 +1749,81 @@ def virtuals_validator_handler():
 except Exception as global_e:
     return jsonify({"id": "err", "type": "object", "value": {"error": str(global_e)}}), 200
 
+# --- Social-ACP: Omni Marketer Endpoint ---
+@app.route('/api/acp/social', methods=['GET', 'POST', 'OPTIONS'])
+def virtuals_social_handler():
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        return resp
+
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        job_id = data.get('id', 'social-id')
+        params = data.get('params', {})
+        content = params.get('content', '')
+
+        if not content:
+            return jsonify({"error": "No content provided"}), 400
+
+        # --- Internal X Posting Logic (Embedded for reliability) ---
+        class InternalXAgent:
+            def __init__(self):
+                self.api_key = os.getenv("X_API_KEY")
+                self.api_secret = os.getenv("X_API_SECRET")
+                self.access_token = os.getenv("X_ACCESS_TOKEN")
+                self.access_secret = os.getenv("X_ACCESS_SECRET")
+                
+                self.client = None
+                if all([self.api_key, self.api_secret, self.access_token, self.access_secret]):
+                    try:
+                        import tweepy
+                        self.client = tweepy.Client(
+                            consumer_key=self.api_key,
+                            consumer_secret=self.api_secret,
+                            access_token=self.access_token,
+                            access_token_secret=self.access_secret
+                        )
+                    except Exception as e:
+                        print(f"X Client Init Error: {e}")
+
+            def post_custom_tweet(self, text):
+                if not text: return False
+                if len(text) > 280: text = text[:277] + "..."
+                if self.client:
+                    try:
+                        self.client.create_tweet(text=text)
+                        return True
+                    except Exception as e:
+                        print(f"X Post Error: {e}")
+                        return False
+                print("X Client not initialized (check env vars)")
+                return False
+
+        try:
+            agent = InternalXAgent()
+            success = agent.post_custom_tweet(content)
+            status = "success" if success else "failed"
+            if not success:
+                content = "X API error or missing credentials. Check Vercel Env Vars."
+        except Exception as e:
+            print(f"Social Post Execution Error: {str(e)}")
+            status = "failed"
+            content = f"Error: {str(e)}"
+
+        return jsonify({
+            "id": job_id,
+            "type": "object",
+            "value": {
+                "status": status,
+                "message": "Broadcast completed" if status == "success" else f"Broadcast failed: {content}"
+            }
+        })
+
+    except Exception as e:
+        return jsonify({"id": "err", "type": "object", "value": {"error": str(e)}}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -15,9 +15,14 @@ except ImportError:
 load_dotenv()
 
 # --- Config ---
+<<<<<<< HEAD
 BASE_URL = "https://us-market-ai-analyst.vercel.app" 
 API_KEY = os.getenv("VIRTUALS_API_KEY") or "VIR-XXXXX"
 AGENT_NAME = "Omni Alpha ($ALPHA)"
+=======
+BASE_URL = "https://us-market-ai-analyst.vercel.app"  # 도메인만 입력 (뒤에 /api/acp 자동 붙음)
+AI_KEY = os.getenv("GOOGLE_API_KEY")
+>>>>>>> 16f817c82f4053dd5715dcc6c974af49fce2eadf
 
 # --- Functions ---
 
