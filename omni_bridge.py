@@ -18,8 +18,8 @@ load_dotenv()
 # 1. Vercel URL (The Brain)
 BRAIN_URL = "https://us-market-ai-analyst.vercel.app/api/acp/validator" 
 
-# 2. Virtuals API Key (Set this in your .env file or replace VIR-XXXXX)
-API_KEY = os.getenv("VIRTUALS_API_KEY") or "VIR-XXXXX"
+# 2. Virtuals API Key (Virtuals 대시보드에서 복사한 API Key)
+API_KEY = "acp-bea3213a73ff63cabe80" 
 
 # 3. Agent Details
 AGENT_NAME = "Omni Validator"
