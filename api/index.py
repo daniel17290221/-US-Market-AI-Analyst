@@ -1677,26 +1677,46 @@ def virtuals_social_handler():
         if not content:
             return jsonify({"error": "No content provided"}), 400
 
-        # Import and use the existing X posting logic
+        # --- Internal X Posting Logic (Embedded for reliability) ---
+        class InternalXAgent:
+            def __init__(self):
+                self.api_key = os.getenv("X_API_KEY")
+                self.api_secret = os.getenv("X_API_SECRET")
+                self.access_token = os.getenv("X_ACCESS_TOKEN")
+                self.access_secret = os.getenv("X_ACCESS_SECRET")
+                
+                self.client = None
+                if all([self.api_key, self.api_secret, self.access_token, self.access_secret]):
+                    try:
+                        import tweepy
+                        self.client = tweepy.Client(
+                            consumer_key=self.api_key,
+                            consumer_secret=self.api_secret,
+                            access_token=self.access_token,
+                            access_token_secret=self.access_secret
+                        )
+                    except Exception as e:
+                        print(f"X Client Init Error: {e}")
+
+            def post_custom_tweet(self, text):
+                if not text: return False
+                if len(text) > 280: text = text[:277] + "..."
+                if self.client:
+                    try:
+                        self.client.create_tweet(text=text)
+                        return True
+                    except Exception as e:
+                        print(f"X Post Error: {e}")
+                        return False
+                print("X Client not initialized (check env vars)")
+                return False
+
         try:
-            import sys
-            import os
-            api_dir = os.path.dirname(__file__)
-            poster_path = os.path.join(api_dir, "agent_x_poster.py")
-            
-            print(f"Checking for poster at: {poster_path} (Exists: {os.path.exists(poster_path)})")
-            
-            if api_dir not in sys.path:
-                sys.path.append(api_dir)
-            
-            from agent_x_poster import XMarketAgent
-            agent = XMarketAgent()
+            agent = InternalXAgent()
             success = agent.post_custom_tweet(content)
             status = "success" if success else "failed"
-        except ImportError as ie:
-            print(f"Import Error: {str(ie)}")
-            status = "failed"
-            content = f"Import Error: {str(ie)}. Make sure agent_x_poster.py is in the api/ folder and all dependencies (google-generativeai, tweepy) are in requirements.txt"
+            if not success:
+                content = "X API error or missing credentials. Check Vercel Env Vars."
         except Exception as e:
             print(f"Social Post Execution Error: {str(e)}")
             status = "failed"
