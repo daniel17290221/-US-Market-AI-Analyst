@@ -39,27 +39,33 @@ class KRDailyReportGenerator:
     def generate_ai_content(self, raw_data):
         logger.info("🤖 Generating KR AI Content with Gemini...")
         
+        # Prepare stock data context for AI
+        stocks_context = ""
+        for s in raw_data.get('top_stocks', []):
+            stocks_context += f"- {s['name']}({s['symbol']}): {s['price']}원 ({s['change']})\n"
+
         prompt = f"""
         당신은 대한민국 증시 전문 시황 분석가 'VibeCodingLab KR'입니다.
         아래의 실시간 국내 증시 데이터를 바탕으로 투자자들이 아침에 읽기 좋은 프리미엄 '국내 증시 마감 리포트'를 작성해주세요.
 
-        [데이터]
+        [시장 데이터]
         날짜: {raw_data['date']}
         지수 현황: {json.dumps(raw_data['market_indices'], ensure_ascii=False)}
-        주요 종목 시황: {json.dumps(raw_data['top_stocks'], ensure_ascii=False)}
+        주요 종목 시황: 
+        {stocks_context}
         환율 및 원자재: {json.dumps(raw_data['commodities'], ensure_ascii=False)}
         수급 현황(외인/기관): {json.dumps(raw_data.get('investor_flows', {}), ensure_ascii=False)}
         주요 뉴스: {json.dumps(raw_data.get('market_news', [])[:5], ensure_ascii=False)}
 
         [작성 지침]
-        1. 독자의 시선을 사로잡는 섹시한 헤드라인을 뽑아주세요.
-        2. '핵심 요약' 3줄을 작성해주세요. (리스트 형식)
-        3. '오늘의 코스피/코스닥' 섹션에서 지수의 움직임과 특징을 분석해주세요. (제공된 외인/기관 수급 데이터를 반드시 심층 분석에 반영)
-        4. '주도주 분석' 섹션에서 시총 상위 종목 및 등락률 상위 종목의 특징적인 움직임을 설명해주세요.
-        5. '시장 주요 뉴스 및 이슈' 섹션에서 제공된 뉴스 데이터를 바탕으로 시장 영향력을 평가해주세요.
-        6. '투자 전략' 섹션에서 내일의 대응 전략 및 주목해야 할 섹터를 제안해주세요.
-        6. 말투는 신뢰감 있고 전문적인 언론사 뉴스 스타일로 작성해주세요.
-        7. 결과는 반드시 아래 JSON 형식을 엄격히 지켜주세요.
+        1. **헤드라인**: 독자의 시선을 사로잡는 섹시하고 통찰력 있는 헤드라인을 뽑아주세요.
+        2. **핵심 요약**: 오늘 시장을 관통하는 3가지 핵심 포인트를 작성해주세요.
+        3. **상세 분석 섹션 (3개 이상)**: 
+           - '마켓 드라이버': 오늘 지수 등락의 결정적 원인 (수급, 대외 변수 등)
+           - '섹터 이슈': 주도 섹터 및 소외 섹터의 원인과 결과
+           - '내일의 관전 포인트': 다음 거래일의 핵심 대응 전략
+        4. **말투**: 전문적이고 분석적이며, 신뢰감 있는 언론사 뉴스 스타일(예: 한국경제, 매일경제)로 작성해주세요.
+        5. **형식**: 반드시 아래 JSON 형식을 엄격히 지켜주세요. JSON 외의 텍스트는 포함하지 마세요.
 
         [JSON 출력 형식]
         {{
@@ -69,7 +75,7 @@ class KRDailyReportGenerator:
                 {{
                     "title": "섹션 제목",
                     "emoji_tag": "📌",
-                    "content": "상세 분석 내용"
+                    "content": "상세 분석 내용 (최소 3문장 이상 풍성하게)"
                 }}
             ],
             "hashtags": ["#코스피", "#삼성전자", "#국내증시"]
@@ -78,8 +84,17 @@ class KRDailyReportGenerator:
 
         try:
             response = self.model.generate_content(prompt)
-            content_text = response.text.replace('```json', '').replace('```', '').strip()
-            return json.loads(content_text)
+            raw_text = response.text.strip()
+            
+            # Extract JSON using regex (more robust)
+            import re
+            json_match = re.search(r'\{.*\}', raw_text, re.DOTALL)
+            if json_match:
+                content_text = json_match.group(0)
+                return json.loads(content_text)
+            else:
+                logger.warning("⚠️ No JSON found in AI response. Using fallback.")
+                return self.get_fallback_content()
         except Exception as e:
             logger.error(f"❌ AI Generation Error: {e}")
             return self.get_fallback_content()

@@ -43,8 +43,8 @@ KR_DATA_DIR = get_data_dir('KR_Market_Analyst')
 
 # from us_market.daily_report_generator import USDailyReportGenerator (Moved inside function)
 
-# KR Report functionality temporarily disabled for Vercel deployment
-KR_REPORT_AVAILABLE = False
+# KR Report functionality enabled
+KR_REPORT_AVAILABLE = True
 
 # Determine template folder location (Vercel uses api/templates, local uses root templates)
 # Determine template folder location (Vercel uses api/templates, local uses root templates)
