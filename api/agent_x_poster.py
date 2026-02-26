@@ -1,3 +1,7 @@
+# --- Omni Swarm Module: Social Broadcaster ---
+# Broadcaster ID: Omni-Marketer-X
+# Part of the Autonomous Investment Swarm
+
 import os
 import json
 import time
