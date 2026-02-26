@@ -15,14 +15,9 @@ except ImportError:
 load_dotenv()
 
 # --- Config ---
-<<<<<<< HEAD
 BASE_URL = "https://us-market-ai-analyst.vercel.app" 
 API_KEY = os.getenv("VIRTUALS_API_KEY") or "VIR-XXXXX"
 AGENT_NAME = "Omni Alpha ($ALPHA)"
-=======
-BASE_URL = "https://us-market-ai-analyst.vercel.app"  # 도메인만 입력 (뒤에 /api/acp 자동 붙음)
-AI_KEY = os.getenv("GOOGLE_API_KEY")
->>>>>>> 16f817c82f4053dd5715dcc6c974af49fce2eadf
 
 # --- Functions ---
 
@@ -39,7 +34,6 @@ def fetch_analysis(ticker: str):
         resp = requests.post(url, json=payload, timeout=20)
         if resp.status_code == 200:
             data = resp.json()
-            # Return tuple for SDK: (status, feedback, info)
             report = data.get("value", {}).get("analysis_report", "The Matrix is silent.")
             return FunctionResultStatus.DONE, report, {"ticker": ticker}
         return FunctionResultStatus.FAILED, f"API Error: {resp.status_code}", {}
@@ -50,12 +44,16 @@ def post_tweet(content: str):
     """Posts a message to X (Twitter) as Omni Alpha."""
     print(f"🐦 Posting to X: {content[:30]}...")
     try:
-        from agent_x_poster import XMarketAgent
-        agent = XMarketAgent()
-        success = agent.post_custom_tweet(content)
-        if success:
+        # Vercel 소셜 엔드포인트 직접 호출
+        url = f"{BASE_URL}/api/acp/social"
+        payload = {
+            "id": "social-post-" + str(int(time.time())),
+            "params": {"content": content}
+        }
+        resp = requests.post(url, json=payload, timeout=20)
+        if resp.status_code == 200:
             return FunctionResultStatus.DONE, "Success: Posted to X", {}
-        return FunctionResultStatus.FAILED, "Twitter API Rejected request.", {}
+        return FunctionResultStatus.FAILED, f"Twitter API Error: {resp.status_code}", {}
     except Exception as e:
         return FunctionResultStatus.FAILED, str(e), {}
 
@@ -80,7 +78,7 @@ twitter_fn = Function(
     fn_name="post_tweet",
     fn_description="Post a final analysis or update to X (Twitter).",
     args=[Argument(name="content", type="string", description="The content to post.")],
-    executable=post_tweet
+    executable=twitter_fn if 'twitter_fn' in globals() else post_tweet
 )
 
 # 2. Define Worker Configuration
