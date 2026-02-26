@@ -1681,13 +1681,24 @@ def virtuals_social_handler():
         try:
             import sys
             import os
-            sys.path.append(os.path.dirname(__file__))
+            api_dir = os.path.dirname(__file__)
+            poster_path = os.path.join(api_dir, "agent_x_poster.py")
+            
+            print(f"Checking for poster at: {poster_path} (Exists: {os.path.exists(poster_path)})")
+            
+            if api_dir not in sys.path:
+                sys.path.append(api_dir)
+            
             from agent_x_poster import XMarketAgent
             agent = XMarketAgent()
             success = agent.post_custom_tweet(content)
             status = "success" if success else "failed"
+        except ImportError as ie:
+            print(f"Import Error: {str(ie)}")
+            status = "failed"
+            content = f"Import Error: {str(ie)}. Make sure agent_x_poster.py is in the api/ folder and all dependencies (google-generativeai, tweepy) are in requirements.txt"
         except Exception as e:
-            print(f"Social Post Error: {str(e)}")
+            print(f"Social Post Execution Error: {str(e)}")
             status = "failed"
             content = f"Error: {str(e)}"
 
