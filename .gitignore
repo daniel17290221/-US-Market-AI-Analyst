@@ -9,8 +9,7 @@ __pycache__/
 venv/
 env/
 ENV/
-
-# Environment variables
+.venv/
 .env
 
 # IDE
@@ -49,3 +48,12 @@ build/
 *.egg-info/
 
 us_market/us_daily_prices.csv
+
+# Large binaries and venvs
+*.exe
+*.dll
+*.setup
+*.msi
+Output/
+AI Shorts Creator/
+AI Senior Content/
