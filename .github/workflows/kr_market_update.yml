@@ -43,9 +43,9 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Add the generated KR data and report files
-          git add KR_Market_Analyst/kr_market/kr_daily_data.json
-          git add KR_Market_Analyst/kr_market/kr_market_daily_report.html
+          # Add the generated KR data and report files using -f to bypass .gitignore
+          git add -f KR_Market_Analyst/kr_market/kr_daily_data.json
+          git add -f KR_Market_Analyst/kr_market/kr_market_daily_report.html
           
           # Commit only if there are changes
           if git commit -m "auto: KR market data & report update $(date +'%Y-%m-%d %H:%M')"; then

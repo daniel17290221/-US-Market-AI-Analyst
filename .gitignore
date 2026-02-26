@@ -28,16 +28,17 @@ us_market/*.csv
 us_market/*.html
 KR_Market_Analyst/kr_market/*.json
 KR_Market_Analyst/kr_market/*.html
-# *.txt  <-- Removed to allow requirements.txt
 *.json
+requirements.txt
+
+# Specific files to keep
 !vercel.json
 !us_market/us_ai_analysis.json
 !us_market/us_macro_analysis.json
 !KR_Market_Analyst/kr_market/kr_market_daily_report.html
 !KR_Market_Analyst/kr_market/kr_daily_data.json
-!vercel-trigger.txt
-requirements.txt
 !requirements.txt
+!vercel-trigger.txt
 
 # Logs
 *.log
