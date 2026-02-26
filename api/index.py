@@ -1647,47 +1647,6 @@ def virtuals_validator_handler():
         ai_resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=10)
         text = ai_resp.json()['candidates'][0]['content']['parts'][0]['text'] if ai_resp.status_code == 200 else "Validator offline."
 
-<<<<<<< Updated upstream
-=======
-        if method == 'full_market_analysis_report' or method == 'full':
-            ticker = params.get('ticker', 'BTC-USD').upper()
-            try:
-                prompt = f"""
-                You are 'Omni Alpha', an institutional-grade AI market analyst. 
-                Perform a high-fidelity market surveillance for {ticker}.
-                
-                The report must include:
-                1. **Market Sentiment Analysis**: Current bullish/bearish bias.
-                2. **SWOT Analysis**: Strengths, Weaknesses, Opportunities, and Threats for this asset.
-                3. **Smart Money Flow Sensing**: Estimated institutional activity based on recent trends.
-                4. **Strategic Recommendation**: Clear, actionable insights (Buy, Sell, Hold).
-                5. **Intrinsic Value Target**: Short-term and long-term price targets.
-                
-                Tone: Professional, data-driven, and authoritative. 
-                Use Markdown formatting for a premium look.
-                """
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
-                resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=10)
-                
-                if resp.status_code == 200:
-                    result_json = resp.json()
-                    text = result_json['candidates'][0]['content']['parts'][0]['text']
-                    # EXACT Correct format from Guide: No 'result' wrapper
-                    return jsonify({
-                        "id": job_id,
-                        "type": "object",
-                        "value": {
-                            "job_id": job_id,
-                            "analysis_report": text
-                        }
-                    })
-                else:
-                    print(f"Gemini API Error: {resp.status_code}")
-            except Exception as api_err:
-                print(f"Gemini Call failed: {api_err}")
-                
-        # Robust Fallback using exact Top-level type-value format
->>>>>>> Stashed changes
         return jsonify({
             "id": job_id,
             "type": "object",
