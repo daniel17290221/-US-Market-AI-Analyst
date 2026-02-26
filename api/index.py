@@ -1679,6 +1679,9 @@ def virtuals_social_handler():
 
         # Import and use the existing X posting logic
         try:
+            import sys
+            import os
+            sys.path.append(os.path.dirname(__file__))
             from agent_x_poster import XMarketAgent
             agent = XMarketAgent()
             success = agent.post_custom_tweet(content)
