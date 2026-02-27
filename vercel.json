@@ -6,19 +6,18 @@
             "use": "@vercel/python"
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api/acp",
-            "dest": "api/index.py"
+            "source": "/api/acp",
+            "destination": "api/index.py"
         },
         {
-            "src": "/assets/(.*)",
-            "dest": "/assets/$1"
+            "source": "/assets/(.*)",
+            "destination": "/assets/$1"
         },
         {
-            "src": "/(.*)",
-            "dest": "api/index.py"
+            "source": "/(.*)",
+            "destination": "api/index.py"
         }
-    ],
-    "cleanUrls": true
+    ]
 }
