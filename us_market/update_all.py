@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 # Essential Scripts for Daily Report
 SCRIPTS = [
-    'smart_money_screener_v2.py', # Required for Top Stocks Picks
+    'analyze_volume.py',           # Generates us_volume_analysis.csv
+    'analyze_13f.py',              # Generates us_13f_holdings.csv
+    'smart_money_screener_v2.py', # Required for Top Stocks Picks (uses above 2)
     'macro_analyzer.py',           # Required for AI Macro Analysis
     'daily_report_generator.py',  # Final HTML & AI writing
 ]
