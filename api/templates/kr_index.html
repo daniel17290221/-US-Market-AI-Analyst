@@ -558,7 +558,8 @@
                             console.warn("Attempting to load report from:", reportPath);
                             frame.src = reportPath;
                         } else {
-                            frame.src = '/api/kr/report';
+                            // Load from GitHub Pages directly to ensure AdSense works on approved domain
+                            frame.src = 'https://daniel17290221.github.io/report_kr.html?t=' + Date.now();
                         }
                     } else {
                         // Just refresh

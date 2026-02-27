@@ -692,8 +692,8 @@
                             const debugEl = document.getElementById('report-debug-info');
                             if (debugEl) debugEl.innerText = "로드 시도 경로: " + reportPath;
                         } else {
-                            // Load from the local Flask API instead of the remote site
-                            reportFrame.src = '/api/us/daily-report';
+                            // Load from GitHub Pages directly to ensure AdSense works on approved domain
+                            reportFrame.src = 'https://daniel17290221.github.io/report_us.html?t=' + Date.now();
                         }
                     }
                 }

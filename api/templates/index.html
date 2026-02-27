@@ -694,8 +694,8 @@
                             const debugEl = document.getElementById('report-debug-info');
                             if (debugEl) debugEl.innerText = "로드 시도 경로: " + reportPath;
                         } else {
-                            // Load from VibeCodingLab main site (with AdSense)
-                            reportFrame.src = '/api/us/daily-report';
+                            // Load from GitHub Pages directly to ensure AdSense works on approved domain
+                            reportFrame.src = 'https://daniel17290221.github.io/report_us.html?t=' + Date.now();
                         }
                     }
                 }

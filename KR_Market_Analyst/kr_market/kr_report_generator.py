@@ -261,7 +261,7 @@ class KRDailyReportGenerator:
         }}
         @media (max-width: 1200px) {{ .ad-sidebar {{ display: none; }} body {{ padding-bottom: 120px; }} .container {{ min-width: 100%; }} .investor-flows {{ grid-template-columns: 1fr; }} }}
         @keyframes fadeIn {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="wrapper">
