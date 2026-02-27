@@ -745,8 +745,9 @@ def get_kr_report():
         resp = requests.get(github_url, timeout=5)
         if resp.status_code == 200:
             logger.info("Serving KR report from GitHub source.")
-            response = make_response(resp.text)
-            response.headers['Content-Type'] = 'text/html'
+            html_content = resp.content.decode('utf-8', errors='replace')
+            response = make_response(html_content)
+            response.headers['Content-Type'] = 'text/html; charset=utf-8'
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
             return response
     except Exception as e:
