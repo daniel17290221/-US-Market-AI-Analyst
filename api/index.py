@@ -716,17 +716,20 @@ def kr_index():
     resp.headers['Expires'] = '0'
     return resp
 
-@app.route('/dividend')
-def dividend_portfolio():
+@app.route('/dashboard')
+def dashboard():
+    resp = make_response(render_template('dashboard.html'))
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
+    return resp
+
+@app.route('/api/market-pulse')
+def get_market_pulse():
+    tickers = ["^KS11", "^GSPC", "BTC-USD", "USDKRW=X"]
     try:
-        resp = make_response(render_template('dividend_portfolio.html'))
-        resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
-        resp.headers['Pragma'] = 'no-cache'
-        resp.headers['Expires'] = '0'
-        return resp
+        prices = fetch_realtime_data(tickers)
+        return jsonify(prices)
     except Exception as e:
-        print(f"CRITICAL: Dividend Template Error: {str(e)}")
-        return f"<h1>Internal Server Error</h1><p>템플릿 로드 중 오류가 발생했습니다: {str(e)}</p><p>Path: {TEMPLATE_DIR}</p>", 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/kr/report')
 def get_kr_report():

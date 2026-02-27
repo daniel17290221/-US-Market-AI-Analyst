@@ -266,10 +266,10 @@
             <span>📡 Command Center</span>
             <div class="status-badge">LIVE</div>
         </div>
-        <div class="menu-item" onclick="window.open('/report_us.html')">
+        <div class="menu-item" onclick="window.location.href='/report_us.html'">
             <span>🇺🇸 US Report</span>
         </div>
-        <div class="menu-item" onclick="window.open('/report_kr.html')">
+        <div class="menu-item" onclick="window.location.href='/report_kr.html'">
             <span>🇰🇷 KR Report</span>
         </div>
         <div class="menu-item" onclick="window.open('https://x.com/omni_alpha_ai')">
@@ -278,7 +278,7 @@
 
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color);">
             <div style="font-size: 0.8rem; color: #8b949e;">
-                <p>ACP Wallet: <span style="color: var(--accent-color)">0x0dD...56EB</span></p>
+                <p>ACP Wallet: <span style="color: var(--accent-color)">0x699...b3e28</span></p>
                 <p>Network: Base (Virtuals)</p>
                 <p>Status: <span style="color: var(--success-color)">● Connected</span></p>
             </div>
@@ -350,8 +350,6 @@
     </div>
 
     <script>
-        const VERCEL_URL = "https://us-market-ai-analyst.vercel.app";
-
         function appendLog(msg, color = "#8b949e") {
             const logs = document.getElementById('logs');
             const time = new Date().toLocaleTimeString();
@@ -361,18 +359,31 @@
 
         async function updateMarketStats() {
             try {
-                // We'll fetch from our own API which has the Yahoo-Live relay
-                const tickers = ["^KS11", "^GSPC", "BTC-USD", "USDKRW=X"];
-                // ACP endpoint technically has a price fetcher inside it too
-                // For simplicity, let's use a common public feed or our own
-                appendLog("Fetching market pulse...");
+                appendLog("Fetching market pulse from Vercel Matrix...");
+                const response = await fetch('/api/market-pulse');
+                const prices = await response.json();
 
-                // Demo values if offline
-                document.getElementById('kospiPrice').innerText = "2,652.12";
-                document.getElementById('kospiChange').innerText = "+0.45%";
-                document.getElementById('spPrice').innerText = "5,001.32";
-                document.getElementById('spChange').innerText = "-0.12%";
-                document.getElementById('spChange').classList.add('down');
+                if (prices["^KS11"]) {
+                    document.getElementById('kospiPrice').innerText = Number(prices["^KS11"].price).toLocaleString();
+                    document.getElementById('kospiChange').innerText = (prices["^KS11"].change > 0 ? "+" : "") + prices["^KS11"].change + "%";
+                    document.getElementById('kospiChange').className = "change " + (prices["^KS11"].change >= 0 ? "up" : "down");
+                }
+                if (prices["^GSPC"]) {
+                    document.getElementById('spPrice').innerText = Number(prices["^GSPC"].price).toLocaleString();
+                    document.getElementById('spChange').innerText = (prices["^GSPC"].change > 0 ? "+" : "") + prices["^GSPC"].change + "%";
+                    document.getElementById('spChange').className = "change " + (prices["^GSPC"].change >= 0 ? "up" : "down");
+                }
+                if (prices["BTC-USD"]) {
+                    document.getElementById('btcPrice').innerText = Number(prices["BTC-USD"].price).toLocaleString();
+                    document.getElementById('btcChange').innerText = (prices["BTC-USD"].change > 0 ? "+" : "") + prices["BTC-USD"].change + "%";
+                    document.getElementById('btcChange').className = "change " + (prices["BTC-USD"].change >= 0 ? "up" : "down");
+                }
+                if (prices["USDKRW=X"]) {
+                    document.getElementById('fxPrice').innerText = Number(prices["USDKRW=X"].price).toLocaleString();
+                    document.getElementById('fxChange').innerText = (prices["USDKRW=X"].change > 0 ? "+" : "") + prices["USDKRW=X"].change + "%";
+                    document.getElementById('fxChange').className = "change " + (prices["USDKRW=X"].change >= 0 ? "up" : "down");
+                }
+                appendLog("Stats synced successfully.", "#3fb950");
             } catch (e) {
                 appendLog("Stats sync failed: " + e.message, "#f85149");
             }
@@ -392,7 +403,8 @@
             appendLog(`[Alpha] Scaling neural layers...`);
 
             try {
-                const response = await fetch(`${VERCEL_URL}/api/acp`, {
+                // Now calling the relative API on the same domain
+                const response = await fetch('/api/acp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -404,7 +416,7 @@
                 const data = await response.json();
                 const report = data.value.analysis_report;
 
-                // Convert Markdown headers slightly for the display
+                // Simple Markdown-ish formatting
                 const formattedReport = report
                     .replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--accent-color)">$1</strong>')
                     .replace(/\n/g, '<br>');
@@ -412,10 +424,10 @@
                 output.innerHTML = `<div style="padding: 10px;">${formattedReport}</div>`;
                 appendLog(`[Alpha] Analysis complete for ${ticker}.`, "#3fb950");
 
-                // Fake Validator step for immersion
+                // Immersion effect
                 setTimeout(() => {
-                    appendLog(`[Validator] Audit passed with 94% confidence.`, "#a371f7");
-                }, 1000);
+                    appendLog(`[Validator] Audit passed with institutional confidence.`, "#a371f7");
+                }, 800);
 
             } catch (e) {
                 output.innerHTML = `<p style="color:var(--danger-color)">Error connecting to Matrix: ${e.message}</p>`;
@@ -423,9 +435,10 @@
             }
         }
 
-        // Init
+        // Initialize
         updateMarketStats();
-        setInterval(updateMarketStats, 60000);
+        // Update stats every 5 minutes (300000ms) to save on API usage
+        setInterval(updateMarketStats, 300000);
     </script>
 </body>
 

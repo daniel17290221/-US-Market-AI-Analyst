@@ -20,6 +20,7 @@ SCRIPTS = [
     'smart_money_screener_v2.py', # Required for Top Stocks Picks (uses above 2)
     'macro_analyzer.py',           # Required for AI Macro Analysis
     'daily_report_generator.py',  # Final HTML & AI writing
+    '../omni_x_broadcaster.py'    # Signal to X/Virtuals Ecosystem
 ]
 
 def run_all():
