@@ -781,9 +781,11 @@
                     <td class="px-6 font-bold ${item.signal && item.signal.includes('적극') ? 'text-brand-success' : 'text-brand-primary'} text-xs italic">
                         ${item.signal || 'Hold'}
                     </td>
-                    <td class="px-6 text-right font-mono text-gray-200">${item.price > 0 ? '₩' + item.price.toLocaleString() : '--'}</td>
-                    <td class="px-6 text-right font-mono ${item.change > 0 ? 'text-brand-success' : (item.change < 0 ? 'text-brand-danger' : 'text-gray-500')}">
-                        ${item.change !== 0 ? (item.change > 0 ? '+' : '') + item.change + '%' : '--'}
+                    <td class="px-6 text-right font-mono text-gray-200">
+                        ${item.price ? (String(item.price).includes('₩') ? item.price : '₩' + item.price) : '--'}
+                    </td>
+                    <td class="px-6 text-right font-mono ${parseFloat(item.change) > 0 ? 'text-brand-success' : (parseFloat(item.change) < 0 ? 'text-brand-danger' : 'text-gray-500')}">
+                        ${item.change != null ? (parseFloat(item.change) > 0 ? '+' : '') + item.change + '%' : '0.00%'}
                     </td>
                 </tr>
             `}).join('');
