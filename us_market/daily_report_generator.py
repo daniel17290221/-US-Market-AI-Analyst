@@ -515,15 +515,7 @@ class USDailyReportGenerator:
         </aside>
 
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 40px; height: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #eeeeee; background: white; border-radius: 8px;">
-                        <img src="/assets/logo.jpg" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                    <div style="font-family: 'Pretendard', sans-serif;">
-                        <span style="font-size: 18px; font-weight: 800; color: var(--text-main); font-style: italic;">Vibe<span style="color: var(--brand-blue);">CodingLab</span></span>
-                    </div>
-                </div>
+            <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 25px;">
                 <span style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
                     🔴 LIVE UPDATED: {gen_time}
                 </span>
