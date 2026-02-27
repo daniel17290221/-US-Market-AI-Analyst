@@ -482,23 +482,71 @@
 
         <!-- Tab: Daily Report (Hidden by Default) -->
         <div id="tab-report" class="hidden space-y-6 animate-fade-in">
-            <div class="glass-card p-0 flex flex-col h-[85vh] overflow-hidden relative">
-                <div class="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center flex-shrink-0">
-                    <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
-                    <div class="flex gap-2">
-                        <button onclick="document.getElementById('reportFrame').contentWindow.location.reload();"
-                            class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
-                            <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
-                        </button>
-                        <a href="/api/kr/report" target="_blank"
-                            class="text-[10px] bg-white/10 text-white px-3 py-1 rounded hover:bg-white/20 transition">
-                            <i class="fas fa-external-link-alt mr-1"></i> 새 창
-                        </a>
+            <!-- Report Preview Card -->
+            <div
+                class="glass-card p-8 relative overflow-hidden min-h-[70vh] flex flex-col items-center justify-center text-center">
+                <!-- Glow BG -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-brand-primary/5 via-transparent to-brand-secondary/5 pointer-events-none">
+                </div>
+
+                <!-- Live Badge -->
+                <div id="report-live-badge"
+                    class="flex items-center gap-2 bg-brand-danger/10 border border-brand-danger/30 text-brand-danger px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 animate-pulse">
+                    <span class="w-1.5 h-1.5 bg-brand-danger rounded-full"></span>
+                    LIVE · 매일 장 종료 후 업데이트
+                </div>
+
+                <!-- Icon -->
+                <div
+                    class="w-20 h-20 bg-brand-primary/10 border border-brand-primary/20 rounded-3xl flex items-center justify-center mb-6 rotate-3 hover:rotate-0 transition-transform duration-500">
+                    <i class="fas fa-newspaper text-4xl text-brand-primary"></i>
+                </div>
+
+                <!-- Title -->
+                <h2 id="report-headline"
+                    class="text-2xl md:text-3xl font-black text-white mb-3 max-w-2xl leading-tight">
+                    KR 프리미엄 데일리 리포트
+                </h2>
+                <p class="text-gray-400 text-sm max-w-md mb-2">
+                    오늘의 코스피·코스닥 시황, 수급 분석, AI 투자 인사이트를 확인하세요.
+                </p>
+                <p id="report-summary" class="text-gray-500 text-xs max-w-lg mb-10 leading-relaxed italic">
+                    로딩 중...
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a id="report-open-btn" href="https://daniel17290221.github.io/report_kr.html" target="_blank"
+                        class="flex items-center gap-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-black font-black px-8 py-4 rounded-2xl text-sm hover:opacity-90 transition-all duration-300 hover:scale-105 shadow-lg shadow-brand-primary/20">
+                        <i class="fas fa-chart-line"></i>
+                        리포트 전체 보기 (광고 포함 · AdSense)
+                        <i class="fas fa-external-link-alt text-xs opacity-70"></i>
+                    </a>
+                    <a href="/api/kr/report" target="_blank"
+                        class="flex items-center gap-3 bg-white/5 border border-white/10 text-gray-300 font-bold px-6 py-4 rounded-2xl text-sm hover:bg-white/10 transition-all duration-300">
+                        <i class="fas fa-server"></i> API 직접 보기
+                    </a>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="mt-10 grid grid-cols-3 gap-6 w-full max-w-lg">
+                    <div class="text-center">
+                        <p class="text-2xl font-black text-brand-primary" id="report-stat-kospi">--%</p>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">코스피 등락</p>
+                    </div>
+                    <div class="text-center border-x border-white/5">
+                        <p class="text-2xl font-black text-brand-primary" id="report-stat-kosdaq">--%</p>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">코스닥 등락</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-black text-white" id="report-stat-date">--</p>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">기준일</p>
                     </div>
                 </div>
-                <iframe id="reportFrame" src="/api/kr/report" class="w-full flex-1 bg-white/5" frameborder="0"></iframe>
             </div>
         </div>
+
 
     </main>
 
@@ -670,7 +718,34 @@
                                 updateTimeEl.innerText = data.date;
                             }
                         }
+
+                        // --- 리포트 탭 통계 업데이트 ---
+                        try {
+                            const dateStr = data.date.split(' ')[0]; // "2026-02-27"
+                            const parts = dateStr.substring(5).split('-'); // ["02","27"]
+                            const reportDateEl = document.getElementById('report-stat-date');
+                            if (reportDateEl) reportDateEl.textContent = parts[0] + '/' + parts[1];
+                        } catch (e) { }
                     }
+
+                    // 코스피·코스닥 등락률을 리포트 탭 통계에 반영
+                    if (data.leaders_kospi && data.leaders_kospi.length > 0) {
+                        // 코스피 대표 등락은 sector_heatmap 또는 첫 종목으로 추정
+                        // market_indices가 있으면 직접 사용
+                    }
+                    // market_indices 있으면 사용 (sector_heatmap 통해 간접 접근)
+                    if (data.sector_heatmap && data.sector_heatmap.length > 0) {
+                        // 전체 섹터 평균으로 코스피 대략 반영
+                        try {
+                            const avg = data.sector_heatmap.reduce((s, x) => s + (parseFloat(x.change) || 0), 0) / data.sector_heatmap.length;
+                            const kospiEl = document.getElementById('report-stat-kospi');
+                            if (kospiEl) {
+                                kospiEl.textContent = (avg >= 0 ? '+' : '') + avg.toFixed(2) + '%';
+                                kospiEl.className = `text-2xl font-black ${avg >= 0 ? 'text-brand-success' : 'text-brand-danger'}`;
+                            }
+                        } catch (e) { }
+                    }
+
 
                     // Parse structured data if available, else fallback to flat array (backward compatibility)
                     if (data.leaders_kospi || data.gainers) {
