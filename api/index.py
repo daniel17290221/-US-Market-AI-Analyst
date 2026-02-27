@@ -738,23 +738,27 @@ def get_market_pulse():
 
 @app.route('/api/kr/report')
 def get_kr_report():
-    # Attempt 1: Dynamic KR_DATA_DIR based path
-    # We also check root and BASE_DIR/KR_Market_Analyst explicitly
+    # Use multiple potential locations for robust path resolution
     paths = [
         os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
         os.path.join(KR_DATA_DIR, 'kr_market_daily_report.html'),
         os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html'),
         os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market_daily_report.html'),
-        # Fallback to current working directory or relative
         os.path.join(os.getcwd(), 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
     ]
     
     report_path = None
     for p in paths:
         if os.path.exists(p):
-            report_path = p
-            logger.info(f"Found KR report at: {p}")
-            break
+            # Check if file is from today
+            try:
+                mtime = datetime.fromtimestamp(os.path.getmtime(p)).date()
+                if mtime == datetime.now().date():
+                    report_path = p
+                    logger.info(f"Serving today's KR report from: {p}")
+                    break
+            except:
+                continue
 
     if report_path:
         try:
@@ -767,14 +771,12 @@ def get_kr_report():
         except Exception as e:
             logger.error(f"Error reading KR report file: {e}")
 
-    # Fallback: Live generation if file is missing
-    logger.warning("KR Report file missing. Attempting live generation...")
+    # Fallback: Live generation if file is missing or old
+    logger.warning("KR Report file missing or old. Attempting live generation...")
     try:
         from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
-        # Use data_dir that contains kr_daily_data.json
         data_dir = os.path.join(KR_DATA_DIR, 'kr_market')
         if not os.path.exists(os.path.join(data_dir, 'kr_daily_data.json')):
-            # Try alternate paths for data
             alt_data_paths = [
                 os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market'),
                 os.path.join(KR_DATA_DIR),
@@ -1169,21 +1171,40 @@ def get_ai_summary(ticker):
 @app.route('/api/us/daily-report')
 @app.route('/daily-report')
 def get_daily_report():
-    report_path = os.path.join(DATA_DIR, 'us_market_morning_report.html')
+    # Use multiple potential locations for robust path resolution
+    paths = [
+        os.path.join(DATA_DIR, 'us_market_morning_report.html'),
+        os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html'),
+        os.path.join(BASE_DIR, 'us_market', 'us_market', 'us_market_morning_report.html'),
+        os.path.join(os.getcwd(), 'us_market', 'us_market_morning_report.html')
+    ]
     
-    # 1. First, check if the pre-generated file exists
-    if os.path.exists(report_path):
-        try:
-            with open(report_path, 'r', encoding='utf-8') as f:
-                resp = make_response(f.read())
-                resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                resp.headers['Pragma'] = 'no-cache'
-                resp.headers['Expires'] = '0'
-                return resp
-        except Exception as e:
-            print(f"DEBUG: Error reading existing report: {e}")
+    report_path = None
+    for p in paths:
+        if os.path.exists(p):
+            # Check if file is from today
+            try:
+                mtime = datetime.fromtimestamp(os.path.getmtime(p)).date()
+                if mtime == datetime.now().date():
+                    report_path = p
+                    logger.info(f"Serving today's US report from: {p}")
+                    break
+            except:
+                continue
 
-    # 2. Fallback to live generation if file doesn't exist
+    if report_path:
+        try:
+            from flask import send_file
+            resp = send_file(report_path, mimetype='text/html')
+            resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
+            resp.headers['Pragma'] = 'no-cache'
+            resp.headers['Expires'] = '0'
+            return resp
+        except Exception as e:
+            logger.error(f"Error reading US report file: {e}")
+
+    # Fallback to live generation if file doesn't exist or is old
+    logger.warning("US Daily Report file missing or old. Attempting live generation...")
     try:
         from us_market.daily_report_generator import USDailyReportGenerator
         generator = USDailyReportGenerator(data_dir=DATA_DIR)
