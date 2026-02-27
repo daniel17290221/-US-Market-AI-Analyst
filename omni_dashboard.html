@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omni Swarm Command Center</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-color: #58a6ff;
+            --success-color: #238636;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .agent-status {
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .agent-status:hover {
+            border-color: var(--accent-color);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            box-shadow: 0 0 10px var(--success-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(88, 166, 255, 0.05), transparent);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.8; }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: #8b949e;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .log-box {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+
+        .report-content {
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            color: #e6edf3;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .loading { animation: pulse 1.5s infinite; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>🤖 Omni Swarm</h2>
+        <div class="agent-status">
+            <div class="status-dot"></div>
+            <span>Omni Alpha ($ALPHA)</span>
+        </div>
+        <div class="agent-status">
+            <div class="status-dot"></div>
+            <span>Omni Validator ($VALID)</span>
+        </div>
+        <div class="agent-status">
+            <div class="status-dot" style="background: #a371f7; box-shadow: 0 0 10px #a371f7;"></div>
+            <span>Omni Marketer (X)</span>
+        </div>
+        
+        <div style="margin-top: auto; font-size: 0.8rem; color: #8b949e;">
+            <p>Wallet: 0x0dD...56EB</p>
+            <p>System Ver: 3.5.2</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Command Center</h1>
+            <div class="control-panel">
+                <input type="text" id="tickerInput" placeholder="종목 코드 (예: TSLA)">
+                <button onclick="runAnalysis()">분석 실행</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Latest Analysis Report <span id="alphaTime">--:--</span></h3>
+                <div id="alphaReport" class="report-content">대기 중...</div>
+            </div>
+            <div class="card">
+                <h3>Validation Verdict <span id="valTime">--:--</span></h3>
+                <div id="valReport" class="report-content">대기 중...</div>
+            </div>
+            <div class="card" style="grid-column: span 2;">
+                <h3>Swarm System Logs</h3>
+                <div id="logs" class="log-box">
+                    [System] Omni Swarm 대시보드가 준비되었습니다.<br>
+                    [System] 분석할 종목을 입력하고 실행 버튼을 누르세요.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const VERCEL_URL = "https://us-market-ai-analyst.vercel.app";
+
+        async function log(msg) {
+            const logs = document.getElementById('logs');
+            const time = new Date().toLocaleTimeString();
+            logs.innerHTML += `<br><span style="color:#8b949e">[${time}]</span> ${msg}`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        async function runAnalysis() {
+            const ticker = document.getElementById('tickerInput').value.toUpperCase();
+            if(!ticker) return alert('종목 고드를 입력하세요.');
+
+            log(`🚀 ${ticker} 분석 스웜 시작...`);
+            
+            try {
+                // Alpha 분석
+                log(`[Alpha] 시장 데이터 스캔 중...`);
+                const alphaRes = await fetch(`${VERCEL_URL}/api/acp`, {
+                    method: 'POST',
+                    body: JSON.stringify({ method: 'market_analysis', params: { ticker } })
+                }).then(r => r.json());
+
+                const report = alphaRes.value.analysis_report;
+                document.getElementById('alphaReport').innerText = report;
+                document.getElementById('alphaTime').innerText = new Date().toLocaleTimeString();
+                log(`[Alpha] 리포트 생성 완료.`);
+
+                // Validator 검증
+                log(`[Validator] 팩트 체크 및 리스크 분석 중...`);
+                const valRes = await fetch(`${VERCEL_URL}/api/acp/validator`, {
+                    method: 'POST',
+                    body: JSON.stringify({ method: 'validate', params: { ticker, analysis_content: report } })
+                }).then(r => r.json());
+
+                document.getElementById('valReport').innerText = valRes.value.validation_report;
+                document.getElementById('valTime').innerText = new Date().toLocaleTimeString();
+                log(`[Validator] 검증 완료. (Status: ${valRes.value.status})`);
+
+                // Marketer 홍보 준비
+                log(`[Marketer] 소셜 네트워크 브로드캐스팅 대기...`);
+                
+            } catch (error) {
+                log(`❌ 오류 발생: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
