@@ -69,9 +69,9 @@ jobs:
             echo "google.com, pub-4995156883730033, DIRECT, f08c47fec0942fa0" > main_repo/ads.txt
           fi
           
-          # 3. Copy reports (using find to be robust against nested paths)
-          find us_market -name "us_market_morning_report.html" -exec cp {} main_repo/report_us.html \;
-          find KR_Market_Analyst -name "kr_market_daily_report.html" -exec cp {} main_repo/report_kr.html \;
+          # 3. Copy reports (Use explicit paths to avoid overwriting with old duplicates)
+          cp us_market/us_market_morning_report.html main_repo/report_us.html
+          cp KR_Market_Analyst/kr_market_daily_report.html main_repo/report_kr.html
           
           # 4. Commit and Push
           cd main_repo
