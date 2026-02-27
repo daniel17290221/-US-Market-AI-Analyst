@@ -899,6 +899,32 @@ def fetch_google_news_rss(query):
 
 # Removed redundant k-news and k-ipo routes
 
+@app.route('/api/kr/debug-price')
+def debug_kr_price():
+    """진단용: JSON 파일에서 leaders_kospi 첫 3개 종목의 실제 price/change 값을 확인"""
+    possible_paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'kr_daily_data.json'),
+        os.path.join(KR_DATA_DIR, 'kr_daily_data.json'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_daily_data.json'),
+        os.path.join(BASE_DIR, 'kr_market', 'kr_daily_data.json')
+    ]
+    found_path = None
+    for p in possible_paths:
+        if p and os.path.exists(p):
+            found_path = p
+            break
+    if not found_path:
+        return jsonify({"error": "JSON not found", "searched": possible_paths})
+    with open(found_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    leaders = data.get('leaders_kospi', [])
+    return jsonify({
+        "found_path": found_path,
+        "date": data.get('date'),
+        "leaders_count": len(leaders),
+        "sample": leaders[:3]  # 처음 3개 종목 그대로 반환
+    })
+
 @app.route('/api/kr/market-data')
 def get_kr_market_data():
     # Robust dynamic search for the most recent kr_daily_data.json
