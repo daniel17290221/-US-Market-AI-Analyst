@@ -753,9 +753,21 @@ def get_kr_report():
             resp.headers['Expires'] = '0'
             return resp
         except Exception as e:
-            return f"Error opening report: {str(e)}", 500
+            print(f"DEBUG: Error reading KR report file: {e}")
+
+    # Fallback: Live generation if file is missing
+    try:
+        from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
+        # Use data_dir that contains kr_daily_data.json
+        data_dir = os.path.join(KR_DATA_DIR, 'kr_market')
+        if not os.path.exists(data_dir):
+            data_dir = KR_DATA_DIR
             
-    return f"데일리 리포트 파일을 생성 중이거나 찾을 수 없습니다. (Path Tried: {path1})", 404
+        generator = KRDailyReportGenerator(data_dir=data_dir)
+        return generator.run()
+    except Exception as e:
+        logger.error(f"KR Live Report Generation Failed: {e}")
+        return f"<html><body style='background:#0d1117;color:white;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;'><div><h2>리포트를 아직 생성 중이거나 찾을 수 없습니다.</h2><p>Error: {str(e)}</p></div></body></html>", 404
 
 
 

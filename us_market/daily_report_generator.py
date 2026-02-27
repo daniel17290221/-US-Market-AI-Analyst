@@ -25,21 +25,10 @@ class USDailyReportGenerator:
         self.output_file = os.path.join(data_dir, 'us_market_morning_report.html')
         
         # Configure Gemini
-        api_key = os.getenv('GOOGLE_API_KEY')
-        if api_key and api_key != "your_gemini_api_key_here":
-            try:
-                import google.generativeai as genai
-                genai.configure(api_key=api_key)
-                self.client = None
-                self.model = genai.GenerativeModel('gemini-2.0-flash')
-                logger.info("[SUCCESS] Gemini AI (legacy) Backend Initialized")
-            except Exception as e:
-                logger.error(f"[ERROR] Gemini Initialization failed: {e}")
-                self.client = None
-                self.model = None
+        self.api_key = os.getenv('GOOGLE_API_KEY') or os.getenv("google_api_key")
+        if self.api_key:
+            logger.info("[SUCCESS] Gemini AI (REST) Backend Initialized")
         else:
-            self.client = None
-            self.model = None
             logger.warning("[WARNING] GOOGLE_API_KEY not found or default. Using mock data.")
 
     def fetch_live_indices(self):
@@ -168,8 +157,8 @@ class USDailyReportGenerator:
         return data
 
     def generate_ai_content(self, raw_data):
-        """Synthesize article content via Gemini"""
-        if not self.model:
+        """Synthesize article content via Gemini REST API"""
+        if not self.api_key:
             return self.get_mock_ai_content(raw_data)
             
         prompt = f"""
@@ -199,22 +188,23 @@ class USDailyReportGenerator:
         """
         
         try:
-            if self.client:
-                response = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt
-                )
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.api_key}"
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "response_mime_type": "application/json",
+                    "temperature": 0.7
+                }
+            }
+            
+            resp = requests.post(url, json=payload, timeout=30)
+            if resp.status_code == 200:
+                res_json = resp.json()
+                text = res_json['candidates'][0]['content']['parts'][0]['text'].strip()
+                return json.loads(text)
             else:
-                response = self.model.generate_content(prompt)
-            
-            text = response.text
-            # Clean JSON string
-            if "```json" in text:
-                text = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                text = text.split("```")[1].split("```")[0].strip()
-            
-            return json.loads(text)
+                logger.error(f"AI API Error: {resp.status_code} - {resp.text}")
+                return self.get_mock_ai_content(raw_data)
         except Exception as e:
             logger.error(f"AI Generation Error: {e}")
             return self.get_mock_ai_content(raw_data)
@@ -525,7 +515,15 @@ class USDailyReportGenerator:
         </aside>
 
         <div class="container">
-            <div style="text-align: right; margin-bottom: 25px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 40px; height: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #eeeeee; background: white; border-radius: 8px;">
+                        <img src="/assets/logo.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="font-family: 'Pretendard', sans-serif;">
+                        <span style="font-size: 18px; font-weight: 800; color: var(--text-main); font-style: italic;">Vibe<span style="color: var(--brand-blue);">CodingLab</span></span>
+                    </div>
+                </div>
                 <span style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
                     🔴 LIVE UPDATED: {gen_time}
                 </span>

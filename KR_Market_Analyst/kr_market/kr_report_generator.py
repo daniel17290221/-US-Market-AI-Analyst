@@ -1,8 +1,8 @@
 import os
 import json
 import logging
+import requests
 from datetime import datetime, timedelta
-import google.generativeai as genai
 from dotenv import load_dotenv
 
 # Setup logging
@@ -12,17 +12,9 @@ logger = logging.getLogger(__name__)
 class KRDailyReportGenerator:
     def __init__(self, data_dir='kr_market', output_file='kr_market_daily_report.html'):
         load_dotenv()
-        api_key = os.getenv("GOOGLE_API_KEY")
-        if not api_key:
+        self.api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key")
+        if not self.api_key:
             logger.error("❌ GOOGLE_API_KEY not found in environment variables.")
-            self.model = None
-        else:
-            try:
-                genai.configure(api_key=api_key)
-                self.model = genai.GenerativeModel('gemini-2.0-flash')
-            except Exception as e:
-                logger.error(f"❌ AI Initialization failed: {e}")
-                self.model = None
         
         self.data_dir = data_dir
         self.data_file = os.path.join(data_dir, 'kr_daily_data.json')
@@ -30,6 +22,9 @@ class KRDailyReportGenerator:
 
     def load_data(self):
         try:
+            if not os.path.exists(self.data_file):
+                logger.warning(f"⚠️ KR data file not found at {self.data_file}")
+                return None
             with open(self.data_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
@@ -37,8 +32,11 @@ class KRDailyReportGenerator:
             return None
 
     def generate_ai_content(self, raw_data):
-        logger.info("🤖 Generating KR AI Content with Gemini...")
+        logger.info("🤖 Generating KR AI Content with Gemini REST API...")
         
+        if not self.api_key:
+            return self.get_fallback_content()
+
         # Prepare stock data context for AI
         stocks_context = ""
         for s in raw_data.get('top_stocks', []):
@@ -83,17 +81,22 @@ class KRDailyReportGenerator:
         """
 
         try:
-            response = self.model.generate_content(prompt)
-            raw_text = response.text.strip()
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.api_key}"
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "response_mime_type": "application/json",
+                    "temperature": 0.7
+                }
+            }
             
-            # Extract JSON using regex (more robust)
-            import re
-            json_match = re.search(r'\{.*\}', raw_text, re.DOTALL)
-            if json_match:
-                content_text = json_match.group(0)
+            resp = requests.post(url, json=payload, timeout=30)
+            if resp.status_code == 200:
+                res_json = resp.json()
+                content_text = res_json['candidates'][0]['content']['parts'][0]['text'].strip()
                 return json.loads(content_text)
             else:
-                logger.warning("⚠️ No JSON found in AI response. Using fallback.")
+                logger.error(f"❌ AI API Error: {resp.status_code} - {resp.text}")
                 return self.get_fallback_content()
         except Exception as e:
             logger.error(f"❌ AI Generation Error: {e}")
@@ -278,7 +281,17 @@ class KRDailyReportGenerator:
         </aside>
 
         <div class="container">
-            <div style="text-align: right; margin-bottom: 20px;"><span style="background: red; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px;">🔴 KR MARKET LIVE: {gen_time}</span></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 40px; height: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #333333; background: white; border-radius: 8px;">
+                        <img src="/assets/logo.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="font-family: 'Pretendard', sans-serif;">
+                        <span style="font-size: 18px; font-weight: 800; color: var(--text-main); font-style: italic;">Vibe<span style="color: var(--brand-blue);">CodingLab</span></span>
+                    </div>
+                </div>
+                <span style="background: red; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px;">🔴 KR MARKET LIVE: {gen_time}</span>
+            </div>
             <h1>{ai_content['catchy_title']}</h1>
             <div class="date">{today_date} • VibeCodingLab KR Premium Analysis</div>
             <div class="box-summary"><h3>오늘의 3요약</h3><ul>{"".join([f'<li>{l}</li>' for l in ai_content['core_summary']])}</ul></div>
