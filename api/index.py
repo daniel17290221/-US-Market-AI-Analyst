@@ -1082,15 +1082,13 @@ def get_kr_market_data():
                     "dcf_target": s['price'], "dcf_bear": "-", "dcf_bull": "-"
                 }
 
-            # Safe parsing for price/change if they come as strings with commas/symbols
+            # Safe parsing for price/change - keep original string format from JSON
+            price_clean = s.get('price', '--') or '--'
             try:
-                price_str = str(s.get('price', '0')).replace(',', '').replace('₩', '').strip()
-                price_num = int(float(price_str)) if price_str and price_str != '0' else 0
-                # Format with comma separator for display
-                price_clean = f"{price_num:,}" if price_num > 0 else s.get('price', '--')
-                change_clean = round(float(str(s.get('change', '0')).replace('%', '').replace('+', '')), 2)
+                # change comes as "+0.68" or "-0.24" string, parse to float
+                raw_change = str(s.get('change', '0') or '0')
+                change_clean = round(float(raw_change.replace('%', '').strip()), 2)
             except:
-                price_clean = s.get('price', '--')
                 change_clean = 0.0
 
             enriched.append({
@@ -1099,11 +1097,11 @@ def get_kr_market_data():
                 "symbol": symbol,
                 "name": s['name'],
                 "sector": s.get('market', 'KOSPI'),
-                "score": round(90.0 - (i * 0.5), 1), # Mock score based on rank
+                "score": round(90.0 - (i * 0.5), 1),
                 "signal": "적극 매수" if i < 3 else ("매수" if i < 7 else "중립"),
-                **details,  # Spread details FIRST so price/change below always take priority
-                "price": price_clean,
-                "change": change_clean,
+                **details,  # Spread details FIRST
+                "price": price_clean,  # Always override with actual price
+                "change": change_clean,  # Always override with actual change
             })
         return enriched
 
