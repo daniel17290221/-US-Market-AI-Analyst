@@ -1,17 +1,23 @@
 {
     "version": 2,
-    "rewrites": [
+    "builds": [
         {
-            "source": "/api/acp",
-            "destination": "/api/index.py"
+            "src": "api/index.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/acp",
+            "dest": "api/index.py"
         },
         {
-            "source": "/assets/(.*)",
-            "destination": "/assets/$1"
+            "src": "/assets/(.*)",
+            "dest": "/assets/$1"
         },
         {
-            "source": "/(.*)",
-            "destination": "/api/index.py"
+            "src": "/(.*)",
+            "dest": "api/index.py"
         }
     ],
     "cleanUrls": true
