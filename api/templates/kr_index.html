@@ -640,8 +640,11 @@
 
         async function fetchData() {
             try {
+                // Determine API base - use Vercel URL if hosted elsewhere (like GitHub Pages)
+                const apiBase = (window.location.hostname.includes('vercel.app')) ? '' : 'https://us-market-ai-analyst.vercel.app';
+
                 // Combined fetch from optimized endpoint
-                const res = await fetch(`/api/kr/market-data?t=${Date.now()}`);
+                const res = await fetch(`${apiBase}/api/kr/market-data?t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
 
@@ -750,11 +753,10 @@
 
             injectSmartMoney(state.smartMoneyData);
 
-            // Auto-load first item of the new tab to sync AI details
-            // REMOVED based on user feedback: Do not auto-select or scroll. 
-            // if (state.smartMoneyData && state.smartMoneyData.length > 0) {
-            //    loadSymbol(0, true); 
-            // }
+            // Population of initial AI details
+            if (state.smartMoneyData && state.smartMoneyData.length > 0) {
+                loadSymbol(0, true);
+            }
         }
 
         function injectSmartMoney(data) {
@@ -965,8 +967,10 @@
         async function fetchChartData(symbol) {
             const container = document.getElementById('tradingview_main');
             try {
+                // Determine API base
+                const apiBase = (window.location.hostname.includes('vercel.app')) ? '' : 'https://us-market-ai-analyst.vercel.app';
                 const cleanSym = String(symbol).padStart(6, '0');
-                const response = await fetch(`/api/chart-data?symbol=${cleanSym}&market=KR`);
+                const response = await fetch(`${apiBase}/api/chart-data?symbol=${cleanSym}&market=KR`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.length > 0 && candleSeries) {

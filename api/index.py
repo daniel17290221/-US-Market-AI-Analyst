@@ -8,7 +8,7 @@ import json
 # --- Config ---
 # --- Omni Swarm v3.5: Multi-Agent Intelligent Analytics ---
 # System Status: Optimized for Vercel Overlord Mode
-# Last Sync: 2026-02-27 08:25 (KST) - Force Build Trigger
+# Last Sync: 2026-02-27 15:00 (KST) - Optimized KR Data Fetch
 
 import os
 import requests
@@ -912,8 +912,9 @@ def get_kr_market_data():
     kr_data_path = None
     latest_time = 0
     
+    # Check all possible paths and find the freshest one
     for p in possible_paths:
-        if os.path.exists(p):
+        if p and os.path.exists(p):
             mtime = os.path.getmtime(p)
             if mtime > latest_time:
                 latest_time = mtime
@@ -922,12 +923,13 @@ def get_kr_market_data():
     kr_data = {}
     if kr_data_path:
         print(f"DEBUG: Loading KR Data from {kr_data_path}")
-    if os.path.exists(kr_data_path):
         try:
             with open(kr_data_path, 'r', encoding='utf-8') as f:
                 kr_data = json.load(f)
         except Exception as e:
             print(f"DEBUG: KR Data Load Error: {e}")
+    else:
+        print("DEBUG: KR Data File not found in any possible paths.")
     
     # Load Lists from JSON (Defaulting to empty if missing)
     leaders_kospi = kr_data.get('leaders_kospi', [])
@@ -972,42 +974,38 @@ def get_kr_market_data():
             leaders_kosdaq = []
 
     # Map Values Back (Leaders, Gainers, Volume) & Price Update
-    try:
-        all_stocks_to_fetch = []
-        # Gather all symbols
-        for s in leaders_kospi: all_stocks_to_fetch.append(f"{s['symbol']}.KS")
-        for s in leaders_kosdaq: all_stocks_to_fetch.append(f"{s['symbol']}.KQ")
-        for s in gainers: 
-            suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
-            all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
-        for s in volume:
-            suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
-            all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
-        
-        all_tickers = list(set(all_stocks_to_fetch))
-        current_prices = fetch_realtime_data(all_tickers)
-        
-        # Update lists with real-time data
-        for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume]:
-            for d in d_list:
-                sym = d['symbol']
-                # Try suffixes matching logic
-                found = False
-                for suffix in ['.KS', '.KQ', '']:
-                    lookup = f"{sym}{suffix}" if suffix else sym
-                    if lookup in current_prices:
-                        # Yahoo returns float, we need to format it or keep it raw for later?
-                        # enrich_list expects string or raw. 
-                        # Let's save formatted string to match old behavior
-                        price_val = current_prices[lookup]['price']
-                        d['price'] = f"{int(price_val):,}"
-                        d['change'] = current_prices[lookup]['change']
-                        found = True
-                        break
-    except Exception as e:
-        print(f"DEBUG: KR Price update error: {e}")
-        import traceback
-        traceback.print_exc()
+    # SKIP: Real-time price update for KR if on Vercel to avoid timeouts (Yahoo is slow for KR)
+    # The JSON data from collect_all is fresh enough.
+    
+    if not os.environ.get('VERCEL'):
+        try:
+            all_stocks_to_fetch = []
+            for s in leaders_kospi: all_stocks_to_fetch.append(f"{s['symbol']}.KS")
+            for s in leaders_kosdaq: all_stocks_to_fetch.append(f"{s['symbol']}.KQ")
+            for s in gainers: 
+                suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
+                all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
+            for s in volume:
+                suffix = ".KS" if s.get('market') == "KOSPI" else (".KQ" if s.get('market') == "KOSDAQ" else ".KS")
+                all_stocks_to_fetch.append(f"{s['symbol']}{suffix}")
+            
+            all_tickers = list(set(all_stocks_to_fetch))
+            current_prices = fetch_realtime_data(all_tickers)
+            
+            for d_list in [leaders_kospi, leaders_kosdaq, gainers, volume]:
+                for d in d_list:
+                    sym = d['symbol']
+                    for suffix in ['.KS', '.KQ', '']:
+                        lookup = f"{sym}{suffix}" if suffix else sym
+                        if lookup in current_prices:
+                            price_val = current_prices[lookup]['price']
+                            d['price'] = f"{int(price_val):,}"
+                            d['change'] = current_prices[lookup]['change']
+                            break
+        except Exception as e:
+            print(f"DEBUG: KR Price update error: {e}")
+    else:
+        print("DEBUG: Skipping live price fetch on Vercel for speed.")
 
     # Use Pre-calculated AI Analysis directly
     dynamic_results = precomputed_ai.copy()
@@ -1089,16 +1087,21 @@ def get_kr_market_data():
             if 'status' not in item: item['status'] = "뉴스"
             if 'name' not in item: item['name'] = item['title']
 
+    # News fetch can also be slow, fallback to json news if available
+    market_news = kr_data.get('market_news', [])
+    if not market_news:
+        market_news = fetch_google_news_rss("국내+증시+시황+마감+브리핑")
+
     response_data = {
         "date": kr_data.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S KST')),
-        "leaders": enrich_list(leaders_kospi), # Default for main tab
+        "leaders": enrich_list(leaders_kospi),
         "leaders_kospi": enrich_list(leaders_kospi),
         "leaders_kosdaq": enrich_list(leaders_kosdaq),
         "gainers": enrich_list(gainers),
         "volume": enrich_list(volume),
         "sector_heatmap": kr_data.get('sector_heatmap', []),
         "ipo_news": ipo_list,
-        "market_news": fetch_google_news_rss("국내+증시+시황+마감+브리핑") # Unified news fetch
+        "market_news": market_news
     }
 
     response = jsonify(response_data)
