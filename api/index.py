@@ -750,15 +750,9 @@ def get_kr_report():
     report_path = None
     for p in paths:
         if os.path.exists(p):
-            # Check if file is from today
-            try:
-                mtime = datetime.fromtimestamp(os.path.getmtime(p)).date()
-                if mtime == datetime.now().date():
-                    report_path = p
-                    logger.info(f"Serving today's KR report from: {p}")
-                    break
-            except:
-                continue
+            report_path = p
+            logger.info(f"Serving KR report from: {p}")
+            break
 
     if report_path:
         try:
@@ -771,27 +765,8 @@ def get_kr_report():
         except Exception as e:
             logger.error(f"Error reading KR report file: {e}")
 
-    # Fallback: Live generation if file is missing or old
-    logger.warning("KR Report file missing or old. Attempting live generation...")
-    try:
-        from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
-        data_dir = os.path.join(KR_DATA_DIR, 'kr_market')
-        if not os.path.exists(os.path.join(data_dir, 'kr_daily_data.json')):
-            alt_data_paths = [
-                os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market'),
-                os.path.join(KR_DATA_DIR),
-                os.path.join(BASE_DIR, 'KR_Market_Analyst')
-            ]
-            for adp in alt_data_paths:
-                if os.path.exists(os.path.join(adp, 'kr_daily_data.json')):
-                    data_dir = adp
-                    break
-            
-        generator = KRDailyReportGenerator(data_dir=data_dir)
-        return generator.run()
-    except Exception as e:
-        logger.error(f"KR Live Report Generation Failed: {e}")
-        return f"<html><body style='background:#0d1117;color:white;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;'><div><h2>리포트를 아직 생성 중이거나 찾을 수 없습니다.</h2><p>Error: {str(e)}</p></div></body></html>", 404
+    # Not found - Do not trigger live generation per user instructions
+    return f"<html><body style='background:#0d1117;color:white;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;'><div><h2>한국 시장 리포트를 생성 중이거나 찾을 수 없습니다.</h2><p>정해진 스케줄에 따라 리포트가 생성된 후 제공됩니다.</p></div></body></html>", 404
 
 
 
@@ -1182,15 +1157,9 @@ def get_daily_report():
     report_path = None
     for p in paths:
         if os.path.exists(p):
-            # Check if file is from today
-            try:
-                mtime = datetime.fromtimestamp(os.path.getmtime(p)).date()
-                if mtime == datetime.now().date():
-                    report_path = p
-                    logger.info(f"Serving today's US report from: {p}")
-                    break
-            except:
-                continue
+            report_path = p
+            logger.info(f"Serving US report from: {p}")
+            break
 
     if report_path:
         try:
@@ -1203,16 +1172,8 @@ def get_daily_report():
         except Exception as e:
             logger.error(f"Error reading US report file: {e}")
 
-    # Fallback to live generation if file doesn't exist or is old
-    logger.warning("US Daily Report file missing or old. Attempting live generation...")
-    try:
-        from us_market.daily_report_generator import USDailyReportGenerator
-        generator = USDailyReportGenerator(data_dir=DATA_DIR)
-        return generator.run()
-    except ImportError:
-        return "<h1>Report Generation Unavailable</h1><p>Full analysis libraries are excluded from Vercel to stay under the 250MB limit. Please check GitHub Actions for generated reports.</p>", 503
-    except Exception as e:
-        return f"<h1>Error generating report</h1><p>{str(e)}</p>", 500
+    # Not found - Do not trigger live generation per user instructions
+    return f"<html><body style='background:#0d1117;color:white;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;'><div><h2>미국 시장 리포트를 찾을 수 없습니다.</h2><p>오전 리포트 생성 스케줄 완료 후 제공됩니다.</p></div></body></html>", 404
 
 @app.route('/api/cron/update')
 def cron_update():
