@@ -476,9 +476,14 @@
                 const data = await res.json();
                 state.allData = data;
 
-                renderHeatmap(data.sector_heatmap);
+                // 방어적 null 체크: sector_heatmap이 없어도 오류 없이 진행
+                if (data.sector_heatmap && Array.isArray(data.sector_heatmap)) {
+                    renderHeatmap(data.sector_heatmap);
+                }
                 renderLists();
-                renderIpo(data.ipo_news);
+                if (data.ipo_news && Array.isArray(data.ipo_news)) {
+                    renderIpo(data.ipo_news);
+                }
 
                 // Load First Stock
                 if (data.leaders_kospi && data.leaders_kospi.length > 0) {
@@ -489,6 +494,9 @@
                 setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 600);
             } catch (e) {
                 console.error("Init failed", e);
+                // 로딩 오버레이는 에러가 나도 숨기기
+                document.getElementById('loading-overlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 600);
             }
         }
 
@@ -508,21 +516,33 @@
         }
 
         function renderLists() {
-            const list = state.allData[state.currentList];
+            const list = state.allData ? state.allData[state.currentList] : null;
             const tbody = document.getElementById('kr-movers-tbody');
             tbody.innerHTML = '';
+
+            if (!list || !Array.isArray(list) || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">데이터를 불러오는 중입니다...</td></tr>';
+                return;
+            }
 
             list.forEach(s => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-white/5 hover:bg-white/5 cursor-pointer transition group';
                 tr.onclick = () => loadStock(s);
 
-                const isUp = parseFloat(s.change) >= 0;
+                const changeVal = parseFloat(String(s.change).replace('%', '').replace('+', ''));
+                const isUp = changeVal >= 0;
+                // change 포맷 정리: 부호 포함 소수점 2자리로 통일
+                const changeDisplay = isNaN(changeVal) ? '--' : (changeVal >= 0 ? '+' + changeVal.toFixed(2) : changeVal.toFixed(2));
+                // price 포맷 정리: 숫자면 콤마 추가, 아니면 그대로 표시
+                const priceNum = parseInt(String(s.price).replace(/,/g, ''));
+                const priceDisplay = isNaN(priceNum) ? (s.price || '--') : priceNum.toLocaleString('ko-KR') + '원';
+
                 tr.innerHTML = `
                     <td class="px-4 py-4 font-mono text-gray-500">${s.symbol}</td>
                     <td class="px-4 py-4 font-bold text-white group-hover:text-brand-primary">${s.name}</td>
-                    <td class="px-4 py-4 text-right font-mono">${s.price}</td>
-                    <td class="px-4 py-4 text-right font-mono ${isUp ? 'text-brand-success' : 'text-brand-danger'}">${s.change}%</td>
+                    <td class="px-4 py-4 text-right font-mono text-white">${priceDisplay}</td>
+                    <td class="px-4 py-4 text-right font-mono font-bold ${isUp ? 'text-brand-success' : 'text-brand-danger'}">${changeDisplay}%</td>
                     <td class="px-4 py-4 text-right"><i class="fas fa-chevron-right text-gray-700"></i></td>
                 `;
                 tbody.appendChild(tr);
@@ -532,6 +552,7 @@
         function renderHeatmap(sectors) {
             const container = document.getElementById('sector-heatmap-container');
             container.innerHTML = '';
+            if (!sectors || !Array.isArray(sectors)) return;
             sectors.forEach(sec => {
                 const isUp = sec.change >= 0;
                 const div = document.createElement('div');
@@ -547,15 +568,20 @@
         function renderIpo(news) {
             const container = document.getElementById('ipo-news-container');
             container.innerHTML = '';
+            if (!news || !Array.isArray(news)) return;
             news.forEach(n => {
                 const div = document.createElement('div');
                 div.className = 'p-3 bg-black/20 rounded-xl border border-white/5';
+                // RSS 뉴스와 IPO 구조 모두 지원
+                const title = n.name || n.title || '정보 없음';
+                const date = n.date || '-';
+                const status = n.status || '뉴스';
                 div.innerHTML = `
                     <div class="flex justify-between mb-1">
-                        <span class="text-[10px] text-brand-primary font-bold">${n.status || 'IPO'}</span>
-                        <span class="text-[9px] text-gray-600">${n.date}</span>
+                        <span class="text-[10px] text-brand-primary font-bold">${status}</span>
+                        <span class="text-[9px] text-gray-600">${date}</span>
                     </div>
-                    <p class="text-xs font-medium text-gray-300">${n.name}</p>
+                    <p class="text-xs font-medium text-gray-300">${title}</p>
                 `;
                 container.appendChild(div);
             });

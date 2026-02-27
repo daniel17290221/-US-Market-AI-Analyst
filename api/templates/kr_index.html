@@ -782,10 +782,21 @@
                         ${item.signal || 'Hold'}
                     </td>
                     <td class="px-6 text-right font-mono text-gray-200">
-                        ${item.price ? (String(item.price).includes('₩') ? item.price : '₩' + item.price) : '--'}
+                        ${(function () {
+                        const p = item.price;
+                        if (p == null || p === '' || p === '--') return '--';
+                        const ps = String(p);
+                        if (ps.includes('₩')) return ps;
+                        const pn = parseInt(ps.replace(/,/g, ''));
+                        return isNaN(pn) || pn === 0 ? (ps || '--') : '₩' + pn.toLocaleString('ko-KR');
+                    })()}
                     </td>
-                    <td class="px-6 text-right font-mono ${parseFloat(item.change) > 0 ? 'text-brand-success' : (parseFloat(item.change) < 0 ? 'text-brand-danger' : 'text-gray-500')}">
-                        ${item.change != null ? (parseFloat(item.change) > 0 ? '+' : '') + item.change + '%' : '0.00%'}
+                    <td class="px-6 text-right font-mono font-bold ${parseFloat(item.change) > 0 ? 'text-brand-success' : (parseFloat(item.change) < 0 ? 'text-brand-danger' : 'text-gray-500')}">
+                        ${(function () {
+                        const c = parseFloat(item.change);
+                        if (isNaN(c)) return '--';
+                        return (c >= 0 ? '+' : '') + c.toFixed(2) + '%';
+                    })()}
                     </td>
                 </tr>
             `}).join('');
