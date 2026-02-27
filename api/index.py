@@ -747,7 +747,7 @@ def get_kr_report():
     if report_path:
         try:
             from flask import send_file
-            resp = make_response(send_file(report_path, mimetype='text/html'))
+            resp = send_file(report_path, mimetype='text/html')
             resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
             resp.headers['Pragma'] = 'no-cache'
             resp.headers['Expires'] = '0'

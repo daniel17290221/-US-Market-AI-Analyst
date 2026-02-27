@@ -361,9 +361,10 @@ class KRDailyReportGenerator:
     def run(self):
         logger.info("Starting KR Market Daily Report Generation...")
         raw_data = self.load_data()
-        if not raw_data: return
+        if not raw_data: 
+            return "<html><body><h1>Error</h1><p>KR Data not found (kr_daily_data.json)</p></body></html>"
         ai_content = self.generate_ai_content(raw_data)
-        self.generate_html(raw_data, ai_content)
+        return self.generate_html(raw_data, ai_content)
 
 if __name__ == "__main__":
     KRDailyReportGenerator().run()

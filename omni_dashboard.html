@@ -260,16 +260,23 @@
 <body>
 
     <div class="sidebar">
-        <div class="logo">OMNI SWARM AI</div>
+        <a href="https://land.vibe-coding-lab.com/" class="logo"
+            style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
+            <div
+                style="width: 32px; height: 32px; overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color); background: white;">
+                <img src="/assets/logo.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <span style="font-style: italic;">Vibe<span style="color: var(--accent-color);">CodingLab</span></span>
+        </a>
 
         <div class="menu-item active">
             <span>📡 Command Center</span>
             <div class="status-badge">LIVE</div>
         </div>
-        <div class="menu-item" onclick="window.open('/report_us.html')">
+        <div class="menu-item" onclick="window.open('/api/us/daily-report')">
             <span>🇺🇸 US Report</span>
         </div>
-        <div class="menu-item" onclick="window.open('/report_kr.html')">
+        <div class="menu-item" onclick="window.open('/api/kr/report')">
             <span>🇰🇷 KR Report</span>
         </div>
         <div class="menu-item" onclick="window.open('https://x.com/omni_alpha_ai')">
@@ -333,6 +340,10 @@
             </div>
 
             <div class="right-col">
+                <a href="https://land.vibe-coding-lab.com/" class="logo-area" style="text-decoration: none;">
+                    <img src="/assets/logo.jpg" alt="Logo" class="logo-img">
+                    <span class="logo-text">Vibe<span class="highlight">CodingLab</span></span>
+                </a>
                 <div class="card">
                     <h3>System Operations Log</h3>
                     <div id="logs" class="log-box">
@@ -341,8 +352,8 @@
                         <span style="color: var(--success-color)">[SYSTEM]</span> Monitoring Market Heartbeat...
                     </div>
                     <div class="quick-links">
-                        <a href="/report_us.html" class="link-btn">US Morning Report</a>
-                        <a href="/report_kr.html" class="link-btn">KR Daily Report</a>
+                        <a href="/api/us/daily-report" target="_blank" class="link-btn">US Morning Report</a>
+                        <a href="/api/kr/report" target="_blank" class="link-btn">KR Daily Report</a>
                     </div>
                 </div>
             </div>

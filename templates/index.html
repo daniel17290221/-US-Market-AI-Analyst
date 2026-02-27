@@ -212,15 +212,14 @@
     <nav
         class="sticky top-0 z-50 glass-card mx-2 mt-2 mb-6 px-4 md:px-6 py-3 flex flex-col lg:flex-row justify-between items-center rounded-2xl border-white/5 gap-4">
         <div class="flex items-center justify-between w-full lg:w-auto">
-            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition">
+            <a href="https://land.vibe-coding-lab.com/" class="flex items-center gap-3 hover:opacity-80 transition">
                 <div
                     class="w-8 h-8 md:w-10 md:h-10 overflow-hidden rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/10 border border-white/10 bg-white">
                     <img src="/assets/logo.jpg" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <h1 class="text-lg md:text-xl font-bold tracking-tight text-white italic">Vibe<span
-                            class="text-brand-primary">CodingLab</span> <span
-                            class="text-[10px] text-gray-500 not-italic ml-1">US</span></h1>
+                            class="text-brand-primary">CodingLab</span></h1>
                 </div>
             </a>
 
@@ -677,7 +676,6 @@
                 const reportFrame = document.getElementById('report-iframe');
                 if (reportFrame) {
                     const currentSrc = reportFrame.getAttribute('src');
-                    // Aggressive check: if src is empty, current URL, or null
                     if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc === "#") {
                         if (window.location.protocol === 'file:') {
                             const path = window.location.pathname;
@@ -689,12 +687,11 @@
                             console.warn("Attempting to load report from:", reportPath);
                             reportFrame.src = reportPath;
 
-                            // Visual debug feedback
                             const debugEl = document.getElementById('report-debug-info');
                             if (debugEl) debugEl.innerText = "로드 시도 경로: " + reportPath;
                         } else {
-                            // Load from VibeCodingLab main site (with AdSense)
-                            reportFrame.src = 'https://land.vibe-coding-lab.com/report_us.html';
+                            // Load from the local Flask API instead of the remote site
+                            reportFrame.src = '/api/us/daily-report';
                         }
                     }
                 }

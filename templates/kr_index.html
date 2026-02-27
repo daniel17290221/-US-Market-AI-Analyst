@@ -135,8 +135,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg md:text-xl font-bold tracking-tight text-white italic">Vibe<span
-                            class="text-brand-primary">CodingLab</span> <span
-                            class="text-[10px] text-gray-500 not-italic ml-1">KR</span></h1>
+                            class="text-brand-primary">CodingLab</span></h1>
                 </div>
             </a>
 
@@ -550,9 +549,20 @@
             if (tabName === 'report') {
                 const frame = document.getElementById('reportFrame');
                 if (frame) {
-                    const currentSrc = frame.src.split('?')[0];
-                    frame.src = `${currentSrc}?t=${Date.now()}`;
-                    console.log("Refreshing report frame with cache busting...");
+                    const currentSrc = frame.getAttribute('src');
+                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc === "#") {
+                        if (window.location.protocol === 'file:') {
+                            const reportPath = 'KR_Market_Analyst/kr_market/kr_market_daily_report.html';
+                            console.warn("Attempting to load report from:", reportPath);
+                            frame.src = reportPath;
+                        } else {
+                            frame.src = '/api/kr/report';
+                        }
+                    } else {
+                        // Just refresh
+                        const baseUrl = frame.src.split('?')[0];
+                        frame.src = `${baseUrl}?t=${Date.now()}`;
+                    }
                 }
             }
 
