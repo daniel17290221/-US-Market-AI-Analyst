@@ -901,13 +901,27 @@ def fetch_google_news_rss(query):
 
 @app.route('/api/kr/market-data')
 def get_kr_market_data():
-    # Load all stocks from daily data
-    # Dynamic search for kr_daily_data.json
-    kr_data_path = os.path.join(KR_DATA_DIR, 'kr_market', 'kr_daily_data.json')
-    if not os.path.exists(kr_data_path):
-        kr_data_path = os.path.join(KR_DATA_DIR, 'kr_daily_data.json')
+    # Robust dynamic search for the most recent kr_daily_data.json
+    possible_paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'kr_daily_data.json'),
+        os.path.join(KR_DATA_DIR, 'kr_daily_data.json'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_daily_data.json'),
+        os.path.join(BASE_DIR, 'kr_market', 'kr_daily_data.json')
+    ]
+    
+    kr_data_path = None
+    latest_time = 0
+    
+    for p in possible_paths:
+        if os.path.exists(p):
+            mtime = os.path.getmtime(p)
+            if mtime > latest_time:
+                latest_time = mtime
+                kr_data_path = p
     
     kr_data = {}
+    if kr_data_path:
+        print(f"DEBUG: Loading KR Data from {kr_data_path}")
     if os.path.exists(kr_data_path):
         try:
             with open(kr_data_path, 'r', encoding='utf-8') as f:
