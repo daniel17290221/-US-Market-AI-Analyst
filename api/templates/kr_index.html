@@ -574,59 +574,68 @@
 
 
         // --- Data Handling ---
-        async function renderSectorHeatmap(sectors) {
+        function renderSectorHeatmap(sectors) {
+            console.log("Rendering Sector Heatmap:", sectors);
             const container = document.getElementById('sector-heatmap-container');
             if (!container) return;
 
-            if (!sectors || sectors.length === 0) {
+            if (!sectors || !Array.isArray(sectors) || sectors.length === 0) {
                 container.innerHTML = '<div class="col-span-2 text-center text-gray-500 text-xs py-10 italic">섹터 정보를 불러올 수 없습니다.</div>';
                 return;
             }
 
-            container.innerHTML = sectors.map(s => {
-                const isUp = s.change >= 0;
-                const absChange = Math.abs(s.change);
+            try {
+                container.innerHTML = sectors.map(s => {
+                    const changeVal = parseFloat(s.change) || 0;
+                    const isUp = changeVal >= 0;
+                    const absChange = Math.abs(changeVal);
 
-                // Colors based on change intensity
-                let bgColor, borderClass, textIntensity;
-                if (isUp) {
-                    const intensity = Math.min(Math.floor(absChange * 30), 80);
-                    bgColor = `rgba(16, 185, 129, ${0.1 + (intensity / 100)})`;
-                    borderClass = 'border-brand-success/20';
-                    textIntensity = 'text-brand-success';
-                } else {
-                    const intensity = Math.min(Math.floor(absChange * 30), 80);
-                    bgColor = `rgba(239, 68, 68, ${0.1 + (intensity / 100)})`;
-                    borderClass = 'border-brand-danger/20';
-                    textIntensity = 'text-brand-danger';
-                }
+                    // Colors based on change intensity
+                    let bgColor, borderClass, textIntensity;
+                    if (isUp) {
+                        const intensity = Math.min(Math.floor(absChange * 30), 80);
+                        bgColor = `rgba(16, 185, 129, ${0.1 + (intensity / 100)})`;
+                        borderClass = 'border-brand-success/20';
+                        textIntensity = 'text-brand-success';
+                    } else {
+                        const intensity = Math.min(Math.floor(absChange * 30), 80);
+                        bgColor = `rgba(239, 68, 68, ${0.1 + (intensity / 100)})`;
+                        borderClass = 'border-brand-danger/20';
+                        textIntensity = 'text-brand-danger';
+                    }
 
-                return `
-                <div class="p-3.5 rounded-2xl border ${borderClass} transition-all duration-300 hover:translate-y-[-2px] group" 
-                     style="background: ${bgColor};">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="text-[11px] font-black text-white/90 group-hover:text-white transition-colors">${s.sector}</span>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[10px] font-black ${textIntensity} flex items-center gap-1">
-                                <i class="fas ${isUp ? 'fa-caret-up' : 'fa-caret-down'}"></i>
-                                ${s.change_str}
-                            </span>
+                    const stocks = s.stocks || [];
+
+                    return `
+                    <div class="p-3.5 rounded-2xl border ${borderClass} transition-all duration-300 hover:translate-y-[-2px] group" 
+                         style="background: ${bgColor};">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-[11px] font-black text-white/90 group-hover:text-white transition-colors">${s.sector || '기타'}</span>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[10px] font-black ${textIntensity} flex items-center gap-1">
+                                    <i class="fas ${isUp ? 'fa-caret-up' : 'fa-caret-down'}"></i>
+                                    ${s.change_str || (changeVal > 0 ? '+' : '') + changeVal.toFixed(2) + '%'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-[7px] font-black text-white/30 uppercase tracking-widest">상위 종목</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                ${stocks.length > 0 ? stocks.map(st => `
+                                    <div class="flex flex-col">
+                                        <span class="text-[8px] font-bold text-white/80">${st.name}</span>
+                                        <span class="text-[7px] font-mono text-white/40">${st.change}</span>
+                                    </div>
+                                `).join('<div class="w-[1px] h-3 bg-white/10 self-center"></div>') : '<span class="text-[8px] text-white/20 italic">데이터 없음</span>'}
+                            </div>
                         </div>
                     </div>
-                    <div class="space-y-2">
-                        <p class="text-[7px] font-black text-white/30 uppercase tracking-widest">상위 종목</p>
-                        <div class="flex flex-wrap gap-1.5">
-                            ${s.stocks.map(st => `
-                                <div class="flex flex-col">
-                                    <span class="text-[8px] font-bold text-white/80">${st.name}</span>
-                                    <span class="text-[7px] font-mono text-white/40">${st.change}</span>
-                                </div>
-                            `).join('<div class="w-[1px] h-3 bg-white/10 self-center"></div>')}
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error("Error in renderSectorHeatmap:", err);
+                container.innerHTML = `<div class="col-span-2 text-center text-brand-danger text-[10px] py-10">렌더링 오류: ${err.message}</div>`;
+            }
         }
 
         async function fetchData() {
@@ -673,7 +682,14 @@
                     }
 
                     if (data.sector_heatmap) {
-                        renderSectorHeatmap(data.sector_heatmap);
+                        try {
+                            renderSectorHeatmap(data.sector_heatmap);
+                        } catch (e) {
+                            console.error("Failed to render sector heatmap:", e);
+                        }
+                    } else {
+                        const container = document.getElementById('sector-heatmap-container');
+                        if (container) container.innerHTML = '<div class="col-span-2 text-center text-gray-500 text-xs py-10 italic">섹터 데이터가 없습니다.</div>';
                     }
 
                     switchMarketTab('leaders_kospi'); // Initial render

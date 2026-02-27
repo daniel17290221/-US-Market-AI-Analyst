@@ -10,15 +10,17 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class KRDailyReportGenerator:
-    def __init__(self, data_dir='kr_market', output_file='kr_market_daily_report.html'):
+    def __init__(self, data_dir=None, output_file='kr_market_daily_report.html'):
         load_dotenv()
         self.api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key")
         if not self.api_key:
             logger.error("❌ GOOGLE_API_KEY not found in environment variables.")
         
-        self.data_dir = data_dir
-        self.data_file = os.path.join(data_dir, 'kr_daily_data.json')
-        self.output_file = os.path.join(data_dir, output_file)
+        # Use absolute path based on script location
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.data_dir = data_dir if data_dir else script_dir
+        self.data_file = os.path.join(self.data_dir, 'kr_daily_data.json')
+        self.output_file = os.path.join(self.data_dir, output_file)
 
     def load_data(self):
         try:
