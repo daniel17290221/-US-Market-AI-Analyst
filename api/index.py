@@ -1754,8 +1754,7 @@ def virtuals_validator_handler():
         }
     })
 
-except Exception as global_e:
-    return jsonify({"id": "err", "type": "object", "value": {"error": str(global_e)}}), 200
+
 
 # --- Social-ACP: Omni Marketer Endpoint ---
 @app.route('/api/acp/social', methods=['GET', 'POST', 'OPTIONS'])
