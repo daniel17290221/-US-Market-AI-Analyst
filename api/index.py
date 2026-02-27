@@ -13,10 +13,15 @@ import json
 import os
 import requests
 import sys
+import logging
 from datetime import datetime
 import xml.etree.ElementTree as ET
 # import google.generativeai as genai (Removed to stay under 250MB size limit)
 from dotenv import load_dotenv
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -734,14 +739,21 @@ def get_market_pulse():
 @app.route('/api/kr/report')
 def get_kr_report():
     # Attempt 1: Dynamic KR_DATA_DIR based path
-    path1 = os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html')
-    path2 = os.path.join(KR_DATA_DIR, 'kr_market_daily_report.html')
-    path3 = os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    # We also check root and BASE_DIR/KR_Market_Analyst explicitly
+    paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
+        os.path.join(KR_DATA_DIR, 'kr_market_daily_report.html'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market_daily_report.html'),
+        # Fallback to current working directory or relative
+        os.path.join(os.getcwd(), 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    ]
     
     report_path = None
-    for p in [path1, path2, path3]:
+    for p in paths:
         if os.path.exists(p):
             report_path = p
+            logger.info(f"Found KR report at: {p}")
             break
 
     if report_path:
@@ -753,15 +765,25 @@ def get_kr_report():
             resp.headers['Expires'] = '0'
             return resp
         except Exception as e:
-            print(f"DEBUG: Error reading KR report file: {e}")
+            logger.error(f"Error reading KR report file: {e}")
 
     # Fallback: Live generation if file is missing
+    logger.warning("KR Report file missing. Attempting live generation...")
     try:
         from KR_Market_Analyst.kr_market.kr_report_generator import KRDailyReportGenerator
         # Use data_dir that contains kr_daily_data.json
         data_dir = os.path.join(KR_DATA_DIR, 'kr_market')
-        if not os.path.exists(data_dir):
-            data_dir = KR_DATA_DIR
+        if not os.path.exists(os.path.join(data_dir, 'kr_daily_data.json')):
+            # Try alternate paths for data
+            alt_data_paths = [
+                os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market'),
+                os.path.join(KR_DATA_DIR),
+                os.path.join(BASE_DIR, 'KR_Market_Analyst')
+            ]
+            for adp in alt_data_paths:
+                if os.path.exists(os.path.join(adp, 'kr_daily_data.json')):
+                    data_dir = adp
+                    break
             
         generator = KRDailyReportGenerator(data_dir=data_dir)
         return generator.run()
