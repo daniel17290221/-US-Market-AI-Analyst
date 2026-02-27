@@ -738,7 +738,21 @@ def get_market_pulse():
 
 @app.route('/api/kr/report')
 def get_kr_report():
-    # Use multiple potential locations for robust path resolution
+    # Attempt 1: Fetch from the dedicated ad-supported GitHub repository for instant updates
+    github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
+    try:
+        import requests
+        resp = requests.get(github_url, timeout=5)
+        if resp.status_code == 200:
+            logger.info("Serving KR report from GitHub source.")
+            response = make_response(resp.text)
+            response.headers['Content-Type'] = 'text/html'
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
+            return response
+    except Exception as e:
+        logger.warning(f"Failed to fetch KR report from GitHub: {e}")
+
+    # Attempt 2: Fallback to local paths
     paths = [
         os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
         os.path.join(KR_DATA_DIR, 'kr_market_daily_report.html'),
@@ -1146,7 +1160,22 @@ def get_ai_summary(ticker):
 @app.route('/api/us/daily-report')
 @app.route('/daily-report')
 def get_daily_report():
-    # Use multiple potential locations for robust path resolution
+    # Attempt 1: Fetch from the dedicated ad-supported GitHub repository for instant updates
+    github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
+    try:
+        import requests
+        # Use a random param to bust GitHub's CDN cache if needed
+        resp = requests.get(github_url, params={"t": int(datetime.now().timestamp())}, timeout=5)
+        if resp.status_code == 200:
+            logger.info("Serving US report from GitHub source.")
+            response = make_response(resp.text)
+            response.headers['Content-Type'] = 'text/html'
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
+            return response
+    except Exception as e:
+        logger.warning(f"Failed to fetch US report from GitHub: {e}")
+
+    # Attempt 2: Fallback to local paths
     paths = [
         os.path.join(DATA_DIR, 'us_market_morning_report.html'),
         os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html'),
