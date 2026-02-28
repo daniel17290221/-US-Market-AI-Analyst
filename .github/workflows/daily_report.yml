@@ -2,8 +2,8 @@ name: Daily US Market Report Update
 
 on:
   schedule:
-    # 1회/일: 07:30 KST (22:30 UTC 전날) - 장 시작 전 아침 브리핑
-    - cron: '30 22 * * 0-4'
+    # 1회/일: 07:30 KST (22:30 UTC 전날) - 장 시작 전 아침 브리핑 (월~토 아침)
+    - cron: '30 22 * * 0-5'
   workflow_dispatch:  # 수동 실행만 허용 (push 트리거 제거 - 무한루프 방지)
 
 jobs:
