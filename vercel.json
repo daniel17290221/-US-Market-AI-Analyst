@@ -19,6 +19,5 @@
             "source": "/(.*)",
             "destination": "api/index.py"
         }
-    ],
-    "ignoreCommand": "git diff --name-only HEAD^ HEAD | grep -qvE '^(KR_Market_Analyst/|us_market/.*\\.(json|csv|html)|vercel-trigger\\.txt)' || exit 0"
+    ]
 }
