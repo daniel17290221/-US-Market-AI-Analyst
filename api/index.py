@@ -494,7 +494,7 @@ def fetch_naver_movers(mover_type='rise', sosok=None):
             results.append({
                 "symbol": code,
                 "name": name,
-                "price": "0",
+                "price": "--",
                 "change": 0.0,
                 "market": "KOSPI" if sosok == 0 else ("KOSDAQ" if sosok == 1 else "KOSPI"),
                 "rank": str(count + 1)
@@ -1050,13 +1050,34 @@ def get_kr_market_data():
                         lookup = f"{sym}{suffix}" if suffix else sym
                         if lookup in current_prices:
                             price_val = current_prices[lookup]['price']
-                            d['price'] = f"{int(price_val):,}"
-                            d['change'] = current_prices[lookup]['change']
+                            try:
+                                d['price'] = f"{int(float(price_val)):,}" # Handle both int and float
+                                d['change'] = current_prices[lookup]['change']
+                            except (ValueError, TypeError):
+                                pass 
                             break
         except Exception as e:
             print(f"DEBUG: KR Price update error: {e}")
     else:
-        print("DEBUG: Skipping live price fetch on Vercel for speed.")
+        # On Vercel, only fetch prices for Leaders (Top 20) to balance speed and completeness
+        try:
+            leaders_tickers = [f"{s['symbol']}.KS" for s in leaders_kospi] + [f"{s['symbol']}.KQ" for s in leaders_kosdaq]
+            if leaders_tickers:
+                current_prices = fetch_realtime_data(leaders_tickers)
+                for d_list in [leaders_kospi, leaders_kosdaq]:
+                    for d in d_list:
+                        sym = d['symbol']
+                        for suffix in ['.KS', '.KQ']:
+                            lookup = f"{sym}{suffix}"
+                            if lookup in current_prices:
+                                price_val = current_prices[lookup]['price']
+                                try:
+                                    d['price'] = f"{int(float(price_val)):,}"
+                                    d['change'] = current_prices[lookup]['change']
+                                except: pass
+                                break
+        except Exception as e:
+            print(f"DEBUG: Vercel KR Price update error: {e}")
 
     # Use Pre-calculated AI Analysis directly
     dynamic_results = precomputed_ai.copy()
