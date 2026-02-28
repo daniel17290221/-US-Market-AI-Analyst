@@ -1294,6 +1294,52 @@ def get_daily_report():
     # Not found - Do not trigger live generation per user instructions
     return f"<html><body style='background:#0d1117;color:white;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;'><div><h2>미국 시장 리포트를 찾을 수 없습니다.</h2><p>오전 리포트 생성 스케줄 완료 후 제공됩니다.</p></div></body></html>", 404
 
+@app.route('/api/kr/daily-report')
+@app.route('/kr/daily-report')
+def get_kr_daily_report():
+    # Attempt 1: Fetch from the dedicated ad-supported GitHub repository for instant updates
+    github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
+    try:
+        import requests
+        # Use a random param to bust GitHub's CDN cache if needed
+        resp = requests.get(github_url, params={"t": int(datetime.now().timestamp())}, timeout=5)
+        if resp.status_code == 200:
+            logger.info("Serving KR report from GitHub source.")
+            response = make_response(resp.text)
+            response.headers['Content-Type'] = 'text/html'
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
+            return response
+    except Exception as e:
+        logger.warning(f"Failed to fetch KR report from GitHub: {e}")
+
+    # Attempt 2: Fallback to local paths
+    paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html'),
+        os.path.join(os.getcwd(), 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    ]
+    
+    report_path = None
+    for p in paths:
+        if os.path.exists(p):
+            report_path = p
+            logger.info(f"Serving KR report from: {p}")
+            break
+
+    if report_path:
+        try:
+            from flask import send_file
+            resp = send_file(report_path, mimetype='text/html')
+            resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
+            resp.headers['Pragma'] = 'no-cache'
+            resp.headers['Expires'] = '0'
+            return resp
+        except Exception as e:
+            logger.error(f"Error reading KR report file: {e}")
+
+    # Not found - Do not trigger live generation per user instructions
+    return f"<html><body style='background:#0d1117;color:white;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;'><div><h2>한국 시장 리포트를 찾을 수 없습니다.</h2><p>오전 리포트 생성 스케줄 완료 후 제공됩니다.</p></div></body></html>", 404
+
 @app.route('/api/cron/update')
 def cron_update():
     """Endpoint for Vercel Cron to trigger data refresh for both US and KR markets"""

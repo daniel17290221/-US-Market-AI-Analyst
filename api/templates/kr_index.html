@@ -481,7 +481,8 @@
         </div>
 
         <!-- Tab: Daily Report (Hidden by Default) -->
-        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden h-[85vh] relative flex flex-col">
+        <div id="tab-report"
+            class="tab-content hidden glass-card p-0 overflow-hidden h-[85vh] min-h-[600px] relative flex flex-col">
             <!-- Header for Iframe -->
             <div class="p-4 bg-white/5 border-b border-white/5 flex flex-col gap-1 flex-shrink-0">
                 <div class="flex justify-between items-center">
@@ -493,7 +494,7 @@
                             LIVE UPDATED
                         </span>
                         <button
-                            onclick="const frame = document.getElementById('reportFrame'); const url = new URL(frame.src, window.location.href); url.searchParams.set('t', Date.now()); frame.src = url.href;"
+                            onclick="const frame = document.getElementById('reportFrame'); frame.src = frame.getAttribute('data-src') + '?t=' + Date.now();"
                             class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
                             <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
                         </button>
@@ -502,10 +503,19 @@
                 <div id="report-debug-info" class="text-[9px] text-gray-600 font-mono"></div>
             </div>
 
-            <!-- Report Iframe -->
-            <iframe id="reportFrame" src="" class="w-full flex-1 border-none bg-[#08080A]" loading="lazy"></iframe>
+            <div id="report-loading-state" class="absolute inset-0 flex items-center justify-center bg-[#08080A] z-0">
+                <div class="flex flex-col items-center gap-3">
+                    <i class="fas fa-circle-notch animate-spin text-2xl text-brand-primary"></i>
+                    <span class="text-xs font-mono text-gray-500 uppercase tracking-widest">리포트를 불러오는 중입니다...</span>
+                </div>
+            </div>
 
-            <!-- Fallback Stats Row (Invisible or overlay if needed, currently just background data) -->
+            <!-- Report Iframe -->
+            <iframe id="reportFrame" src="" data-src="/api/kr/daily-report"
+                class="w-full flex-1 border-none bg-[#08080A] relative z-10"
+                onload="const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
+
+            <!-- Fallback Stats Row -->
             <div class="hidden">
                 <p id="report-stat-kospi"></p>
                 <p id="report-stat-kosdaq"></p>
@@ -581,10 +591,11 @@
                             const debugEl = document.getElementById('report-debug-info');
                             if (debugEl) debugEl.innerText = "Local load: " + reportPath;
                         } else {
-                            // Load from GitHub Pages directly to ensure AdSense works on approved domain
-                            frame.src = 'https://daniel17290221.github.io/report_kr.html?t=' + Date.now();
+                            // Load via backend endpoint for robust CORS and proxying
+                            const dataSrc = frame.getAttribute('data-src') || '/api/kr/daily-report';
+                            frame.src = dataSrc + '?t=' + Date.now();
                             const debugEl = document.getElementById('report-debug-info');
-                            if (debugEl) debugEl.innerText = "Remote load: daniel17290221.github.io/report_kr.html";
+                            if (debugEl) debugEl.innerText = "API load: " + dataSrc;
                         }
                     }
                 }
