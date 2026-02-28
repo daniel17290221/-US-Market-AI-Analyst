@@ -604,19 +604,28 @@
                 </div>
             </div>
         </div>
-        <div id="tab-report" class="tab-content hidden glass-card p-0 overflow-hidden h-[85vh] relative flex flex-col">
+        <div id="tab-report"
+            class="tab-content hidden glass-card p-0 overflow-hidden h-[85vh] min-h-[600px] relative flex flex-col">
             <div class="p-4 bg-white/5 border-b border-white/5 flex flex-col gap-1 flex-shrink-0">
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold text-gray-400 italic">PREMIUM MARKET REPORT v1.0</span>
                     <button
-                        onclick="const frame = document.getElementById('report-iframe'); const url = new URL(frame.src, window.location.href); url.searchParams.set('t', Date.now()); frame.src = url.href;"
+                        onclick="const frame = document.getElementById('report-iframe'); frame.src = frame.getAttribute('data-src') + '?t=' + Date.now();"
                         class="text-[10px] bg-brand-primary/20 text-brand-primary px-3 py-1 rounded hover:bg-brand-primary/30 transition">
                         <i class="fas fa-sync-alt mr-1"></i> 리포트 새로고침
                     </button>
                 </div>
                 <div id="report-debug-info" class="text-[9px] text-gray-600 font-mono"></div>
             </div>
-            <iframe id="report-iframe" src="" class="w-full flex-1 border-none bg-[#0d1117]" loading="lazy"></iframe>
+            <div id="report-loading-state" class="absolute inset-0 flex items-center justify-center bg-[#0d1117] z-0">
+                <div class="flex flex-col items-center gap-3">
+                    <i class="fas fa-circle-notch animate-spin text-2xl text-brand-primary"></i>
+                    <span class="text-xs font-mono text-gray-500 uppercase tracking-widest">리포트를 불러오는 중입니다...</span>
+                </div>
+            </div>
+            <iframe id="report-iframe" src="" data-src="https://daniel17290221.github.io/report_us.html"
+                class="w-full flex-1 border-none bg-[#0d1117] relative z-10"
+                onload="document.getElementById('report-loading-state').style.display='none';"></iframe>
         </div>
     </main>
 
