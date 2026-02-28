@@ -2,11 +2,9 @@ name: Daily US Market Report Update
 
 on:
   schedule:
-    # 4 times a day (KST: 04:00, 10:00, 16:00, 22:00 -> UTC: 19:00, 01:00, 07:00, 13:00)
-    - cron: '0 1,7,13,19 * * *'
-  workflow_dispatch:
-  push:
-    branches: [ main ]
+    # 1회/일: 07:30 KST (22:30 UTC 전날) - 장 시작 전 아침 브리핑
+    - cron: '30 22 * * 0-4'
+  workflow_dispatch:  # 수동 실행만 허용 (push 트리거 제거 - 무한루프 방지)
 
 jobs:
   update-report:
@@ -86,6 +84,5 @@ jobs:
             echo "No changes for main repo"
           fi
 
-      - name: Trigger Vercel Deployment (Optional)
-        run: |
-          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_hYHnViRFvIuQoGJqQ7pgRUXWv78P/1sZQeXELu7"
+      # Vercel 자동 배포: GitHub 연동으로 코드 변경 시에만 자동 트리거됨
+      # 데이터(JSON) 업데이트는 Vercel 재배포 불필요 → curl 호출 제거

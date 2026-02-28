@@ -745,8 +745,9 @@ def get_kr_report():
         resp = requests.get(github_url, timeout=5)
         if resp.status_code == 200:
             logger.info("Serving KR report from GitHub source.")
-            response = make_response(resp.text)
-            response.headers['Content-Type'] = 'text/html'
+            html_content = resp.content.decode('utf-8', errors='replace')
+            response = make_response(html_content)
+            response.headers['Content-Type'] = 'text/html; charset=utf-8'
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
             return response
     except Exception as e:
@@ -913,10 +914,23 @@ def debug_kr_price():
         if p and os.path.exists(p):
             found_path = p
             break
+    
+    data = {}
     if not found_path:
-        return jsonify({"error": "JSON not found", "searched": possible_paths})
-    with open(found_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+        # GitHub Raw fallback for diagnostic
+        try:
+            github_raw_url = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/kr_daily_data.json"
+            resp = requests.get(github_raw_url, timeout=8)
+            if resp.status_code == 200:
+                data = resp.json()
+                found_path = "github_raw"
+            else:
+                return jsonify({"error": "JSON not found (local and GitHub)", "searched": possible_paths})
+        except Exception as e:
+            return jsonify({"error": f"JSON not found, GitHub fallback failed: {e}", "searched": possible_paths})
+    else:
+        with open(found_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
     leaders = data.get('leaders_kospi', [])
     return jsonify({
         "found_path": found_path,
@@ -955,7 +969,18 @@ def get_kr_market_data():
         except Exception as e:
             print(f"DEBUG: KR Data Load Error: {e}")
     else:
-        print("DEBUG: KR Data File not found in any possible paths.")
+        print("DEBUG: KR Data File not found in any possible paths. Trying GitHub Raw fallback...")
+        # GitHub fallback: fetch kr_daily_data.json from public repo
+        try:
+            github_raw_url = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/kr_daily_data.json"
+            resp = requests.get(github_raw_url, timeout=8)
+            if resp.status_code == 200:
+                kr_data = resp.json()
+                print(f"DEBUG: Successfully loaded KR data from GitHub Raw. Keys: {list(kr_data.keys())[:5]}")
+            else:
+                print(f"DEBUG: GitHub Raw fetch failed with status {resp.status_code}")
+        except Exception as e:
+            print(f"DEBUG: GitHub Raw fallback error: {e}")
     
     # Load Lists from JSON (Defaulting to empty if missing)
     leaders_kospi = kr_data.get('leaders_kospi', [])

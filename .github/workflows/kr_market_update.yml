@@ -48,15 +48,14 @@ jobs:
           git add -f KR_Market_Analyst/kr_market/kr_market_daily_report.html
           
           # Commit only if there are changes
-          if git commit -m "auto: KR market data & report update $(date +'%Y-%m-%d %H:%M')"; then
-            echo "Successfully committed changes. Syncing branches via force push..."
-            
-            # Use force push on main to ensure auto-generated data files are always updated
-            # without merge/rebase conflicts.
-            git push origin main --force
-            echo "Forced pushed changes to main."
-          else
+          if git diff --cached --quiet; then
             echo "No changes to commit."
+          else
+            git commit -m "auto: KR market data & report update $(date +'%Y-%m-%d %H:%M')"
+            # Pull rebase 모드로 충돌 방지
+            git pull origin main --rebase --no-edit || true
+            git push origin main
+            echo "Pushed KR data update."
           fi
 
       - name: Deploy to MAIN Domain Repository (GitHub Pages)
@@ -86,6 +85,6 @@ jobs:
             echo "No changes for main repo"
           fi
 
-      - name: Trigger Vercel Deployment
-        run: |
-          curl -v -X POST "https://api.vercel.com/v1/integrations/deploy/prj_hYHnViRFvIuQoGJqQ7pgRUXWv78P/1sZQeXELu7"
+      # Vercel 복원: 코드 변경이 없으므로 Vercel 재배포 불필요
+      # KR 데이터(JSON)은 Vercel에 배포되지 않음 (.vercelignore)
+      # 리포트는 GitHub Pages(daniel17290221.github.io)로 직접 배포됨 (위 단계에서 완료)

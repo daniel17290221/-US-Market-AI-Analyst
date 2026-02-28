@@ -341,8 +341,51 @@ class KRDailyReportGenerator:
             logger.info(f"[SUCCESS] KR Premium report saved to: {self.output_file}")
         except Exception as e:
             logger.warning(f"[WARNING] Could not write KR report to filesystem: {e}")
-            
+
+        # --- Auto-deploy to GitHub Pages (temp_pages_repo) ---
+        self._deploy_to_github_pages(html_template)
+
         return html_template
+
+    def _deploy_to_github_pages(self, html_content):
+        """생성된 리포트를 GitHub Pages 레포에 복사하고 git push 합니다."""
+        import subprocess, shutil
+        try:
+            # temp_pages_repo 위치 찾기 (프로젝트 루트 기준)
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = os.path.dirname(os.path.dirname(script_dir))
+            pages_repo = os.path.join(project_root, 'temp_pages_repo')
+
+            if not os.path.isdir(pages_repo):
+                logger.warning(f"[DEPLOY] GitHub Pages repo not found at: {pages_repo}")
+                return
+
+            target_file = os.path.join(pages_repo, 'report_kr.html')
+            with open(target_file, 'w', encoding='utf-8') as f:
+                f.write(html_content)
+            logger.info(f"[DEPLOY] Copied report to GitHub Pages repo: {target_file}")
+
+            # Git add, commit, push
+            today = __import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M')
+            cmds = [
+                ['git', 'add', 'report_kr.html'],
+                ['git', 'commit', '-m', f'auto: KR 데일리 리포트 업데이트 ({today})'],
+                ['git', 'push', 'origin', 'main'],
+            ]
+            for cmd in cmds:
+                result = subprocess.run(cmd, cwd=pages_repo, capture_output=True, text=True, timeout=30)
+                if result.returncode != 0:
+                    # commit이 없을 경우(nothing to commit) 무시
+                    if 'nothing to commit' in result.stdout or 'nothing to commit' in result.stderr:
+                        logger.info("[DEPLOY] Nothing new to commit.")
+                        break
+                    logger.warning(f"[DEPLOY] Git command failed: {' '.join(cmd)}\n{result.stderr}")
+                    break
+                logger.info(f"[DEPLOY] OK: {' '.join(cmd)}")
+
+            logger.info("[DEPLOY] ✅ GitHub Pages 배포 완료!")
+        except Exception as e:
+            logger.warning(f"[DEPLOY] GitHub Pages 배포 실패 (무시): {e}")
 
     def get_fallback_content(self):
         return {

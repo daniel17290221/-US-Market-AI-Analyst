@@ -470,22 +470,17 @@ class USDailyReportGenerator:
         }}
 
         .ad-banner-bottom {{ 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: rgba(10, 10, 10, 0.85); 
-            border-top: 1px solid var(--border-color); 
-            padding: 12px; 
-            text-align: center; 
-            z-index: 1000; 
-            backdrop-filter: blur(10px);
+            width: 100%;
+            background: rgba(10, 10, 10, 0.5);
+            border-top: 1px solid var(--border-color);
+            padding: 20px 12px;
+            margin-top: 40px;
+            text-align: center;
         }}
 
         @media (max-width: 1200px) {{
             .ad-sidebar {{ display: none; }}
             .container {{ max-width: 100%; padding: 30px 20px; }}
-            body {{ padding-bottom: 120px; }} /* Space for sticky ad */
             .container {{ min-width: 100%; }}
         }}
 
