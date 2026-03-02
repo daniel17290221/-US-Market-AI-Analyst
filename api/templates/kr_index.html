@@ -513,7 +513,7 @@
             <!-- Report Iframe -->
             <iframe id="reportFrame" src="" data-src="https://land.vibe-coding-lab.com/report_kr.html"
                 class="w-full flex-1 border-none bg-[#08080A] relative z-10"
-                onload="console.log('KR Report Loaded'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
+                onload="console.log('KR Report Loaded Success'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
 
             <!-- Fallback Stats Row -->
             <div class="hidden">
@@ -722,11 +722,16 @@
 
 
                     // Parse structured data if available, else fallback to flat array (backward compatibility)
+                    // Parse structured data if available
                     if (data.leaders_kospi || data.gainers) {
-                        state.leaders_kospi = data.leaders_kospi || [];
-                        state.leaders_kosdaq = data.leaders_kosdaq || [];
-                        state.gainers = data.gainers || [];
-                        state.volume = data.volume || [];
+                        const ai = data.ai_analysis || {};
+                        const mergeAI = (list) => list.map(s => ({ ...s, ...(ai[s.symbol] || {}) }));
+
+                        state.leaders_kospi = mergeAI(data.leaders_kospi || []);
+                        state.leaders_kosdaq = mergeAI(data.leaders_kosdaq || []);
+                        state.gainers = mergeAI(data.gainers || []);
+                        state.volume = mergeAI(data.volume || []);
+
                         state.smartMoneyData = state.leaders_kospi; // Default view
                     } else {
                         state.smartMoneyData = data; // Legacy format
@@ -813,8 +818,8 @@
             if (!tbody) return;
             tbody.innerHTML = data.map((item, index) => {
                 return `
-                <tr onclick="loadSymbol(${index})" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
-                    <td class="px-6 text-gray-600 font-mono text-[10px]">${item.rank}</td>
+                <tr onclick="loadSymbol(${index});" class="border-b border-white/[0.03] hover:bg-white/[0.04] transition group cursor-pointer h-16">
+                    <td class="px-6 text-gray-600 font-mono text-[10px]">${item.rank || (index + 1)}</td>
                     <td class="px-6">
                         <div class="flex flex-col">
                             <span class="text-white font-bold group-hover:text-brand-primary transition">${item.name}</span>

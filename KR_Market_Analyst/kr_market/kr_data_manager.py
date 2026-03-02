@@ -44,8 +44,53 @@ class KRDataManager:
             
             return df
         except Exception as e:
-            print(f"Error fetching real market movers: {e}")
-            traceback.print_exc()
+            print(f"Error fetching real market movers via FDR: {e}")
+            # Fallback to Naver scraping for Top Movers if FDR fails
+            return self._fallback_naver_all()
+
+    def _fallback_naver_all(self):
+        """Scrape Naver Finance Sise as a fallback for StockListing('KRX')"""
+        import requests, re
+        from bs4 import BeautifulSoup
+        print("Using Naver Scraping Fallback for Market Movers...")
+        try:
+            results = []
+            for sosok in [0, 1]: # 0: KOSPI, 1: KOSDAQ
+                url = f"https://finance.naver.com/sise/sise_market_sum.naver?sosok={sosok}"
+                resp = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
+                soup = BeautifulSoup(resp.content, 'html.parser', from_encoding='euc-kr')
+                table = soup.find('table', {'class': 'type_2'})
+                if not table: continue
+                
+                for tr in table.find_all('tr'):
+                    tds = tr.find_all('td')
+                    if len(tds) < 12: continue
+                    name_tag = tds[1].find('a')
+                    if not name_tag: continue
+                    
+                    code = re.search(r'code=(\d+)', name_tag['href']).group(1)
+                    
+                    # Convert to numeric to avoid TypeError in filters
+                    try:
+                        close = float(tds[2].text.replace(',', '').strip())
+                        change = float(tds[4].text.replace('%', '').replace(',', '').strip())
+                        volume = int(tds[9].text.replace(',', '').strip())
+                        marcap = int(tds[12].text.replace(',', '').strip()) if len(tds) > 12 else 0
+                    except:
+                        close, change, volume, marcap = 0, 0, 0, 0
+
+                    results.append({
+                        'Code': code,
+                        'Name': name_tag.text.strip(),
+                        'Market': 'KOSPI' if sosok == 0 else 'KOSDAQ',
+                        'Close': close,
+                        'ChagesRatio': change,
+                        'Volume': volume,
+                        'Marcap': marcap
+                    })
+            return pd.DataFrame(results)
+        except Exception as e:
+            print(f"Fallback scraper failed: {e}")
             return pd.DataFrame()
 
     def get_top_lists(self):
@@ -60,10 +105,11 @@ class KRDataManager:
         # Helper to format
         def format_stocks(stock_df):
             result = []
-            for _, row in stock_df.iterrows():
+            for i, (_, row) in enumerate(stock_df.iterrows()):
                 try:
                     result.append({
-                        'symbol': str(row['Code']),
+                        'rank': i + 1,
+                        'symbol': str(row['Code']).padStart(6, '0'),
                         'name': row['Name'],
                         'price': f"{int(row['Close']):,}",
                         'change': f"{row['ChagesRatio']:+.2f}",
@@ -121,8 +167,34 @@ class KRDataManager:
                     else:
                         results[k] = {'symbol': v['symbol'], 'name': v['name'], 'price': 'N/A', 'change': '0%'}
                 except Exception as e:
-                    print(f"Error fetching index {k}: {e}")
-                    results[k] = {'symbol': v['symbol'], 'name': v['name'], 'price': 'N/A', 'change': '0%'}
+                    print(f"Error fetching index {k} via FDR: {e}")
+                    # Naver Scraping Fallback for Indices
+                    try:
+                        import requests
+                        from bs4 import BeautifulSoup
+                        naver_code = 'KOSPI' if k == 'KOSPI' else ('KOSDAQ' if k == 'KOSDAQ' else 'KOSPI200')
+                        naver_url = f"https://finance.naver.com/sise/sise_index.naver?code={naver_code}"
+                        resp = requests.get(naver_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
+                        soup = BeautifulSoup(resp.content, 'html.parser', from_encoding='euc-kr')
+                        price_el = soup.select_one('#now_value')
+                        change_el = soup.select_one('#change_value_and_rate')
+                        if price_el:
+                            # Cleanup change string (remove extra characters from Naver)
+                            change_text = change_el.text.strip() if change_el else "0%"
+                            # Remove excessive whitespace and redundant signs
+                            import re
+                            change_text = re.sub(r'\s+', ' ', change_text)
+                            
+                            results[k] = {
+                                'symbol': v['symbol'],
+                                'name': v['name'],
+                                'price': price_el.text.strip(),
+                                'change': change_text
+                            }
+                        else:
+                            results[k] = {'symbol': v['symbol'], 'name': v['name'], 'price': 'N/A', 'change': '0%'}
+                    except:
+                        results[k] = {'symbol': v['symbol'], 'name': v['name'], 'price': 'N/A', 'change': '0%'}
             
             return results
         except Exception as e:
