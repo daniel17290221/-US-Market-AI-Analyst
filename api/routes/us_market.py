@@ -65,12 +65,34 @@ def get_smart_money():
     precomputed_ai = load_json('us_ai_analysis.json')
     dynamic_results = precomputed_ai.copy()
     
+    # Identify stocks needing dynamic analysis
+    stocks_to_analyze = []
+    for d in data[:15]:
+        ticker = d['ticker']
+        if ticker not in major_us_analysis and ticker not in dynamic_results:
+            stocks_to_analyze.append({'symbol': ticker, 'name': d.get('name', ticker)})
+    
+    # Fetch dynamic AI analysis if needed
+    if stocks_to_analyze:
+        try:
+            new_analyses = fetch_dynamic_ai_analysis(stocks_to_analyze)
+            dynamic_results.update(new_analyses)
+        except Exception as e:
+            logger.error(f"Dynamic AI analysis error: {e}")
+
     enriched = []
     for i, d in enumerate(data[:15]):
-        ticker = d['ticker']
+        ticker = d.get('ticker', '').strip().upper()
         details = major_us_analysis.get(ticker) or dynamic_results.get(ticker)
+        
         if not details:
-            details = {"insight": "시장 지배력이 유효한 구간입니다.", "risk": "-", "upside": "+15-20%", "mkt_cap": "-", "vol_ratio": "-", "rsi": "-", "swot_s": "-", "swot_w": "-", "swot_o": "-", "swot_t": "-", "dcf_target": d.get('price', '0'), "dcf_bear": "-", "dcf_bull": "-"}
+            details = {
+                "insight": "실시간 데이터 분석 중입니다.", 
+                "risk": "데이터 확인 필요", 
+                "upside": "-", "mkt_cap": "-", "vol_ratio": "-", "rsi": "-", 
+                "swot_s": "-", "swot_w": "-", "swot_o": "-", "swot_t": "-", 
+                "dcf_target": str(d.get('price', '0')), "dcf_bear": "-", "dcf_bull": "-"
+            }
         
         enriched.append({
             **d, **details,
