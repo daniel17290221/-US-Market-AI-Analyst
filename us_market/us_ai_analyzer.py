@@ -11,6 +11,7 @@ import time
 import pandas as pd
 from datetime import datetime
 from dotenv import load_dotenv
+import yfinance as yf
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -45,7 +46,25 @@ class USAIAnalyzer:
         
         all_symbols = []
         for _, row in top_stocks.iterrows():
-            all_symbols.append({'symbol': row['ticker'], 'name': row.get('name', row['ticker'])})
+            ticker = row['ticker']
+            name = row.get('name', ticker)
+            
+            # Fetch real-time price for better AI context
+            curr_price = 0
+            try:
+                t = yf.Ticker(ticker)
+                curr_price = t.info.get('regularMarketPrice') or t.fast_info.get('last_price', 0)
+                if curr_price == 0:
+                    hist = t.history(period="1d")
+                    if not hist.empty: curr_price = hist['Close'].iloc[-1]
+            except Exception as e:
+                logger.warning(f"Failed to fetch price for {ticker}: {e}")
+            
+            all_symbols.append({
+                'symbol': ticker, 
+                'name': name,
+                'price': round(curr_price, 2)
+            })
 
         logger.info(f"Analyzing {len(all_symbols)} US stocks in batches...")
         
@@ -63,7 +82,13 @@ class USAIAnalyzer:
             logger.info(f"Processing batch {i//chunk_size + 1}/{len(all_symbols)//chunk_size + 1}...")
             
             prompt = f"""
-            당신은 미국 주식 전문 AI 분석가입니다. 아래 미국 주식 리스트에 대해 실시간 SWOT 분석과 투자 인사이트를 제공해주세요.
+            당신은 미국 주식 전문 AI 분석가로서, 제공된 최신 시스템 가격(System Price)을 기준으로 정밀 분석을 수행해야 합니다.
+            
+            [분석 규칙]
+            1. 제공된 'price'가 시스템 상의 기준 가격입니다. (액면분할 등이 반영된 최신 가격일 수 있음)
+            2. 'dcf_target', 'dcf_bear', 'dcf_bull' 수치는 반드시 제공된 'price'와 수학적으로 호환되는 스케일이어야 합니다.
+            3. 상승 여력(upside)은 (dcf_target - price) / price 로 계산하여 백분율로 표기하세요.
+            4. 절대적으로 'price'와 동떨어진(예: 10배 차이 등) 목표가를 제시하지 마세요.
             
             [반드시 준수할 JSON 데이터 구조]
             각 티커(Ticker)를 키로 하는 객체를 반환하세요.
