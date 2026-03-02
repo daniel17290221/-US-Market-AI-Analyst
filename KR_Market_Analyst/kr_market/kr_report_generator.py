@@ -193,6 +193,9 @@ class KRDailyReportGenerator:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>{ai_content['catchy_title']}</title>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033" crossorigin="anonymous"></script>
     <style>
@@ -214,8 +217,6 @@ class KRDailyReportGenerator:
             gap: 20px; 
             max-width: 1400px; 
             margin: 0 auto; 
-            opacity: 0; 
-            animation: fadeIn 0.5s ease-in-out forwards; 
         }}
         .ad-sidebar {{ width: 180px; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px; height: fit-content; align-self: flex-start; }}
         .ad-unit {{ background: transparent; border: none; height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-sub); font-size: 11px; padding: 15px; overflow: hidden; }}
