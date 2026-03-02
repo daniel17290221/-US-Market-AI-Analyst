@@ -367,21 +367,30 @@ def fetch_dynamic_ai_analysis(stocks_to_analyze):
             payload_items.append(f"{name} ({sym})")
             
         if not payload_items: return results
+        
+        logger.info(f"Fetching dynamic AI analysis for: {', '.join(payload_items)}")
 
-        prompt = f"""Analyze the following stocks for {today}. Return ONLY a JSON object where keys are symbols.
+        prompt = f"""Analyze the following stocks for {today}. Return ONLY a JSON object where keys are exactly the symbols provided.
         Stocks: {', '.join(payload_items)}
         Format: {{ "SYMBOL": {{ "insight": "...", "risk": "...", "upside": "+X%", "mkt_cap": "...", "vol_ratio": "...", "rsi": "...", "swot_s": "...", "swot_w": "...", "swot_o": "...", "swot_t": "...", "dcf_target": "...", "dcf_bear": "...", "dcf_bull": "..." }} }}
         Language: Korean.
         """
         
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-        resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"response_mime_type": "application/json"}}, timeout=15)
+        resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"response_mime_type": "application/json"}}, timeout=30)
         
         if resp.status_code == 200:
             raw_data = resp.json()['candidates'][0]['content']['parts'][0]['text']
             data = json.loads(raw_data)
             for raw_sym, analysis in data.items():
-                final_sym = normalize(raw_sym)
+                # Extract ticker symbol from potentially "Name (SYMBOL)" format
+                import re
+                match = re.search(r'\((.*?)\)', str(raw_sym))
+                if match: 
+                    final_sym = match.group(1).split('.')[0].strip().upper()
+                else:
+                    final_sym = str(raw_sym).split('(')[0].split('.')[0].strip().upper()
+                
                 AI_CACHE[(today, final_sym)] = analysis
                 results[final_sym] = analysis
         return results

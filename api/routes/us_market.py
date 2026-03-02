@@ -65,10 +65,11 @@ def get_smart_money():
     precomputed_ai = load_json('us_ai_analysis.json')
     dynamic_results = precomputed_ai.copy()
     
-    # Identify stocks needing dynamic analysis
+    # Identify stocks needing dynamic analysis (Normalized tickers)
     stocks_to_analyze = []
     for d in data[:15]:
-        ticker = d['ticker']
+        ticker = str(d.get('ticker', '')).strip().upper()
+        if not ticker: continue
         if ticker not in major_us_analysis and ticker not in dynamic_results:
             stocks_to_analyze.append({'symbol': ticker, 'name': d.get('name', ticker)})
     
@@ -82,7 +83,9 @@ def get_smart_money():
 
     enriched = []
     for i, d in enumerate(data[:15]):
-        ticker = d.get('ticker', '').strip().upper()
+        ticker = str(d.get('ticker', d.get('symbol', ''))).strip().upper()
+        if not ticker: continue
+        
         details = major_us_analysis.get(ticker) or dynamic_results.get(ticker)
         
         if not details:
