@@ -511,10 +511,9 @@
             </div>
 
             <!-- Report Iframe -->
-            <iframe id="reportFrame" src="https://daniel17290221.github.io/report_kr.html"
-                data-src="https://daniel17290221.github.io/report_kr.html"
+            <iframe id="reportFrame" src="" data-src="https://daniel17290221.github.io/report_kr.html"
                 class="w-full flex-1 border-none bg-[#08080A] relative z-10"
-                onload="console.log('KR Report Loaded Success'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
+                onload="console.log('KR Report Loaded'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
 
             <!-- Fallback Stats Row -->
             <div class="hidden">
@@ -575,35 +574,20 @@
             // Force refresh report when entering the report tab
             if (tabName === 'report') {
                 const frame = document.getElementById('reportFrame');
+                const loadingState = document.getElementById('report-loading-state');
                 if (frame) {
-                    const currentSrc = frame.getAttribute('src');
-                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc === "#") {
-                        if (window.location.protocol === 'file:') {
-                            // Detect if we are in templates folder or root
-                            const path = window.location.pathname;
-                            const isTemplate = path.includes('/templates/');
-                            const reportPath = isTemplate
-                                ? '../../KR_Market_Analyst/kr_market/kr_market_daily_report.html'
-                                : 'KR_Market_Analyst/kr_market/kr_market_daily_report.html';
-
-                            console.warn("Attempting to load report from:", reportPath);
-                            frame.src = reportPath;
-
-                            const debugEl = document.getElementById('report-debug-info');
-                            if (debugEl) debugEl.innerText = "Local load: " + reportPath;
-                        } else {
-                            // Load from GitHub Pages directly to ensure AdSense works on approved domain
-                            const dataSrc = frame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_kr.html';
-                            const finalSrc = dataSrc + '?t=' + Date.now();
-                            if (frame.src !== finalSrc) {
-                                const ls = document.getElementById('report-loading-state');
-                                if (ls) ls.style.display = 'flex';
-                                frame.src = finalSrc;
-                            }
-                            const debugEl = document.getElementById('report-debug-info');
-                            if (debugEl) debugEl.innerText = "External load: " + dataSrc;
-                        }
+                    const currentSrc = frame.src;
+                    // Initial load if src is empty or not pointing to the report
+                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc.indexOf('daniel17290221.github.io') === -1) {
+                        if (loadingState) loadingState.style.display = 'flex';
+                        const dataSrc = frame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_kr.html';
+                        frame.src = dataSrc + '?t=' + Date.now();
+                        console.log("Starting initial KR report load...");
+                    } else {
+                        console.log("KR Report already assigned.");
                     }
+                    const debugEl = document.getElementById('report-debug-info');
+                    if (debugEl) debugEl.innerText = "Target: github.io/report_kr.html";
                 }
             }
 
