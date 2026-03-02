@@ -75,6 +75,10 @@ app = Flask(__name__,
             static_url_path='/assets')
 
 # Register Blueprints
+API_DIR = os.path.dirname(os.path.abspath(__file__))
+if API_DIR not in sys.path:
+    sys.path.append(API_DIR)
+
 from routes.omni import omni_bp
 app.register_blueprint(omni_bp, url_prefix='/api/acp')
 
