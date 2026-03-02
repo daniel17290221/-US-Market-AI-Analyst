@@ -46,33 +46,64 @@ class MacroAnalyzer:
     
     def fetch_market_news(self) -> str:
         """
-        Fetch recent market news headlines (Mock or RSS)
-        For production, integrate with NewsAPI or similar
+        Fetch recent market news headlines from real RSS feeds (CNBC/Yahoo/Reuters)
         """
-        # Mock updated news for demonstration without external API
-        return """
-        1. Fed signals potential pause in rate cuts as inflation persists above 2%.
-        2. Tech stocks rally led by AI chip demand; NVDA hits new high.
-        3. Oil prices stabilize amid geopolitical tensions in Middle East.
-        4. US Treasury yields tick higher, 10-year reaches 4.2%.
-        5. Consumer spending data shows resilience despite economic headwinds.
+        import xml.etree.ElementTree as ET
+        
+        feeds = [
+            "https://search.cnbc.com/rs/search/all/view.rss?partnerId=2000&keywords=market",
+            "https://finance.yahoo.com/rss/topstories"
+        ]
+        
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        news_items = []
+        
+        for url in feeds:
+            try:
+                resp = requests.get(url, headers=headers, timeout=10)
+                if resp.status_code == 200:
+                    root = ET.fromstring(resp.content)
+                    # Fetching up to 8 items to capture more context
+                    for item in root.findall('.//item')[:8]:
+                        title = item.find('title').text
+                        # Get more description to help AI understand context
+                        desc = item.find('description').text if item.find('description') is not None else ""
+                        pub_date = item.find('pubDate').text if item.find('pubDate') is not None else ""
+                        news_items.append(f"[{pub_date}] TITLE: {title}\nSUMMARY: {desc[:300]}...")
+            except Exception as e:
+                logger.warning(f"Failed to fetch feed {url}: {e}")
+        
+        if news_items:
+            logger.info(f"Successfully fetched {len(news_items)} real-time news items.")
+            # Join with clear separators for AI processing
+            return "\n---\n".join(news_items)
+            
+        # Fallback to a slightly more dynamic mock if all feeds fail
+        return f"""
+        - Market Update ({datetime.now().strftime('%Y-%m-%d')}): 
+        - US Stocks show mixed performance as investors digest recent economic data.
+        - Treasury yields and corporate earnings reports are driving sector movements.
+        - Focus remains on labor market resilience and consumer sentiment.
         """
 
     def generate_analysis(self, news_text: str) -> Dict:
         """Generate analysis using selected AI model"""
         prompt = f"""
-        Analyze the following US market news and data:
+        당신은 월스트리트 출신의 수석 매크로 전략가입니다. 다음의 '실시간 뉴스 헤드라인 및 요약'을 면밀히 분석하세요:
         {news_text}
         
-        Provide a professional, localized US market analysis for Korean investors in JSON format.
+        [분석 지침]
+        1. **실시간성 극대화**: '미국의 이란 공격', '특정 기업의 급격한 실적 변화' 등 현재 수집된 뉴스 중 가장 파괴력이 큰 이벤트를 중심으로 분석하세요.
+        2. **지표와의 연결**: 단순히 뉴스를 나열하지 말고, 이 뉴스가 '유가(WTI)', '국채 금리', '나스닥' 등에 구체적으로 어떤 영향을 주는지 인과관계를 설명하세요.
+        3. **진부함 탈피**: '지정학적 리스크' 같은 단어 대신 '중동발 유가 발작', '호재를 삼킨 미사일' 등 뉴스 내용을 반영한 구체적인 용어를 사용하세요.
         
-        Fields required:
+        JSON 형식으로 답변하세요:
         - market_mood: ONE Korean term (극도의 공포, 공포, 중립, 탐욕, 극도의 탐욕)
         - mood_score: 0-100 score
-        - key_takeaways: 3 specific, actionable points in professional Korean (금융 전문가 스타일)
-        - sector_outlook: 2-3 sentences on promising sectors and why (in Korean)
-        - risk_factors: 2-3 specific risks to monitor (in Korean)
-        - strategy: A brief investment strategy recommendation (in Korean)
+        - key_takeaways: 오늘의 뉴스를 관통하는 가장 핵심적인 관점 3가지 (뉴스 기반의 구체적인 내용)
+        - sector_outlook: 특정 뉴스에 직접적으로 영향받는 섹터와 전망 (2-3문장)
+        - risk_factors: 뉴스에서 도출된 긴급한 리스크 요인 2-3개
+        - strategy: 현재의 긴박한 시장 상황에 맞춘 구체적인 대응 전략
         """
         
         try:
