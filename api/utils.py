@@ -415,6 +415,45 @@ def fetch_google_news_rss(query):
         logger.error(f"RSS error: {e}")
     return []
 
+def fetch_yahoo_history(sym, period="6mo"):
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=1d&range={period}"
+    try:
+        resp = requests.get(url, headers=headers, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            result = data.get('chart', {}).get('result')
+            if not result: return []
+            
+            res = result[0]
+            timestamps = res.get('timestamp', [])
+            quotes = res.get('indicators', {}).get('quote', [{}])[0]
+            
+            opens = quotes.get('open', [])
+            highs = quotes.get('high', [])
+            lows = quotes.get('low', [])
+            closes = quotes.get('close', [])
+            volumes = quotes.get('volume', [])
+            
+            chart_data = []
+            for i in range(len(timestamps)):
+                if i >= len(opens) or i >= len(closes): break
+                if opens[i] is None or closes[i] is None: continue
+                
+                dt = datetime.fromtimestamp(timestamps[i])
+                chart_data.append({
+                    "time": dt.strftime('%Y-%m-%d'),
+                    "open": float(opens[i]),
+                    "high": float(highs[i] if highs[i] is not None else opens[i]),
+                    "low": float(lows[i] if lows[i] is not None else opens[i]),
+                    "close": float(closes[i]),
+                    "volume": float(volumes[i] or 0)
+                })
+            return chart_data
+    except Exception as e:
+        logger.error(f"Error in fetch_yahoo_history for {sym}: {e}")
+    return []
+
 def get_exchange_rate():
     try:
         url = "https://query1.finance.yahoo.com/v8/finance/chart/USDKRW=X?interval=1d&range=1d"

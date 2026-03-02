@@ -5,7 +5,7 @@ import requests
 from datetime import datetime
 from utils import (
     DATA_DIR, BASE_DIR, AI_KEY, get_exchange_rate, portfolio_rate_limit,
-    logger
+    fetch_yahoo_history, logger
 )
 
 common_bp = Blueprint('common', __name__)
@@ -41,6 +41,21 @@ def cron_update():
 
     status_code = 200 if all(v == "success" for v in results.values()) else 207
     return jsonify({"status": "completed", "details": results}), status_code
+
+@common_bp.route('/api/chart-data', strict_slashes=False)
+def get_universal_chart_data():
+    symbol = request.args.get('symbol', '005930')
+    market = request.args.get('market', 'KR')
+    if not symbol: return jsonify([])
+    ticker_sym = symbol.upper() if market.upper() == 'US' else f"{symbol}.KS"
+    try:
+        data = fetch_yahoo_history(ticker_sym)
+        if not data and market.upper() == 'KR':
+            data = fetch_yahoo_history(f"{symbol}.KQ")
+        return jsonify(data)
+    except Exception as e:
+        logger.error(f"Chart data error for {symbol}: {e}")
+        return jsonify([])
 
 @common_bp.route('/api/generate-portfolio', methods=['POST'], strict_slashes=False)
 def generate_portfolio():
