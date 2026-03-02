@@ -503,7 +503,7 @@
                 <div id="report-debug-info" class="text-[9px] text-gray-600 font-mono"></div>
             </div>
 
-            <div id="report-loading-state" class="absolute inset-0 flex items-center justify-center bg-[#08080A] z-0">
+            <div id="report-loading-state" class="absolute inset-0 flex items-center justify-center bg-[#08080A] z-20">
                 <div class="flex flex-col items-center gap-3">
                     <i class="fas fa-circle-notch animate-spin text-2xl text-brand-primary"></i>
                     <span class="text-xs font-mono text-gray-500 uppercase tracking-widest">리포트를 불러오는 중입니다...</span>
@@ -511,9 +511,10 @@
             </div>
 
             <!-- Report Iframe -->
-            <iframe id="reportFrame" src="" data-src="https://daniel17290221.github.io/report_kr.html"
+            <iframe id="reportFrame" src="https://daniel17290221.github.io/report_kr.html"
+                data-src="https://daniel17290221.github.io/report_kr.html"
                 class="w-full flex-1 border-none bg-[#08080A] relative z-10"
-                onload="console.log('KR Report Loaded'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; } this.style.opacity='1';"></iframe>
+                onload="console.log('KR Report Loaded Success'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
 
             <!-- Fallback Stats Row -->
             <div class="hidden">
@@ -593,8 +594,12 @@
                         } else {
                             // Load from GitHub Pages directly to ensure AdSense works on approved domain
                             const dataSrc = frame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_kr.html';
-                            frame.style.opacity = '0';
-                            frame.src = dataSrc + '?t=' + Date.now();
+                            const finalSrc = dataSrc + '?t=' + Date.now();
+                            if (frame.src !== finalSrc) {
+                                const ls = document.getElementById('report-loading-state');
+                                if (ls) ls.style.display = 'flex';
+                                frame.src = finalSrc;
+                            }
                             const debugEl = document.getElementById('report-debug-info');
                             if (debugEl) debugEl.innerText = "External load: " + dataSrc;
                         }

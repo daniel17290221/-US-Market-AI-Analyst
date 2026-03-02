@@ -617,15 +617,16 @@
                 </div>
                 <div id="report-debug-info" class="text-[9px] text-gray-600 font-mono"></div>
             </div>
-            <div id="report-loading-state" class="absolute inset-0 flex items-center justify-center bg-[#0d1117] z-0">
+            <div id="report-loading-state" class="absolute inset-0 flex items-center justify-center bg-[#0d1117] z-20">
                 <div class="flex flex-col items-center gap-3">
                     <i class="fas fa-circle-notch animate-spin text-2xl text-brand-primary"></i>
                     <span class="text-xs font-mono text-gray-500 uppercase tracking-widest">리포트를 불러오는 중입니다...</span>
                 </div>
             </div>
-            <iframe id="report-iframe" src="" data-src="https://daniel17290221.github.io/report_us.html"
+            <iframe id="report-iframe" src="https://daniel17290221.github.io/report_us.html"
+                data-src="https://daniel17290221.github.io/report_us.html"
                 class="w-full flex-1 border-none bg-[#0d1117] relative z-10"
-                onload="console.log('US Report Loaded'); document.getElementById('report-loading-state').style.display='none'; this.style.opacity='1';"></iframe>
+                onload="console.log('US Report Loaded Success'); document.getElementById('report-loading-state').style.display='none';"></iframe>
         </div>
     </main>
 
@@ -704,10 +705,12 @@
                             if (debugEl) debugEl.innerText = "로드 시도 경로: " + reportPath;
                         } else {
                             // Load from GitHub Pages directly to ensure AdSense works on approved domain
-                            // Using HTTPS to prevent mixed content issues
                             const dataSrc = reportFrame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_us.html';
-                            reportFrame.style.opacity = '0'; // Hide until loaded
-                            reportFrame.src = dataSrc + '?t=' + Date.now();
+                            const finalSrc = dataSrc + '?t=' + Date.now();
+                            if (reportFrame.src !== finalSrc) {
+                                document.getElementById('report-loading-state').style.display = 'flex';
+                                reportFrame.src = finalSrc;
+                            }
                         }
                     }
                 }
