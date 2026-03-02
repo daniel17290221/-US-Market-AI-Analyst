@@ -511,7 +511,7 @@
             </div>
 
             <!-- Report Iframe -->
-            <iframe id="reportFrame" src="" data-src="/api/kr/daily-report"
+            <iframe id="reportFrame" src="" data-src="https://daniel17290221.github.io/report_kr.html"
                 class="w-full flex-1 border-none bg-[#08080A] relative z-10"
                 onload="const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
 
@@ -591,11 +591,11 @@
                             const debugEl = document.getElementById('report-debug-info');
                             if (debugEl) debugEl.innerText = "Local load: " + reportPath;
                         } else {
-                            // Load via backend endpoint for robust CORS and proxying
-                            const dataSrc = frame.getAttribute('data-src') || '/api/kr/daily-report';
+                            // Load from GitHub Pages directly to ensure AdSense works on approved domain
+                            const dataSrc = frame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_kr.html';
                             frame.src = dataSrc + '?t=' + Date.now();
                             const debugEl = document.getElementById('report-debug-info');
-                            if (debugEl) debugEl.innerText = "API load: " + dataSrc;
+                            if (debugEl) debugEl.innerText = "External load: " + dataSrc;
                         }
                     }
                 }
