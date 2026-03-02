@@ -41,7 +41,7 @@ class USAIAnalyzer:
             return
 
         df = pd.read_csv(self.screener_file)
-        top_stocks = df.head(top_n)
+        top_stocks = df.head(15)
         
         all_symbols = []
         for _, row in top_stocks.iterrows():
@@ -75,6 +75,9 @@ class USAIAnalyzer:
                     "swot_w": "Weakness 약점 키워드",
                     "swot_o": "Opportunity 기회 키워드",
                     "swot_t": "Threat 위협 키워드",
+                    "mkt_cap": "시가총액 (예: $3.5T)",
+                    "vol_ratio": "거래량 비율 (예: 1.5x ↑)",
+                    "rsi": "RSI 지수 (예: 65.4)",
                     "upside": "+20%",
                     "dcf_target": "숫자",
                     "dcf_bear": "숫자", 
