@@ -986,9 +986,9 @@
                             swot_w: item.swot_w || '-',
                             swot_o: item.swot_o || '-',
                             swot_t: item.swot_t || '-',
-                            dcf_target: item.dcf_target || `$${(price * 1.1).toFixed(2)}`,
-                            dcf_bear: item.dcf_bear || `$${(price * 0.9).toFixed(2)}`,
-                            dcf_bull: item.dcf_bull || `$${(price * 1.3).toFixed(2)}`
+                            dcf_target: (item.dcf_target && item.dcf_target !== '-') ? item.dcf_target : (price * 1.05).toFixed(2),
+                            dcf_bear: (item.dcf_bear && item.dcf_bear !== '-') ? item.dcf_bear : (price * 0.9).toFixed(2),
+                            dcf_bull: (item.dcf_bull && item.dcf_bull !== '-') ? item.dcf_bull : (price * 1.3).toFixed(2)
                         });
                     });
 

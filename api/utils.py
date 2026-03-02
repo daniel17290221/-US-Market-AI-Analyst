@@ -201,14 +201,26 @@ major_us_analysis = {
 }
 
 def load_json(filename):
-    path = os.path.join(DATA_DIR, filename)
+    possible_paths = [
+        os.path.join(DATA_DIR, filename),
+        os.path.join(os.getcwd(), 'us_market', filename),
+        os.path.join(os.getcwd(), filename),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'us_market', filename))
+    ]
+    
     data = {}
-    if os.path.exists(path):
+    path_to_use = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            path_to_use = path
+            break
+            
+    if path_to_use:
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path_to_use, 'r', encoding='utf-8') as f:
                 data = json.load(f)
         except Exception as e:
-            logger.error(f"Error reading {filename}: {e}")
+            logger.error(f"Error reading {filename} from {path_to_use}: {e}")
     
     if not data and filename == 'us_macro_analysis.json':
         return {
