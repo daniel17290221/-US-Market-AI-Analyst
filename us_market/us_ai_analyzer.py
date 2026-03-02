@@ -8,6 +8,7 @@ import os
 import json
 import logging
 import time
+import pandas as pd
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -109,8 +110,10 @@ class USAIAnalyzer:
                         cleaned = cleaned[start:end]
                     
                     batch_json = json.loads(cleaned)
-                    results_map.update(batch_json)
-                    logger.info(f"Updated analysis for {len(batch_json)} stocks")
+                    # Normalize keys to uppercase
+                    normalized_batch = {str(k).strip().upper(): v for k, v in batch_json.items()}
+                    results_map.update(normalized_batch)
+                    logger.info(f"Updated analysis for {len(normalized_batch)} stocks")
             except Exception as e:
                 logger.error(f"Batch processing error: {e}")
             
