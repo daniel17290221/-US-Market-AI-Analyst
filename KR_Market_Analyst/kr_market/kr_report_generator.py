@@ -159,7 +159,7 @@ class KRDailyReportGenerator:
                     </div>
                 </a>"""
 
-        # Build News Sections
+        # Build AI Sections
         sections_html = ""
         for sec in ai_content['sections']:
             sections_html += f"""
@@ -170,6 +170,31 @@ class KRDailyReportGenerator:
                 </div>
                 <div class="section-content">
                     <p>{sec['content']}</p>
+                </div>
+            </div>"""
+
+        # Build Top Stocks Summary
+        top_stocks_html = ""
+        if 'top_stocks' in raw_data:
+            stock_items = ""
+            for s in raw_data['top_stocks'][:5]:
+                is_up = '+' in s['change']
+                change_class = 'up' if is_up else 'down'
+                stock_items += f"""
+                <div class="stock-summary-card">
+                    <div class="stock-sum-header">
+                        <span class="stock-sum-name">{s['name']}</span>
+                        <span class="stock-sum-symbol">{s['symbol']}</span>
+                    </div>
+                    <div class="stock-sum-price">₩{s['price']}</div>
+                    <div class="stock-sum-change {change_class}">{s['change']}</div>
+                </div>"""
+            
+            top_stocks_html = f"""
+            <div class="premium-section">
+                <div class="section-title">🎯 AI 포착 주도주 브리핑</div>
+                <div class="stock-summary-grid">
+                    {stock_items}
                 </div>
             </div>"""
 
@@ -197,7 +222,6 @@ class KRDailyReportGenerator:
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>{ai_content['catchy_title']}</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033" crossorigin="anonymous"></script>
     <style>
         :root {{
             --bg-color: #050505;
@@ -247,9 +271,23 @@ class KRDailyReportGenerator:
         .news-source {{ font-size: 10px; background: var(--brand-blue); color: #000; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-right: 10px; }}
         .news-title {{ font-size: 14px; }}
 
+        /* Premium Stock Summary */
+        .premium-section {{ margin-bottom: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); }}
+        .section-title {{ font-size: 18px; font-weight: bold; margin-bottom: 20px; color: var(--brand-blue); }}
+        .stock-summary-grid {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }}
+        .stock-summary-card {{ background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; text-align: center; }}
+        .stock-sum-name {{ display: block; font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+        .stock-sum-symbol {{ font-size: 10px; color: var(--text-sub); }}
+        .stock-sum-price {{ font-size: 14px; font-weight: 800; margin-top: 5px; }}
+        .stock-sum-change {{ font-size: 11px; font-weight: bold; }}
+        .stock-sum-change.up {{ color: var(--brand-red); }}
+        .stock-sum-change.down {{ color: var(--brand-blue); }}
+
         .article-section {{ margin-bottom: 50px; }}
         .section-header {{ display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }}
+        .section-content p {{ font-size: 16px; line-height: 1.8; color: var(--text-main); text-align: justify; }}
         .footer {{ margin-top: 50px; text-align: center; font-size: 12px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 20px; }}
+        .hashtag {{ color: var(--brand-blue); font-size: 13px; margin-right: 15px; font-weight: 500; opacity: 0.8; }}
         .ad-banner-bottom {{ 
             position: fixed; 
             bottom: 0; 
@@ -262,9 +300,15 @@ class KRDailyReportGenerator:
             z-index: 1000; 
             backdrop-filter: blur(8px);
         }}
-        @media (max-width: 1200px) {{ .ad-sidebar {{ display: none; }} body {{ padding-bottom: 120px; }} .container {{ min-width: 100%; }} .investor-flows {{ grid-template-columns: 1fr; }} }}
+        @media (max-width: 1200px) {{ 
+            .ad-sidebar {{ display: none; }} 
+            body {{ padding-bottom: 120px; }} 
+            .container {{ min-width: 100%; }} 
+            .investor-flows {{ grid-template-columns: 1fr; }}
+            .stock-summary-grid {{ grid-template-columns: repeat(2, 1fr); }}
+        }}
         @keyframes fadeIn {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033" crossorigin="anonymous"></script>
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -299,9 +343,17 @@ class KRDailyReportGenerator:
                 {news_html}
             </div>
 
+            {top_stocks_html}
+
             {sections_html}
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                {hashtags_html}
+            </div>
+
             <div class="footer">
-                © 2026 VibeCodingLab KR. All Rights Reserved.
+                © 2026 VibeCodingLab KR. All Rights Reserved.<br>
+                본 리포트는 AI 분석 기술을 바탕으로 자동 생성되었습니다.
             </div>
         </div>
 
@@ -350,9 +402,8 @@ class KRDailyReportGenerator:
 
     def _deploy_to_github_pages(self, html_content):
         """생성된 리포트를 GitHub Pages 레포에 복사하고 git push 합니다."""
-        import subprocess, shutil
+        import subprocess
         try:
-            # temp_pages_repo 위치 찾기 (프로젝트 루트 기준)
             script_dir = os.path.dirname(os.path.abspath(__file__))
             project_root = os.path.dirname(os.path.dirname(script_dir))
             pages_repo = os.path.join(project_root, 'temp_pages_repo')
@@ -361,12 +412,23 @@ class KRDailyReportGenerator:
                 logger.warning(f"[DEPLOY] GitHub Pages repo not found at: {pages_repo}")
                 return
 
+            # ★ GitHub Desktop 등 수동 push와의 충돌 방지
+            pull_result = subprocess.run(
+                ['git', 'pull', '--rebase', 'origin', 'main'],
+                cwd=pages_repo, capture_output=True, text=True,
+                timeout=30, encoding='utf-8', errors='replace'
+            )
+            if pull_result.returncode != 0:
+                logger.warning(f"[DEPLOY] pull 실패, 강제 리셋: {pull_result.stderr[:200]}")
+                subprocess.run(['git', 'rebase', '--abort'], cwd=pages_repo, capture_output=True)
+                subprocess.run(['git', 'fetch', 'origin'], cwd=pages_repo, capture_output=True)
+                subprocess.run(['git', 'reset', '--hard', 'origin/main'], cwd=pages_repo, capture_output=True)
+
             target_file = os.path.join(pages_repo, 'report_kr.html')
             with open(target_file, 'w', encoding='utf-8') as f:
                 f.write(html_content)
-            logger.info(f"[DEPLOY] Copied report to GitHub Pages repo: {target_file}")
+            logger.info(f"[DEPLOY] report_kr.html 작성 완료")
 
-            # Git add, commit, push
             today = __import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M')
             cmds = [
                 ['git', 'add', 'report_kr.html'],
@@ -374,19 +436,21 @@ class KRDailyReportGenerator:
                 ['git', 'push', 'origin', 'main'],
             ]
             for cmd in cmds:
-                result = subprocess.run(cmd, cwd=pages_repo, capture_output=True, text=True, timeout=30)
+                result = subprocess.run(
+                    cmd, cwd=pages_repo, capture_output=True, text=True,
+                    timeout=30, encoding='utf-8', errors='replace'
+                )
                 if result.returncode != 0:
-                    # commit이 없을 경우(nothing to commit) 무시
-                    if 'nothing to commit' in result.stdout or 'nothing to commit' in result.stderr:
-                        logger.info("[DEPLOY] Nothing new to commit.")
+                    if 'nothing to commit' in (result.stdout + result.stderr):
+                        logger.info("[DEPLOY] 변경사항 없음 (스킵)")
                         break
-                    logger.warning(f"[DEPLOY] Git command failed: {' '.join(cmd)}\n{result.stderr}")
+                    logger.warning(f"[DEPLOY] git 명령 실패: {' '.join(cmd)}\n{result.stderr[:200]}")
                     break
                 logger.info(f"[DEPLOY] OK: {' '.join(cmd)}")
 
-            logger.info("[DEPLOY] ✅ GitHub Pages 배포 완료!")
+            logger.info("[DEPLOY] ✅ KR 리포트 배포 완료!")
         except Exception as e:
-            logger.warning(f"[DEPLOY] GitHub Pages 배포 실패 (무시): {e}")
+            logger.warning(f"[DEPLOY] KR 배포 실패 (무시): {e}")
 
     def get_fallback_content(self):
         return {
@@ -402,7 +466,20 @@ class KRDailyReportGenerator:
         if not raw_data: 
             return "<html><body><h1>Error</h1><p>KR Data not found (kr_daily_data.json)</p></body></html>"
         ai_content = self.generate_ai_content(raw_data)
-        return self.generate_html(raw_data, ai_content)
+        html_content = self.generate_html(raw_data, ai_content)
+
+        # 로컬 저장
+        try:
+            output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kr_market_daily_report.html')
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(html_content)
+            logger.info(f"[SUCCESS] KR 리포트 로컬 저장: {output_path}")
+        except Exception as e:
+            logger.warning(f"[WARN] 로컬 저장 실패: {e}")
+
+        # GitHub 배포
+        self._deploy_to_github_pages(html_content)
+        return html_content
 
 if __name__ == "__main__":
     KRDailyReportGenerator().run()

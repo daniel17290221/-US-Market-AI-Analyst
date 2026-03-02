@@ -75,7 +75,7 @@ class KRDataManager:
                         close = float(tds[2].text.replace(',', '').strip())
                         change = float(tds[4].text.replace('%', '').replace(',', '').strip())
                         volume = int(tds[9].text.replace(',', '').strip())
-                        marcap = int(tds[12].text.replace(',', '').strip()) if len(tds) > 12 else 0
+                        marcap = int(tds[6].text.replace(',', '').strip()) if len(tds) > 6 else 0
                     except:
                         close, change, volume, marcap = 0, 0, 0, 0
 
@@ -109,7 +109,7 @@ class KRDataManager:
                 try:
                     result.append({
                         'rank': i + 1,
-                        'symbol': str(row['Code']).padStart(6, '0'),
+                        'symbol': str(row['Code']).zfill(6),
                         'name': row['Name'],
                         'price': f"{int(row['Close']):,}",
                         'change': f"{row['ChagesRatio']:+.2f}",
@@ -542,6 +542,9 @@ class KRDataManager:
                         "symbol_code": {{
                             "insight": "핵심 투자 포인트 (1문장)",
                             "risk": "핵심 리스크 (1문장)",
+                            "mkt_cap": "시가총액 (예: 100조원)",
+                            "vol_ratio": "평균 대비 거래량 비율 (예: 1.2x)",
+                            "rsi": "RSI 지표 숫자 (예: 55)",
                             "swot_s": "Strength 강점 키워드",
                             "swot_w": "Weakness 약점 키워드",
                             "swot_o": "Opportunity 기회 키워드",

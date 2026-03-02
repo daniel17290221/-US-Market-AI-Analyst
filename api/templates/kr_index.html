@@ -241,6 +241,35 @@
                         </div>
                     </div>
 
+                    <!-- Market Summary Cards (Market Cap, Vol Ratio, RSI, etc.) -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                        <div
+                            class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">시가 총액</p>
+                            <p id="detail-mkt-cap" class="font-mono font-bold text-lg">--</p>
+                        </div>
+                        <div
+                            class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">거래량 비율</p>
+                            <p id="detail-vol-ratio" class="font-mono font-bold text-lg text-brand-success">--</p>
+                        </div>
+                        <div
+                            class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">RSI (14)</p>
+                            <p id="detail-rsi" class="font-mono font-bold text-lg">--</p>
+                        </div>
+                        <div
+                            class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">AI Score</p>
+                            <p id="detail-score" class="font-mono font-bold text-lg text-brand-primary">--</p>
+                        </div>
+                        <div
+                            class="p-5 bg-white/5 rounded-2xl border border-white/5 text-center transition hover:bg-white/10">
+                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">신호 강도</p>
+                            <p id="detail-signal-strength" class="font-mono font-bold text-lg text-brand-success">--</p>
+                        </div>
+                    </div>
+
                     <!-- Detailed Analysis Panel (Insights, SWOT, DCF) -->
                     <div class="glass-card p-8 bg-accent-gradient/5">
                         <div class="flex flex-col lg:flex-row gap-8">
@@ -511,7 +540,7 @@
             </div>
 
             <!-- Report Iframe -->
-            <iframe id="reportFrame" src="" data-src="https://land.vibe-coding-lab.com/report_kr.html"
+            <iframe id="reportFrame" src="" data-src="/api/kr/report"
                 class="w-full flex-1 border-none bg-[#08080A] relative z-10"
                 onload="console.log('KR Report Loaded Success'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
 
@@ -663,7 +692,7 @@
         async function fetchData() {
             try {
                 // Determine API base - use Vercel URL if hosted elsewhere (like GitHub Pages)
-                const apiBase = (window.location.hostname.includes('vercel.app')) ? '' : 'https://us-market-ai-analyst.vercel.app';
+                const apiBase = (window.location.hostname.includes('vercel.app') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? '' : 'https://us-market-ai-analyst.vercel.app';
 
                 // Combined fetch from optimized endpoint
                 const res = await fetch(`${apiBase}/api/kr/market-data?t=${Date.now()}`);
@@ -872,6 +901,12 @@
                 safeSetText('main-full-name', data.name);
                 safeSetText('main-ai-score', data.score || '90');
 
+                // Summary Cards
+                safeSetText('detail-mkt-cap', data.mkt_cap);
+                safeSetText('detail-vol-ratio', data.vol_ratio);
+                safeSetText('detail-rsi', data.rsi);
+                safeSetText('detail-score', data.score);
+                safeSetText('detail-signal-strength', data.signal || 'Neutral');
 
                 safeSetText('current-price-label', data.price);
 
@@ -1035,7 +1070,7 @@
             const container = document.getElementById('tradingview_main');
             try {
                 // Determine API base
-                const apiBase = (window.location.hostname.includes('vercel.app')) ? '' : 'https://us-market-ai-analyst.vercel.app';
+                const apiBase = (window.location.hostname.includes('vercel.app') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? '' : 'https://us-market-ai-analyst.vercel.app';
                 const cleanSym = String(symbol).padStart(6, '0');
                 const response = await fetch(`${apiBase}/api/chart-data?symbol=${cleanSym}&market=KR`);
                 if (response.ok) {

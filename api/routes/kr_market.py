@@ -67,6 +67,8 @@ def get_kr_market_data():
                 latest_time = mtime
                 kr_data_path = p
     
+    logger.info(f"KR Market Data Path Selected: {kr_data_path}")
+    
     kr_data = {}
     if kr_data_path:
         try:
@@ -75,6 +77,7 @@ def get_kr_market_data():
         except Exception as e:
             logger.error(f"KR Data Load Error: {e}")
     else:
+        logger.warning("No local KR Data Path found. Falling back to GitHub.")
         try:
             github_raw_url = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/kr_daily_data.json"
             resp = requests.get(github_raw_url, timeout=8)
@@ -89,7 +92,10 @@ def get_kr_market_data():
     volume = kr_data.get('volume', [])
     precomputed_ai = kr_data.get('ai_analysis', {})
 
+    logger.info(f"KR Data Summary: KOSPI={len(leaders_kospi)}, KOSDAQ={len(leaders_kosdaq)}, Gainers={len(gainers)}, Volume={len(volume)}")
+    
     if not leaders_kospi and not leaders_kosdaq:
+        logger.info("Triggering Naver Live Fetch Fallback...")
         try:
             with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
                 f1 = executor.submit(fetch_naver_movers, 'rise', 0)
@@ -123,29 +129,34 @@ def get_kr_market_data():
     
     def enrich_list(stock_list):
         enriched = []
+        if not stock_list: return []
         for i, s in enumerate(stock_list):
-            symbol = s['symbol']
-            details = MAJOR_ANALYSIS_KR.get(symbol) or dynamic_results.get(symbol)
-            if not details:
-                details = {"insight": "분석 정보 준비 중입니다.", "risk": "-", "upside": "-", "mkt_cap": "-", "vol_ratio": "-", "rsi": "-", "swot_s": "-", "swot_w": "-", "swot_o": "-", "swot_t": "-", "dcf_target": "-", "dcf_bear": "-", "dcf_bull": "-"}
-            
-            price_clean = s.get('price', '--') or '--'
             try:
-                change_clean = round(float(str(s.get('change', '0')).replace('%', '').strip()), 2)
-            except: change_clean = 0.0
+                symbol = s.get('symbol', '000000')
+                details = MAJOR_ANALYSIS_KR.get(symbol) or dynamic_results.get(symbol)
+                if not details:
+                    details = {"insight": "분석 정보 준비 중입니다.", "risk": "-", "upside": "-", "mkt_cap": "-", "vol_ratio": "-", "rsi": "-", "swot_s": "-", "swot_w": "-", "swot_o": "-", "swot_t": "-", "dcf_target": "-", "dcf_bear": "-", "dcf_bull": "-"}
+                
+                price_clean = s.get('price', '--') or '--'
+                try:
+                    change_raw = str(s.get('change', '0')).replace('%', '').replace(',', '').strip()
+                    change_clean = round(float(change_raw), 2)
+                except: change_clean = 0.0
 
-            enriched.append({
-                "rank": str(i+1).zfill(2),
-                "ticker": s['name'],
-                "symbol": symbol,
-                "name": s['name'],
-                "sector": s.get('market', 'KOSPI'),
-                "score": round(90.0 - (i * 0.5), 1),
-                "signal": "매수",
-                **details,
-                "price": price_clean,
-                "change": change_clean,
-            })
+                enriched.append({
+                    "rank": str(i+1).zfill(2),
+                    "ticker": s.get('name', 'N/A'),
+                    "symbol": symbol,
+                    "name": s.get('name', 'N/A'),
+                    "sector": s.get('market', 'KOSPI'),
+                    "score": round(90.0 - (i * 0.5), 1),
+                    "signal": "매수",
+                    **details,
+                    "price": price_clean,
+                    "change": change_clean,
+                })
+            except Exception as e:
+                logger.error(f"Error enriching stock {s}: {e}")
         return enriched
 
     response_data = {
@@ -177,6 +188,7 @@ def get_kr_ipo():
         return jsonify(fetch_google_news_rss("공모주+청약+일정+상장"))
     except: return jsonify([])
 
+@kr_market_bp.route('/api/kr/report', strict_slashes=False)
 @kr_market_bp.route('/api/kr/daily-report', strict_slashes=False)
 @kr_market_bp.route('/kr/daily-report', strict_slashes=False)
 def get_kr_daily_report():

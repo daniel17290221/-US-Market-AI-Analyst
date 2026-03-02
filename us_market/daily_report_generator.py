@@ -605,9 +605,8 @@ class USDailyReportGenerator:
 
     def _deploy_to_github_pages(self, html_content):
         """생성된 리포트를 GitHub Pages 레포에 복사하고 git push 합니다."""
-        import subprocess, shutil
+        import subprocess
         try:
-            # temp_pages_repo 위치 찾기 (프로젝트 루트 기준)
             script_dir = os.path.dirname(os.path.abspath(__file__))
             project_root = os.path.dirname(script_dir)
             pages_repo = os.path.join(project_root, 'temp_pages_repo')
@@ -616,12 +615,23 @@ class USDailyReportGenerator:
                 logger.warning(f"[DEPLOY] GitHub Pages repo not found at: {pages_repo}")
                 return
 
+            # ★ GitHub Desktop 등 수동 push와의 충돌 방지: 파일 쓰기 전에 원격 변경사항 먼저 반영
+            pull_result = subprocess.run(
+                ['git', 'pull', '--rebase', 'origin', 'main'],
+                cwd=pages_repo, capture_output=True, text=True,
+                timeout=30, encoding='utf-8', errors='replace'
+            )
+            if pull_result.returncode != 0:
+                logger.warning(f"[DEPLOY] pull 실패, 강제 리셋: {pull_result.stderr[:200]}")
+                subprocess.run(['git', 'rebase', '--abort'], cwd=pages_repo, capture_output=True)
+                subprocess.run(['git', 'fetch', 'origin'], cwd=pages_repo, capture_output=True)
+                subprocess.run(['git', 'reset', '--hard', 'origin/main'], cwd=pages_repo, capture_output=True)
+
             target_file = os.path.join(pages_repo, 'report_us.html')
             with open(target_file, 'w', encoding='utf-8') as f:
                 f.write(html_content)
-            logger.info(f"[DEPLOY] Copied US report to GitHub Pages repo: {target_file}")
+            logger.info(f"[DEPLOY] report_us.html 작성 완료")
 
-            # Git add, commit, push
             today = datetime.now().strftime('%Y-%m-%d %H:%M')
             cmds = [
                 ['git', 'add', 'report_us.html'],
@@ -629,18 +639,21 @@ class USDailyReportGenerator:
                 ['git', 'push', 'origin', 'main'],
             ]
             for cmd in cmds:
-                result = subprocess.run(cmd, cwd=pages_repo, capture_output=True, text=True, timeout=30)
+                result = subprocess.run(
+                    cmd, cwd=pages_repo, capture_output=True, text=True,
+                    timeout=30, encoding='utf-8', errors='replace'
+                )
                 if result.returncode != 0:
-                    if 'nothing to commit' in result.stdout or 'nothing to commit' in result.stderr:
-                        logger.info("[DEPLOY] Nothing new to commit.")
+                    if 'nothing to commit' in (result.stdout + result.stderr):
+                        logger.info("[DEPLOY] 변경사항 없음 (스킵)")
                         break
-                    logger.warning(f"[DEPLOY] Git command failed: {' '.join(cmd)}\n{result.stderr}")
+                    logger.warning(f"[DEPLOY] git 명령 실패: {' '.join(cmd)}\n{result.stderr[:200]}")
                     break
                 logger.info(f"[DEPLOY] OK: {' '.join(cmd)}")
 
-            logger.info("[DEPLOY] ✅ US GitHub Pages 배포 완료!")
+            logger.info("[DEPLOY] ✅ US 리포트 배포 완료!")
         except Exception as e:
-            logger.warning(f"[DEPLOY] US GitHub Pages 배포 실패 (무시): {e}")
+            logger.warning(f"[DEPLOY] US 배포 실패 (무시): {e}")
 
     def run(self):
         logger.info("Generating Premium Daily US Market Report...")
