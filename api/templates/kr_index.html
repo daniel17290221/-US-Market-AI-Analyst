@@ -513,7 +513,7 @@
             <!-- Report Iframe -->
             <iframe id="reportFrame" src="" data-src="https://daniel17290221.github.io/report_kr.html"
                 class="w-full flex-1 border-none bg-[#08080A] relative z-10"
-                onload="const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
+                onload="console.log('KR Report Loaded'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; } this.style.opacity='1';"></iframe>
 
             <!-- Fallback Stats Row -->
             <div class="hidden">
@@ -593,6 +593,7 @@
                         } else {
                             // Load from GitHub Pages directly to ensure AdSense works on approved domain
                             const dataSrc = frame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_kr.html';
+                            frame.style.opacity = '0';
                             frame.src = dataSrc + '?t=' + Date.now();
                             const debugEl = document.getElementById('report-debug-info');
                             if (debugEl) debugEl.innerText = "External load: " + dataSrc;
