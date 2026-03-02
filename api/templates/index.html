@@ -623,9 +623,9 @@
                     <span class="text-xs font-mono text-gray-500 uppercase tracking-widest">리포트를 불러오는 중입니다...</span>
                 </div>
             </div>
-            <iframe id="report-iframe" src="" data-src="https://daniel17290221.github.io/report_us.html"
+            <iframe id="report-iframe" src="" data-src="https://land.vibe-coding-lab.com/report_us.html"
                 class="w-full flex-1 border-none bg-[#0d1117] relative z-10"
-                onload="console.log('US Report Loaded'); document.getElementById('report-loading-state').style.display='none';"></iframe>
+                onload="console.log('US Report Loaded Success'); document.getElementById('report-loading-state').style.display='none';"></iframe>
         </div>
     </main>
 
@@ -689,11 +689,11 @@
                 if (reportFrame) {
                     const currentSrc = reportFrame.src;
                     // Check if we need to start initial load (src is empty or not the destination)
-                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc.indexOf('daniel17290221.github.io') === -1) {
+                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc.indexOf('vibe-coding-lab.com') === -1) {
                         if (loadingState) loadingState.style.display = 'flex';
-                        const dataSrc = reportFrame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_us.html';
+                        const dataSrc = reportFrame.getAttribute('data-src') || 'https://land.vibe-coding-lab.com/report_us.html';
                         reportFrame.src = dataSrc + '?t=' + Date.now();
-                        console.log("Starting initial US report load...");
+                        console.log("Starting initial US report load via HTTPS...");
                     } else {
                         // Already loaded or loading. Ensure spinner is hidden if already successful.
                         // If onload already fired, this is redundant but safe.

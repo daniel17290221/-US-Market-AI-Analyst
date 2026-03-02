@@ -511,7 +511,7 @@
             </div>
 
             <!-- Report Iframe -->
-            <iframe id="reportFrame" src="" data-src="https://daniel17290221.github.io/report_kr.html"
+            <iframe id="reportFrame" src="" data-src="https://land.vibe-coding-lab.com/report_kr.html"
                 class="w-full flex-1 border-none bg-[#08080A] relative z-10"
                 onload="console.log('KR Report Loaded'); const ls = document.getElementById('report-loading-state'); if(ls) { ls.style.display='none'; }"></iframe>
 
@@ -578,16 +578,16 @@
                 if (frame) {
                     const currentSrc = frame.src;
                     // Initial load if src is empty or not pointing to the report
-                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc.indexOf('daniel17290221.github.io') === -1) {
+                    if (!currentSrc || currentSrc === "" || currentSrc === window.location.href || currentSrc.indexOf('vibe-coding-lab.com') === -1) {
                         if (loadingState) loadingState.style.display = 'flex';
-                        const dataSrc = frame.getAttribute('data-src') || 'https://daniel17290221.github.io/report_kr.html';
+                        const dataSrc = frame.getAttribute('data-src') || 'https://land.vibe-coding-lab.com/report_kr.html';
                         frame.src = dataSrc + '?t=' + Date.now();
-                        console.log("Starting initial KR report load...");
+                        console.log("Starting initial KR report load via HTTPS...");
                     } else {
                         console.log("KR Report already assigned.");
                     }
                     const debugEl = document.getElementById('report-debug-info');
-                    if (debugEl) debugEl.innerText = "Target: github.io/report_kr.html";
+                    if (debugEl) debugEl.innerText = "Target: land.vibe-coding-lab.com/report_kr.html";
                 }
             }
 
