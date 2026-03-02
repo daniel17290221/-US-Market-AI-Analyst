@@ -2,16 +2,12 @@ import os
 import json
 import requests
 from flask import Blueprint, request, jsonify, make_response
-from dotenv import load_dotenv
-
-load_dotenv()
+from utils import AI_KEY, logger
 
 # Initialize Blueprint
 omni_bp = Blueprint('omni_bp', __name__)
 
-AI_KEY = os.getenv("GOOGLE_API_KEY")
-
-@omni_bp.route('/', methods=['GET', 'POST', 'OPTIONS'])
+@omni_bp.route('/', methods=['GET', 'POST', 'OPTIONS'], strict_slashes=False)
 def virtuals_acp_handler():
     # CORS 사전 요청(OPTIONS) 대응
     if request.method == 'OPTIONS':
@@ -125,7 +121,7 @@ def virtuals_acp_handler():
         return error_resp, 200
 
 # --- Sub-ACP: Omni Validator Endpoint ---
-@omni_bp.route('/validator', methods=['GET', 'POST', 'OPTIONS'])
+@omni_bp.route('/validator', methods=['GET', 'POST', 'OPTIONS'], strict_slashes=False)
 def virtuals_validator_handler():
     # CORS 사전 요청 대응
     if request.method == 'OPTIONS':
@@ -278,7 +274,7 @@ def virtuals_validator_handler():
     })
 
 # --- Social-ACP: Omni Marketer Endpoint ---
-@omni_bp.route('/social', methods=['GET', 'POST', 'OPTIONS'])
+@omni_bp.route('/social', methods=['GET', 'POST', 'OPTIONS'], strict_slashes=False)
 def virtuals_social_handler():
     if request.method == 'OPTIONS':
         resp = make_response()
