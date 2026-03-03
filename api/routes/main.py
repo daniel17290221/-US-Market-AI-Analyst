@@ -25,8 +25,15 @@ def kr_index():
     resp.headers['Expires'] = '0'
     return resp
 
+@main_bp.route('/dividend', strict_slashes=False)
+def dividend_portfolio():
+    resp = make_response(render_template('dividend_portfolio.html'))
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return resp
+
 @main_bp.route('/dashboard', strict_slashes=False)
 def dashboard():
     resp = make_response(render_template('dashboard.html'))
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
     return resp
+
