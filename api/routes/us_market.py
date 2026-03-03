@@ -110,12 +110,23 @@ def get_smart_money():
 @us_market_bp.route('/api/us/daily-report', strict_slashes=False)
 @us_market_bp.route('/daily-report', strict_slashes=False)
 def get_daily_report():
+    # Primary source: Custom Domain
+    domain_url = "https://land.vibe-coding-lab.com/report_us.html"
     github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
-    try:
-        resp = requests.get(github_url, params={"t": int(datetime.now().timestamp())}, timeout=5)
-        if resp.status_code == 200:
-            return make_response(resp.text)
-    except: pass
+    
+    urls = [domain_url, github_url]
+    for url in urls:
+        try:
+            # Enhanced cache busting with multiple params
+            params = {"t": int(datetime.now().timestamp()), "v": "1.1"}
+            resp = requests.get(url, params=params, timeout=5)
+            if resp.status_code == 200 and len(resp.text) > 1000:
+                response = make_response(resp.text)
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
+                return response
+        except: continue
 
     paths = [
         os.path.join(DATA_DIR, 'us_market_morning_report.html'),

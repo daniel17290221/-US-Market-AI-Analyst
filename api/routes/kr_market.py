@@ -192,14 +192,21 @@ def get_kr_ipo():
 @kr_market_bp.route('/api/kr/daily-report', strict_slashes=False)
 @kr_market_bp.route('/kr/daily-report', strict_slashes=False)
 def get_kr_daily_report():
+    # Primary source: Custom Domain
+    domain_url = "https://land.vibe-coding-lab.com/report_kr.html"
     github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
-    try:
-        resp = requests.get(github_url, params={"t": int(datetime.now().timestamp())}, timeout=5)
-        if resp.status_code == 200:
-            response = make_response(resp.text)
-            response.headers['Content-Type'] = 'text/html'
-            return response
-    except: pass
+    
+    urls = [domain_url, github_url]
+    for url in urls:
+        try:
+            params = {"t": int(datetime.now().timestamp()), "v": "1.1"}
+            resp = requests.get(url, params=params, timeout=5)
+            if resp.status_code == 200 and len(resp.text) > 1000:
+                response = make_response(resp.text)
+                response.headers['Content-Type'] = 'text/html; charset=utf-8'
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                return response
+        except: continue
 
     paths = [
         os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
