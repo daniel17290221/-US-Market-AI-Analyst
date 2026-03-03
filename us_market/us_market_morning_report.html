@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>오프라인의 몰락과 에너지 랠리: 탐욕의 시대, 투자 기회는?</title>
+    <style>
+        :root {
+            --bg-color: #f7f9fb;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --brand-blue: #0070f3;
+            --brand-red: #f44336;
+            --brand-green: #4caf50;
+            --border-color: #eeeeee;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0d1117;
+                --card-bg: #161b22;
+                --text-main: #e6edf3;
+                --text-sub: #8b949e;
+                --border-color: #30363d;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        /* Layout Structure */
+        .wrapper {
+            display: grid;
+            grid-template-columns: 180px minmax(600px, 1000px) 180px;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .ad-sidebar {
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            align-self: flex-start;
+        }
+
+        .ad-unit {
+            background: transparent;
+            border: none;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 12px;
+            padding: 5px;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category { color: var(--brand-blue); font-weight: 800; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
+        h1 { font-size: 32px; line-height: 1.3; margin-bottom: 15px; letter-spacing: -1px; }
+        .date { color: var(--text-sub); font-size: 14px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+
+        .box-summary { 
+            background: rgba(0, 112, 243, 0.05); 
+            border-radius: 12px; 
+            padding: 28px; 
+            margin-bottom: 45px; 
+            border: 1px solid rgba(0, 112, 243, 0.1); 
+        }
+        .box-summary h3 { font-size: 18px; margin-bottom: 12px; color: var(--brand-blue); }
+        .box-summary ul { list-style-position: inside; }
+        .box-summary li { margin-bottom: 8px; color: var(--text-main); font-size: 16px; }
+
+        .market-indices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 40px; }
+        .index-card { 
+            padding: 15px; 
+            background: rgba(128,128,128,0.05); 
+            border-radius: 10px; 
+            text-align: center; 
+            border: 1px solid var(--border-color);
+        }
+        .index-name { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+        .index-value { font-size: 18px; font-weight: 800; margin: 4px 0; }
+        .index-change { font-size: 14px; font-weight: 600; }
+        .index-change.up { color: var(--brand-red); }
+        .index-change.down { color: var(--brand-blue); }
+
+        .article-section { margin-bottom: 60px; }
+        .section-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+        .emoji { font-size: 28px; }
+        .section-header h2 { font-size: 22px; font-weight: 800; line-height: 1.4; }
+        .section-content p { font-size: 17px; color: var(--text-main); margin-bottom: 20px; line-height: 1.9; text-align: justify; }
+
+        .market-brief { border-top: 2px solid var(--border-color); padding-top: 30px; margin-bottom: 45px; }
+        .brief-title { font-size: 19px; font-weight: 800; margin-bottom: 25px; }
+        .market-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-size: 16px; }
+        .market-row .label { font-weight: 600; }
+        .market-row .val { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+        .market-row .chg.up { color: var(--brand-red); }
+        .market-row .chg.down { color: var(--brand-blue); }
+
+        .hashtags { margin-top: 50px; padding-top: 25px; border-top: 1px solid var(--border-color); }
+        .hashtag { color: var(--text-sub); font-size: 15px; margin-right: 20px; font-weight: 600; }
+
+        /* Smart Money Grid */
+        .smart-money-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stock-card { 
+            padding: 12px; 
+            background: rgba(128,128,128,0.03); 
+            border-radius: 10px; 
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+        .stock-card:hover { transform: translateY(-3px); }
+        .stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .stock-header .ticker { font-weight: 900; font-size: 14px; }
+        .stock-header .score { font-size: 10px; font-weight: 800; }
+        .stock-name { font-size: 10px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .stock-grade { font-size: 10px; font-weight: 700; margin-top: 5px; color: var(--text-main); }
+
+        @media (max-width: 768px) {
+            .smart-money-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .footer { margin-top: 70px; text-align: center; font-size: 13px; color: var(--text-sub); border-top: 1px solid var(--border-color); padding-top: 30px; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .ad-banner-bottom { 
+            width: 100%;
+            background: rgba(10, 10, 10, 0.5);
+            border-top: 1px solid var(--border-color);
+            padding: 20px 12px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        @media (max-width: 1200px) {
+            .ad-sidebar { display: none; }
+            .container { max-width: 100%; padding: 30px 20px; }
+            .container { min-width: 100%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Left Sidebar for Ads (AdSense) -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                <!-- 바이브코딩랩 PC좌측 사이드바 -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-4995156883730033"
+                     data-ad-slot="7174591391"
+                     data-ad-format="vertical"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </aside>
+
+        <div class="container">
+            <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 25px;">
+                <span style="background: #f44336; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; animation: pulse 2s infinite; letter-spacing: 1px;">
+                    🔴 LIVE UPDATED: 2026-03-03 09:26:23
+                </span>
+            </div>
+            <div class="category">Daily Morning Report</div>
+            <h1>오프라인의 몰락과 에너지 랠리: 탐욕의 시대, 투자 기회는?</h1>
+            <div class="date">2026.03.03 • Premium AI Analysis</div>
+
+            <div class="box-summary">
+                <h3>소비 트렌드 변화 속 에너지 섹터의 부활, S급 추천주 집중 분석</h3>
+                <ul>
+                    <li>오프라인 리테일의 구조적 쇠퇴 속에서 에너지, 건설, 농업 등 전통 산업군의 'Bull Case' 부각. 시장의 탐욕 심리 속 옥석 가리기가 중요해지고 있다.</li><li>WTI 원유 8% 폭등과 금 선물 급등은 인플레이션 재점화 우려를 낳고 있으며, 투자자들은 변동성에 대비해야 한다.</li><li>S&P 500, 나스닥, 다우존스 모두 상승세를 보였지만, 개별 종목별 편차가 커지고 있어 신중한 접근이 요구된다.</li>
+                </ul>
+            </div>
+
+            <div class="market-brief">
+                <div class="brief-title">주요 지수 동향: 탐욕과 환희 속 숨겨진 불안: 03.03 장마감 기준</div>
+                <div class="market-indices">
+                    
+            <div class="index-card">
+                <div class="index-name">📈 S&P 500</div>
+                <div class="index-value">6,881.62</div>
+                <div class="index-change up">+0.64%</div>
+            </div>
+            <div class="index-card">
+                <div class="index-name">📈 나스닥</div>
+                <div class="index-value">22,748.86</div>
+                <div class="index-change up">+0.54%</div>
+            </div>
+            <div class="index-card">
+                <div class="index-name">📈 다우존스</div>
+                <div class="index-value">48,904.78</div>
+                <div class="index-change up">+0.21%</div>
+            </div>
+                </div>
+            </div>
+
+            
+            <div class="article-section">
+                <div class="section-header">
+                    <span class="emoji">📉</span>
+                    <h2>153년 전통 서점 폐쇄: 오프라인 리테일, 몰락의 서막인가?</h2>
+                </div>
+                <div class="section-content">
+                    <p>서점 체인의 추가 폐쇄는 단순한 기업의 문제가 아닌, 구조적인 소비 트렌드 변화를 반영한다. 온라인 쇼핑의 편리함과 가격 경쟁력에 밀려 오프라인 리테일은 생존의 기로에 섰다. 특히 금리 인상 환경 속에서 자금 조달이 어려운 기업들은 더욱 취약해질 수밖에 없다. 투자자들은 오프라인 리테일 섹터에 대한 투자를 재고하고, 디지털 전환에 성공한 기업을 선별적으로 주목해야 한다. 생존을 위한 혁신과 차별화 전략이 오프라인 리테일 기업의 미래를 결정할 것이다. 온라인과의 경쟁에서 살아남기 위한 새로운 비즈니스 모델 구축이 시급하다.</p>
+                </div>
+            </div>
+            <div class="article-section">
+                <div class="section-header">
+                    <span class="emoji">🛢️</span>
+                    <h2>WTI 8% 폭등: 에너지 섹터, 인플레이션 헤지 수단으로 부상?</h2>
+                </div>
+                <div class="section-content">
+                    <p>WTI 원유 가격이 8% 이상 폭등하면서 에너지 섹터에 대한 관심이 집중되고 있다. 지정학적 리스크와 공급망 불안정은 유가 상승을 부추기고 있으며, 이는 곧 인플레이션 압력으로 이어진다. 에너지 기업들은 이러한 환경 속에서 수익성을 개선하고 있으며, 투자자들은 인플레이션 헤지 수단으로 에너지 섹터를 고려할 수 있다. 특히, 브라질과 캐나다 자산 성장에 주목할 필요가 있다. 다만, 유가 변동성은 여전히 크기 때문에 신중한 투자 전략이 요구된다. XOM과 같은 S급 에너지 기업에 주목할 필요가 있다.</p>
+                </div>
+            </div>
+            <div class="article-section">
+                <div class="section-header">
+                    <span class="emoji">📈</span>
+                    <h2>탐욕 지수 72: 과열 경고등, 지금은 신중할 때?</h2>
+                </div>
+                <div class="section-content">
+                    <p>현재 시장 분위기는 '탐욕' 단계로, 탐욕 지수가 72까지 상승했다. 이는 투자 심리가 과열되었음을 의미하며, 조정 가능성에 대한 경고 신호로 해석할 수 있다. 투자자들은 시장 전반의 낙관론에 휩쓸리기보다는 개별 기업의 펀더멘털을 꼼꼼히 분석하고, 리스크 관리에 집중해야 한다. 특히, 'Bull Case'가 제시된 기업들의 실적 부진은 급격한 주가 하락으로 이어질 수 있으므로 주의해야 한다. 단기적으로는 선별적 투자 전략을 유지하되, 중장기적으로는 포트폴리오 리스크 관리를 강화해야 한다.</p>
+                </div>
+            </div>
+
+            
+            <div class="market-brief">
+                <div class="brief-title">🎯 스마트 머니 포착: 오늘의 TOP 5 유망주</div>
+                <div class="smart-money-grid">
+            
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="ticker">MRK</span>
+                        <span class="score" style="color: #ff4d4f">S:84.08</span>
+                    </div>
+                    <div class="stock-name">MRK</div>
+                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                </div>
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="ticker">PEP</span>
+                        <span class="score" style="color: #ff4d4f">S:82.59</span>
+                    </div>
+                    <div class="stock-name">PEP</div>
+                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                </div>
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="ticker">XOM</span>
+                        <span class="score" style="color: #ff4d4f">S:82.53</span>
+                    </div>
+                    <div class="stock-name">XOM</div>
+                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                </div>
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="ticker">PM</span>
+                        <span class="score" style="color: #ff4d4f">S:80.56</span>
+                    </div>
+                    <div class="stock-name">PM</div>
+                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                </div>
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="ticker">CSCO</span>
+                        <span class="score" style="color: #ff4d4f">S:80.55</span>
+                    </div>
+                    <div class="stock-name">CSCO</div>
+                    <div class="stock-grade">🔥 S급 (즉시 매수)</div>
+                </div></div></div>
+
+            <div class="market-brief">
+                <div class="brief-title">주요 원자재 및 암호화폐 시황</div>
+                
+            <div class="market-row">
+                <span class="label">WTI 원유</span>
+                <span class="val">71.22</span>
+                <span class="chg up">+8.87%</span>
+            </div>
+            <div class="market-row">
+                <span class="label">금 선물</span>
+                <span class="val">5,363.90</span>
+                <span class="chg up">+3.03%</span>
+            </div>
+            <div class="market-row">
+                <span class="label">비트코인</span>
+                <span class="val">68,708.09</span>
+                <span class="chg up">+4.29%</span>
+            </div>
+            </div>
+
+            <div class="hashtags">
+                <span class="hashtag">#미국증시</span> <span class="hashtag">#주식투자</span> <span class="hashtag">#에너지섹터</span> <span class="hashtag">#인플레이션</span> <span class="hashtag">#오프라인리테일</span> <span class="hashtag">#탐욕지수</span> <span class="hashtag">#투자전략</span>
+            </div>
+
+            <div class="footer">
+                🚀 본 리포트는 VibeCodingLab 종목 분석 AI 시스템에 의해 실시간 데이터 집계 및 분석되었습니다.<br>
+                <b>생성 시각: 2026-03-03 09:26:23</b> (KST 한국 시각 반영 완료)<br>
+                © 2026 VibeCodingLab. All Rights Reserved.
+            </div>
+        </div>
+
+        <!-- Right Sidebar for Ads -->
+        <aside class="ad-sidebar">
+            <div class="ad-unit">
+                <!-- 바이브코딩랩 데일리 리포트 우측 -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-4995156883730033"
+                     data-ad-slot="7174591391"
+                     data-ad-format="vertical"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </aside>
+    </div>
+
+    <div class="ad-banner-bottom">
+        <!-- 바이브코딩랩 데일리 리포트 하단 전면 -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-4995156883730033"
+             data-ad-slot="7174591391"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+</body>
+</html>
+        
