@@ -174,6 +174,23 @@ def x_history():
         logger.error(f"X History Error: {e}")
         return jsonify([])
 
+@common_bp.route('/api/x/research-draft', strict_slashes=False)
+def x_research_draft():
+    try:
+        from x_agent import XMarketAgent
+        agent = XMarketAgent()
+        market_data = agent.fetch_realtime_market_data()
+        tweet_text = agent.generate_korean_market_insight(market_data)
+        
+        return jsonify({
+            "status": "success", 
+            "draft": tweet_text,
+            "data_snapshot": market_data
+        })
+    except Exception as e:
+        logger.error(f"Research Draft Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @common_bp.route('/api/x/post', methods=['POST'], strict_slashes=False)
 def x_post_manual():
     req_json = request.get_json(silent=True) or {}

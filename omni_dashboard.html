@@ -407,12 +407,19 @@
                     <div class="terminal-container">
                         <textarea id="tweetContent"
                             placeholder="Enter raw market intel or news. Omni Alpha AI will rewrite this into a sarcastic, high-conviction post before broadcasting."></textarea>
-                        <div class="btn-row">
-                            <button class="btn-post secondary" onclick="postTweet('direct')" id="btnDirect">
-                                <i class="fas fa-bolt"></i> Direct Post
+                        <div class="btn-row" style="grid-template-columns: 1fr 1fr 1.2fr;">
+                            <button class="btn-post secondary" onclick="postTweet('direct')" id="btnDirect"
+                                title="Post exactly what is in the box">
+                                <i class="fas fa-paper-plane"></i> Direct Post
                             </button>
-                            <button class="btn-post" onclick="postTweet('draft')" id="btnDraft">
-                                <i class="fas fa-wand-magic-sparkles"></i> AI Draft & Post
+                            <button class="btn-post secondary" onclick="postTweet('draft')" id="btnDraft"
+                                title="Rewrite input with AI persona then post">
+                                <i class="fas fa-wand-magic-sparkles"></i> AI Re-write
+                            </button>
+                            <button class="btn-post" onclick="researchDraft()" id="btnResearch"
+                                style="background: var(--success-color);"
+                                title="AI automatically finds news and writes a fresh briefing">
+                                <i class="fas fa-microscope"></i> AI Research & Draft
                             </button>
                         </div>
                     </div>
@@ -484,6 +491,31 @@
                     document.getElementById('btcChange').className = "change " + (prices["BTC-USD"].change >= 0 ? "up" : "down");
                 }
             } catch (e) { console.error(e); }
+        }
+
+        async function researchDraft() {
+            const btn = document.getElementById('btnResearch');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Researching...';
+
+            try {
+                const response = await fetch(`/api/x/research-draft`);
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('tweetContent').value = result.draft;
+                    // Auto-update quick scan box too
+                    const scanBox = document.getElementById('quickScanResults');
+                    scanBox.innerHTML = `[DEEP RESEARCH COMPLETE]<br>Omni Matrix has scanned ${Object.keys(result.data_snapshot).length} data points and latest news. Draft ready in terminal.`;
+                } else {
+                    alert("Research Error: " + result.message);
+                }
+            } catch (e) {
+                alert("Matrix Sync Error: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
         }
 
         async function postTweet(mode) {
