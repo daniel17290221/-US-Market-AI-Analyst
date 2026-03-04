@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omni Swarm AI | Intelligence Terminal</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033"
+        crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-color: #58a6ff;
+            --success-color: #238636;
+            --danger-color: #f85149;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+            margin-bottom: 25px;
+        }
+
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: white;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main {
+            font-style: italic;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .logo-main .highlight {
+            color: var(--accent-color);
+        }
+
+        .logo-sub {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: rgba(88, 166, 255, 0.6);
+            font-weight: 900;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #8b949e;
+        }
+
+        .menu-item:hover {
+            background: rgba(88, 166, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .menu-item.active {
+            background: rgba(88, 166, 255, 0.15);
+            color: var(--accent-color);
+        }
+
+        /* Wallet Info */
+        .wallet-container {
+            margin-top: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 0.75rem;
+        }
+
+        .wallet-value {
+            color: var(--accent-color);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .top-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .stat-card .label {
+            font-size: 0.7rem;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-card .change {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+
+        .stat-card .change.down {
+            color: var(--danger-color);
+        }
+
+        /* Custom Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Broadcast History */
+        .x-history-box {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            height: 500px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tweet-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .tweet-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tweet-time {
+            font-size: 0.7rem;
+            color: var(--accent-color);
+            font-family: 'Fira Code', monospace;
+            margin-bottom: 5px;
+        }
+
+        .tweet-text {
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* Terminal Input */
+        .terminal-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border-color);
+            color: #3fb950;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            resize: none;
+            height: 120px;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: #238636;
+            opacity: 0.5;
+        }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-post {
+            background: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-post.secondary {
+            background: #21262d;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-post:hover {
+            opacity: 0.9;
+        }
+
+        .btn-post:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Market Pulse Small Bar */
+        .pulse-bar {
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            background: #000;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .pulse-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--accent-color);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <a href="https://land.vibe-coding-lab.com" class="logo-area">
+            <img src="/assets/logo.jpg" alt="Logo" class="logo-img">
+            <div class="logo-text">
+                <span class="logo-main">Omni<span class="highlight">Swarm</span></span>
+                <span class="logo-sub">Investment Prophecy</span>
+            </div>
+        </a>
+
+        <div class="menu-item active">
+            <i class="fas fa-terminal"></i>
+            <span>Command Center</span>
+        </div>
+        <div class="menu-item" onclick="window.open('https://x.com/richideabank')">
+            <i class="fab fa-twitter"></i>
+            <span>𝕏 Intelligence Feed</span>
+        </div>
+        <div class="menu-item" onclick="window.open('/daily-report')">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span>US Market Matrix</span>
+        </div>
+
+        <div class="wallet-container">
+            <div style="font-size: 0.6rem; color: #6e7681; margin-bottom: 5px;">ACP WALLET (BASE)</div>
+            <div class="wallet-value">0x0dD...56EB</div>
+            <div style="margin-top: 5px; color: var(--success-color); font-size: 0.65rem;">● Swarm Connected</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-stats" id="marketStats">
+            <div class="stat-card">
+                <div class="label">KOSPI</div>
+                <div id="kospiPrice" class="value">----.--</div>
+                <div id="kospiChange" class="change">--.--%</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">S&P 500</div>
+                <div id="spPrice" class="value">----.--</div>
+                <div id="spChange" class="change">--.--%</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Bitcoin ($)</div>
+                <div id="btcPrice" class="value">--.---</div>
+                <div id="btcChange" class="change">--.--%</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">USD/KRW</div>
+                <div id="fxPrice" class="value">----.--</div>
+                <div id="fxChange" class="change">--.--%</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="left-col">
+                <div class="card">
+                    <h3><i class="fab fa-twitter" style="color:#1DA1F2"></i> Automated Broadcast History</h3>
+                    <div id="xHistory" class="x-history-box">
+                        <div style="text-align: center; margin-top: 100px; color: #8b949e;">
+                            <i class="fas fa-spinner fa-spin fa-2x"></i>
+                            <p>Syncing with the Matrix...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-col">
+                <div class="card">
+                    <h3><i class="fas fa-magic"></i> AI-Assisted Intelligence Draft</h3>
+                    <div class="terminal-container">
+                        <textarea id="tweetContent"
+                            placeholder="Enter raw market intel or news. Omni Alpha AI will rewrite this into a sarcastic, high-conviction post before broadcasting."></textarea>
+                        <div class="btn-row">
+                            <button class="btn-post secondary" onclick="postTweet('direct')" id="btnDirect">
+                                <i class="fas fa-bolt"></i> Direct Post
+                            </button>
+                            <button class="btn-post" onclick="postTweet('draft')" id="btnDraft">
+                                <i class="fas fa-wand-magic-sparkles"></i> AI Draft & Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4 style="font-size: 0.8rem; color: #8b949e; margin-bottom: 10px; text-transform: uppercase;">
+                            Matrix Quick Scan</h4>
+                        <div id="quickScanResults"
+                            style="font-size: 0.75rem; color: #8b949e; line-height: 1.6; background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); height: 100px; overflow-y: auto;">
+                            Select 'Run Rapid Scan' to analyze current momentum.
+                        </div>
+                        <button onclick="runRapidAnalysis()"
+                            style="margin-top: 10px; font-size: 0.8rem; background: rgba(88,166,255,0.1); color: var(--accent-color); border: 1px solid var(--accent-color); width: 100%; border-radius: 8px; padding: 10px; cursor: pointer;">
+                            <i class="fas fa-bolt"></i> Run Rapid Market Scan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchHistory() {
+            try {
+                const response = await fetch(`/api/x/history`);
+                const tweets = await response.json();
+                const container = document.getElementById('xHistory');
+
+                if (tweets.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No history found.</div>';
+                    return;
+                }
+
+                container.innerHTML = tweets.map(t => `
+                    <div class="tweet-item">
+                        <div class="tweet-time">${t.time}</div>
+                        <div class="tweet-text">${t.text}</div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function updateStats() {
+            try {
+                const response = await fetch(`/api/market-pulse`);
+                const prices = await response.json();
+
+                // USDKRW=X handling (Yahoo API key)
+                const fx = prices["USDKRW=X"] || prices["USDKRW"];
+                if (fx) {
+                    document.getElementById('fxPrice').innerText = Number(fx.price).toLocaleString();
+                    document.getElementById('fxChange').innerText = (fx.change > 0 ? "+" : "") + fx.change + "%";
+                    document.getElementById('fxChange').className = "change " + (fx.change >= 0 ? "up" : "down");
+                }
+
+                if (prices["^KS11"]) {
+                    document.getElementById('kospiPrice').innerText = Number(prices["^KS11"].price).toLocaleString();
+                    document.getElementById('kospiChange').innerText = (prices["^KS11"].change > 0 ? "+" : "") + prices["^KS11"].change + "%";
+                    document.getElementById('kospiChange').className = "change " + (prices["^KS11"].change >= 0 ? "up" : "down");
+                }
+                if (prices["^GSPC"]) {
+                    document.getElementById('spPrice').innerText = Number(prices["^GSPC"].price).toLocaleString();
+                    document.getElementById('spChange').innerText = (prices["^GSPC"].change > 0 ? "+" : "") + prices["^GSPC"].change + "%";
+                    document.getElementById('spChange').className = "change " + (prices["^GSPC"].change >= 0 ? "up" : "down");
+                }
+                if (prices["BTC-USD"]) {
+                    document.getElementById('btcPrice').innerText = Number(prices["BTC-USD"].price).toLocaleString();
+                    document.getElementById('btcChange').innerText = (prices["BTC-USD"].change > 0 ? "+" : "") + prices["BTC-USD"].change + "%";
+                    document.getElementById('btcChange').className = "change " + (prices["BTC-USD"].change >= 0 ? "up" : "down");
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function postTweet(mode) {
+            const content = document.getElementById('tweetContent').value.trim();
+            if (!content) return;
+
+            const btn = mode === 'draft' ? document.getElementById('btnDraft') : document.getElementById('btnDirect');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const response = await fetch(`/api/x/post`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: content, mode: mode })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    alert("Omni Alpha Broadcasted:\n\n" + (result.tweet || content));
+                    document.getElementById('tweetContent').value = '';
+                    fetchHistory();
+                } else {
+                    alert("Broadcast Error: " + result.message);
+                }
+            } catch (e) {
+                alert("Matrix Link Error: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function runRapidAnalysis() {
+            const scanBox = document.getElementById('quickScanResults');
+            scanBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing global matrix...';
+
+            try {
+                const resp = await fetch(`/api/market-pulse`);
+                const data = await resp.json();
+                const ks = data["^KS11"] ? data["^KS11"].change : 0;
+                const sp = data["^GSPC"] ? data["^GSPC"].change : 0;
+
+                let insight = "";
+                if (sp > 0.5) insight = "US Market leading the charge. Bullish continuation likely.";
+                else if (sp < -0.5) insight = "Macro fear peaking. Matrix rebalancing into safe havens.";
+                else insight = "Sideways chop. Optimal time for AI accumulation.";
+
+                scanBox.innerHTML = `[PULSE SCAN COMPLETE]<br>KOSPI: ${ks}% | S&P500: ${sp}%<br><br>INSIGHT: ${insight}`;
+            } catch (e) {
+                scanBox.innerHTML = "Scan failed. Check Matrix connection.";
+            }
+        }
+
+        // Init
+        updateStats();
+        fetchHistory();
+        setInterval(updateStats, 30000);
+        setInterval(fetchHistory, 60000);
+    </script>
+</body>
+
+</html>
