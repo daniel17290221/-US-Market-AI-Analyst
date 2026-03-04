@@ -137,3 +137,15 @@ def generate_portfolio():
     except Exception as e:
         logger.error(f"Portfolio creation error: {e}")
         return jsonify({"error": "AI Error"}), 500
+
+@common_bp.route('/api/market-pulse', strict_slashes=False)
+def market_pulse():
+    # Helper to fetch current prices for indices and BTC
+    tickers = ["^KS11", "^GSPC", "BTC-USD", "USDKRW=X"]
+    try:
+        from utils import fetch_realtime_data
+        data = fetch_realtime_data(tickers)
+        return jsonify(data)
+    except Exception as e:
+        logger.error(f"Market Pulse Error: {e}")
+        return jsonify({}), 500
