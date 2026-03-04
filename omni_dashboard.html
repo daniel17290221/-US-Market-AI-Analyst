@@ -256,6 +256,12 @@
             opacity: 0.5;
         }
 
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
         .btn-post {
             background: var(--accent-color);
             color: #fff;
@@ -268,10 +274,21 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-post.secondary {
+            background: #21262d;
+            border: 1px solid var(--border-color);
         }
 
         .btn-post:hover {
             opacity: 0.9;
+        }
+
+        .btn-post:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Market Pulse Small Bar */
@@ -335,7 +352,7 @@
             <i class="fab fa-twitter"></i>
             <span>𝕏 Intelligence Feed</span>
         </div>
-        <div class="menu-item" onclick="window.open('/api/us/daily-report')">
+        <div class="menu-item" onclick="window.open('/daily-report')">
             <i class="fas fa-file-invoice-dollar"></i>
             <span>US Market Matrix</span>
         </div>
@@ -349,7 +366,6 @@
 
     <div class="main-content">
         <div class="top-stats" id="marketStats">
-            <!-- Stats will be populated here -->
             <div class="stat-card">
                 <div class="label">KOSPI</div>
                 <div id="kospiPrice" class="value">----.--</div>
@@ -379,7 +395,7 @@
                     <div id="xHistory" class="x-history-box">
                         <div style="text-align: center; margin-top: 100px; color: #8b949e;">
                             <i class="fas fa-spinner fa-spin fa-2x"></i>
-                            <p>Fetching history from Matrix...</p>
+                            <p>Syncing with the Matrix...</p>
                         </div>
                     </div>
                 </div>
@@ -387,23 +403,29 @@
 
             <div class="right-col">
                 <div class="card">
-                    <h3><i class="fas fa-pen-nib"></i> Manual Intelligence Post</h3>
+                    <h3><i class="fas fa-magic"></i> AI-Assisted Intelligence Draft</h3>
                     <div class="terminal-container">
                         <textarea id="tweetContent"
-                            placeholder="Enter manual market insight to broadcast..."></textarea>
-                        <button class="btn-post" onclick="postManualTweet()" id="btnPost">
-                            <i class="fas fa-paper-plane"></i> Broadcast to 𝕏
-                        </button>
+                            placeholder="Enter raw market intel or news. Omni Alpha AI will rewrite this into a sarcastic, high-conviction post before broadcasting."></textarea>
+                        <div class="btn-row">
+                            <button class="btn-post secondary" onclick="postTweet('direct')" id="btnDirect">
+                                <i class="fas fa-bolt"></i> Direct Post
+                            </button>
+                            <button class="btn-post" onclick="postTweet('draft')" id="btnDraft">
+                                <i class="fas fa-wand-magic-sparkles"></i> AI Draft & Post
+                            </button>
+                        </div>
                     </div>
 
                     <div style="margin-top: 20px;">
-                        <h4 style="font-size: 0.8rem; color: #8b949e; margin-bottom: 15px; text-transform: uppercase;">
-                            Quick Intelligence Check</h4>
-                        <div id="marketPulseSmall" class="pulse-bar">
-                            <!-- Populated dynamically -->
+                        <h4 style="font-size: 0.8rem; color: #8b949e; margin-bottom: 10px; text-transform: uppercase;">
+                            Matrix Quick Scan</h4>
+                        <div id="quickScanResults"
+                            style="font-size: 0.75rem; color: #8b949e; line-height: 1.6; background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); height: 100px; overflow-y: auto;">
+                            Select 'Run Rapid Scan' to analyze current momentum.
                         </div>
                         <button onclick="runRapidAnalysis()"
-                            style="font-size: 0.8rem; background: rgba(88,166,255,0.1); color: var(--accent-color); border: 1px solid var(--accent-color); width: 100%; border-radius: 8px; padding: 10px;">
+                            style="margin-top: 10px; font-size: 0.8rem; background: rgba(88,166,255,0.1); color: var(--accent-color); border: 1px solid var(--accent-color); width: 100%; border-radius: 8px; padding: 10px; cursor: pointer;">
                             <i class="fas fa-bolt"></i> Run Rapid Market Scan
                         </button>
                     </div>
@@ -413,8 +435,6 @@
     </div>
 
     <script>
-        const VERCEL_URL = ""; // Relative paths will work now
-
         async function fetchHistory() {
             try {
                 const response = await fetch(`/api/x/history`);
@@ -432,15 +452,21 @@
                         <div class="tweet-text">${t.text}</div>
                     </div>
                 `).join('');
-            } catch (e) {
-                console.error("History fetch failed", e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         async function updateStats() {
             try {
                 const response = await fetch(`/api/market-pulse`);
                 const prices = await response.json();
+
+                // USDKRW=X handling (Yahoo API key)
+                const fx = prices["USDKRW=X"] || prices["USDKRW"];
+                if (fx) {
+                    document.getElementById('fxPrice').innerText = Number(fx.price).toLocaleString();
+                    document.getElementById('fxChange').innerText = (fx.change > 0 ? "+" : "") + fx.change + "%";
+                    document.getElementById('fxChange').className = "change " + (fx.change >= 0 ? "up" : "down");
+                }
 
                 if (prices["^KS11"]) {
                     document.getElementById('kospiPrice').innerText = Number(prices["^KS11"].price).toLocaleString();
@@ -457,56 +483,67 @@
                     document.getElementById('btcChange').innerText = (prices["BTC-USD"].change > 0 ? "+" : "") + prices["BTC-USD"].change + "%";
                     document.getElementById('btcChange').className = "change " + (prices["BTC-USD"].change >= 0 ? "up" : "down");
                 }
-                if (prices["USDKRW=X"]) {
-                    document.getElementById('fxPrice').innerText = Number(prices["USDKRW=X"].price).toLocaleString();
-                    document.getElementById('fxChange').innerText = (prices["USDKRW=X"].change > 0 ? "+" : "") + prices["USDKRW=X"].change + "%";
-                    document.getElementById('fxChange').className = "change " + (prices["USDKRW=X"].change >= 0 ? "up" : "down");
-                }
             } catch (e) { console.error(e); }
         }
 
-        async function postManualTweet() {
+        async function postTweet(mode) {
             const content = document.getElementById('tweetContent').value.trim();
             if (!content) return;
 
-            const btn = document.getElementById('btnPost');
+            const btn = mode === 'draft' ? document.getElementById('btnDraft') : document.getElementById('btnDirect');
             const originalText = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Broadcasting...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
             try {
                 const response = await fetch(`/api/x/post`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: content })
+                    body: JSON.stringify({ text: content, mode: mode })
                 });
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    alert("Broadcast successful!");
+                    alert("Omni Alpha Broadcasted:\n\n" + (result.tweet || content));
                     document.getElementById('tweetContent').value = '';
                     fetchHistory();
                 } else {
-                    alert("Error: " + result.message);
+                    alert("Broadcast Error: " + result.message);
                 }
             } catch (e) {
-                alert("Matrix Connection Error: " + e.message);
+                alert("Matrix Link Error: " + e.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
             }
         }
 
-        function runRapidAnalysis() {
-            // Quick alert or redirection to full report
-            window.open('/api/us/daily-report', '_blank');
+        async function runRapidAnalysis() {
+            const scanBox = document.getElementById('quickScanResults');
+            scanBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing global matrix...';
+
+            try {
+                const resp = await fetch(`/api/market-pulse`);
+                const data = await resp.json();
+                const ks = data["^KS11"] ? data["^KS11"].change : 0;
+                const sp = data["^GSPC"] ? data["^GSPC"].change : 0;
+
+                let insight = "";
+                if (sp > 0.5) insight = "US Market leading the charge. Bullish continuation likely.";
+                else if (sp < -0.5) insight = "Macro fear peaking. Matrix rebalancing into safe havens.";
+                else insight = "Sideways chop. Optimal time for AI accumulation.";
+
+                scanBox.innerHTML = `[PULSE SCAN COMPLETE]<br>KOSPI: ${ks}% | S&P500: ${sp}%<br><br>INSIGHT: ${insight}`;
+            } catch (e) {
+                scanBox.innerHTML = "Scan failed. Check Matrix connection.";
+            }
         }
 
         // Init
         updateStats();
         fetchHistory();
-        setInterval(updateStats, 60000);
-        setInterval(fetchHistory, 300000);
+        setInterval(updateStats, 30000);
+        setInterval(fetchHistory, 60000);
     </script>
 </body>
 

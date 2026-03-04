@@ -352,7 +352,9 @@ def fetch_realtime_data(tickers):
         futures = [executor.submit(fetch_single_ticker, t, headers) for t in tickers]
         for f in concurrent.futures.as_completed(futures):
             ticker, data = f.result()
-            if data: results[ticker] = data
+            if data:
+                # Normalize keys for frontend consistency if needed, but original tickers are usually fine
+                results[ticker] = data
     return results
 
 def fetch_dynamic_ai_analysis(stocks_to_analyze):

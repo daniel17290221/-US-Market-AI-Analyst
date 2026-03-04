@@ -178,17 +178,39 @@ def x_history():
 def x_post_manual():
     req_json = request.get_json(silent=True) or {}
     text = req_json.get('text')
+    mode = req_json.get('mode', 'direct') # 'direct' or 'draft'
+    
     if not text:
         return jsonify({"status": "failed", "message": "No content"}), 400
     
     try:
         from x_agent import XMarketAgent
         agent = XMarketAgent()
-        success = agent.post_custom_tweet(text)
+        
+        target_text = text
+        if mode == 'draft':
+            # Persona-based drafting logic
+            prompt = f"""
+            Role: You are 'Omni Alpha ($OMNI)', a SASSIEST and SARCASTIC AI Fund Manager.
+            Input Intel: {text}
+            Task: Rewrite this news/intel into a punchy X (Twitter) post (max 270 chars). 
+            Style: Bold, dominant, arrogant intelligence. Use financial slang. Start with a hook.
+            Output: RAW TWEET TEXT ONLY.
+            """
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
+            resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=15)
+            if resp.status_code == 200:
+                target_text = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
+                if target_text.startswith('"') and target_text.endswith('"'):
+                    target_text = target_text[1:-1]
+            else:
+                return jsonify({"status": "failed", "message": "AI Drafting failed"}), 500
+
+        success = agent.post_custom_tweet(target_text)
         if success:
-            return jsonify({"status": "success", "message": "Broadcasted successfully"})
+            return jsonify({"status": "success", "message": "Broadcasted", "tweet": target_text})
         else:
-            return jsonify({"status": "failed", "message": "Post failed (Check credentials)"}), 500
+            return jsonify({"status": "failed", "message": "Post failed"}), 500
     except Exception as e:
         logger.error(f"Manual X Post Error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
