@@ -1,0 +1,57 @@
+name: Omni Alpha X Auto-Broadcaster
+
+on:
+  schedule:
+    # --- Korean Market Insights (4 times/day) ---
+    - cron: '30 0 * * 1-5'  # 09:30 KST
+    - cron: '30 4 * * 1-5'  # 13:30 KST
+    - cron: '30 7 * * 1-5'  # 16:30 KST
+    - cron: '0 13 * * 1-5'  # 22:00 KST
+    
+    # --- English Promo (2 times/day) ---
+    - cron: '0 10 * * *'    # 10:00 UTC
+    - cron: '0 16 * * *'    # 16:00 UTC
+  
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  broadcast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install dependencies
+        run: |
+          pip install requests tweepy python-dotenv
+          
+      - name: Determine Mode and Post
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          # Use current hour (UTC) to decide mode
+          HOUR=$(date -u +%H)
+          MINUTE=$(date -u +%M)
+          
+          echo "Current UTC Time: $HOUR:$MINUTE"
+          
+          if [[ "$HOUR" == "10" || "$HOUR" == "16" ]]; then
+            echo "Mode: promo"
+            python api/x_agent.py --mode promo
+          elif [[ "$HOUR" == "00" || "$HOUR" == "04" || "$HOUR" == "07" || "$HOUR" == "13" ]]; then
+            echo "Mode: kr_insight"
+            python api/x_agent.py --mode kr_insight
+          else
+            # Default fallback for manual trigger or slight drift
+            echo "Mode: standard (default)"
+            python api/x_agent.py --mode standard
+          fi

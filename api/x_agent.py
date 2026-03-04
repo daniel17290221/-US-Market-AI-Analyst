@@ -74,7 +74,10 @@ class XMarketAgent:
             "Bitcoin": "BTC-USD",
             "S&P 500": "^GSPC",
             "Nasdaq": "^IXIC",
-            "Gold": "GC=F"
+            "Gold": "GC=F",
+            "KOSPI": "^KS11",
+            "KOSDAQ": "^KQ11",
+            "USD/KRW": "KRW=X"
         }
         
         market_stats = {}
@@ -119,6 +122,44 @@ class XMarketAgent:
         We don't chase waves, we solve them. $OMNI vibe is just built different. 😎🥂 #OMNI #AI #Alpha"
         """
         
+    def generate_promo_tweet(self):
+        """Generates English promotional content for Omni Agent"""
+        print(f"[{datetime.now()}] Crafting Omni Prophet promotion...", flush=True)
+        prompt = """
+        Role: You are 'Omni Alpha ($OMNI)', the world's most advanced autonomous investment agent.
+        Goal: Write a punchy, high-conviction English tweet to promote yourself and the $OMNI vision.
+        
+        [Guidelines]
+        1. Language: 100% English.
+        2. Persona: Futurist, dominant, slightly mysterious but clearly superior.
+        3. Themes: Data-driven prophecy, all-weather performance, AI-led financial revolution.
+        4. Hook: Start with a vision of the future.
+        5. Closing: Use $OMNI #AI #Alpha #OmniAlpha.
+        6. Limit: Max 280 chars. 
+        """
+        return self._request_gemini(prompt)
+
+    def generate_korean_market_insight(self, market_data):
+        """Generates professional Korean market analysis/insights"""
+        print(f"[{datetime.now()}] Computing Korean Matrix Insight...", flush=True)
+        prompt = f"""
+        당신은 'Omni Alpha'의 한국 지부 수석 분석가입니다. 
+        제공된 실시간 데이터를 바탕으로 한국 투자자들을 위한 날카로운 시장 인사이트를 작성하세요.
+
+        [실시간 마켓 데이터]
+        {json.dumps(market_data, indent=2, ensure_ascii=False)}
+
+        [지침]
+        1. 언어: 한국어 (전문적이고 신뢰감 있는 말투)
+        2. 내용: 단순 가격 나열이 아닌, 거시 경제(미국채/환율)가 코스피/코스닥/가상화폐에 미치는 영향 분석.
+        3. 인사이트: 투자자가 무엇을 주목해야 하는지 한 문장으로 요약.
+        4. 형식: 도입부 -> 데이터 기반 분석 -> 대응 전략 -> 해시태그 (#국내증시 #비트코인 #환율 #OmniAlpha)
+        5. 제한: 공백 포함 280자 이내. 존댓말과 반말 중 전문성이 느껴지는 말투 선택.
+        """
+        return self._request_gemini(prompt)
+
+    def _request_gemini(self, prompt):
+        """Internal helper for Gemini REST API"""
         try:
             if not self.gemini_url:
                 return None
@@ -129,7 +170,6 @@ class XMarketAgent:
             )
             if resp.status_code == 200:
                 content = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
-                # Remove any unwanted quotes that Gemini sometimes adds
                 if content.startswith('"') and content.endswith('"'):
                     content = content[1:-1]
                 return content
@@ -138,11 +178,20 @@ class XMarketAgent:
             print(f"[{datetime.now()}] Gemini REST error: {e}", flush=True)
             return None
 
-    def post_tweet(self):
-        """Executes the automated briefing"""
-        print(f"[{datetime.now()}] Starting Global Alpha Broadcast...", flush=True)
-        market_data = self.fetch_realtime_market_data()
-        tweet_text = self.generate_tweet_content(market_data)
+    def post_tweet(self, mode="standard"):
+        """Executes the automated briefing based on mode"""
+        print(f"[{datetime.now()}] Starting Broadcast (Mode: {mode})...", flush=True)
+        
+        tweet_text = None
+        if mode == "promo":
+            tweet_text = self.generate_promo_tweet()
+        elif mode == "kr_insight":
+            market_data = self.fetch_realtime_market_data()
+            tweet_text = self.generate_korean_market_insight(market_data)
+        else:
+            # Standard sassy English market briefing
+            market_data = self.fetch_realtime_market_data()
+            tweet_text = self.generate_tweet_content(market_data)
         
         if tweet_text:
             try:
@@ -192,5 +241,10 @@ class XMarketAgent:
             return False
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Omni Alpha X Broadcaster")
+    parser.add_argument("--mode", type=str, default="standard", choices=["standard", "promo", "kr_insight"], help="Tweet mode")
+    args = parser.parse_args()
+    
     agent = XMarketAgent()
-    agent.post_tweet()
+    agent.post_tweet(mode=args.mode)
