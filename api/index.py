@@ -18,6 +18,11 @@ try:
         sys.path.append(BASE_DIR)
 
     from utils import get_data_dir
+    try:
+        from x_agent import XMarketAgent
+        print("X Agent Module Loaded")
+    except:
+        pass
 
     # Re-initialize Flask with proper folders
     TEMPLATE_DIR = os.path.join(API_DIR, 'templates')

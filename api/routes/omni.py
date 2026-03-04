@@ -8,16 +8,21 @@ except ImportError:
     from ..utils import AI_KEY, logger
 
 try:
-    from agent_x_poster import XMarketAgent
+    from x_agent import XMarketAgent
 except ImportError:
     try:
-        from ..agent_x_poster import XMarketAgent
+        from ..x_agent import XMarketAgent
     except ImportError:
-        # Fallback for Vercel package structure
-        import sys
-        import os
-        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        from agent_x_poster import XMarketAgent
+        try:
+            from api.x_agent import XMarketAgent
+        except ImportError:
+            # Last resort: Dynamic path discovery
+            import sys
+            import os
+            API_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            if API_PATH not in sys.path:
+                sys.path.append(API_PATH)
+            from x_agent import XMarketAgent
 
 # Initialize Blueprint
 omni_bp = Blueprint('omni_bp', __name__)
