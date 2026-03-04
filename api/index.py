@@ -47,36 +47,17 @@ try:
     app.register_blueprint(common_bp)
 
 except Exception as e:
+    # Minimal logging for production safety
+    print(f"CRITICAL APP STARTUP ERROR: {e}")
     import traceback
-    error_info = traceback.format_exc()
-    debug_info = {
-        "sys_path": sys.path,
-        "cwd": os.getcwd(),
-        "api_dir": locals().get('API_DIR', 'N/A'),
-        "api_contents": os.listdir(locals().get('API_DIR', '.')) if 'API_DIR' in locals() else "N/A"
-    }
-    @app.route('/<path:path>')
-    @app.route('/')
-    def fallback_error(path=None):
-        return f"""
-        <pre>
-        <h1>App Startup Error</h1>
-        {error_info}
-        <hr>
-        <h2>Debug Info:</h2>
-        {json.dumps(debug_info, indent=4)}
-        </pre>
-        """, 500
+    traceback.print_exc()
 
-@app.errorhandler(Exception)
-def handle_exception(e):
-    return f"<pre><h1>Unhandled Request Exception</h1>{traceback.format_exc()}</pre>", 500
-
+# Global Handlers
+from flask import request
 @app.before_request
-def debug_all_requests():
-    path = request.path.lower()
-    if 'acp' in path or request.method == 'POST':
-        print(f"!!! [{request.method}] {request.path} detected !!!")
+def check_options():
+    if request.method == 'OPTIONS':
+        return make_response()
 
 @app.after_request
 def after_request(response):
@@ -86,4 +67,4 @@ def after_request(response):
     return response
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)
