@@ -3,10 +3,16 @@ import os
 import json
 import requests
 from datetime import datetime
-from utils import (
-    DATA_DIR, BASE_DIR, AI_KEY, get_exchange_rate, portfolio_rate_limit,
-    fetch_yahoo_history, logger
-)
+try:
+    from utils import (
+        DATA_DIR, BASE_DIR, AI_KEY, get_exchange_rate, portfolio_rate_limit,
+        fetch_yahoo_history, logger
+    )
+except ImportError:
+    from ..utils import (
+        DATA_DIR, BASE_DIR, AI_KEY, get_exchange_rate, portfolio_rate_limit,
+        fetch_yahoo_history, logger
+    )
 
 common_bp = Blueprint('common', __name__)
 

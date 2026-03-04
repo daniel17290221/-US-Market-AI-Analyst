@@ -3,11 +3,18 @@ import os
 import json
 import requests
 from datetime import datetime
-from utils import (
-    DATA_DIR, BASE_DIR, major_us_analysis, 
-    load_json, load_csv, fetch_realtime_data, fetch_dynamic_ai_analysis,
-    logger
-)
+try:
+    from utils import (
+        DATA_DIR, BASE_DIR, major_us_analysis, 
+        load_json, load_csv, fetch_realtime_data, fetch_dynamic_ai_analysis,
+        logger
+    )
+except ImportError:
+    from ..utils import (
+        DATA_DIR, BASE_DIR, major_us_analysis, 
+        load_json, load_csv, fetch_realtime_data, fetch_dynamic_ai_analysis,
+        logger
+    )
 
 us_market_bp = Blueprint('us_market', __name__)
 

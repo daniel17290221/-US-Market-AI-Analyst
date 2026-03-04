@@ -4,11 +4,18 @@ import json
 import requests
 import concurrent.futures
 from datetime import datetime
-from utils import (
-    BASE_DIR, KR_DATA_DIR, MAJOR_ANALYSIS_KR, 
-    fetch_naver_movers, fetch_realtime_data, fetch_dynamic_ai_analysis, fetch_google_news_rss,
-    logger
-)
+try:
+    from utils import (
+        BASE_DIR, KR_DATA_DIR, MAJOR_ANALYSIS_KR, 
+        fetch_naver_movers, fetch_realtime_data, fetch_dynamic_ai_analysis, fetch_google_news_rss,
+        logger
+    )
+except ImportError:
+    from ..utils import (
+        BASE_DIR, KR_DATA_DIR, MAJOR_ANALYSIS_KR, 
+        fetch_naver_movers, fetch_realtime_data, fetch_dynamic_ai_analysis, fetch_google_news_rss,
+        logger
+    )
 
 kr_market_bp = Blueprint('kr_market', __name__)
 

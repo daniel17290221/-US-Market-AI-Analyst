@@ -2,8 +2,22 @@ import os
 import json
 import requests
 from flask import Blueprint, request, jsonify, make_response
-from utils import AI_KEY, logger
-from agent_x_poster import XMarketAgent
+try:
+    from utils import AI_KEY, logger
+except ImportError:
+    from ..utils import AI_KEY, logger
+
+try:
+    from agent_x_poster import XMarketAgent
+except ImportError:
+    try:
+        from ..agent_x_poster import XMarketAgent
+    except ImportError:
+        # Fallback for Vercel package structure
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from agent_x_poster import XMarketAgent
 
 # Initialize Blueprint
 omni_bp = Blueprint('omni_bp', __name__)
