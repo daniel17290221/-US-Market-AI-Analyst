@@ -9,4 +9,4 @@ pytz
 tweepy
 # Removed heavy data science/AI SDKs to stay under Vercel 25MB limit
 # Removed yfinance due to multitasking conflict and size
-google-generativeai
+# Removed google-generativeai SDK (too large for Vercel 25MB limit) - using REST API directly

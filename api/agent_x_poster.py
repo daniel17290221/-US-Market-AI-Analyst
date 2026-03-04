@@ -7,7 +7,7 @@ import json
 import time
 import random
 import tweepy
-import google.generativeai as genai
+# google.generativeai removed - using REST API directly to stay under Vercel 25MB limit
 # import yfinance as yf (Removed for stability)
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -25,13 +25,9 @@ class XMarketAgent:
         self.access_token = os.getenv("X_ACCESS_TOKEN")
         self.access_secret = os.getenv("X_ACCESS_SECRET")
         
-        # Google Gemini setup
+        # Google Gemini setup (REST API, no SDK)
         self.gemini_key = os.getenv("GOOGLE_API_KEY")
-        if self.gemini_key:
-            genai.configure(api_key=self.gemini_key)
-            self.model = genai.GenerativeModel('gemini-2.0-flash')
-        else:
-            self.model = None
+        self.gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.gemini_key}" if self.gemini_key else None
         
         # Twitter Client (v2)
         try:
@@ -124,14 +120,22 @@ class XMarketAgent:
         """
         
         try:
-            response = self.model.generate_content(prompt)
-            content = response.text.strip()
-            # Remove any unwanted quotes that Gemini sometimes adds
-            if content.startswith('"') and content.endswith('"'):
-                content = content[1:-1]
-            return content
+            if not self.gemini_url:
+                return None
+            resp = requests.post(
+                self.gemini_url,
+                json={"contents": [{"parts": [{"text": prompt}]}]},
+                timeout=15
+            )
+            if resp.status_code == 200:
+                content = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
+                # Remove any unwanted quotes that Gemini sometimes adds
+                if content.startswith('"') and content.endswith('"'):
+                    content = content[1:-1]
+                return content
+            return None
         except Exception as e:
-            print(f"[{datetime.now()}] Gemini error: {e}", flush=True)
+            print(f"[{datetime.now()}] Gemini REST error: {e}", flush=True)
             return None
 
     def post_tweet(self):
