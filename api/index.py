@@ -41,11 +41,26 @@ try:
     app.register_blueprint(common_bp)
 
 except Exception as e:
+    import traceback
     error_info = traceback.format_exc()
+    debug_info = {
+        "sys_path": sys.path,
+        "cwd": os.getcwd(),
+        "api_dir": locals().get('API_DIR', 'N/A'),
+        "api_contents": os.listdir(locals().get('API_DIR', '.')) if 'API_DIR' in locals() else "N/A"
+    }
     @app.route('/<path:path>')
     @app.route('/')
     def fallback_error(path=None):
-        return f"<pre><h1>App Startup Error</h1>{error_info}</pre>", 500
+        return f"""
+        <pre>
+        <h1>App Startup Error</h1>
+        {error_info}
+        <hr>
+        <h2>Debug Info:</h2>
+        {json.dumps(debug_info, indent=4)}
+        </pre>
+        """, 500
 
 # Global Handlers
 from flask import request
