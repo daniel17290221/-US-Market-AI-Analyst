@@ -65,6 +65,23 @@ class XMarketAgent:
         except Exception:
             return None, None
 
+    def _fetch_news(self, query):
+        """Fetches top news headlines from Google News RSS"""
+        url = f"https://news.google.com/rss/search?q={query}&hl=ko&gl=KR&ceid=KR:ko"
+        try:
+            resp = requests.get(url, timeout=5)
+            if resp.status_code == 200:
+                import xml.etree.ElementTree as ET
+                root = ET.fromstring(resp.content)
+                titles = []
+                for item in root.findall('.//item')[:5]:
+                    title = item.find('title').text
+                    if " - " in title: title = title.rsplit(" - ", 1)[0]
+                    titles.append(title)
+                return titles
+        except: pass
+        return []
+
     def fetch_realtime_market_data(self):
         """Fetches real-time macro data using REST API"""
         print(f"[{datetime.now()}] Fetching real-time market metrics from the Matrix...", flush=True)
@@ -140,21 +157,34 @@ class XMarketAgent:
         return self._request_gemini(prompt)
 
     def generate_korean_market_insight(self, market_data):
-        """Generates professional Korean market analysis/insights"""
-        print(f"[{datetime.now()}] Computing Korean Matrix Insight...", flush=True)
+        """Generates professional Korean market analysis/insights involving latest news"""
+        print(f"[{datetime.now()}] Computing Korean Matrix Insight (News+Market)...", flush=True)
+        
+        # Aggregate news from multiple sectors
+        queries = ["국내 증시", "비트코인 전망", "미국 금리", "한국 경제"]
+        all_news = []
+        for q in queries:
+            all_news.extend(self._fetch_news(q))
+        random.shuffle(all_news)
+        top_news = all_news[:6]
+
         prompt = f"""
         당신은 'Omni Alpha'의 한국 지부 수석 분석가입니다. 
-        제공된 실시간 데이터를 바탕으로 한국 투자자들을 위한 날카로운 시장 인사이트를 작성하세요.
+        제공된 실시간 데이터와 최신 뉴스 헤드라인을 바탕으로 한국 투자자들을 위한 날카로운 인사이트를 작성하세요.
 
         [실시간 마켓 데이터]
         {json.dumps(market_data, indent=2, ensure_ascii=False)}
 
+        [최신 뉴스 헤드라인]
+        - {chr(10).join(top_news)}
+
         [지침]
         1. 언어: 한국어 (전문적이고 신뢰감 있는 말투)
-        2. 내용: 단순 가격 나열이 아닌, 거시 경제(미국채/환율)가 코스피/코스닥/가상화폐에 미치는 영향 분석.
-        3. 인사이트: 투자자가 무엇을 주목해야 하는지 한 문장으로 요약.
-        4. 형식: 도입부 -> 데이터 기반 분석 -> 대응 전략 -> 해시태그 (#국내증시 #비트코인 #환율 #OmniAlpha)
-        5. 제한: 공백 포함 280자 이내. 존댓말과 반말 중 전문성이 느껴지는 말투 선택.
+        2. 내용: 단순 뉴스 나열이 아닌, 데이터와 뉴스 사이의 연결 고리(인사이트)를 제시.
+           (예: 달러 환율 강세와 뉴스 속 수출 기업의 상황 연결 등)
+        3. 구조: [헤드라인 인사이트] -> [시장 상황 분석] -> [투자자 대응 포인트] -> [해시태그]
+        4. 해시태그 예시: #국내증시 #미국주식 #투자뉴스 #OmniAlpha
+        5. 제한: 공백 포함 280자 이내. 엄숙하면서도 미래지향적인 톤.
         """
         return self._request_gemini(prompt)
 
