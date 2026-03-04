@@ -6,13 +6,13 @@
 **/.git/**
 us_market/us_daily_prices.csv
 us_market/history/
-# KR_Market_Analyst - JSON 데이터는 Vercel에 포함 (가격 표시에 필수)
+# KR_Market_Analyst - JSON/HTML 데이터는 Vercel에 포함 (가격 및 리포트 표시에 필수)
 KR_Market_Analyst/**/*.py
-KR_Market_Analyst/**/*.html
+!KR_Market_Analyst/**/*.html
 KR_Market_Analyst/**/__pycache__/
 KR_Market_Analyst/kr_market/__pycache__/
 KR_Market_Analyst/KR_Market_Analyst/
-agent_x_poster.py
+# agent_x_poster.py (Remove from ignore to allow API import)
 app_local.py
 test_*.py
 debug_*.py
