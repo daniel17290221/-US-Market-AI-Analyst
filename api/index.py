@@ -1,7 +1,8 @@
 import os
 import sys
+import json
 import traceback
-from flask import Flask, session
+from flask import Flask, session, request
 
 app = Flask(__name__) # Minimal app for error reporting
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'vibecoding_secret_key')
@@ -62,8 +63,10 @@ except Exception as e:
         </pre>
         """, 500
 
-# Global Handlers
-from flask import request
+@app.errorhandler(Exception)
+def handle_exception(e):
+    return f"<pre><h1>Unhandled Request Exception</h1>{traceback.format_exc()}</pre>", 500
+
 @app.before_request
 def debug_all_requests():
     path = request.path.lower()
