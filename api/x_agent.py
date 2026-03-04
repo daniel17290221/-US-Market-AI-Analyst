@@ -161,7 +161,7 @@ class XMarketAgent:
         print(f"[{datetime.now()}] Computing Korean Matrix Insight (News+Market)...", flush=True)
         
         # Aggregate news from multiple sectors
-        queries = ["국내 증시", "비트코인 전망", "미국 금리", "한국 경제"]
+        queries = ["국내 증시", "비트코인 전망", "미국 금리", "한국 경제", "금 시세", "채권 금리"]
         all_news = []
         for q in queries:
             all_news.extend(self._fetch_news(q))
