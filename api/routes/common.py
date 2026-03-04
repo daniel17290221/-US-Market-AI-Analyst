@@ -149,3 +149,46 @@ def market_pulse():
     except Exception as e:
         logger.error(f"Market Pulse Error: {e}")
         return jsonify({}), 500
+
+@common_bp.route('/api/x/history', strict_slashes=False)
+def x_history():
+    # Read tweet history from log file
+    log_path = os.path.join(BASE_DIR, "logs", "tweet_history.log")
+    if not os.path.exists(log_path):
+        return jsonify([])
+    
+    try:
+        tweets = []
+        with open(log_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            # Parse reverse chronological
+            for line in reversed(lines):
+                if line.strip():
+                    try:
+                        time_part = line.split("]")[0][1:]
+                        content_part = line.split("CONTENT:")[1].strip()
+                        tweets.append({"time": time_part, "text": content_part})
+                    except: continue
+        return jsonify(tweets[:20]) # Last 20 tweets
+    except Exception as e:
+        logger.error(f"X History Error: {e}")
+        return jsonify([])
+
+@common_bp.route('/api/x/post', methods=['POST'], strict_slashes=False)
+def x_post_manual():
+    req_json = request.get_json(silent=True) or {}
+    text = req_json.get('text')
+    if not text:
+        return jsonify({"status": "failed", "message": "No content"}), 400
+    
+    try:
+        from x_agent import XMarketAgent
+        agent = XMarketAgent()
+        success = agent.post_custom_tweet(text)
+        if success:
+            return jsonify({"status": "success", "message": "Broadcasted successfully"})
+        else:
+            return jsonify({"status": "failed", "message": "Post failed (Check credentials)"}), 500
+    except Exception as e:
+        logger.error(f"Manual X Post Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500

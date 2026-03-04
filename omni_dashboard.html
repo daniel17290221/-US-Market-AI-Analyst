@@ -128,6 +128,7 @@
             flex: 1;
             padding: 30px;
             overflow-y: auto;
+            position: relative;
         }
 
         .top-stats {
@@ -168,10 +169,10 @@
             color: var(--danger-color);
         }
 
-        /* Report Grid */
-        .report-grid {
+        /* Custom Grid */
+        .content-grid {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: 1fr 400px;
             gap: 25px;
         }
 
@@ -192,79 +193,124 @@
             color: #fff;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
         }
 
-        .analysis-box {
+        /* Broadcast History */
+        .x-history-box {
             background: #0d1117;
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
-            min-height: 480px;
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-        }
-
-        .log-box {
-            background: #000;
-            padding: 15px;
-            border-radius: 10px;
-            height: 380px;
+            height: 500px;
             overflow-y: auto;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.75rem;
-            color: #8b949e;
-            border: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Inputs */
-        input {
-            flex: 1;
-            background: #0d1117;
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 12px 18px;
-            border-radius: 10px;
+        .tweet-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
             font-size: 0.9rem;
-            outline: none;
-        }
-
-        button {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 800;
-            cursor: pointer;
             transition: 0.2s;
         }
 
-        button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+        .tweet-item:hover {
+            background: rgba(255, 255, 255, 0.02);
         }
 
-        .link-btn {
-            background: rgba(255, 255, 255, 0.05);
-            text-decoration: none;
-            color: var(--text-color);
+        .tweet-time {
+            font-size: 0.7rem;
+            color: var(--accent-color);
+            font-family: 'Fira Code', monospace;
+            margin-bottom: 5px;
+        }
+
+        .tweet-text {
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* Terminal Input */
+        .terminal-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border-color);
+            color: #3fb950;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            resize: none;
+            height: 120px;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: #238636;
+            opacity: 0.5;
+        }
+
+        .btn-post {
+            background: var(--accent-color);
+            color: #fff;
+            border: none;
             padding: 12px;
             border-radius: 10px;
-            text-align: center;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-post:hover {
+            opacity: 0.9;
+        }
+
+        /* Market Pulse Small Bar */
+        .pulse-bar {
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            background: #000;
+            border-radius: 8px;
             font-size: 0.8rem;
-            font-weight: 600;
+            margin-bottom: 15px;
             border: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
-        .link-btn:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
+        .pulse-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
-        @keyframes blink {
-            50% {
-                opacity: 0.5;
+        /* Loading Spinner */
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--accent-color);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
             }
         }
     </style>
@@ -282,20 +328,16 @@
         </a>
 
         <div class="menu-item active">
-            <i class="fas fa-satellite-dish"></i>
+            <i class="fas fa-terminal"></i>
             <span>Command Center</span>
-        </div>
-        <div class="menu-item" onclick="openReport('us')">
-            <i class="fas fa-flag-usa"></i>
-            <span>US Market Report</span>
-        </div>
-        <div class="menu-item" onclick="openReport('kr')">
-            <i class="fas fa-landmark"></i>
-            <span>KR Market Report</span>
         </div>
         <div class="menu-item" onclick="window.open('https://x.com/omni_alpha_ai')">
             <i class="fab fa-twitter"></i>
             <span>𝕏 Intelligence Feed</span>
+        </div>
+        <div class="menu-item" onclick="window.open('/api/us/daily-report')">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span>US Market Matrix</span>
         </div>
 
         <div class="wallet-container">
@@ -307,6 +349,7 @@
 
     <div class="main-content">
         <div class="top-stats" id="marketStats">
+            <!-- Stats will be populated here -->
             <div class="stat-card">
                 <div class="label">KOSPI</div>
                 <div id="kospiPrice" class="value">----.--</div>
@@ -329,45 +372,40 @@
             </div>
         </div>
 
-        <div class="report-grid">
+        <div class="content-grid">
             <div class="left-col">
                 <div class="card">
-                    <h3>
-                        <span>Autonomous Market Intelligence</span>
-                        <div
-                            style="background: var(--danger-color); font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; animation: blink 2s infinite;">
-                            ALPHA FEED</div>
-                    </h3>
-                    <div id="analysisOutput" class="analysis-box">
-                        <div style="text-align: center; color: #8b949e; margin-top: 150px;">
-                            <p>에이전트가 마켓 매트릭스 동기화를 대기 중입니다.</p>
-                            <p style="font-size: 0.8rem;">분석할 종목 코드를 아래에 입력하세요.</p>
+                    <h3><i class="fab fa-twitter" style="color:#1DA1F2"></i> Automated Broadcast History</h3>
+                    <div id="xHistory" class="x-history-box">
+                        <div style="text-align: center; margin-top: 100px; color: #8b949e;">
+                            <i class="fas fa-spinner fa-spin fa-2x"></i>
+                            <p>Fetching history from Matrix...</p>
                         </div>
-                    </div>
-
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="tickerInput" placeholder="Enter Ticker (eg. NVDA, 005930)">
-                        <button onclick="runOmniAnalysis()">Run Swarm Analysis</button>
                     </div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="card">
-                    <h3>System Operations Log</h3>
-                    <div id="logs" class="log-box">
-                        <span style="color: var(--success-color)">[SYSTEM]</span> Omni Matrix Initialized.<br>
-                        <span style="color: var(--success-color)">[SYSTEM]</span> ACP Seller Service: Active.
+                    <h3><i class="fas fa-pen-nib"></i> Manual Intelligence Post</h3>
+                    <div class="terminal-container">
+                        <textarea id="tweetContent"
+                            placeholder="Enter manual market insight to broadcast..."></textarea>
+                        <button class="btn-post" onclick="postManualTweet()" id="btnPost">
+                            <i class="fas fa-paper-plane"></i> Broadcast to 𝕏
+                        </button>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                        <a href="https://us-market-ai-analyst.vercel.app/api/us/daily-report" target="_blank"
-                            class="link-btn">
-                            <i class="fas fa-file-alt"></i> Latest US Report
-                        </a>
-                        <a href="https://us-market-ai-analyst.vercel.app/api/kr/report" target="_blank"
-                            class="link-btn">
-                            <i class="fas fa-file-alt"></i> Latest KR Report
-                        </a>
+
+                    <div style="margin-top: 20px;">
+                        <h4 style="font-size: 0.8rem; color: #8b949e; margin-bottom: 15px; text-transform: uppercase;">
+                            Quick Intelligence Check</h4>
+                        <div id="marketPulseSmall" class="pulse-bar">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <button onclick="runRapidAnalysis()"
+                            style="font-size: 0.8rem; background: rgba(88,166,255,0.1); color: var(--accent-color); border: 1px solid var(--accent-color); width: 100%; border-radius: 8px; padding: 10px;">
+                            <i class="fas fa-bolt"></i> Run Rapid Market Scan
+                        </button>
                     </div>
                 </div>
             </div>
@@ -375,20 +413,33 @@
     </div>
 
     <script>
-        const VERCEL_URL = "https://us-market-ai-analyst.vercel.app";
+        const VERCEL_URL = ""; // Relative paths will work now
 
-        function appendLog(msg, color = "#8b949e") {
-            const logs = document.getElementById('logs');
-            const time = new Date().toLocaleTimeString();
-            logs.innerHTML += `<br><span style="color:#58a6ff">[${time}]</span> <span style="color:${color}">${msg}</span>`;
-            logs.scrollTop = logs.scrollHeight;
+        async function fetchHistory() {
+            try {
+                const response = await fetch(`/api/x/history`);
+                const tweets = await response.json();
+                const container = document.getElementById('xHistory');
+
+                if (tweets.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No history found.</div>';
+                    return;
+                }
+
+                container.innerHTML = tweets.map(t => `
+                    <div class="tweet-item">
+                        <div class="tweet-time">${t.time}</div>
+                        <div class="tweet-text">${t.text}</div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error("History fetch failed", e);
+            }
         }
 
-        async function updateMarketStats() {
+        async function updateStats() {
             try {
-                appendLog("Connecting to Matrix Pulse...");
-                const response = await fetch(`${VERCEL_URL}/api/market-pulse`);
-                if (!response.ok) throw new Error("Matrix Offline");
+                const response = await fetch(`/api/market-pulse`);
                 const prices = await response.json();
 
                 if (prices["^KS11"]) {
@@ -411,59 +462,51 @@
                     document.getElementById('fxChange').innerText = (prices["USDKRW=X"].change > 0 ? "+" : "") + prices["USDKRW=X"].change + "%";
                     document.getElementById('fxChange').className = "change " + (prices["USDKRW=X"].change >= 0 ? "up" : "down");
                 }
-                appendLog("Market Pulse synced.", "#3fb950");
-            } catch (e) {
-                appendLog("Sync failed: " + e.message, "#f85149");
-            }
+            } catch (e) { console.error(e); }
         }
 
-        async function runOmniAnalysis() {
-            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
-            if (!ticker) return;
+        async function postManualTweet() {
+            const content = document.getElementById('tweetContent').value.trim();
+            if (!content) return;
 
-            const output = document.getElementById('analysisOutput');
-            output.innerHTML = `<div style="text-align: center; margin-top: 100px;">
-                <p style="color: var(--accent-color)">[Omni Alpha] Analyzing ${ticker}...</p>
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
-            </div>`;
-
-            appendLog(`Command: Analyze ${ticker}`);
+            const btn = document.getElementById('btnPost');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Broadcasting...';
 
             try {
-                const response = await fetch(`${VERCEL_URL}/api/acp`, {
+                const response = await fetch(`/api/x/post`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        method: 'market_analysis',
-                        params: { ticker: ticker }
-                    })
+                    body: JSON.stringify({ text: content })
                 });
+                const result = await response.json();
 
-                const data = await response.json();
-                const report = data.value.analysis_report;
-                const formattedReport = report
-                    .replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--accent-color)">$1</strong>')
-                    .replace(/\n/g, '<br>');
-
-                output.innerHTML = `<div style="padding: 10px;">${formattedReport}</div>`;
-                appendLog(`[Alpha] Analysis complete for ${ticker}.`, "#3fb950");
+                if (result.status === 'success') {
+                    alert("Broadcast successful!");
+                    document.getElementById('tweetContent').value = '';
+                    fetchHistory();
+                } else {
+                    alert("Error: " + result.message);
+                }
             } catch (e) {
-                output.innerHTML = `<p style="color:var(--danger-color)">Error: ${e.message}</p>`;
-                appendLog(`FAILED: ${e.message}`, "#f85149");
+                alert("Matrix Connection Error: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         }
 
-        function openReport(type) {
-            window.open(`${VERCEL_URL}/api/${type}/report`, '_blank');
+        function runRapidAnalysis() {
+            // Quick alert or redirection to full report
+            window.open('/api/us/daily-report', '_blank');
         }
 
         // Init
-        updateMarketStats();
-        setInterval(updateMarketStats, 300000);
-
-        document.getElementById('tickerInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') runOmniAnalysis();
-        });
+        updateStats();
+        fetchHistory();
+        setInterval(updateStats, 60000);
+        setInterval(fetchHistory, 300000);
     </script>
 </body>
 
