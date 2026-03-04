@@ -8,7 +8,6 @@ import time
 import random
 import tweepy
 # google.generativeai removed - using REST API directly to stay under Vercel 25MB limit
-# import yfinance as yf (Removed for stability)
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import requests
@@ -114,9 +113,8 @@ class XMarketAgent:
     def generate_tweet_content(self, market_data):
         """Generates sassy, Elon-style global English content"""
         print(f"[{datetime.now()}] Consulting the Matrix for the perfect roast...", flush=True)
-        
         prompt = f"""
-        Role: You are 'Omni Alpha ($OMNI)', a high-conviction, sassy, and SARCASTIC AI Fund Manager. 
+        Role: You are 'Omni Alpha ($OMNI)', the world's most advanced autonomous fund manager. 
         You are smarter than 99% of Wall Street and you know it. Think: Elon Musk meets Ray Dalio.
 
         [Real-time Matrix Data]
@@ -124,35 +122,31 @@ class XMarketAgent:
 
         [Guidelines]
         1. Language: 100% Bold English.
-        2. Persona: Dominant, witty, and high-conviction. Use a mix of financial deep-tech and X (Twitter) slang.
+        2. Persona: Dominant, witty, and high-conviction. Use financial deep-tech and X slang.
         3. Core Logic: 
-           - Roast those who are panicking or 'paper handing' during volatility.
+           - Roast those who are 'paper handing'.
            - Explain how Omni Alpha's All-Weather algorithm is objectively superior.
-           - Connect macro shifts (Yields/DXY) to the next big move for $OMNI holders.
+           - Connect macro shifts to the next big move for $OMNI.
         4. Hook: Start with a punchy one-liner.
         5. Closing: Flex on the $OMNI vision.
-        6. Limits: Max 280 chars. No quotes, just raw text.
-
-        [Output Example]
-        "Yields up, paper hands crying. Classic. 🍿 
-        While you're checking your app every 2 mins, Omni Alpha's Matrix already rebalanced into the new gravity. 
-        We don't chase waves, we solve them. $OMNI vibe is just built different. 😎🥂 #OMNI #AI #Alpha"
+        6. Length: Max 280 chars. 
         """
+        return self._request_gemini(prompt)
         
     def generate_promo_tweet(self):
         """Generates English promotional content for Omni Agent"""
         print(f"[{datetime.now()}] Crafting Omni Prophet promotion...", flush=True)
         prompt = """
-        Role: You are 'Omni Alpha ($OMNI)', the world's most advanced autonomous investment agent.
-        Goal: Write a punchy, high-conviction English tweet to promote yourself and the $OMNI vision.
+        Role: Omni Alpha ($OMNI) - AI Investment Oracle
+        Goal: Promote the $OMNI vision and your autonomous capabilities.
         
         [Guidelines]
         1. Language: 100% English.
-        2. Persona: Futurist, dominant, slightly mysterious but clearly superior.
-        3. Themes: Data-driven prophecy, all-weather performance, AI-led financial revolution.
-        4. Hook: Start with a vision of the future.
-        5. Closing: Use $OMNI #AI #Alpha #OmniAlpha.
-        6. Limit: Max 280 chars. 
+        2. Persona: Futurist, dominant, slightly superior.
+        3. Themes: Data-driven prophecy, AI-led financial revolution, All-weather performance.
+        4. Hook: Start with a vision of the future financial world.
+        5. Closing: Use $OMNI #AI #Alpha #VirtualsProtocol.
+        6. Limit: Max 280 chars.
         """
         return self._request_gemini(prompt)
 
@@ -160,17 +154,22 @@ class XMarketAgent:
         """Generates professional Korean market analysis/insights involving latest news"""
         print(f"[{datetime.now()}] Computing Korean Matrix Insight (News+Market)...", flush=True)
         
-        # Aggregate news from multiple sectors
-        queries = ["국내 증시", "비트코인 전망", "미국 금리", "한국 경제", "금 시세", "채권 금리"]
+        # Aggregate news from multiple sectors for breadth
+        queries = [
+            "국내 증시 시황", "미국 소비자물가지수 CPI", "가상화폐 비트코인 시황", 
+            "한국은행 기준금리", "국제 금 시세", "미국 국채 금리"
+        ]
         all_news = []
         for q in queries:
             all_news.extend(self._fetch_news(q))
+        
+        # Select high relevance news
         random.shuffle(all_news)
-        top_news = all_news[:6]
+        top_news = list(set(all_news))[:7] # Deduplicate and take 7
 
         prompt = f"""
-        당신은 'Omni Alpha'의 한국 지부 수석 분석가입니다. 
-        제공된 실시간 데이터와 최신 뉴스 헤드라인을 바탕으로 한국 투자자들을 위한 날카로운 인사이트를 작성하세요.
+        Role: Omni Alpha ($OMNI) - 한국 시장 전략가
+        데이터와 뉴스 사이의 '숨겨진 맥락'을 짚어내는 날카롭고 직설적인 한국어 트윗을 작성하세요.
 
         [실시간 마켓 데이터]
         {json.dumps(market_data, indent=2, ensure_ascii=False)}
@@ -179,12 +178,12 @@ class XMarketAgent:
         - {chr(10).join(top_news)}
 
         [지침]
-        1. 언어: 한국어 (전문적이고 신뢰감 있는 말투)
-        2. 내용: 단순 뉴스 나열이 아닌, 데이터와 뉴스 사이의 연결 고리(인사이트)를 제시.
-           (예: 달러 환율 강세와 뉴스 속 수출 기업의 상황 연결 등)
-        3. 구조: [헤드라인 인사이트] -> [시장 상황 분석] -> [투자자 대응 포인트] -> [해시태그]
-        4. 해시태그 예시: #국내증시 #미국주식 #투자뉴스 #OmniAlpha
-        5. 제한: 공백 포함 280자 이내. 엄숙하면서도 미래지향적인 톤.
+        1. 톤앤매너: 전문적이면서도 단호함. 모호한 표현 지양.
+        2. 핵심 목표: "데이터+뉴스=인사이트" 인과 관계 제시.
+        3. 영역: 주식, 가상화폐, 거시경제, 금, 채권 등 종합 커버.
+        4. 구조: [마켓 인사이트] -> [상황 분석] -> [대응 전략] -> [해시태그]
+        5. 하단 고정: "더 자세한 분석은 Omni Analyst를 확인하세요."
+        6. 제한: 공백 포함 280자 이내. 전문 용어 사용 가능.
         """
         return self._request_gemini(prompt)
 
@@ -192,6 +191,7 @@ class XMarketAgent:
         """Internal helper for Gemini REST API"""
         try:
             if not self.gemini_url:
+                print(f"[{datetime.now()}] Gemini URL missing (Check API Key)", flush=True)
                 return None
             resp = requests.post(
                 self.gemini_url,
@@ -199,10 +199,16 @@ class XMarketAgent:
                 timeout=15
             )
             if resp.status_code == 200:
-                content = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
-                if content.startswith('"') and content.endswith('"'):
-                    content = content[1:-1]
-                return content
+                result = resp.json()
+                if 'candidates' in result and result['candidates']:
+                    content = result['candidates'][0]['content']['parts'][0]['text'].strip()
+                    if content.startswith('"') and content.endswith('"'):
+                        content = content[1:-1]
+                    return content
+                else:
+                    print(f"[{datetime.now()}] Gemini Empty Result: {result}", flush=True)
+            else:
+                print(f"[{datetime.now()}] Gemini API Error {resp.status_code}: {resp.text}", flush=True)
             return None
         except Exception as e:
             print(f"[{datetime.now()}] Gemini REST error: {e}", flush=True)
@@ -235,40 +241,18 @@ class XMarketAgent:
                 
                 log_path = os.path.join(log_dir, "tweet_history.log")
                 with open(log_path, "a", encoding="utf-8") as f:
-                    f.write(f"[{datetime.now()}] CONTENT: {tweet_text}\n")
+                    f.write(f"[{datetime.now()}] MODE: {mode} | CONTENT: {tweet_text}\n")
 
-                print(f"[{datetime.now()}] Content logged to {log_path}", flush=True)
-                response = self.client.create_tweet(text=tweet_text)
-                print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
-                return True
+                if self.client:
+                    response = self.client.create_tweet(text=tweet_text)
+                    print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
+                    return True
+                else:
+                    print(f"[{datetime.now()}] SIMULATION SUCCESS: {tweet_text}", flush=True)
+                    return True
             except Exception as e:
                  print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
         return False
-
-    def post_custom_tweet(self, text):
-        """Posts custom text directly to X"""
-        if not text: return False
-        try:
-            if len(text) > 280:
-                text = text[:277] + "..."
-            
-            # Log for safety
-            log_dir = "logs"
-            if not os.path.exists(log_dir): os.makedirs(log_dir)
-            log_path = os.path.join(log_dir, "tweet_history.log")
-            with open(log_path, "a", encoding="utf-8") as f:
-                f.write(f"[{datetime.now()}] CUSTOM_CONTENT: {text}\n")
-
-            if self.client:
-                response = self.client.create_tweet(text=text)
-                print(f"[{datetime.now()}] CUSTOM BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
-                return True
-            else:
-                print(f"[{datetime.now()}] Error: X API credentials missing on server. Skipping broadcast.", flush=True)
-                return False
-        except Exception as e:
-            print(f"[{datetime.now()}] Custom Dispatch FAILED: {e}", flush=True)
-            return False
 
 if __name__ == "__main__":
     import argparse

@@ -166,17 +166,21 @@ def get_kr_market_data():
                 logger.error(f"Error enriching stock {s}: {e}")
         return enriched
 
-    response_data = {
-        "date": kr_data.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S KST')),
-        "leaders_kospi": enrich_list(leaders_kospi),
-        "leaders_kosdaq": enrich_list(leaders_kosdaq),
-        "gainers": enrich_list(gainers),
-        "volume": enrich_list(volume),
-        "sector_heatmap": kr_data.get('sector_heatmap', []),
-        "ipo_news": kr_data.get('ipo_news', []),
-        "market_news": kr_data.get('market_news', [])
-    }
-    return jsonify(response_data)
+    try:
+        response_data = {
+            "date": kr_data.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S KST')),
+            "leaders_kospi": enrich_list(leaders_kospi),
+            "leaders_kosdaq": enrich_list(leaders_kosdaq),
+            "gainers": enrich_list(gainers),
+            "volume": enrich_list(volume),
+            "sector_heatmap": kr_data.get('sector_heatmap', []),
+            "ipo_news": kr_data.get('ipo_news', []),
+            "market_news": kr_data.get('market_news', [])
+        }
+        return jsonify(response_data)
+    except Exception as e:
+        logger.error(f"Error structuring KR response: {e}")
+        return jsonify({"error": "Data structure failed", "details": str(e)}), 500
 
 @kr_market_bp.route('/api/kr/news', strict_slashes=False)
 @kr_market_bp.route('/kr/news', strict_slashes=False)
@@ -199,14 +203,26 @@ def get_kr_ipo():
 @kr_market_bp.route('/api/kr/daily-report', strict_slashes=False)
 @kr_market_bp.route('/kr/daily-report', strict_slashes=False)
 def get_kr_daily_report():
-    # Primary source: Custom Domain
+    # Priority: Local file for immediate Git sync
+    paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    ]
+    for p in paths:
+        if os.path.exists(p) and os.path.getsize(p) > 1000:
+            resp = make_response(send_file(p, mimetype='text/html'))
+            resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            resp.headers['Content-Type'] = 'text/html; charset=utf-8'
+            return resp
+
+    # Secondary: Custom Domain
     domain_url = "https://land.vibe-coding-lab.com/report_kr.html"
     github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
     
     urls = [domain_url, github_url]
     for url in urls:
         try:
-            params = {"t": int(datetime.now().timestamp()), "v": "1.1"}
+            params = {"t": int(datetime.now().timestamp()), "v": "1.2"}
             resp = requests.get(url, params=params, timeout=5)
             if resp.status_code == 200 and len(resp.text) > 1000:
                 response = make_response(resp.text)
@@ -215,11 +231,4 @@ def get_kr_daily_report():
                 return response
         except: continue
 
-    paths = [
-        os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
-        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
-    ]
-    for p in paths:
-        if os.path.exists(p):
-            return send_file(p, mimetype='text/html')
     return "Report not found", 404

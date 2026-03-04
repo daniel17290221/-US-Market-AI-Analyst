@@ -117,29 +117,33 @@ def get_smart_money():
 @us_market_bp.route('/api/us/daily-report', strict_slashes=False)
 @us_market_bp.route('/daily-report', strict_slashes=False)
 def get_daily_report():
-    # Primary source: Custom Domain
-    domain_url = "https://land.vibe-coding-lab.com/report_us.html"
-    github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
-    
-    urls = [domain_url, github_url]
-    for url in urls:
-        try:
-            # Enhanced cache busting with multiple params
-            params = {"t": int(datetime.now().timestamp()), "v": "1.1"}
-            resp = requests.get(url, params=params, timeout=5)
-            if resp.status_code == 200 and len(resp.text) > 1000:
-                response = make_response(resp.text)
-                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                response.headers['Pragma'] = 'no-cache'
-                response.headers['Expires'] = '0'
-                return response
-        except: continue
-
+    # Priority: Local file for immediate Git push sync
     paths = [
         os.path.join(DATA_DIR, 'us_market_morning_report.html'),
         os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')
     ]
     for p in paths:
         if os.path.exists(p):
-            return send_file(p, mimetype='text/html')
+            # Verify file is not empty
+            if os.path.getsize(p) > 1000:
+                response = make_response(send_file(p, mimetype='text/html'))
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                return response
+
+    # Secondary source: Custom Domain / GitHub (for distributed agents)
+    domain_url = "https://land.vibe-coding-lab.com/report_us.html"
+    github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
+    
+    urls = [domain_url, github_url]
+    for url in urls:
+        try:
+            params = {"t": int(datetime.now().timestamp()), "v": "1.2"}
+            resp = requests.get(url, params=params, timeout=5)
+            if resp.status_code == 200 and len(resp.text) > 1000:
+                response = make_response(resp.text)
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Content-Type'] = 'text/html; charset=utf-8'
+                return response
+        except: continue
+
     return "Report not found", 404
