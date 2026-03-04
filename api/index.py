@@ -25,18 +25,26 @@ app = Flask(__name__,
 
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'vibecoding_secret_key')
 
-# Register Blueprints
-from routes.main import main_bp
-from routes.kr_market import kr_market_bp
-from routes.us_market import us_market_bp
-from routes.omni import omni_bp
-from routes.common import common_bp
-
-app.register_blueprint(main_bp)
-app.register_blueprint(kr_market_bp)
-app.register_blueprint(us_market_bp)
-app.register_blueprint(omni_bp, url_prefix='/api/acp')
-app.register_blueprint(common_bp)
+try:
+    # Register Blueprints
+    from routes.main import main_bp
+    from routes.kr_market import kr_market_bp
+    from routes.us_market import us_market_bp
+    from routes.omni import omni_bp
+    from routes.common import common_bp
+    
+    app.register_blueprint(main_bp)
+    app.register_blueprint(kr_market_bp)
+    app.register_blueprint(us_market_bp)
+    app.register_blueprint(omni_bp, url_prefix='/api/acp')
+    app.register_blueprint(common_bp)
+except Exception as e:
+    import traceback
+    error_info = traceback.format_exc()
+    @app.route('/<path:path>')
+    @app.route('/')
+    def fallback_error(path=None):
+        return f"<pre><h1>App Startup Error</h1>{error_info}</pre>", 500
 
 # Global Handlers
 from flask import request
