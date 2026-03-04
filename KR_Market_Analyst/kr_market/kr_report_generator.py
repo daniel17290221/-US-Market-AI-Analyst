@@ -222,6 +222,7 @@ class KRDailyReportGenerator:
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>{ai_content['catchy_title']}</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033" crossorigin="anonymous"></script>
     <style>
         :root {{
             --bg-color: #050505;
