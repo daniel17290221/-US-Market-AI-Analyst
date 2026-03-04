@@ -1,31 +1,32 @@
 import os
 import sys
+import traceback
 from flask import Flask, session
 
-# Robust path resolution
-API_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.dirname(API_DIR)
-
-if API_DIR not in sys.path:
-    sys.path.append(API_DIR)
-if BASE_DIR not in sys.path:
-    sys.path.append(BASE_DIR)
-
-from utils import get_data_dir
-
-# Initialize Flask with specific template and static folders
-TEMPLATE_DIR = os.path.join(API_DIR, 'templates')
-if not os.path.exists(TEMPLATE_DIR):
-    TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
-
-app = Flask(__name__, 
-            template_folder=TEMPLATE_DIR,
-            static_folder=os.path.join(BASE_DIR, 'assets'),
-            static_url_path='/assets')
-
+app = Flask(__name__) # Minimal app for error reporting
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'vibecoding_secret_key')
 
 try:
+    # Robust path resolution
+    API_DIR = os.path.dirname(os.path.abspath(__file__))
+    BASE_DIR = os.path.dirname(API_DIR)
+
+    if API_DIR not in sys.path:
+        sys.path.append(API_DIR)
+    if BASE_DIR not in sys.path:
+        sys.path.append(BASE_DIR)
+
+    from utils import get_data_dir
+
+    # Re-initialize Flask with proper folders
+    TEMPLATE_DIR = os.path.join(API_DIR, 'templates')
+    if not os.path.exists(TEMPLATE_DIR):
+        TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+
+    app.template_folder = TEMPLATE_DIR
+    app.static_folder = os.path.join(BASE_DIR, 'assets')
+    app.static_url_path = '/assets'
+
     # Register Blueprints
     from routes.main import main_bp
     from routes.kr_market import kr_market_bp
@@ -38,8 +39,8 @@ try:
     app.register_blueprint(us_market_bp)
     app.register_blueprint(omni_bp, url_prefix='/api/acp')
     app.register_blueprint(common_bp)
+
 except Exception as e:
-    import traceback
     error_info = traceback.format_exc()
     @app.route('/<path:path>')
     @app.route('/')
