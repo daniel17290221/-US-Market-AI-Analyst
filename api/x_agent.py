@@ -214,6 +214,38 @@ class XMarketAgent:
             print(f"[{datetime.now()}] Gemini REST error: {e}", flush=True)
             return None
 
+    def get_recent_tweets(self, count=10):
+        """Fetches the most recent tweets from the authenticated user's timeline"""
+        if not self.client:
+            return []
+        try:
+            # Get authenticated user info to get the ID
+            me = self.client.get_me()
+            user_id = me.data.id
+            
+            # Fetch tweets
+            response = self.client.get_users_tweets(id=user_id, max_results=count, tweet_fields=['created_at'])
+            
+            tweets = []
+            if response.data:
+                for tweet in response.data:
+                    # Format time to KST or just string
+                    created_at = tweet.created_at
+                    if created_at:
+                        # Convert to string and adjust for simpler display
+                        time_str = created_at.strftime("%Y-%m-%d %H:%M:%S")
+                    else:
+                        time_str = "Recent"
+                        
+                    tweets.append({
+                        "time": time_str,
+                        "text": tweet.text
+                    })
+            return tweets
+        except Exception as e:
+            print(f"[{datetime.now()}] Error fetching tweets from X: {e}", flush=True)
+            return []
+
     def post_tweet(self, mode="standard"):
         """Executes the automated briefing based on mode"""
         print(f"[{datetime.now()}] Starting Broadcast (Mode: {mode})...", flush=True)

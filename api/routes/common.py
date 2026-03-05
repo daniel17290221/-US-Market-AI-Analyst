@@ -152,7 +152,17 @@ def market_pulse():
 
 @common_bp.route('/api/x/history', strict_slashes=False)
 def x_history():
-    # Read tweet history from log file
+    # 1. Try to fetch LIVE tweets from X API first for accuracy
+    try:
+        from x_agent import XMarketAgent
+        agent = XMarketAgent()
+        live_tweets = agent.get_recent_tweets(count=15)
+        if live_tweets:
+            return jsonify(live_tweets)
+    except Exception as e:
+        logger.error(f"Live X History Fetch Error: {e}")
+
+    # 2. Fallback to local log file if API fails or is empty
     log_path = os.path.join(BASE_DIR, "logs", "tweet_history.log")
     if not os.path.exists(log_path):
         return jsonify([])
@@ -171,7 +181,7 @@ def x_history():
                     except: continue
         return jsonify(tweets[:20]) # Last 20 tweets
     except Exception as e:
-        logger.error(f"X History Error: {e}")
+        logger.error(f"X History Log Error: {e}")
         return jsonify([])
 
 @common_bp.route('/api/x/research-draft', strict_slashes=False)
