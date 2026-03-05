@@ -254,6 +254,35 @@ class XMarketAgent:
             print(f"[{datetime.now()}] Error fetching tweets from X: {e}", flush=True)
             return []
 
+    def post_custom_tweet(self, text):
+        """Posts a custom given text to X"""
+        print(f"[{datetime.now()}] Dispatching custom Omni broadcast...", flush=True)
+        if not text:
+            return False
+            
+        try:
+            if len(text) > 280:
+                text = text[:277] + "..."
+                
+            log_dir = "logs"
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+                
+            log_path = os.path.join(log_dir, "tweet_history.log")
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write(f"[{datetime.now()}] MODE: custom | CONTENT: {text}\n")
+
+            if self.client:
+                response = self.client.create_tweet(text=text)
+                print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
+                return True
+            else:
+                print(f"[{datetime.now()}] SIMULATION (Custom) SUCCESS: {text}", flush=True)
+                return True
+        except Exception as e:
+            print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
+            return False
+
     def post_tweet(self, mode="standard"):
         """Executes the automated briefing based on mode"""
         print(f"[{datetime.now()}] Starting Broadcast (Mode: {mode})...", flush=True)
