@@ -203,7 +203,26 @@ def get_kr_ipo():
 @kr_market_bp.route('/api/kr/daily-report', strict_slashes=False)
 @kr_market_bp.route('/kr/daily-report', strict_slashes=False)
 def get_kr_daily_report():
-    # Priority: Local file for immediate Git sync
+    # Primary: GitHub Raw URL for real-time synchronization with GitHub Actions
+    github_raw_repo = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/kr_market_daily_report.html"
+    
+    # Secondary: Custom Domain / Other GitHub
+    domain_url = "https://land.vibe-coding-lab.com/report_kr.html"
+    github_alt_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
+    
+    urls = [github_raw_repo, domain_url, github_alt_url]
+    for url in urls:
+        try:
+            params = {"t": int(datetime.now().timestamp())} # Cache busting
+            resp = requests.get(url, params=params, timeout=5)
+            if resp.status_code == 200 and len(resp.text) > 1000:
+                response = make_response(resp.text)
+                response.headers['Content-Type'] = 'text/html; charset=utf-8'
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                return response
+        except: continue
+
+    # Final Fallback: Local file
     paths = [
         os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
         os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
@@ -211,24 +230,8 @@ def get_kr_daily_report():
     for p in paths:
         if os.path.exists(p) and os.path.getsize(p) > 1000:
             resp = make_response(send_file(p, mimetype='text/html'))
-            resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
             resp.headers['Content-Type'] = 'text/html; charset=utf-8'
             return resp
-
-    # Secondary: Custom Domain
-    domain_url = "https://land.vibe-coding-lab.com/report_kr.html"
-    github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
-    
-    urls = [domain_url, github_url]
-    for url in urls:
-        try:
-            params = {"t": int(datetime.now().timestamp()), "v": "1.2"}
-            resp = requests.get(url, params=params, timeout=5)
-            if resp.status_code == 200 and len(resp.text) > 1000:
-                response = make_response(resp.text)
-                response.headers['Content-Type'] = 'text/html; charset=utf-8'
-                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                return response
-        except: continue
 
     return "Report not found", 404

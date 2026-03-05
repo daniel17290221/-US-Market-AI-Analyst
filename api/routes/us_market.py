@@ -117,33 +117,35 @@ def get_smart_money():
 @us_market_bp.route('/api/us/daily-report', strict_slashes=False)
 @us_market_bp.route('/daily-report', strict_slashes=False)
 def get_daily_report():
-    # Priority: Local file for immediate Git push sync
+    # Primary: GitHub Raw URL for real-time synchronization with GitHub Actions
+    # Even if Vercel hasn't redeployed, this will fetch the latest report pushed to the repo
+    github_raw_repo = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/us_market_morning_report.html"
+    
+    # Secondary: Custom Domain / Other GitHub
+    domain_url = "https://land.vibe-coding-lab.com/report_us.html"
+    github_alt_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
+    
+    urls = [github_raw_repo, domain_url, github_alt_url]
+    for url in urls:
+        try:
+            params = {"t": int(datetime.now().timestamp())} # Cache busting
+            resp = requests.get(url, params=params, timeout=5)
+            if resp.status_code == 200 and len(resp.text) > 1000:
+                response = make_response(resp.text)
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                response.headers['Content-Type'] = 'text/html; charset=utf-8'
+                return response
+        except: continue
+
+    # Final Fallback: Local file (packaged with deployment)
     paths = [
         os.path.join(DATA_DIR, 'us_market_morning_report.html'),
         os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')
     ]
     for p in paths:
-        if os.path.exists(p):
-            # Verify file is not empty
-            if os.path.getsize(p) > 1000:
-                response = make_response(send_file(p, mimetype='text/html'))
-                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                return response
-
-    # Secondary source: Custom Domain / GitHub (for distributed agents)
-    domain_url = "https://land.vibe-coding-lab.com/report_us.html"
-    github_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
-    
-    urls = [domain_url, github_url]
-    for url in urls:
-        try:
-            params = {"t": int(datetime.now().timestamp()), "v": "1.2"}
-            resp = requests.get(url, params=params, timeout=5)
-            if resp.status_code == 200 and len(resp.text) > 1000:
-                response = make_response(resp.text)
-                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                response.headers['Content-Type'] = 'text/html; charset=utf-8'
-                return response
-        except: continue
+        if os.path.exists(p) and os.path.getsize(p) > 1000:
+            response = make_response(send_file(p, mimetype='text/html'))
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+            return response
 
     return "Report not found", 404
