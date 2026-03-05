@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Essential Scripts for Daily Report
 SCRIPTS = [
+    'create_us_daily_prices.py',   # NEW: Generates us_daily_prices.csv
     'analyze_volume.py',           # Generates us_volume_analysis.csv
     'analyze_13f.py',              # Generates us_13f_holdings.csv
     'smart_money_screener_v2.py',  # Required for Top Stocks Picks (uses above 2)
@@ -23,6 +24,11 @@ SCRIPTS = [
     'daily_report_generator.py',   # Final HTML & AI writing
     '../omni_x_broadcaster.py'     # Signal to X/Virtuals Ecosystem
 ]
+
+TIMEOUTS = {
+    'create_us_daily_prices.py': 600, # 10 minutes for full download
+    'daily_report_generator.py': 300  # 5 minutes for AI writing
+}
 
 def run_all():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,8 +44,9 @@ def run_all():
             
         logger.info(f"Running US script: {script}...")
         try:
-            # Set a 2 minutes timeout for each script to prevent hanging
-            res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, check=True, cwd=base_dir, timeout=120)
+            # Use specific timeout or default to 120s
+            timeout_sec = TIMEOUTS.get(script, 120)
+            res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, check=True, cwd=base_dir, timeout=timeout_sec)
             if res.stdout: 
                 print(res.stdout, flush=True) 
         except subprocess.TimeoutExpired:

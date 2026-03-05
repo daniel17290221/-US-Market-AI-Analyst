@@ -86,7 +86,7 @@ class MacroAnalyzer:
         - Focus remains on labor market resilience and consumer sentiment.
         """
 
-    def generate_analysis(self, news_text: str) -> Dict:
+    def generate_analysis(self, news_text: str) -> dict:
         """Generate analysis using selected AI model"""
         prompt = f"""
         당신은 월스트리트 출신의 수석 매크로 전략가입니다. 다음의 '실시간 뉴스 헤드라인 및 요약'을 면밀히 분석하세요:
@@ -121,7 +121,7 @@ class MacroAnalyzer:
             logger.error(f"AI Generation Error: {e}")
             return self._get_mock_analysis()
 
-    def _parse_response(self, text: str) -> Dict:
+    def _parse_response(self, text: str) -> dict:
         """Clean and parse JSON from AI response"""
         try:
             text = text.replace('```json', '').replace('```', '')
@@ -129,7 +129,7 @@ class MacroAnalyzer:
         except:
             return self._get_mock_analysis()
 
-    def _get_mock_analysis(self) -> Dict:
+    def _get_mock_analysis(self) -> dict:
         """Fallback mock analysis"""
         return {
             "market_mood": "Greed",
