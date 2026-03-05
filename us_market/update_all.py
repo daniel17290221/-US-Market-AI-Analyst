@@ -48,7 +48,9 @@ def run_all():
             timeout_sec = TIMEOUTS.get(script, 120)
             res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, check=True, cwd=base_dir, timeout=timeout_sec)
             if res.stdout: 
-                print(res.stdout, flush=True) 
+                print(res.stdout, flush=True)
+            if res.stderr:
+                print(res.stderr, flush=True, file=sys.stderr)
         except subprocess.TimeoutExpired:
             logger.error(f"⚠️ Timeout: {script} took too long (skipped)")
         except subprocess.CalledProcessError as e:
