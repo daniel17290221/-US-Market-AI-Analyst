@@ -163,14 +163,21 @@ def x_history():
             lines = resp.text.splitlines()
     except: pass
 
-    # 2. Secondary: If GitHub Raw fails or is empty, try local file
+    # 2. Secondary: If GitHub Raw fails or is empty, try multiple local file paths
     if not lines:
-        log_path = os.path.join(BASE_DIR, "logs", "tweet_history.log")
-        if os.path.exists(log_path):
-            try:
-                with open(log_path, "r", encoding="utf-8") as f:
-                    lines = f.readlines()
-            except: pass
+        log_paths = [
+            os.path.join(BASE_DIR, "logs", "tweet_history.log"),
+            os.path.join(os.getcwd(), "logs", "tweet_history.log"),
+            "/var/task/logs/tweet_history.log",
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs", "tweet_history.log")
+        ]
+        for path in log_paths:
+            if os.path.exists(path):
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        lines = f.readlines()
+                    if lines: break
+                except: continue
 
     # 3. Parse lines if we found any
     if lines:

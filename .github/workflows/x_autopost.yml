@@ -61,6 +61,6 @@ jobs:
           git config --global user.name "Omni-Bot"
           git config --global user.email "bot@vibe-coding-lab.com"
           git add logs/tweet_history.log || true
-          git commit -m "chore: update tweet history log [skip ci]" || echo "No changes to commit"
+          git commit -m "chore: update tweet history log" || echo "No changes to commit"
           git pull --rebase origin main
           git push origin main
