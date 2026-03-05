@@ -239,12 +239,15 @@ def x_post_manual():
             Input Intel: {text}
             Task: Rewrite this news/intel into a punchy X (Twitter) post (max 270 chars). 
             Style: Bold, dominant, arrogant intelligence. Use financial slang. Start with a hook.
+            IMPORTANT: DO NOT USE ANY MARKDOWN LIKE **BOLD** OR *ITALIC*. Use plain text only.
             Output: RAW TWEET TEXT ONLY.
             """
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={AI_KEY}"
             resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}]}, timeout=15)
             if resp.status_code == 200:
                 target_text = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
+                # Post-processing: Remove AI-style Markdown
+                target_text = target_text.replace("**", "").replace("*", "")
                 if target_text.startswith('"') and target_text.endswith('"'):
                     target_text = target_text[1:-1]
             else:

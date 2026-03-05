@@ -188,20 +188,28 @@ class XMarketAgent:
         return self._request_gemini(prompt)
 
     def _request_gemini(self, prompt):
-        """Internal helper for Gemini REST API"""
+        """Internal helper for Gemini REST API with AI-Markdown cleanup"""
         try:
             if not self.gemini_url:
                 print(f"[{datetime.now()}] Gemini URL missing (Check API Key)", flush=True)
                 return None
+            
+            # Explicitly tell AI not to use bold/italic Markdown
+            clean_prompt = prompt + "\nCRITICAL: DO NOT use any Markdown formatting like **bold** or *italic*. Use plain text only."
+            
             resp = requests.post(
                 self.gemini_url,
-                json={"contents": [{"parts": [{"text": prompt}]}]},
+                json={"contents": [{"parts": [{"text": clean_prompt}]}]},
                 timeout=15
             )
             if resp.status_code == 200:
                 result = resp.json()
                 if 'candidates' in result and result['candidates']:
                     content = result['candidates'][0]['content']['parts'][0]['text'].strip()
+                    
+                    # AI-Formatting Cleanup: Remove all '*' and '**' commonly used by LLMs
+                    content = content.replace("**", "").replace("*", "")
+                    
                     if content.startswith('"') and content.endswith('"'):
                         content = content[1:-1]
                     return content
