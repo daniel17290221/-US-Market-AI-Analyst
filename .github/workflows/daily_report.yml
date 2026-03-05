@@ -46,11 +46,21 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add us_market/*.json us_market/*.csv us_market/*.html KR_Market_Analyst/kr_market/*.json KR_Market_Analyst/kr_market/*.html || true
-          if git commit -m "auto: Daily market report update $(date +'%Y-%m-%d %H:%M')"; then
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push skipped or failed"
-          else
+          # Debug: confirm files were generated
+          echo "=== Checking generated files ==="
+          ls -la us_market/*.html || echo "No HTML in us_market/"
+          ls -la KR_Market_Analyst/kr_market/*.html || echo "No HTML in kr_market/"
+          echo "================================"
+          # Force-add report files (bypasses .gitignore for tracked files)
+          git add -f us_market/us_market_morning_report.html || true
+          git add -f KR_Market_Analyst/kr_market/kr_market_daily_report.html || true
+          git add us_market/*.json us_market/smart_money_picks_v2.csv || true
+          git add KR_Market_Analyst/kr_market/*.json || true
+          if git diff --cached --quiet; then
             echo "No changes to commit"
+          else
+            git commit -m "auto: Daily market report update $(date +'%Y-%m-%d %H:%M')"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
           fi
 
       - name: Deploy to MAIN Domain Repository (GitHub Pages)
