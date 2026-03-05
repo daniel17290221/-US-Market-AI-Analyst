@@ -39,8 +39,21 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
-          # Timeout set to 10 mins to prevent infinite hanging
-          timeout 600s python us_market/update_all.py || echo "Update timed out but continuing..."
+          # Total timeout: 25 minutes for the full pipeline
+          timeout 1500s python us_market/update_all.py || echo "Update timed out but continuing..."
+
+      - name: Ensure Report Is Generated
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          # Safety net: if the orchestrator timed out, run report generator directly
+          if [ ! -f us_market/us_market_morning_report.html ] || [ $(find us_market/us_market_morning_report.html -mmin +60 | wc -l) -gt 0 ]; then
+            echo "Report missing or stale — regenerating directly..."
+            python us_market/daily_report_generator.py
+          else
+            echo "Report already fresh. Skipping direct regeneration."
+          fi
+          ls -la us_market/us_market_morning_report.html
 
       - name: Commit and Push changes to CURRENT repo
         run: |

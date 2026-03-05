@@ -27,6 +27,9 @@ SCRIPTS = [
 
 TIMEOUTS = {
     'create_us_daily_prices.py': 600, # 10 minutes for full download
+    'analyze_13f.py': 300,            # 5 minutes for institutional data
+    'us_ai_analyzer.py': 240,         # 4 minutes for AI analysis
+    'macro_analyzer.py': 120,         # 2 minutes for macro
     'daily_report_generator.py': 300  # 5 minutes for AI writing
 }
 
