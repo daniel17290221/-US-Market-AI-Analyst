@@ -152,36 +152,46 @@ def market_pulse():
 
 @common_bp.route('/api/x/history', strict_slashes=False)
 def x_history():
-    # 1. Try to fetch LIVE tweets from X API first for accuracy
+    # Attempt to fetch centrally managed logs from GitHub Raw for sync consistency
+    github_log_url = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/logs/tweet_history.log"
+    
+    lines = []
+    # 1. Primary: Try GitHub Raw (to sync GitHub Actions and Local)
+    try:
+        resp = requests.get(github_log_url, timeout=5)
+        if resp.status_code == 200:
+            lines = resp.text.splitlines()
+    except: pass
+
+    # 2. Secondary: If GitHub Raw fails or is empty, try local file
+    if not lines:
+        log_path = os.path.join(BASE_DIR, "logs", "tweet_history.log")
+        if os.path.exists(log_path):
+            try:
+                with open(log_path, "r", encoding="utf-8") as f:
+                    lines = f.readlines()
+            except: pass
+
+    # 3. Parse lines if we found any
+    if lines:
+        tweets = []
+        for line in reversed(lines):
+            if "CONTENT:" in line:
+                try:
+                    time_part = line.split("]")[0][1:]
+                    content_part = line.split("CONTENT:")[1].strip()
+                    tweets.append({"time": time_part, "text": content_part})
+                except: continue
+        if tweets:
+            return jsonify(tweets[:15])
+
+    # 4. Final Fallback: Directly from X API account timeline
     try:
         from x_agent import XMarketAgent
         agent = XMarketAgent()
-        live_tweets = agent.get_recent_tweets(count=15)
-        if live_tweets:
-            return jsonify(live_tweets)
-    except Exception as e:
-        logger.error(f"Live X History Fetch Error: {e}")
-
-    # 2. Fallback to local log file if API fails or is empty
-    log_path = os.path.join(BASE_DIR, "logs", "tweet_history.log")
-    if not os.path.exists(log_path):
-        return jsonify([])
-    
-    try:
-        tweets = []
-        with open(log_path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-            # Parse reverse chronological
-            for line in reversed(lines):
-                if line.strip():
-                    try:
-                        time_part = line.split("]")[0][1:]
-                        content_part = line.split("CONTENT:")[1].strip()
-                        tweets.append({"time": time_part, "text": content_part})
-                    except: continue
-        return jsonify(tweets[:20]) # Last 20 tweets
-    except Exception as e:
-        logger.error(f"X History Log Error: {e}")
+        live_tweets = agent.get_recent_tweets(count=10)
+        return jsonify(live_tweets)
+    except:
         return jsonify([])
 
 @common_bp.route('/api/x/research-draft', strict_slashes=False)

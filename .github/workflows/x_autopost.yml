@@ -55,3 +55,12 @@ jobs:
             echo "Mode: standard (default)"
             python api/x_agent.py --mode standard
           fi
+
+      - name: Commit and Push History
+        run: |
+          git config --global user.name "Omni-Bot"
+          git config --global user.email "bot@vibe-coding-lab.com"
+          git add logs/tweet_history.log || true
+          git commit -m "chore: update tweet history log [skip ci]" || echo "No changes to commit"
+          git pull --rebase origin main
+          git push origin main
