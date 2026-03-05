@@ -117,19 +117,21 @@ def get_smart_money():
 @us_market_bp.route('/api/us/daily-report', strict_slashes=False)
 @us_market_bp.route('/daily-report', strict_slashes=False)
 def get_daily_report():
-    # Primary: GitHub Raw URL for real-time synchronization with GitHub Actions
-    # Even if Vercel hasn't redeployed, this will fetch the latest report pushed to the repo
+    # Primary: GitHub Pages URL — always updated by 'Deploy to MAIN Domain Repository' step
+    # This is the most reliable source since it's explicitly cloned and pushed each run
+    github_pages_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
+    
+    # Secondary: Raw source repo (may lag if commit was skipped due to .gitignore)
     github_raw_repo = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/us_market_morning_report.html"
     
-    # Secondary: Custom Domain / Other GitHub
+    # Tertiary: Custom Domain
     domain_url = "https://land.vibe-coding-lab.com/report_us.html"
-    github_alt_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
     
-    urls = [github_raw_repo, domain_url, github_alt_url]
+    urls = [github_pages_url, github_raw_repo, domain_url]
     for url in urls:
         try:
             params = {"t": int(datetime.now().timestamp())} # Cache busting
-            resp = requests.get(url, params=params, timeout=5)
+            resp = requests.get(url, params=params, timeout=8)
             if resp.status_code == 200 and len(resp.text) > 1000:
                 response = make_response(resp.text)
                 response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'

@@ -93,11 +93,21 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
           git add .
-          if git commit -m "auto: Update AI Reports (Manual Sync)"; then
+          if git commit -m "auto: Update AI Reports $(date +'%Y-%m-%d %H:%M')"; then
             git push origin main --force
+            echo "✅ GitHub Pages updated!"
           else
             echo "No changes for domain repo"
           fi
 
-      # Vercel 자동 배포: GitHub 연동으로 코드 변경 시에만 자동 트리거됨
-      # 데이터(JSON) 업데이트는 Vercel 재배포 불필요 → curl 호출 제거
+      - name: Trigger Vercel Redeployment
+        run: |
+          # Update vercel-trigger.txt to force Vercel to redeploy
+          cd $GITHUB_WORKSPACE
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          echo "Report updated: $(date +'%Y-%m-%d %H:%M:%S')" > vercel-trigger.txt
+          git add vercel-trigger.txt
+          git commit -m "trigger: Vercel redeploy for report $(date +'%Y-%m-%d')" || echo "Already committed"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
+          echo "✅ Vercel redeployment triggered!"

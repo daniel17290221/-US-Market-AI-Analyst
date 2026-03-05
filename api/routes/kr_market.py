@@ -203,18 +203,20 @@ def get_kr_ipo():
 @kr_market_bp.route('/api/kr/daily-report', strict_slashes=False)
 @kr_market_bp.route('/kr/daily-report', strict_slashes=False)
 def get_kr_daily_report():
-    # Primary: GitHub Raw URL for real-time synchronization with GitHub Actions
+    # Primary: GitHub Pages URL — always updated by 'Deploy to MAIN Domain Repository' step
+    github_pages_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
+    
+    # Secondary: Raw source repo
     github_raw_repo = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/kr_market_daily_report.html"
     
-    # Secondary: Custom Domain / Other GitHub
+    # Tertiary: Custom Domain
     domain_url = "https://land.vibe-coding-lab.com/report_kr.html"
-    github_alt_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html"
     
-    urls = [github_raw_repo, domain_url, github_alt_url]
+    urls = [github_pages_url, github_raw_repo, domain_url]
     for url in urls:
         try:
             params = {"t": int(datetime.now().timestamp())} # Cache busting
-            resp = requests.get(url, params=params, timeout=5)
+            resp = requests.get(url, params=params, timeout=8)
             if resp.status_code == 200 and len(resp.text) > 1000:
                 response = make_response(resp.text)
                 response.headers['Content-Type'] = 'text/html; charset=utf-8'
