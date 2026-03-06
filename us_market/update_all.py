@@ -64,7 +64,7 @@ def run_scripts(script_list, base_dir, label=""):
             logger.error(f"⚠️ Timeout: {script} took too long (skipped)")
         except subprocess.CalledProcessError as e:
             logger.error(f"❌ Error running {script}!")
-            if e.stderr: print(f"STDERR: {e.stderr[:500]}", flush=True)
+            if e.stderr: print(f"STDERR: {e.stderr}", flush=True)
             continue
 
 def run_all():
