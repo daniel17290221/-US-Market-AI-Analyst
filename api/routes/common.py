@@ -29,8 +29,8 @@ def health_check():
         "deployment": os.environ.get('VERCEL_URL', 'local'),
         "env": "production" if os.environ.get('VERCEL') else "development",
         "data_dir_exists": os.path.exists(DATA_DIR),
-        "us_report_exists": os.path.exists(os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')),
-        "kr_report_exists": os.path.exists(os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html'))
+        "us_report_exists": os.path.exists(os.path.join(BASE_DIR, 'us_market', 'report_us.html')),
+        "kr_report_exists": os.path.exists(os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'report_kr.html'))
     })
 
 @common_bp.route('/api/cron/update', strict_slashes=False)
