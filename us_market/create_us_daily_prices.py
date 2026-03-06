@@ -33,8 +33,8 @@ class USStockDailyPricesCreator:
         self.prices_file = os.path.join(self.output_dir, 'us_daily_prices.csv')
         self.stocks_list_file = os.path.join(self.output_dir, 'us_stocks_list.csv')
         
-        # Start date for historical data (UTC)
-        self.start_date = datetime(2024, 1, 1, tzinfo=timezone.utc)
+        # Start date for historical data (UTC) - Reduced to 60 days for fast updates
+        self.start_date = datetime.now(timezone.utc) - timedelta(days=60)
         self.end_date = datetime.now(timezone.utc)
         
     def get_sp500_tickers(self) -> List[Dict]:
@@ -207,33 +207,55 @@ class USStockDailyPricesCreator:
             now = datetime.now(timezone.utc)
             target_end_date = now
             
-            # 4. Collect data
-            all_new_data = []
-            failed_tickers = []
+            # 4. Collect data in BATCH (much faster)
+            tickers = stocks_df['ticker'].tolist()
+            logger.info(f"💾 Downloading batch data for {len(tickers)} stocks...")
             
-            for idx, row in tqdm(stocks_df.iterrows(), desc="Downloading US stocks", total=len(stocks_df)):
-                ticker = row['ticker']
+            try:
+                # Use threads for faster execution
+                all_data = yf.download(
+                    tickers, 
+                    start=self.start_date.strftime('%Y-%m-%d'),
+                    end=target_end_date.strftime('%Y-%m-%d'),
+                    group_by='ticker',
+                    threads=True,
+                    progress=True
+                )
                 
-                # Determine start date
-                if ticker in latest_dates:
-                    start_date = latest_dates[ticker] + timedelta(days=1)
-                else:
-                    start_date = self.start_date
-                
-                # Skip if already up to date
-                if start_date >= target_end_date:
-                    continue
-                
-                # Download data
-                new_data = self.download_stock_data(ticker, start_date, target_end_date)
-                
-                if not new_data.empty:
-                    # Add name from stock list
-                    new_data['name'] = row['name']
-                    new_data['market'] = row['market']
-                    all_new_data.append(new_data)
-                else:
-                    failed_tickers.append(ticker)
+                all_new_data = []
+                for ticker in tqdm(tickers, desc="Processing downloaded data"):
+                    try:
+                        if ticker not in all_data or all_data[ticker].empty:
+                            continue
+                            
+                        hist = all_data[ticker].copy().reset_index()
+                        hist['ticker'] = ticker
+                        
+                        # Cleanup and format
+                        hist = hist.rename(columns={
+                            'Date': 'date', 'Open': 'open', 'High': 'high', 
+                            'Low': 'low', 'Close': 'current_price', 'Volume': 'volume'
+                        })
+                        
+                        # Filter out rows with all NaNs
+                        hist = hist.dropna(subset=['current_price'])
+                        if hist.empty: continue
+                        
+                        # Add metadata
+                        row_meta = stocks_df[stocks_df['ticker'] == ticker].iloc[0]
+                        hist['name'] = row_meta['name']
+                        hist['market'] = row_meta['market']
+                        
+                        # Calculate change
+                        hist['change'] = hist['current_price'].diff()
+                        hist['change_rate'] = hist['current_price'].pct_change() * 100
+                        
+                        all_new_data.append(hist)
+                    except Exception as e:
+                        logger.debug(f"Error processing {ticker}: {e}")
+            except Exception as e:
+                logger.error(f"❌ Batch download failed: {e}")
+                return False
             
             # 5. Combine and save
             if all_new_data:
@@ -256,12 +278,8 @@ class USStockDailyPricesCreator:
             
             # 6. Summary
             logger.info(f"\n📊 Collection Summary:")
-            logger.info(f"   Total stocks: {len(stocks_df)}")
-            logger.info(f"   Success: {len(stocks_df) - len(failed_tickers)}")
-            logger.info(f"   Failed: {len(failed_tickers)}")
-            
-            if failed_tickers[:10]:
-                logger.warning(f"   Failed samples: {failed_tickers[:10]}")
+            logger.info(f"   Total stocks processed: {len(stocks_df)}")
+            logger.info(f"   Success: {len(all_new_data)}")
             
             return True
             
