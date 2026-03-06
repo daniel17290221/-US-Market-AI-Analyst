@@ -53,8 +53,8 @@ jobs:
           ls -la KR_Market_Analyst/kr_market/*.html || echo "No HTML in kr_market/"
           echo "================================"
           # Force-add report files (bypasses .gitignore for tracked files)
-          git add -f us_market/us_market_morning_report.html || true
-          git add -f KR_Market_Analyst/kr_market/kr_market_daily_report.html || true
+          git add -f us_market/report_us.html || true
+          git add -f KR_Market_Analyst/kr_market/report_kr.html || true
           git add us_market/*.json us_market/smart_money_picks_v2.csv || true
           git add KR_Market_Analyst/kr_market/*.json || true
           if git diff --cached --quiet; then
