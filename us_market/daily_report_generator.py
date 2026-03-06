@@ -587,7 +587,8 @@ class USDailyReportGenerator:
     </div>
 </body>
 </html>
-        """
+        # Add a hidden timestamp to force Git to see a change even if AI content is similar
+        html_template += f"\n<!-- Generation ID: {datetime.now().isoformat()} -->"
         
         try:
             # Try to write only if allowed (it might fail on Vercel)

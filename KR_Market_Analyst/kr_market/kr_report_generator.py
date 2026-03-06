@@ -389,6 +389,9 @@ class KRDailyReportGenerator:
 </html>
         """
         
+        # Force content change for Git detection
+        html_template += f"\n<!-- KR Generation ID: {datetime.utcnow().isoformat()} -->"
+        
         try:
             with open(self.output_file, 'w', encoding='utf-8') as f:
                 f.write(html_template)
@@ -471,7 +474,7 @@ class KRDailyReportGenerator:
 
         # 로컬 저장
         try:
-            output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kr_market_daily_report.html')
+            output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'report_kr.html')
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(html_content)
             logger.info(f"[SUCCESS] KR 리포트 로컬 저장: {output_path}")
