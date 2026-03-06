@@ -13,76 +13,97 @@ from datetime import datetime
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Essential Scripts for Daily Report
-SCRIPTS = [
-    'create_us_daily_prices.py',   # NEW: Generates us_daily_prices.csv
-    'analyze_volume.py',           # Generates us_volume_analysis.csv
-    'analyze_13f.py',              # Generates us_13f_holdings.csv
-    'smart_money_screener_v2.py',  # Required for Top Stocks Picks (uses above 2)
-    'us_ai_analyzer.py',           # NEW: Analyze individual stocks (SWOT, Insight)
-    'macro_analyzer.py',           # Required for AI Macro Analysis
-    'daily_report_generator.py',   # Final HTML & AI writing
+# ==================================================================
+# PRIORITY 1: FAST scripts that generate the HTML report quickly.
+# These must complete within ~3 minutes so the report is always fresh.
+# ==================================================================
+FAST_SCRIPTS = [
+    'macro_analyzer.py',           # 2 min max - AI Macro Analysis (RSS feeds)
+    'smart_money_screener_v2.py',  # Uses existing CSVs - fast
+    'daily_report_generator.py',   # Final HTML & AI writing - MUST run early
+]
+
+# ==================================================================
+# PRIORITY 2: SLOW/HEAVY scripts run AFTER the report is saved.
+# These will not block report generation.
+# ==================================================================
+SLOW_SCRIPTS = [
+    'create_us_daily_prices.py',   # 10 min - Full S&P500 download
+    'analyze_volume.py',           # Uses daily prices
+    'analyze_13f.py',              # 5 min - Institutional data
+    'us_ai_analyzer.py',           # 4 min - Stock SWOT analysis
     '../omni_x_broadcaster.py'     # Signal to X/Virtuals Ecosystem
 ]
 
 TIMEOUTS = {
-    'create_us_daily_prices.py': 600, # 10 minutes for full download
-    'analyze_13f.py': 300,            # 5 minutes for institutional data
-    'us_ai_analyzer.py': 240,         # 4 minutes for AI analysis
-    'macro_analyzer.py': 120,         # 2 minutes for macro
-    'daily_report_generator.py': 300  # 5 minutes for AI writing
+    'create_us_daily_prices.py': 480, # 8 minutes max
+    'analyze_13f.py': 240,
+    'us_ai_analyzer.py': 180,
+    'macro_analyzer.py': 90,          # 90 seconds max for macro
+    'daily_report_generator.py': 120, # 2 minutes max for report generation
+    'smart_money_screener_v2.py': 60,
 }
 
-def run_all():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.dirname(base_dir) # Root of the project
-    logger.info(f"Starting Full Market Update... ({base_dir})")
-    
-    # 1. Run US Market Update
-    for script in SCRIPTS:
+def run_scripts(script_list, base_dir, label=""):
+    for script in script_list:
         script_path = os.path.join(base_dir, script)
         if not os.path.exists(script_path):
             logger.warning(f"[WARNING] Script not found: {script}")
             continue
-            
-        logger.info(f"Running US script: {script}...")
+
+        logger.info(f"Running {label} script: {script}...")
         try:
             start_time = datetime.now()
-            # Use specific timeout or default to 120s
-            timeout_sec = TIMEOUTS.get(script, 180)
-            res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, check=True, cwd=base_dir, timeout=timeout_sec)
-            
-            end_time = datetime.now()
-            duration = (end_time - start_time).total_seconds()
+            timeout_sec = TIMEOUTS.get(script, 120)
+            res = subprocess.run(
+                [sys.executable, script_path],
+                capture_output=True, text=True, check=True,
+                cwd=base_dir, timeout=timeout_sec
+            )
+            duration = (datetime.now() - start_time).total_seconds()
             logger.info(f"✅ {script} completed in {duration:.1f}s")
-            
-            if res.stdout: 
-                # Print only first 500 chars of stdout to keep logs clean
+            if res.stdout:
                 print(res.stdout[:500] + "..." if len(res.stdout) > 500 else res.stdout, flush=True)
         except subprocess.TimeoutExpired:
             logger.error(f"⚠️ Timeout: {script} took too long (skipped)")
         except subprocess.CalledProcessError as e:
             logger.error(f"❌ Error running {script}!")
-            if e.stdout: print(f"STDOUT: {e.stdout}", flush=True)
-            if e.stderr: print(f"STDERR: {e.stderr}", flush=True)
-            # Continue to next script even if one fails
+            if e.stderr: print(f"STDERR: {e.stderr[:500]}", flush=True)
             continue
-    
-    # 2. Run KR Market Update
-    logger.info("Starting KR Market Update...")
+
+def run_all():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.dirname(base_dir)
+    logger.info(f"Starting Full Market Update... ({base_dir})")
+
+    # ★ PHASE 1: Run fast report-generation scripts FIRST
+    logger.info("=== PHASE 1: Generating HTML Reports (Fast) ===")
+    run_scripts(FAST_SCRIPTS, base_dir, label="FAST")
+
+    # ★ PHASE 2: Run heavy data collection scripts AFTER report is saved
+    logger.info("=== PHASE 2: Heavy Data Collection (Slow) ===")
+    run_scripts(SLOW_SCRIPTS, base_dir, label="SLOW")
+
+    # ★ PHASE 3: KR Market Update
+    logger.info("=== PHASE 3: KR Market Update ===")
     kr_update_script = os.path.join(root_dir, 'KR_Market_Analyst', 'update_kr.py')
     if os.path.exists(kr_update_script):
         try:
-            res = subprocess.run([sys.executable, kr_update_script], capture_output=True, text=True, check=True, cwd=os.path.join(root_dir, 'KR_Market_Analyst'))
+            res = subprocess.run(
+                [sys.executable, kr_update_script],
+                capture_output=True, text=True, check=True,
+                cwd=os.path.join(root_dir, 'KR_Market_Analyst'),
+                timeout=300
+            )
             logger.info(res.stdout)
             logger.info("KR Update Complete!")
+        except subprocess.TimeoutExpired:
+            logger.error("⚠️ KR Update timed out!")
         except subprocess.CalledProcessError as e:
-            logger.error(f"❌ KR Market Update failed!")
-            logger.error(f"STDOUT: {e.stdout}")
-            logger.error(f"STDERR: {e.stderr}")
+            logger.error(f"❌ KR Market Update failed! STDERR: {e.stderr[:500]}")
     else:
         logger.warning("KR Update script not found.")
-            
+
     logger.info("Full Update Cycle Complete!")
 
 if __name__ == "__main__":
