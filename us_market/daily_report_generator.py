@@ -591,20 +591,19 @@ class USDailyReportGenerator:
         # Add a hidden timestamp to force Git to see a change even if AI content is similar
         html_template += f"\n<!-- Generation ID: {datetime.now().isoformat()} -->"
         
+        # 1. Local Filesystem Write (Optional/Non-blocking)
         try:
-            # Try to write only if allowed (it might fail on Vercel)
-            try:
-                with open(self.output_file, 'w', encoding='utf-8') as f:
-                    f.write(html_template)
-                logger.info(f"[SUCCESS] Premium report saved to: {self.output_file}")
-            except Exception as write_e:
-                logger.warning(f"[WARNING] Could not write report to filesystem (typical on Vercel): {write_e}")
-                
-            # --- Auto-deploy to GitHub Pages (temp_pages_repo) ---
-            self._deploy_to_github_pages(html_template)
+            with open(self.output_file, 'w', encoding='utf-8') as f:
+                f.write(html_template)
+            logger.info(f"[SUCCESS] Premium report saved locally to: {self.output_file}")
+        except Exception as write_e:
+            logger.warning(f"[WARNING] Could not write report locally: {write_e}")
             
+        # 2. GitHub Pages Repo Write (CRITICAL for updating the actual URL)
+        try:
+            self._deploy_to_github_pages(html_template)
         except Exception as e:
-            logger.error(f"[ERROR] Error generating/saving report: {e}")
+            logger.error(f"[ERROR] _deploy_to_github_pages failed: {e}")
             
         return html_template
 

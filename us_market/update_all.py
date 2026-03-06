@@ -18,21 +18,17 @@ logger = logging.getLogger(__name__)
 # These must complete within ~3 minutes so the report is always fresh.
 # ==================================================================
 FAST_SCRIPTS = [
-    'macro_analyzer.py',           # 2 min max - AI Macro Analysis (RSS feeds)
-    'smart_money_screener_v2.py',  # Uses existing CSVs - fast
-    'daily_report_generator.py',   # Final HTML & AI writing - MUST run early
+    'macro_analyzer.py',           # ~10s - AI Macro Analysis from RSS
+    'daily_report_generator.py',   # ~30s - HTML report (uses existing CSVs if present)
 ]
 
-# ==================================================================
-# PRIORITY 2: SLOW/HEAVY scripts run AFTER the report is saved.
-# These will not block report generation.
-# ==================================================================
 SLOW_SCRIPTS = [
-    'create_us_daily_prices.py',   # 10 min - Full S&P500 download
-    'analyze_volume.py',           # Uses daily prices
-    'analyze_13f.py',              # 5 min - Institutional data
-    'us_ai_analyzer.py',           # 4 min - Stock SWOT analysis
-    '../omni_x_broadcaster.py'     # Signal to X/Virtuals Ecosystem
+    'create_us_daily_prices.py',   # 8 min - Full S&P500 download
+    'analyze_volume.py',
+    'analyze_13f.py',
+    'smart_money_screener_v2.py',  # Depends on above CSVs - runs after download
+    'us_ai_analyzer.py',
+    '../omni_x_broadcaster.py'
 ]
 
 TIMEOUTS = {

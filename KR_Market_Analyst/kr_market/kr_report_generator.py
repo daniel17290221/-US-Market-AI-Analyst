@@ -479,7 +479,11 @@ class KRDailyReportGenerator:
             logger.warning(f"[WARN] 로컬 저장 실패: {e}")
 
         # GitHub 배포
-        self._deploy_to_github_pages(html_content)
+        try:
+            self._deploy_to_github_pages(html_content)
+        except Exception as e:
+            logger.error(f"[ERROR] KR _deploy_to_github_pages 실패: {e}")
+            
         return html_content
 
 if __name__ == "__main__":
