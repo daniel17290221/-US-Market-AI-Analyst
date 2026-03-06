@@ -47,13 +47,18 @@ def run_all():
             
         logger.info(f"Running US script: {script}...")
         try:
+            start_time = datetime.now()
             # Use specific timeout or default to 120s
-            timeout_sec = TIMEOUTS.get(script, 120)
+            timeout_sec = TIMEOUTS.get(script, 180)
             res = subprocess.run([sys.executable, script_path], capture_output=True, text=True, check=True, cwd=base_dir, timeout=timeout_sec)
+            
+            end_time = datetime.now()
+            duration = (end_time - start_time).total_seconds()
+            logger.info(f"✅ {script} completed in {duration:.1f}s")
+            
             if res.stdout: 
-                print(res.stdout, flush=True)
-            if res.stderr:
-                print(res.stderr, flush=True, file=sys.stderr)
+                # Print only first 500 chars of stdout to keep logs clean
+                print(res.stdout[:500] + "..." if len(res.stdout) > 500 else res.stdout, flush=True)
         except subprocess.TimeoutExpired:
             logger.error(f"⚠️ Timeout: {script} took too long (skipped)")
         except subprocess.CalledProcessError as e:

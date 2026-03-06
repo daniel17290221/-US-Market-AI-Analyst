@@ -128,23 +128,36 @@ def get_daily_report():
         "User-Agent": "Mozilla/5.0 (VibeCodingLab-Bot)"
     }
 
-    # Primary: Raw source repo (no CDN delay — most up-to-date)
-    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/us_market_morning_report.html?nocache={cache_buster}"
-    # Secondary: GitHub Pages (may have slight CDN propagation delay)
-    github_pages_url = f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html?nocache={cache_buster}"
-    # Tertiary: Custom Domain
-    domain_url = f"https://land.vibe-coding-lab.com/report_us.html?t={cache_buster}"
+    # Primary: Local file (packaged with deployment - ALWAYS freshest after Vercel redeploy)
+    paths = [
+        os.path.join(DATA_DIR, 'us_market_morning_report.html'),
+        os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')
+    ]
+    for p in paths:
+        if os.path.exists(p) and os.path.getsize(p) > 1000:
+            try:
+                # Check if it was modified recently (optional, but good for confidence)
+                # mtime = os.path.getmtime(p)
+                response = make_response(send_file(p, mimetype='text/html'))
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                response.headers['X-Source'] = 'Local-Bundle'
+                return response
+            except: continue
 
-    urls = [github_raw_repo, github_pages_url, domain_url]
+    # Secondary: Raw source repo (fallback if local missing)
+    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/us_market_morning_report.html?nocache={cache_buster}"
+    # Tertiary: GitHub Pages
+    github_pages_url = f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html?nocache={cache_buster}"
+    
+    urls = [github_raw_repo, github_pages_url]
     for url in urls:
         try:
-            resp = requests.get(url, headers=no_cache_headers, timeout=8)
+            resp = requests.get(url, headers=no_cache_headers, timeout=5)
             if resp.status_code == 200 and len(resp.text) > 1000:
                 response = make_response(resp.text)
                 response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
                 response.headers['Content-Type'] = 'text/html; charset=utf-8'
-                response.headers['Pragma'] = 'no-cache'
-                response.headers['Expires'] = '0'
+                response.headers['X-Source'] = 'GitHub-Remote'
                 return response
         except: continue
 
