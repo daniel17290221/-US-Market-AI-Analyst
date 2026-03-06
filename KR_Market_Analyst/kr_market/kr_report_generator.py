@@ -389,9 +389,6 @@ class KRDailyReportGenerator:
 </html>
         """
         
-        # Force content change for Git detection
-        html_template += f"\n<!-- KR Generation ID: {datetime.utcnow().isoformat()} -->"
-        
         try:
             with open(self.output_file, 'w', encoding='utf-8') as f:
                 f.write(html_template)

@@ -35,14 +35,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements_local.txt
 
-      - name: Diagnostic - Check Secrets
-        run: |
-          if [ -z "${{ secrets.GOOGLE_API_KEY }}" ]; then
-            echo "❌ [ERROR] GOOGLE_API_KEY is NOT set in GitHub Secrets!"
-          else
-            echo "✅ [SUCCESS] GOOGLE_API_KEY is configured."
-          fi
-
       - name: Run Full Market Update Pipeline
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
@@ -58,9 +50,8 @@ jobs:
           git config --local user.name "daniel"
           
           echo "=== [DEBUG] Verifying Generated Files ==="
-          find . -name "report_us.html" -exec md5sum {} +
-          find . -name "report_kr.html" -exec md5sum {} +
-          md5sum us_market/us_macro_analysis.json || echo "No macro json"
+          find . -name "report_us.html"
+          find . -name "report_kr.html"
           echo "========================================"
           
           # Force add with absolute-like paths to avoid any scoping issues
