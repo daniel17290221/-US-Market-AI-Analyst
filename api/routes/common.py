@@ -21,6 +21,18 @@ def serve_ads_txt():
     content = "google.com, pub-4995156883730033, DIRECT, f08c47fec0942fa0"
     return make_response(content, 200, {'Content-Type': 'text/plain'})
 
+@common_bp.route('/api/health', strict_slashes=False)
+def health_check():
+    return jsonify({
+        "status": "online",
+        "timestamp": datetime.now().isoformat(),
+        "deployment": os.environ.get('VERCEL_URL', 'local'),
+        "env": "production" if os.environ.get('VERCEL') else "development",
+        "data_dir_exists": os.path.exists(DATA_DIR),
+        "us_report_exists": os.path.exists(os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')),
+        "kr_report_exists": os.path.exists(os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html'))
+    })
+
 @common_bp.route('/api/cron/update', strict_slashes=False)
 def cron_update():
     results = {}
