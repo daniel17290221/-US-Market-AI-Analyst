@@ -39,30 +39,39 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
-          # The orchestrator runs macro_analyzer, market update, and report generation in sequence
           echo "🚀 Starting full market update pipeline..."
+          # Ensure we are in the right directory
+          cd $GITHUB_WORKSPACE
           python us_market/update_all.py
 
       - name: Commit and Push changes to CURRENT repo
         run: |
           git config --local user.email "1729021@naver.com"
           git config --local user.name "daniel"
-          # Debug: confirm files were generated
-          echo "=== Checking generated files ==="
-          ls -la us_market/*.html || echo "No HTML in us_market/"
-          ls -la KR_Market_Analyst/kr_market/*.html || echo "No HTML in kr_market/"
-          echo "================================"
-          # Force-add report files (bypasses .gitignore for tracked files)
+          
+          echo "=== [DEBUG] Verifying Generated Files ==="
+          find . -name "report_us.html"
+          find . -name "report_kr.html"
+          echo "========================================"
+          
+          # Force add with absolute-like paths to avoid any scoping issues
           git add -f us_market/report_us.html || true
           git add -f KR_Market_Analyst/kr_market/report_kr.html || true
-          git add us_market/*.json us_market/smart_money_picks_v2.csv || true
-          git add KR_Market_Analyst/kr_market/*.json || true
+          git add -A us_market/*.json || true
+          git add -A KR_Market_Analyst/kr_market/*.json || true
+          git add -A us_market/*.csv || true
+          
+          # Force a commit even if git thinks nothing changed (by adding a timestamp to a dedicated log or just check diff)
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "No changes detected. Forcing a refresh commit..."
+            date > last_run.txt
+            git add last_run.txt
+            git commit -m "auto: Manual forced update $(date +'%Y-%m-%d %H:%M')"
           else
             git commit -m "auto: Daily market report update $(date +'%Y-%m-%d %H:%M')"
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
           fi
+          
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
 
       - name: Deploy to MAIN Domain Repository (GitHub Pages)
         env:
