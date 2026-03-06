@@ -73,8 +73,8 @@ jobs:
           git clone https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/daniel17290221/daniel17290221.github.io.git main_repo
           
           # 2. Sync files
-          cp -f us_market/us_market_morning_report.html main_repo/report_us.html || true
-          cp -f KR_Market_Analyst/kr_market/kr_market_daily_report.html main_repo/report_kr.html || true
+          cp -f us_market/report_us.html main_repo/report_us.html || true
+          cp -f KR_Market_Analyst/kr_market/report_kr.html main_repo/report_kr.html || true
           
           # 3. Commit and Push with Force
           cd main_repo

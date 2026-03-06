@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class KRDailyReportGenerator:
-    def __init__(self, data_dir=None, output_file='kr_market_daily_report.html'):
+    def __init__(self, data_dir=None, output_file='report_kr.html'):
         load_dotenv()
         self.api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key")
         if not self.api_key:

@@ -216,6 +216,8 @@ def get_kr_daily_report():
 
     # Primary: Local file (packaged with deployment - ALWAYS freshest after Vercel redeploy)
     paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'report_kr.html'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'report_kr.html'),
         os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
         os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
     ]
@@ -228,7 +230,7 @@ def get_kr_daily_report():
             return resp
 
     # Secondary: Raw source repo (fallback if local missing)
-    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/kr_market_daily_report.html?nocache={cache_buster}"
+    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/report_kr.html?nocache={cache_buster}"
     # Tertiary: GitHub Pages
     github_pages_url = f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html?nocache={cache_buster}"
 

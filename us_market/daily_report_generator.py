@@ -24,7 +24,7 @@ class USDailyReportGenerator:
         if data_dir is None:
             data_dir = os.path.dirname(os.path.abspath(__file__))
         self.data_dir = data_dir
-        self.output_file = os.path.join(data_dir, 'us_market_morning_report.html')
+        self.output_file = os.path.join(data_dir, 'report_us.html')
         
         # Configure Gemini
         self.api_key = os.getenv('GOOGLE_API_KEY') or os.getenv("google_api_key")

@@ -130,14 +130,14 @@ def get_daily_report():
 
     # Primary: Local file (packaged with deployment - ALWAYS freshest after Vercel redeploy)
     paths = [
+        os.path.join(DATA_DIR, 'report_us.html'),
+        os.path.join(BASE_DIR, 'us_market', 'report_us.html'),
         os.path.join(DATA_DIR, 'us_market_morning_report.html'),
         os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')
     ]
     for p in paths:
         if os.path.exists(p) and os.path.getsize(p) > 1000:
             try:
-                # Check if it was modified recently (optional, but good for confidence)
-                # mtime = os.path.getmtime(p)
                 response = make_response(send_file(p, mimetype='text/html'))
                 response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
                 response.headers['X-Source'] = 'Local-Bundle'
@@ -145,7 +145,7 @@ def get_daily_report():
             except: continue
 
     # Secondary: Raw source repo (fallback if local missing)
-    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/us_market_morning_report.html?nocache={cache_buster}"
+    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/report_us.html?nocache={cache_buster}"
     # Tertiary: GitHub Pages
     github_pages_url = f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html?nocache={cache_buster}"
     
