@@ -117,25 +117,34 @@ def get_smart_money():
 @us_market_bp.route('/api/us/daily-report', strict_slashes=False)
 @us_market_bp.route('/daily-report', strict_slashes=False)
 def get_daily_report():
-    # Primary: GitHub Pages URL — always updated by 'Deploy to MAIN Domain Repository' step
-    # This is the most reliable source since it's explicitly cloned and pushed each run
-    github_pages_url = "https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html"
-    
-    # Secondary: Raw source repo (may lag if commit was skipped due to .gitignore)
-    github_raw_repo = "https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/us_market_morning_report.html"
-    
+    import time as _time
+    cache_buster = int(_time.time())
+
+    # Aggressive no-cache headers for upstream fetches
+    no_cache_headers = {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "User-Agent": "Mozilla/5.0 (VibeCodingLab-Bot)"
+    }
+
+    # Primary: Raw source repo (no CDN delay — most up-to-date)
+    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/us_market_morning_report.html?nocache={cache_buster}"
+    # Secondary: GitHub Pages (may have slight CDN propagation delay)
+    github_pages_url = f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html?nocache={cache_buster}"
     # Tertiary: Custom Domain
-    domain_url = "https://land.vibe-coding-lab.com/report_us.html"
-    
-    urls = [github_pages_url, github_raw_repo, domain_url]
+    domain_url = f"https://land.vibe-coding-lab.com/report_us.html?t={cache_buster}"
+
+    urls = [github_raw_repo, github_pages_url, domain_url]
     for url in urls:
         try:
-            params = {"t": int(datetime.now().timestamp())} # Cache busting
-            resp = requests.get(url, params=params, timeout=8)
+            resp = requests.get(url, headers=no_cache_headers, timeout=8)
             if resp.status_code == 200 and len(resp.text) > 1000:
                 response = make_response(resp.text)
                 response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
                 response.headers['Content-Type'] = 'text/html; charset=utf-8'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
                 return response
         except: continue
 
