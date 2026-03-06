@@ -661,9 +661,24 @@ class USDailyReportGenerator:
 
     def run(self):
         logger.info("Generating Premium Daily US Market Report...")
-        raw_data = self.load_data()
-        ai_content = self.generate_ai_content(raw_data)
-        return self.generate_html(raw_data, ai_content)
+        try:
+            raw_data = self.load_data()
+            ai_content = self.generate_ai_content(raw_data)
+            return self.generate_html(raw_data, ai_content)
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            logger.error(f"[FATAL] Report generation crashed: {error_trace}")
+            
+            # Generate a blank error HTML to force the action to commit it, exposing the error!
+            html_template = f"<html><body><h1>Fatal Error in US Generator</h1><pre>{error_trace}</pre>\n<!-- Generation ID: {datetime.now().isoformat()} --></body></html>"
+            
+            try:
+                with open(self.output_file, 'w', encoding='utf-8') as f:
+                    f.write(html_template)
+            except:
+                pass
+            return html_template
 
 
 if __name__ == "__main__":
