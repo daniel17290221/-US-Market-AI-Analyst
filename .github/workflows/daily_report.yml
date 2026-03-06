@@ -35,24 +35,28 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements_local.txt
 
-      - name: Run Market Update
+      - name: Run Macro Analyzer (Fresh News - Always First)
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
-          # Total timeout: 25 minutes for the full pipeline
-          timeout 1500s python us_market/update_all.py || echo "Update timed out but continuing..."
+          echo "🔍 Fetching today's market news and generating macro analysis..."
+          timeout 90s python us_market/macro_analyzer.py || echo "⚠️ Macro analyzer timed out - will use previous data"
+          echo "macro_analyzer done at $(date)"
 
-      - name: Ensure Report Is Generated
+      - name: Run Full Market Update Pipeline
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
-          # Safety net: if the orchestrator timed out, run report generator directly
-          if [ ! -f us_market/us_market_morning_report.html ] || [ $(find us_market/us_market_morning_report.html -mmin +60 | wc -l) -gt 0 ]; then
-            echo "Report missing or stale — regenerating directly..."
-            python us_market/daily_report_generator.py
-          else
-            echo "Report already fresh. Skipping direct regeneration."
-          fi
+          # Total timeout: 20 minutes for the rest of the pipeline
+          timeout 1200s python us_market/update_all.py || echo "Update timed out but continuing..."
+
+      - name: Ensure Fresh Report Is Generated
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          # Always regenerate the report to ensure latest macro data is used
+          echo "📝 Regenerating final report with today's data..."
+          timeout 120s python us_market/daily_report_generator.py || echo "⚠️ Report generator failed"
           ls -la us_market/us_market_morning_report.html
 
       - name: Commit and Push changes to CURRENT repo
