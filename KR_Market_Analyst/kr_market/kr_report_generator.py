@@ -92,7 +92,7 @@ class KRDailyReportGenerator:
                 }
             }
             
-            resp = requests.post(url, json=payload, timeout=30)
+            resp = requests.post(url, json=payload, timeout=120)
             if resp.status_code == 200:
                 res_json = resp.json()
                 content_text = res_json['candidates'][0]['content']['parts'][0]['text'].strip()
