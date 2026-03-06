@@ -45,7 +45,7 @@ jobs:
           
           # Add the generated KR data and report files using -f to bypass .gitignore
           git add -f KR_Market_Analyst/kr_market/kr_daily_data.json
-          git add -f KR_Market_Analyst/kr_market/kr_market_daily_report.html
+          git add -f KR_Market_Analyst/kr_market/report_kr.html
           
           # Commit only if there are changes
           if git diff --cached --quiet; then
@@ -71,8 +71,8 @@ jobs:
           fi
           
           # 3. Copy reports
-          find us_market -name "us_market_morning_report.html" -exec cp {} main_repo/report_us.html \;
-          find KR_Market_Analyst -name "kr_market_daily_report.html" -exec cp {} main_repo/report_kr.html \;
+          find us_market -name "report_us.html" -exec cp {} main_repo/report_us.html \;
+          find KR_Market_Analyst -name "report_kr.html" -exec cp {} main_repo/report_kr.html \;
           
           # 4. Commit and Push
           cd main_repo
