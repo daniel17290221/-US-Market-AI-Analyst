@@ -98,15 +98,12 @@ class EnhancedSmartMoneyScreener:
             if count < 15:
                 try:
                     t = yf.Ticker(ticker)
-                    info = t.info
-                    sector = info.get('sector', '기타')
-                    
-                    # Map exchange to TradingView prefix
-                    raw_exchange = info.get('exchange', 'NYSE')
-                    if any(x in raw_exchange.upper() for x in ['NAS', 'NMS', 'NGM', 'NCM']):
+                    # Use fast_info to avoid slow .info call
+                    f_info = t.fast_info
+                    exchange = f_info.get('exchange', 'NYSE')
+                    # Basic mapping to human readable names
+                    if any(x in str(exchange).upper() for x in ['NAS', 'NMS', 'NGM', 'NCM']):
                         exchange = "NASDAQ"
-                    elif any(x in raw_exchange.upper() for x in ['NYQ', 'NYSE', 'ASE', 'AMEX']):
-                        exchange = "NYSE"
                     else:
                         exchange = "NYSE"
                 except:

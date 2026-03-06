@@ -53,7 +53,8 @@ class USAIAnalyzer:
             curr_price = 0
             try:
                 t = yf.Ticker(ticker)
-                curr_price = t.info.get('regularMarketPrice') or t.fast_info.get('last_price', 0)
+                # Use fast_info - MUCH faster than .info
+                curr_price = t.fast_info.get('last_price', 0)
                 if curr_price == 0:
                     hist = t.history(period="1d")
                     if not hist.empty: curr_price = hist['Close'].iloc[-1]
