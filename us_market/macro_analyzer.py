@@ -106,41 +106,59 @@ class MacroAnalyzer:
         - strategy: 현재의 긴박한 시장 상황에 맞춘 구체적인 대응 전략
         """
         
+        # Load env forcefully just in case
+        load_dotenv()
+        api_key = os.getenv('GOOGLE_API_KEY') or os.getenv('google_api_key')
+        
         try:
-            if self.model == 'gemini' and (self.gemini_key):
-                import google.generativeai as genai
-                model = genai.GenerativeModel('gemini-2.0-flash')
-                response = model.generate_content(prompt)
-                return self._parse_response(response.text)
-            
-            else:
+            if not api_key:
                 logger.warning("No API keys found. Returning mock analysis.")
                 return self._get_mock_analysis()
                 
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "response_mime_type": "application/json",
+                    "temperature": 0.7
+                }
+            }
+            resp = requests.post(url, json=payload, timeout=30)
+            if resp.status_code == 200:
+                text = resp.json()['candidates'][0]['content']['parts'][0]['text'].strip()
+                return self._parse_response(text)
+            else:
+                logger.error(f"REST API failed: {resp.text}")
+                return self._get_mock_analysis()
+
         except Exception as e:
-            logger.error(f"AI Generation Error: {e}")
+            logger.error(f"AI Generation Error: {str(e)}")
             return self._get_mock_analysis()
 
     def _parse_response(self, text: str) -> dict:
         """Clean and parse JSON from AI response"""
         try:
-            text = text.replace('```json', '').replace('```', '')
+            text = text.replace('```json', '').replace('```', '').strip()
             return json.loads(text)
-        except:
+        except Exception as e:
+            logger.error(f"Failed to parse JSON from AI: {str(e)}\nRaw Response: {text}")
             return self._get_mock_analysis()
 
     def _get_mock_analysis(self) -> dict:
-        """Fallback mock analysis"""
+        """Dynamic Mock analysis when fails, using TODAY's date"""
+        import time as _time
         return {
-            "market_mood": "Greed",
-            "mood_score": 75,
+            "market_mood": "중립",
+            "mood_score": 50,
             "key_takeaways": [
-                "AI 주도 기술주 랠리가 시장 상승 견인",
-                "금리 인하 불확실성에도 소비자 심리 견고",
-                "지정학적 리스크가 유가에 미치는 영향 제한적"
+                f"[{datetime.now().strftime('%m월 %d일')}] AI 데이터 수집 실패로 기본 데이터가 노출됩니다.",
+                "Gemini API 통신 지연 혹은 응답 형식 오류가 발생했습니다.",
+                "시장 데이터(지수 자체)는 정상적으로 수집중입니다."
             ],
-            "sector_outlook": "기술(Tech) 및 임의소비재(Discretionary) 강세 예상",
-            "risk_factors": "국채 금리 상승 및 인플레이션 고착화 우려"
+            "sector_outlook": "임시 대응 모드 가동 중",
+            "risk_factors": "API 연동 에러",
+            "strategy": {"단기": "API 복구 대기", "중장기": "정상화 후 리포트 확인"},
+            "timestamp": datetime.now().isoformat()
         }
 
     def run(self):
