@@ -40,7 +40,7 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           echo "🔍 Fetching today's market news and generating macro analysis..."
-          timeout 90s python us_market/macro_analyzer.py || echo "⚠️ Macro analyzer timed out - will use previous data"
+          python us_market/macro_analyzer.py
           echo "macro_analyzer done at $(date)"
 
       - name: Run Full Market Update Pipeline
@@ -56,7 +56,7 @@ jobs:
         run: |
           # Always regenerate the report to ensure latest macro data is used
           echo "📝 Regenerating final report with today's data..."
-          timeout 120s python us_market/daily_report_generator.py || echo "⚠️ Report generator failed"
+          python us_market/daily_report_generator.py
           ls -la us_market/us_market_morning_report.html
 
       - name: Commit and Push changes to CURRENT repo

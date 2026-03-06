@@ -20,7 +20,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class USDailyReportGenerator:
-    def __init__(self, data_dir: str = '.'):
+    def __init__(self, data_dir: str = None):
+        if data_dir is None:
+            data_dir = os.path.dirname(os.path.abspath(__file__))
         self.data_dir = data_dir
         self.output_file = os.path.join(data_dir, 'us_market_morning_report.html')
         

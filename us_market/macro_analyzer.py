@@ -28,7 +28,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class MacroAnalyzer:
-    def __init__(self, data_dir: str = '.', model: str = 'gemini'):
+    def __init__(self, data_dir: str = None, model: str = 'gemini'):
+        if data_dir is None:
+            data_dir = os.path.dirname(os.path.abspath(__file__))
+            
         self.data_dir = data_dir
         self.output_file = os.path.join(data_dir, 'us_macro_analysis.json')
         self.model = model
