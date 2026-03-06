@@ -43,20 +43,24 @@ jobs:
           git config --local user.email "1729021@naver.com"
           git config --local user.name "daniel"
           
-          # Add the generated KR data and report files using -f to bypass .gitignore
+          echo "=== Verifying KR Files ==="
+          ls -l KR_Market_Analyst/kr_market/report_kr.html || echo "File not found"
+          
+          # Add the generated KR data and report files
           git add -f KR_Market_Analyst/kr_market/kr_daily_data.json
           git add -f KR_Market_Analyst/kr_market/report_kr.html
           
-          # Commit only if there are changes
+          # Force a commit even if git thinks nothing changed
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No changes detected. Forcing update..."
+            date > last_run_kr.txt
+            git add last_run_kr.txt
+            git commit -m "auto: Manual forced KR update $(date +'%Y-%m-%d %H:%M')"
           else
             git commit -m "auto: KR market data & report update $(date +'%Y-%m-%d %H:%M')"
-            # Pull rebase 모드로 충돌 방지
-            git pull origin main --rebase --no-edit || true
-            git push origin main
-            echo "Pushed KR data update."
           fi
+          
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
 
       - name: Deploy to MAIN Domain Repository (GitHub Pages)
         env:

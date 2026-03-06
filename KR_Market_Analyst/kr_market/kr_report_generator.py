@@ -475,17 +475,19 @@ class KRDailyReportGenerator:
                 return "<html><body><h1>Error</h1><p>KR Data not found (kr_daily_data.json)</p></body></html>"
             ai_content = self.generate_ai_content(raw_data)
             html_content = self.generate_html(raw_data, ai_content)
+            
+            # --- 강제 갱신용 타임스탬프 주입 ---
+            html_content += f"\n<!-- Generation ID: {datetime.now().isoformat()} -->"
 
-            # 로컬 저장
+            # 1. 로컬 저장 (output_file 경로가 초기화 시 설정됨)
             try:
-                output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'report_kr.html')
-                with open(output_path, 'w', encoding='utf-8') as f:
+                with open(self.output_file, 'w', encoding='utf-8') as f:
                     f.write(html_content)
-                logger.info(f"[SUCCESS] KR 리포트 로컬 저장: {output_path}")
+                logger.info(f"[SUCCESS] KR 리포트 로컬 저장: {self.output_file}")
             except Exception as e:
                 logger.warning(f"[WARN] 로컬 저장 실패: {e}")
 
-            # GitHub 배포
+            # 2. GitHub 배포 (temp_pages_repo)
             try:
                 self._deploy_to_github_pages(html_content)
             except Exception as e:
@@ -496,11 +498,9 @@ class KRDailyReportGenerator:
             import traceback
             error_trace = traceback.format_exc()
             logger.error(f"[FATAL] KR Report generation crashed: {error_trace}")
-            from datetime import datetime
             html_template = f"<html><body><h1>Fatal Error in KR Generator</h1><pre>{error_trace}</pre>\n<!-- Generation ID: {datetime.now().isoformat()} --></body></html>"
             try:
-                output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'report_kr.html')
-                with open(output_path, 'w', encoding='utf-8') as f:
+                with open(self.output_file, 'w', encoding='utf-8') as f:
                     f.write(html_template)
             except:
                 pass
