@@ -2,12 +2,12 @@ name: Daily US Market Report Update
 
 on:
   schedule:
-    # 1회/일: 07:30 KST (22:30 UTC 전날) - 장 시작 전 아침 브리핑 (월~토 아침)
+    # 07:30 KST (22:30 UTC 전날) - 장 시작 전 아침 브리핑 (월~토 아침)
     - cron: '30 22 * * 0-5'
-  workflow_dispatch:  # 수동 실행만 허용 (push 트리거 제거 - 무한루프 방지)
+  workflow_dispatch:  # 수동 실행 허용
 
 jobs:
-  update-report:
+  update-us-report:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,91 +35,79 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements_local.txt
 
-      - name: Run Full Market Update Pipeline
+      - name: Generate US Market Report (Fast Mode)
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
-          echo "🚀 Starting full market update pipeline..."
-          # Verify API key is available
+          echo "🚀 Starting US Market Report generation (fast mode)..."
           if [ -z "$GOOGLE_API_KEY" ]; then
-            echo "❌ [CRITICAL] GOOGLE_API_KEY secret is NOT set! Reports will use fallback content!"
+            echo "❌ [CRITICAL] GOOGLE_API_KEY is NOT set!"
             exit 1
           fi
           echo "✅ GOOGLE_API_KEY is set (length: ${#GOOGLE_API_KEY} chars)"
-          # Ensure we are in the right directory
           cd $GITHUB_WORKSPACE
-          python us_market/update_all.py 2>&1
-          
-          echo "=== [VERIFY] Checking generated report content ==="
+
+          # --fast: runs macro_analyzer.py + daily_report_generator.py only (~2 min)
+          # Skips heavy S&P500 download, 13F analysis, etc.
+          python us_market/update_all.py --fast 2>&1
+
+          echo "=== [VERIFY] Checking US report ==="
           US_SIZE=$(wc -c < us_market/report_us.html 2>/dev/null || echo 0)
-          KR_SIZE=$(wc -c < KR_Market_Analyst/kr_market/report_kr.html 2>/dev/null || echo 0)
           echo "US report size: $US_SIZE bytes"
-          echo "KR report size: $KR_SIZE bytes"
-          
           if [ "$US_SIZE" -lt 5000 ]; then
-            echo "❌ [WARNING] US report seems too small ($US_SIZE bytes) - may be error page!"
+            echo "❌ US report is too small - generation may have failed!"
+            exit 1
           else
-            echo "✅ US report size OK"
-          fi
-          if [ "$KR_SIZE" -lt 5000 ]; then
-            echo "❌ [WARNING] KR report seems too small ($KR_SIZE bytes) - may be error page!"
-          else
-            echo "✅ KR report size OK"
+            echo "✅ US report generated successfully"
           fi
 
-      - name: Commit and Push changes to CURRENT repo
+      - name: Commit and Push US report to source repo
         run: |
           git config --local user.email "1729021@naver.com"
           git config --local user.name "daniel"
-          
-          echo "=== [DEBUG] Verifying Generated Files ==="
-          find . -name "report_us.html"
-          find . -name "report_kr.html"
-          echo "========================================"
-          
-          # Force add with absolute-like paths to avoid any scoping issues
+
           git add -f us_market/report_us.html || true
-          git add -f KR_Market_Analyst/kr_market/report_kr.html || true
           git add -A us_market/*.json || true
-          git add -A KR_Market_Analyst/kr_market/*.json || true
           git add -A us_market/*.csv || true
-          
-          # Force a commit even if git thinks nothing changed (by adding a timestamp to a dedicated log or just check diff)
+
           if git diff --cached --quiet; then
             echo "No changes detected. Forcing a refresh commit..."
-            date > last_run.txt
-            git add last_run.txt
-            git commit -m "auto: Manual forced update $(date +'%Y-%m-%d %H:%M')"
+            date > last_run_us.txt
+            git add last_run_us.txt
+            git commit -m "auto: US report refresh $(date +'%Y-%m-%d %H:%M')"
           else
-            git commit -m "auto: Daily market report update $(date +'%Y-%m-%d %H:%M')"
+            git commit -m "auto: US Daily report update $(date +'%Y-%m-%d %H:%M')"
           fi
-          
+
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
 
-      - name: Deploy to MAIN Domain Repository (GitHub Pages)
+      - name: Deploy US report to GitHub Pages
         env:
-          API_TOKEN_GITHUB: ${{ secrets.DEPLOY_TOKEN }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         run: |
-          # 1. Clone the target repository cleanly
           rm -rf main_repo
           git clone https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/daniel17290221/daniel17290221.github.io.git main_repo
-          
-          # 2. Sync files
-          cp -f us_market/report_us.html main_repo/report_us.html || true
-          cp -f KR_Market_Analyst/kr_market/report_kr.html main_repo/report_kr.html || true
-          
-          # 3. Commit and Push with Force
+
+          cp -f us_market/report_us.html main_repo/report_us.html
+
           cd main_repo
           git config user.email "1729021@naver.com"
           git config user.name "daniel"
-          git add .
-          if git commit -m "auto: Update AI Reports $(date +'%Y-%m-%d %H:%M')"; then
+          git add report_us.html
+          if git commit -m "auto: US report update $(date +'%Y-%m-%d %H:%M')"; then
             git push origin main --force
-            echo "✅ GitHub Pages updated!"
+            echo "✅ GitHub Pages updated with new US report!"
           else
-            echo "No changes for domain repo"
+            echo "No changes to deploy"
           fi
 
-      # NOTE: Vercel is automatically triggered by the git push in the step above.
-      # A separate "Trigger Vercel Redeployment" push is NOT needed and was causing
-      # duplicate deployments (2 pushes × 2 connected Vercel projects = 4 deployments).
+      - name: Trigger Vercel Redeployment
+        run: |
+          cd $GITHUB_WORKSPACE
+          git config --local user.email "1729021@naver.com"
+          git config --local user.name "daniel"
+          echo "US Report updated: $(date +'%Y-%m-%d %H:%M:%S')" > vercel-trigger.txt
+          git add vercel-trigger.txt
+          git commit -m "trigger: Vercel redeploy $(date +'%Y-%m-%d')" || echo "Already committed"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
+          echo "✅ Vercel redeployment triggered!"

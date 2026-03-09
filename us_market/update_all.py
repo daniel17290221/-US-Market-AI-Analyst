@@ -68,6 +68,11 @@ def run_scripts(script_list, base_dir, label=""):
             continue
 
 def run_all():
+    import argparse
+    parser = argparse.ArgumentParser(description='Update All Orchestrator')
+    parser.add_argument('--fast', action='store_true', help='Skip slow data collection scripts')
+    args = parser.parse_args()
+
     base_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.dirname(base_dir)
     logger.info(f"Starting Full Market Update... ({base_dir})")
@@ -77,28 +82,11 @@ def run_all():
     run_scripts(FAST_SCRIPTS, base_dir, label="FAST")
 
     # ★ PHASE 2: Run heavy data collection scripts AFTER report is saved
-    logger.info("=== PHASE 2: Heavy Data Collection (Slow) ===")
-    run_scripts(SLOW_SCRIPTS, base_dir, label="SLOW")
-
-    # ★ PHASE 3: KR Market Update
-    logger.info("=== PHASE 3: KR Market Update ===")
-    kr_update_script = os.path.join(root_dir, 'KR_Market_Analyst', 'update_kr.py')
-    if os.path.exists(kr_update_script):
-        try:
-            res = subprocess.run(
-                [sys.executable, kr_update_script],
-                capture_output=True, text=True, check=True,
-                cwd=os.path.join(root_dir, 'KR_Market_Analyst'),
-                timeout=300
-            )
-            logger.info(res.stdout)
-            logger.info("KR Update Complete!")
-        except subprocess.TimeoutExpired:
-            logger.error("⚠️ KR Update timed out!")
-        except subprocess.CalledProcessError as e:
-            logger.error(f"❌ KR Market Update failed! STDERR: {e.stderr[:500]}")
+    if not args.fast:
+        logger.info("=== PHASE 2: Heavy Data Collection (Slow) ===")
+        run_scripts(SLOW_SCRIPTS, base_dir, label="SLOW")
     else:
-        logger.warning("KR Update script not found.")
+        logger.info("=== PHASE 2: Skipping Heavy Data Collection (--fast mode) ===")
 
     logger.info("Full Update Cycle Complete!")
 
