@@ -127,9 +127,26 @@ def get_daily_report():
         "User-Agent": "Mozilla/5.0 (VibeCodingLab-Bot)"
     }
 
-    # PRIMARY: GitHub Raw URL (ALWAYS latest - avoids stale Vercel bundle issue)
-    # Vercel bundles files at deploy time, so local file may lag by 1 deploy cycle.
-    # GitHub Raw always reflects the latest committed content.
+    local_paths = [
+        os.path.join(DATA_DIR, 'report_us.html'),
+        os.path.join(BASE_DIR, 'us_market', 'report_us.html'),
+    ]
+
+    is_vercel = os.environ.get('VERCEL') == '1'
+    
+    # IF NOT ON VERCEL (Local Dev): Always prioritize the local file
+    if not is_vercel:
+        for p in local_paths:
+            if os.path.exists(p) and os.path.getsize(p) > 1000:
+                try:
+                    response = make_response(send_file(p, mimetype='text/html'))
+                    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                    response.headers['X-Source'] = 'Local-Dev'
+                    logger.info(f"[US Report] Served from Local Dev Path: {p}")
+                    return response
+                except: continue
+
+    # PRIMARY (Vercel): GitHub Raw URL (ALWAYS latest - avoids stale Vercel bundle issue)
     github_urls = [
         f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/report_us.html?nocache={cache_buster}",
         f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html?nocache={cache_buster}",
@@ -148,11 +165,8 @@ def get_daily_report():
             logger.warning(f"[US Report] GitHub Raw fetch failed: {e}")
             continue
 
-    # FALLBACK: Local file (Vercel bundle - may be 1 deploy behind)
-    local_paths = [
-        os.path.join(DATA_DIR, 'report_us.html'),
-        os.path.join(BASE_DIR, 'us_market', 'report_us.html'),
-    ]
+    # FALLBACK (Vercel): Local file
+
     for p in local_paths:
         if os.path.exists(p) and os.path.getsize(p) > 1000:
             try:

@@ -213,9 +213,27 @@ def get_kr_daily_report():
         "User-Agent": "Mozilla/5.0 (VibeCodingLab-Bot)"
     }
 
-    # PRIMARY: GitHub Raw URL (ALWAYS latest - avoids stale Vercel bundle issue)
-    # Vercel bundles files at deploy time, so local file may lag by 1 deploy cycle.
-    # GitHub Raw always reflects the latest committed content.
+    local_paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'report_kr.html'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'report_kr.html'),
+    ]
+
+    is_vercel = os.environ.get('VERCEL') == '1'
+    
+    # IF NOT ON VERCEL (Local Dev): Always prioritize the local file
+    if not is_vercel:
+        for p in local_paths:
+            if os.path.exists(p) and os.path.getsize(p) > 1000:
+                try:
+                    resp = make_response(send_file(p, mimetype='text/html'))
+                    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                    resp.headers['Content-Type'] = 'text/html; charset=utf-8'
+                    resp.headers['X-Source'] = 'Local-Dev'
+                    logger.info(f"[KR Report] Served from Local Dev Path: {p}")
+                    return resp
+                except: continue
+
+    # PRIMARY (Vercel): GitHub Raw URL (ALWAYS latest - avoids stale Vercel bundle issue)
     github_urls = [
         f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/report_kr.html?nocache={cache_buster}",
         f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html?nocache={cache_buster}",
@@ -234,11 +252,7 @@ def get_kr_daily_report():
             logger.warning(f"[KR Report] GitHub Raw fetch failed: {e}")
             continue
 
-    # FALLBACK: Local file (Vercel bundle - may be 1 deploy behind)
-    local_paths = [
-        os.path.join(KR_DATA_DIR, 'kr_market', 'report_kr.html'),
-        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'report_kr.html'),
-    ]
+    # FALLBACK (Vercel): Local file 
     for p in local_paths:
         if os.path.exists(p) and os.path.getsize(p) > 1000:
             try:
