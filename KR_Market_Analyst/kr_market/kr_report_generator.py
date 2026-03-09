@@ -409,6 +409,13 @@ class KRDailyReportGenerator:
     def _deploy_to_github_pages(self, html_content):
         """생성된 리포트를 GitHub Pages 레포에 복사하고 git push 합니다."""
         import subprocess
+        
+        # GitHub Actions already deployed via the workflow file. 
+        # Skipping this to avoid duplicate commits and submodule conflicts.
+        if os.environ.get('GITHUB_ACTIONS') == 'true':
+            logger.info("[DEPLOY] Skipping Python-based deploy in GitHub Actions environment.")
+            return
+
         try:
             script_dir = os.path.dirname(os.path.abspath(__file__))
             project_root = os.path.dirname(os.path.dirname(script_dir))
