@@ -120,14 +120,6 @@ jobs:
             echo "No changes for domain repo"
           fi
 
-      - name: Trigger Vercel Redeployment
-        run: |
-          # Update vercel-trigger.txt to force Vercel to redeploy
-          cd $GITHUB_WORKSPACE
-          git config --local user.email "1729021@naver.com"
-          git config --local user.name "daniel"
-          echo "Report updated: $(date +'%Y-%m-%d %H:%M:%S')" > vercel-trigger.txt
-          git add vercel-trigger.txt
-          git commit -m "trigger: Vercel redeploy for report $(date +'%Y-%m-%d')" || echo "Already committed"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main --force || echo "Push failed"
-          echo "✅ Vercel redeployment triggered!"
+      # NOTE: Vercel is automatically triggered by the git push in the step above.
+      # A separate "Trigger Vercel Redeployment" push is NOT needed and was causing
+      # duplicate deployments (2 pushes × 2 connected Vercel projects = 4 deployments).
