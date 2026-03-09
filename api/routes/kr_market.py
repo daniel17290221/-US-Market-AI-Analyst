@@ -206,7 +206,6 @@ def get_kr_daily_report():
     import time as _time
     cache_buster = int(_time.time())
 
-    # Aggressive no-cache headers for upstream fetches
     no_cache_headers = {
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
@@ -214,36 +213,41 @@ def get_kr_daily_report():
         "User-Agent": "Mozilla/5.0 (VibeCodingLab-Bot)"
     }
 
-    # Primary: Local file (packaged with deployment - ALWAYS freshest after Vercel redeploy)
-    paths = [
-        os.path.join(KR_DATA_DIR, 'kr_market', 'report_kr.html'),
-        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'report_kr.html'),
-        os.path.join(KR_DATA_DIR, 'kr_market', 'kr_market_daily_report.html'),
-        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'kr_market_daily_report.html')
+    # PRIMARY: GitHub Raw URL (ALWAYS latest - avoids stale Vercel bundle issue)
+    # Vercel bundles files at deploy time, so local file may lag by 1 deploy cycle.
+    # GitHub Raw always reflects the latest committed content.
+    github_urls = [
+        f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/report_kr.html?nocache={cache_buster}",
+        f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html?nocache={cache_buster}",
     ]
-    for p in paths:
-        if os.path.exists(p) and os.path.getsize(p) > 1000:
-            resp = make_response(send_file(p, mimetype='text/html'))
-            resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-            resp.headers['Content-Type'] = 'text/html; charset=utf-8'
-            resp.headers['X-Source'] = 'Local-Bundle'
-            return resp
-
-    # Secondary: Raw source repo (fallback if local missing)
-    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/KR_Market_Analyst/kr_market/report_kr.html?nocache={cache_buster}"
-    # Tertiary: GitHub Pages
-    github_pages_url = f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_kr.html?nocache={cache_buster}"
-
-    urls = [github_raw_repo, github_pages_url]
-    for url in urls:
+    for url in github_urls:
         try:
             resp = requests.get(url, headers=no_cache_headers, timeout=8)
-            if resp.status_code == 200 and len(resp.text) > 1000:
+            if resp.status_code == 200 and len(resp.text) > 5000:
                 response = make_response(resp.text)
                 response.headers['Content-Type'] = 'text/html; charset=utf-8'
                 response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-                response.headers['X-Source'] = 'GitHub-Remote'
+                response.headers['X-Source'] = 'GitHub-Raw-Primary'
+                logger.info(f"[KR Report] Served from GitHub Raw: {url[:80]}")
                 return response
-        except: continue
+        except Exception as e:
+            logger.warning(f"[KR Report] GitHub Raw fetch failed: {e}")
+            continue
+
+    # FALLBACK: Local file (Vercel bundle - may be 1 deploy behind)
+    local_paths = [
+        os.path.join(KR_DATA_DIR, 'kr_market', 'report_kr.html'),
+        os.path.join(BASE_DIR, 'KR_Market_Analyst', 'kr_market', 'report_kr.html'),
+    ]
+    for p in local_paths:
+        if os.path.exists(p) and os.path.getsize(p) > 1000:
+            try:
+                resp = make_response(send_file(p, mimetype='text/html'))
+                resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                resp.headers['Content-Type'] = 'text/html; charset=utf-8'
+                resp.headers['X-Source'] = 'Local-Bundle-Fallback'
+                logger.warning(f"[KR Report] Falling back to local bundle: {p}")
+                return resp
+            except: continue
 
     return "Report not found", 404

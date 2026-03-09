@@ -120,7 +120,6 @@ def get_daily_report():
     import time as _time
     cache_buster = int(_time.time())
 
-    # Aggressive no-cache headers for upstream fetches
     no_cache_headers = {
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
@@ -128,48 +127,40 @@ def get_daily_report():
         "User-Agent": "Mozilla/5.0 (VibeCodingLab-Bot)"
     }
 
-    # Primary: Local file (packaged with deployment - ALWAYS freshest after Vercel redeploy)
-    paths = [
+    # PRIMARY: GitHub Raw URL (ALWAYS latest - avoids stale Vercel bundle issue)
+    # Vercel bundles files at deploy time, so local file may lag by 1 deploy cycle.
+    # GitHub Raw always reflects the latest committed content.
+    github_urls = [
+        f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/report_us.html?nocache={cache_buster}",
+        f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html?nocache={cache_buster}",
+    ]
+    for url in github_urls:
+        try:
+            resp = requests.get(url, headers=no_cache_headers, timeout=8)
+            if resp.status_code == 200 and len(resp.text) > 5000:
+                response = make_response(resp.text)
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                response.headers['Content-Type'] = 'text/html; charset=utf-8'
+                response.headers['X-Source'] = 'GitHub-Raw-Primary'
+                logger.info(f"[US Report] Served from GitHub Raw: {url[:80]}")
+                return response
+        except Exception as e:
+            logger.warning(f"[US Report] GitHub Raw fetch failed: {e}")
+            continue
+
+    # FALLBACK: Local file (Vercel bundle - may be 1 deploy behind)
+    local_paths = [
         os.path.join(DATA_DIR, 'report_us.html'),
         os.path.join(BASE_DIR, 'us_market', 'report_us.html'),
-        os.path.join(DATA_DIR, 'us_market_morning_report.html'),
-        os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')
     ]
-    for p in paths:
+    for p in local_paths:
         if os.path.exists(p) and os.path.getsize(p) > 1000:
             try:
                 response = make_response(send_file(p, mimetype='text/html'))
                 response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-                response.headers['X-Source'] = 'Local-Bundle'
+                response.headers['X-Source'] = 'Local-Bundle-Fallback'
+                logger.warning(f"[US Report] Falling back to local bundle: {p}")
                 return response
             except: continue
-
-    # Secondary: Raw source repo (fallback if local missing)
-    github_raw_repo = f"https://raw.githubusercontent.com/daniel17290221/-US-Market-AI-Analyst/main/us_market/report_us.html?nocache={cache_buster}"
-    # Tertiary: GitHub Pages
-    github_pages_url = f"https://raw.githubusercontent.com/daniel17290221/daniel17290221.github.io/main/report_us.html?nocache={cache_buster}"
-    
-    urls = [github_raw_repo, github_pages_url]
-    for url in urls:
-        try:
-            resp = requests.get(url, headers=no_cache_headers, timeout=5)
-            if resp.status_code == 200 and len(resp.text) > 1000:
-                response = make_response(resp.text)
-                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-                response.headers['Content-Type'] = 'text/html; charset=utf-8'
-                response.headers['X-Source'] = 'GitHub-Remote'
-                return response
-        except: continue
-
-    # Final Fallback: Local file (packaged with deployment)
-    paths = [
-        os.path.join(DATA_DIR, 'us_market_morning_report.html'),
-        os.path.join(BASE_DIR, 'us_market', 'us_market_morning_report.html')
-    ]
-    for p in paths:
-        if os.path.exists(p) and os.path.getsize(p) > 1000:
-            response = make_response(send_file(p, mimetype='text/html'))
-            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-            return response
 
     return "Report not found", 404
