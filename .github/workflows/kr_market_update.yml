@@ -35,8 +35,23 @@ jobs:
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
+          # Verify API key is available
+          if [ -z "$GOOGLE_API_KEY" ]; then
+            echo "❌ [CRITICAL] GOOGLE_API_KEY secret is NOT set! KR Report will use fallback content!"
+            exit 1
+          fi
+          echo "✅ GOOGLE_API_KEY is set (length: ${#GOOGLE_API_KEY} chars)"
           # Use the orchestrator script to update both data and AI report
-          python KR_Market_Analyst/update_kr.py
+          python KR_Market_Analyst/update_kr.py 2>&1
+          
+          echo "=== [VERIFY] Checking KR report ==="
+          KR_SIZE=$(wc -c < KR_Market_Analyst/kr_market/report_kr.html 2>/dev/null || echo 0)
+          echo "KR report size: $KR_SIZE bytes"
+          if [ "$KR_SIZE" -lt 5000 ]; then
+            echo "❌ [WARNING] KR report too small ($KR_SIZE bytes) - may be error page!"
+          else
+            echo "✅ KR report size OK"
+          fi
 
       - name: Commit and Push changes
         run: |

@@ -37,6 +37,7 @@ class KRDailyReportGenerator:
         logger.info("🤖 Generating KR AI Content with Gemini REST API...")
         
         if not self.api_key:
+            logger.error("❌ [CRITICAL] GOOGLE_API_KEY is missing! Returning FALLBACK content. Report will NOT be updated with new AI analysis.")
             return self.get_fallback_content()
 
         # Prepare stock data context for AI
@@ -102,12 +103,17 @@ class KRDailyReportGenerator:
             if resp.status_code == 200:
                 res_json = resp.json()
                 content_text = res_json['candidates'][0]['content']['parts'][0]['text'].strip()
+                logger.info("✅ Gemini AI content generated successfully.")
                 return json.loads(content_text)
             else:
-                logger.error(f"❌ AI API Error: {resp.status_code} - {resp.text}")
+                logger.error(f"❌ [CRITICAL] AI API Error: {resp.status_code} - {resp.text[:500]}")
+                logger.error("❌ [CRITICAL] Returning FALLBACK content. Report will NOT contain new AI analysis!")
                 return self.get_fallback_content()
+        except json.JSONDecodeError as je:
+            logger.error(f"❌ [CRITICAL] AI returned invalid JSON: {je}. Returning FALLBACK.")
+            return self.get_fallback_content()
         except Exception as e:
-            logger.error(f"❌ AI Generation Error: {e}")
+            logger.error(f"❌ [CRITICAL] AI Generation Error: {e}. Returning FALLBACK.")
             return self.get_fallback_content()
 
     def generate_html(self, raw_data, ai_content):
@@ -393,18 +399,11 @@ class KRDailyReportGenerator:
     </div>
 </body>
 </html>
-        """
+"""
+        # Inject forced timestamp INSIDE the HTML so git always detects a change
+        html_template += f"\n<!-- KR Generation ID: {datetime.now().isoformat()} -->"
         
-        try:
-            with open(self.output_file, 'w', encoding='utf-8') as f:
-                f.write(html_template)
-            logger.info(f"[SUCCESS] KR Premium report saved to: {self.output_file}")
-        except Exception as e:
-            logger.warning(f"[WARNING] Could not write KR report to filesystem: {e}")
-
-        # --- Auto-deploy to GitHub Pages (temp_pages_repo) ---
-        self._deploy_to_github_pages(html_template)
-
+        # NOTE: File saving and deployment are handled ONLY in run() to avoid double-write
         return html_template
 
     def _deploy_to_github_pages(self, html_content):
@@ -472,26 +471,28 @@ class KRDailyReportGenerator:
         try:
             raw_data = self.load_data()
             if not raw_data: 
+                logger.error("❌ [FATAL] KR data not found. Aborting report generation.")
                 return "<html><body><h1>Error</h1><p>KR Data not found (kr_daily_data.json)</p></body></html>"
+            
             ai_content = self.generate_ai_content(raw_data)
             html_content = self.generate_html(raw_data, ai_content)
-            
-            # --- 강제 갱신용 타임스탬프 주입 ---
-            html_content += f"\n<!-- Generation ID: {datetime.now().isoformat()} -->"
+            # Timestamp already injected in generate_html()
 
             # 1. 로컬 저장 (output_file 경로가 초기화 시 설정됨)
             try:
                 with open(self.output_file, 'w', encoding='utf-8') as f:
                     f.write(html_content)
-                logger.info(f"[SUCCESS] KR 리포트 로컬 저장: {self.output_file}")
+                logger.info(f"✅ [SUCCESS] KR 리포트 로컬 저장 완료: {self.output_file}")
+                logger.info(f"✅ [SUCCESS] KR 리포트 파일 크기: {len(html_content)} bytes")
             except Exception as e:
-                logger.warning(f"[WARN] 로컬 저장 실패: {e}")
+                logger.error(f"❌ [ERROR] 로컬 저장 실패: {e}")
+                raise  # Re-raise to mark the step as failed
 
-            # 2. GitHub 배포 (temp_pages_repo)
+            # 2. GitHub Pages 배포 (로컬 환경 only - GitHub Actions에서는 workflow가 처리)
             try:
                 self._deploy_to_github_pages(html_content)
             except Exception as e:
-                logger.error(f"[ERROR] KR _deploy_to_github_pages 실패: {e}")
+                logger.warning(f"[WARN] KR _deploy_to_github_pages 실패 (무시): {e}")
                 
             return html_content
         except Exception as crash_e:
@@ -502,6 +503,7 @@ class KRDailyReportGenerator:
             try:
                 with open(self.output_file, 'w', encoding='utf-8') as f:
                     f.write(html_template)
+                logger.info(f"[INFO] Error report saved to: {self.output_file}")
             except:
                 pass
             return html_template

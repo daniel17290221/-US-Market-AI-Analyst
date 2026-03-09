@@ -161,6 +161,7 @@ class USDailyReportGenerator:
     def generate_ai_content(self, raw_data):
         """Synthesize article content via Gemini REST API"""
         if not self.api_key:
+            logger.error("❌ [CRITICAL] GOOGLE_API_KEY is missing! Returning MOCK content. Report will NOT be updated with real AI analysis.")
             return self.get_mock_ai_content(raw_data)
             
         prompt = f"""
@@ -208,12 +209,17 @@ class USDailyReportGenerator:
             if resp.status_code == 200:
                 res_json = resp.json()
                 text = res_json['candidates'][0]['content']['parts'][0]['text'].strip()
+                logger.info("✅ [SUCCESS] Gemini AI content generated successfully.")
                 return json.loads(text)
             else:
-                logger.error(f"AI API Error: {resp.status_code} - {resp.text}")
+                logger.error(f"❌ [CRITICAL] AI API Error: {resp.status_code} - {resp.text[:500]}")
+                logger.error("❌ [CRITICAL] Using MOCK content. Report will NOT contain new AI analysis!")
                 return self.get_mock_ai_content(raw_data)
+        except json.JSONDecodeError as je:
+            logger.error(f"❌ [CRITICAL] AI returned invalid JSON: {je}. Using MOCK content.")
+            return self.get_mock_ai_content(raw_data)
         except Exception as e:
-            logger.error(f"AI Generation Error: {e}")
+            logger.error(f"❌ [CRITICAL] AI Generation Error: {e}. Using MOCK content.")
             return self.get_mock_ai_content(raw_data)
 
     def get_mock_ai_content(self, raw_data):
@@ -593,22 +599,24 @@ class USDailyReportGenerator:
 </body>
 </html>
         """
-        # Add a hidden timestamp to force Git to see a change even if AI content is similar
-        html_template += f"\n<!-- Generation ID: {datetime.now().isoformat()} -->"
+        # Add a forced timestamp to ensure git always detects a change
+        html_template += f"\n<!-- US Generation ID: {datetime.now().isoformat()} -->"
         
-        # 1. Local Filesystem Write (Optional/Non-blocking)
+        # 1. Local Filesystem Write
         try:
             with open(self.output_file, 'w', encoding='utf-8') as f:
                 f.write(html_template)
-            logger.info(f"[SUCCESS] Premium report saved locally to: {self.output_file}")
+            logger.info(f"✅ [SUCCESS] US report saved locally to: {self.output_file}")
+            logger.info(f"✅ [SUCCESS] US report size: {len(html_template)} bytes")
         except Exception as write_e:
-            logger.warning(f"[WARNING] Could not write report locally: {write_e}")
+            logger.error(f"❌ [ERROR] Could not write US report locally: {write_e}")
+            raise  # Re-raise so the GitHub Actions step fails visibly
             
-        # 2. GitHub Pages Repo Write (CRITICAL for updating the actual URL)
+        # 2. GitHub Pages Repo Write (local env only, GitHub Actions workflow handles this)
         try:
             self._deploy_to_github_pages(html_template)
         except Exception as e:
-            logger.error(f"[ERROR] _deploy_to_github_pages failed: {e}")
+            logger.warning(f"[WARN] _deploy_to_github_pages failed (ignored): {e}")
             
         return html_template
 

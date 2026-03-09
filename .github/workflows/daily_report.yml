@@ -40,9 +40,32 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           echo "🚀 Starting full market update pipeline..."
+          # Verify API key is available
+          if [ -z "$GOOGLE_API_KEY" ]; then
+            echo "❌ [CRITICAL] GOOGLE_API_KEY secret is NOT set! Reports will use fallback content!"
+            exit 1
+          fi
+          echo "✅ GOOGLE_API_KEY is set (length: ${#GOOGLE_API_KEY} chars)"
           # Ensure we are in the right directory
           cd $GITHUB_WORKSPACE
-          python us_market/update_all.py
+          python us_market/update_all.py 2>&1
+          
+          echo "=== [VERIFY] Checking generated report content ==="
+          US_SIZE=$(wc -c < us_market/report_us.html 2>/dev/null || echo 0)
+          KR_SIZE=$(wc -c < KR_Market_Analyst/kr_market/report_kr.html 2>/dev/null || echo 0)
+          echo "US report size: $US_SIZE bytes"
+          echo "KR report size: $KR_SIZE bytes"
+          
+          if [ "$US_SIZE" -lt 5000 ]; then
+            echo "❌ [WARNING] US report seems too small ($US_SIZE bytes) - may be error page!"
+          else
+            echo "✅ US report size OK"
+          fi
+          if [ "$KR_SIZE" -lt 5000 ]; then
+            echo "❌ [WARNING] KR report seems too small ($KR_SIZE bytes) - may be error page!"
+          else
+            echo "✅ KR report size OK"
+          fi
 
       - name: Commit and Push changes to CURRENT repo
         run: |
