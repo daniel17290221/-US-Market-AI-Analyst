@@ -19,13 +19,14 @@ class XMarketAgent:
     def __init__(self):
         print(f"[{datetime.now()}] Initializing Global Omni Alpha Agent ($OMNI)...", flush=True)
         # Twitter API setup
-        self.api_key = os.getenv("X_API_KEY")
-        self.api_secret = os.getenv("X_API_SECRET")
-        self.access_token = os.getenv("X_ACCESS_TOKEN")
-        self.access_secret = os.getenv("X_ACCESS_SECRET")
+        self.api_key = os.getenv("X_API_KEY", "").strip()
+        self.api_secret = os.getenv("X_API_SECRET", "").strip()
+        self.access_token = os.getenv("X_ACCESS_TOKEN", "").strip()
+        self.access_secret = os.getenv("X_ACCESS_SECRET", "").strip()
+        self.bearer_token = os.getenv("X_BEARER_TOKEN", "").strip()
         
         # Google Gemini setup (REST API, no SDK)
-        self.gemini_key = os.getenv("GOOGLE_API_KEY")
+        self.gemini_key = os.getenv("GOOGLE_API_KEY", "").strip()
         self.gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.gemini_key}" if self.gemini_key else None
         
         # Twitter Client (v2)
@@ -39,6 +40,7 @@ class XMarketAgent:
                 print(f"[{datetime.now()}] Debug Keys: API_K={k_mask}, API_S={s_mask}, ACC_T={at_mask}, ACC_S={as_mask}", flush=True)
 
                 self.client = tweepy.Client(
+                    bearer_token=self.bearer_token if self.bearer_token else None,
                     consumer_key=self.api_key,
                     consumer_secret=self.api_secret,
                     access_token=self.access_token,
