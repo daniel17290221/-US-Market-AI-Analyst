@@ -157,6 +157,13 @@ class OmniXBroadcaster:
             print(f"Gemini error: {e}")
             return None
 
+    def _calculate_weighted_length(self, text):
+        weighted_len = 0
+        for char in text:
+            if ord(char) > 0x07FF: weighted_len += 2
+            else: weighted_len += 1
+        return weighted_len
+
     def broadcast(self):
         context = self.construct_context()
         tweet_text = self.generate_tweet(context)
@@ -164,22 +171,37 @@ class OmniXBroadcaster:
         if tweet_text:
             print(f"\n[DRAFT TWEET]:\n{tweet_text}\n")
             
+            if self._calculate_weighted_length(tweet_text) > 280:
+                print(f"Warning: Tweet too long. Clipping...")
+                while self._calculate_weighted_length(tweet_text + "...") > 280:
+                    tweet_text = tweet_text[:-1]
+                tweet_text = tweet_text + "..."
+
             if self.client:
                 try:
-                    # Clip if necessary
-                    if len(tweet_text) > 280:
-                        tweet_text = tweet_text[:277] + "..."
-                    
+                    # Auth check
+                    try:
+                        me = self.client.get_me()
+                        if me and me.data:
+                            print(f"Authenticated as: @{me.data.username}")
+                    except Exception as auth_err:
+                        print(f"Auth Check Warning: {auth_err}")
+
                     response = self.client.create_tweet(text=tweet_text)
                     print(f"SUCCESS! Tweet ID: {response.data['id']}")
                     
-                    # Log for record
-                    with open("logs/x_broadcast.log", "a", encoding="utf-8") as f:
+                    # Log for record (use /tmp on Vercel)
+                    log_dir = "/tmp/logs" if os.environ.get('VERCEL') else "logs"
+                    if not os.path.exists(log_dir):
+                        os.makedirs(log_dir)
+                    with open(os.path.join(log_dir, "x_broadcast.log"), "a", encoding="utf-8") as f:
                         f.write(f"[{datetime.now()}] {tweet_text}\n")
                         
                     return True
                 except Exception as e:
                     print(f"Broadcast failed: {e}")
+                    if hasattr(e, 'response') and e.response is not None:
+                        print(f"X API Response: {e.response.text}")
             else:
                 print("Simulation Success (No Credentials).")
         return False

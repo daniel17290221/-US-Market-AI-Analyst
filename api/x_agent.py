@@ -280,7 +280,8 @@ class XMarketAgent:
                     text = text[:-1]
                 text = text + "..."
                 
-            log_dir = "logs"
+            # Determine log directory (use /tmp on Vercel for write access)
+            log_dir = "/tmp/logs" if os.environ.get('VERCEL') else "logs"
             if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
                 
@@ -334,8 +335,8 @@ class XMarketAgent:
                         tweet_text = tweet_text[:-1]
                     tweet_text = tweet_text + "..."
                 
-                # Use a dedicated log file to avoid console encoding issues
-                log_dir = "logs"
+                # Determine log directory (use /tmp on Vercel for write access)
+                log_dir = "/tmp/logs" if os.environ.get('VERCEL') else "logs"
                 if not os.path.exists(log_dir):
                     os.makedirs(log_dir)
                 
