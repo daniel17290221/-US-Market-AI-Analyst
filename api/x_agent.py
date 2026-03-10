@@ -39,8 +39,9 @@ class XMarketAgent:
                 as_mask = f"{self.access_secret[:4]}..." if self.access_secret else "None"
                 print(f"[{datetime.now()}] Debug Keys: API_K={k_mask}, API_S={s_mask}, ACC_T={at_mask}, ACC_S={as_mask}", flush=True)
 
+                # Simplify Client: Use ONLY OAuth 1.0a (User Context) for posting.
+                # Avoid providing Bearer Token here as it can sometimes confuse v2 endpoints if mismatched.
                 self.client = tweepy.Client(
-                    bearer_token=self.bearer_token if self.bearer_token else None,
                     consumer_key=self.api_key,
                     consumer_secret=self.api_secret,
                     access_token=self.access_token,
@@ -315,8 +316,16 @@ class XMarketAgent:
                 return True
         except Exception as e:
             err_msg = str(e)
+            # Tweepy v2 errors often hide details in response object
+            if hasattr(e, 'api_codes'):
+                err_msg += f" | Codes: {e.api_codes}"
+            if hasattr(e, 'api_messages'):
+                err_msg += f" | Messages: {e.api_messages}"
             if hasattr(e, 'response') and e.response is not None:
-                err_msg += f" | Details: {e.response.text}"
+                try:
+                    err_msg += f" | Raw: {e.response.text}"
+                except:
+                    pass
             print(f"[{datetime.now()}] Dispatch FAILED: {err_msg}", flush=True)
             return False, err_msg
 
