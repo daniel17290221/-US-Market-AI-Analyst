@@ -183,7 +183,7 @@ class XMarketAgent:
         3. 영역: 주식, 가상화폐, 거시경제, 금, 채권 등 종합 커버.
         4. 구조: [마켓 인사이트] -> [상황 분석] -> [대응 전략] -> [해시태그]
         5. 하단 고정: "더 자세한 분석은 Omni Analyst를 확인하세요."
-        6. 제한: 공백 포함 280자 이내. 전문 용어 사용 가능.
+        6. 제한: 공백 포함 130자 이내 (X 한국어 가중치 제한 준수). 전문 용어 사용 가능.
         """
         return self._request_gemini(prompt)
 
@@ -254,6 +254,17 @@ class XMarketAgent:
             print(f"[{datetime.now()}] Error fetching tweets from X: {e}", flush=True)
             return []
 
+    def _calculate_weighted_length(self, text):
+        """Calculates X (Twitter) weighted length: CJK characters count as 2, others as 1."""
+        weighted_len = 0
+        for char in text:
+            # Simple heuristic: if ord > 0x7FF, it's likely a 2-unit character (like Korean/Chinese/Japanese/Emojis)
+            if ord(char) > 0x07FF:
+                weighted_len += 2
+            else:
+                weighted_len += 1
+        return weighted_len
+
     def post_custom_tweet(self, text):
         """Posts a custom given text to X"""
         print(f"[{datetime.now()}] Dispatching custom Omni broadcast...", flush=True)
@@ -261,8 +272,13 @@ class XMarketAgent:
             return False
             
         try:
-            if len(text) > 280:
-                text = text[:277] + "..."
+            # Weighted length clipping for X
+            # V2 API limit is 280 weighted characters.
+            if self._calculate_weighted_length(text) > 280:
+                print(f"[{datetime.now()}] Warning: Tweet too long. Clipping...")
+                while self._calculate_weighted_length(text + "...") > 280:
+                    text = text[:-1]
+                text = text + "..."
                 
             log_dir = "logs"
             if not os.path.exists(log_dir):
@@ -273,6 +289,14 @@ class XMarketAgent:
                 f.write(f"[{datetime.now()}] MODE: custom | CONTENT: {text}\n")
 
             if self.client:
+                # Test connectivity
+                try:
+                    me = self.client.get_me()
+                    if me and me.data:
+                        print(f"[{datetime.now()}] Authenticated as: @{me.data.username}", flush=True)
+                except Exception as auth_err:
+                    print(f"[{datetime.now()}] Auth Check Warning (Permissions?): {auth_err}", flush=True)
+
                 response = self.client.create_tweet(text=text)
                 print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
                 return True
@@ -280,8 +304,11 @@ class XMarketAgent:
                 print(f"[{datetime.now()}] SIMULATION (Custom) SUCCESS: {text}", flush=True)
                 return True
         except Exception as e:
-            print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
-            return False
+            err_msg = str(e)
+            if hasattr(e, 'response') and e.response is not None:
+                err_msg += f" | Details: {e.response.text}"
+            print(f"[{datetime.now()}] Dispatch FAILED: {err_msg}", flush=True)
+            return False, err_msg
 
     def post_tweet(self, mode="standard"):
         """Executes the automated briefing based on mode"""
@@ -300,8 +327,12 @@ class XMarketAgent:
         
         if tweet_text:
             try:
-                if len(tweet_text) > 280:
-                    tweet_text = tweet_text[:277] + "..."
+                # Weighted length clipping for X
+                if self._calculate_weighted_length(tweet_text) > 280:
+                    print(f"[{datetime.now()}] Warning: Tweet too long ({self._calculate_weighted_length(tweet_text)} units). Clipping...")
+                    while self._calculate_weighted_length(tweet_text + "...") > 280:
+                        tweet_text = tweet_text[:-1]
+                    tweet_text = tweet_text + "..."
                 
                 # Use a dedicated log file to avoid console encoding issues
                 log_dir = "logs"
@@ -313,6 +344,14 @@ class XMarketAgent:
                     f.write(f"[{datetime.now()}] MODE: {mode} | CONTENT: {tweet_text}\n")
 
                 if self.client:
+                    # Test connectivity
+                    try:
+                        me = self.client.get_me()
+                        if me and me.data:
+                            print(f"[{datetime.now()}] Authenticated as: @{me.data.username}", flush=True)
+                    except Exception as auth_err:
+                        print(f"[{datetime.now()}] Auth Check Warning (Permissions?): {auth_err}", flush=True)
+
                     response = self.client.create_tweet(text=tweet_text)
                     print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
                     return True
@@ -320,7 +359,9 @@ class XMarketAgent:
                     print(f"[{datetime.now()}] SIMULATION SUCCESS: {tweet_text}", flush=True)
                     return True
             except Exception as e:
-                 print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
+                  print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
+                  if hasattr(e, 'response') and e.response is not None:
+                      print(f"[{datetime.now()}] X API Response Error Body: {e.response.text}", flush=True)
         return False
 
 if __name__ == "__main__":

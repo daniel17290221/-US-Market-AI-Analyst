@@ -508,10 +508,14 @@
                     document.getElementById('tweetContent').value = '';
                     fetchHistory();
                 } else {
-                    alert("Broadcast Error: " + result.message);
+                    const errorMsg = result.message || "Unknown error";
+                    const trace = result.trace ? `\n\nTrace:\n${result.trace}` : "";
+                    alert("Broadcast Error: " + errorMsg + trace);
+                    console.error("Server Error Detail:", result);
                 }
             } catch (e) {
                 alert("Matrix Link Error: " + e.message);
+                console.error("Fetch Error:", e);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;

@@ -268,11 +268,16 @@ def x_post_manual():
             else:
                 return jsonify({"status": "failed", "message": "AI Drafting failed"}), 500
 
-        success = agent.post_custom_tweet(target_text)
+        result = agent.post_custom_tweet(target_text)
+        success = result[0] if isinstance(result, tuple) else result
+        error_detail = result[1] if isinstance(result, tuple) else "Unknown error"
+
         if success:
             return jsonify({"status": "success", "message": "Broadcasted", "tweet": target_text})
         else:
-            return jsonify({"status": "failed", "message": "Post failed"}), 500
+            return jsonify({"status": "failed", "message": f"Post failed: {error_detail}"}), 500
     except Exception as e:
-        logger.error(f"Manual X Post Error: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        import traceback
+        error_trace = traceback.format_exc()
+        logger.error(f"Manual X Post Error: {e}\n{error_trace}")
+        return jsonify({"status": "error", "message": str(e), "trace": error_trace}), 500
