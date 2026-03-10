@@ -31,6 +31,13 @@ class XMarketAgent:
         # Twitter Client (v2)
         try:
             if self.api_key:
+                # Masked logging for debugging (only first 4 chars)
+                k_mask = f"{self.api_key[:4]}..." if self.api_key else "None"
+                s_mask = f"{self.api_secret[:4]}..." if self.api_secret else "None"
+                at_mask = f"{self.access_token[:4]}..." if self.access_token else "None"
+                as_mask = f"{self.access_secret[:4]}..." if self.access_secret else "None"
+                print(f"[{datetime.now()}] Debug Keys: API_K={k_mask}, API_S={s_mask}, ACC_T={at_mask}, ACC_S={as_mask}", flush=True)
+
                 self.client = tweepy.Client(
                     consumer_key=self.api_key,
                     consumer_secret=self.api_secret,
