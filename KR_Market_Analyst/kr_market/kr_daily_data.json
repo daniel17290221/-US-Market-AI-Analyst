@@ -1,69 +1,91 @@
 {
-    "date": "2026-03-13 05:00:15 KST",
+    "date": "2026-03-13 08:00:55 KST",
     "market_indices": {
         "KOSPI": {
             "symbol": "KS11",
             "name": "코스피",
-            "price": "5,503.77",
-            "change": "-1.42%"
+            "price": "5,487.24",
+            "change": "-1.72%"
         },
         "KOSDAQ": {
             "symbol": "KQ11",
             "name": "코스닥",
-            "price": "1,153.26",
-            "change": "+0.42%"
+            "price": "1,152.96",
+            "change": "+0.40%"
         },
         "KOSPI200": {
             "symbol": "KS200",
             "name": "코스피 200",
-            "price": "815.98",
-            "change": "-1.39%"
+            "price": "812.93",
+            "change": "-1.76%"
         }
     },
     "commodities": [
         {
             "name": "원/달러 환율",
-            "price": "1,489.77",
+            "price": "1,497.20",
             "change": "+nan%"
         },
         {
             "name": "WTI 원유",
-            "price": "95.37",
+            "price": "96.99",
             "change": "+nan%"
         },
         {
             "name": "국제 금",
-            "price": "5,108.80",
+            "price": "5,089.80",
             "change": "+nan%"
         }
     ],
     "sector_heatmap": [
         {
             "sector": "게임/엔터",
-            "change": 4.438,
-            "change_str": "+4.44%",
+            "change": 4.196,
+            "change_str": "+4.20%",
             "stocks": [
                 {
                     "symbol": "036570",
                     "name": "엔씨소프트",
-                    "change": "+8.02%"
+                    "change": "+7.78%"
                 },
                 {
                     "symbol": "259960",
                     "name": "크래프톤",
-                    "change": "+10.62%"
+                    "change": "+8.19%"
                 },
                 {
                     "symbol": "352820",
                     "name": "하이브",
-                    "change": "+1.69%"
+                    "change": "+1.83%"
+                }
+            ]
+        },
+        {
+            "sector": "바이오",
+            "change": 0.9040000000000001,
+            "change_str": "+0.90%",
+            "stocks": [
+                {
+                    "symbol": "207940",
+                    "name": "삼성바이오로직스",
+                    "change": "-2.03%"
+                },
+                {
+                    "symbol": "068270",
+                    "name": "셀트리온",
+                    "change": "-0.24%"
+                },
+                {
+                    "symbol": "000100",
+                    "name": "유한양행",
+                    "change": "-0.60%"
                 }
             ]
         },
         {
             "sector": "IT/플랫폼",
-            "change": 0.0725,
-            "change_str": "+0.07%",
+            "change": 0.11750000000000003,
+            "change_str": "+0.12%",
             "stocks": [
                 {
                     "symbol": "035420",
@@ -78,183 +100,161 @@
                 {
                     "symbol": "035810",
                     "name": "이지홀딩스",
-                    "change": "-1.97%"
-                }
-            ]
-        },
-        {
-            "sector": "바이오",
-            "change": -0.152,
-            "change_str": "-0.15%",
-            "stocks": [
-                {
-                    "symbol": "207940",
-                    "name": "삼성바이오로직스",
-                    "change": "-2.15%"
-                },
-                {
-                    "symbol": "068270",
-                    "name": "셀트리온",
-                    "change": "-0.49%"
-                },
-                {
-                    "symbol": "000100",
-                    "name": "유한양행",
-                    "change": "-0.30%"
-                }
-            ]
-        },
-        {
-            "sector": "철강/금속",
-            "change": -0.5575000000000001,
-            "change_str": "-0.56%",
-            "stocks": [
-                {
-                    "symbol": "005490",
-                    "name": "POSCO홀딩스",
-                    "change": "-2.16%"
-                },
-                {
-                    "symbol": "004020",
-                    "name": "현대제철",
-                    "change": "-1.59%"
-                },
-                {
-                    "symbol": "010130",
-                    "name": "고려아연",
-                    "change": "-1.73%"
+                    "change": "-3.11%"
                 }
             ]
         },
         {
             "sector": "조선/중공업",
-            "change": -0.9133333333333334,
-            "change_str": "-0.91%",
+            "change": -1.31,
+            "change_str": "-1.31%",
             "stocks": [
                 {
                     "symbol": "329180",
                     "name": "HD현대중공업",
-                    "change": "-1.16%"
+                    "change": "-1.32%"
                 },
                 {
                     "symbol": "010140",
                     "name": "삼성중공업",
-                    "change": "+1.13%"
+                    "change": "-0.49%"
                 },
                 {
                     "symbol": "009540",
                     "name": "HD한국조선해양",
-                    "change": "-2.71%"
+                    "change": "-2.12%"
                 }
             ]
         },
         {
-            "sector": "금융/지주",
-            "change": -1.124,
-            "change_str": "-1.12%",
+            "sector": "철강/금속",
+            "change": -1.5875,
+            "change_str": "-1.59%",
             "stocks": [
                 {
-                    "symbol": "105560",
-                    "name": "KB금융",
-                    "change": "+0.74%"
+                    "symbol": "005490",
+                    "name": "POSCO홀딩스",
+                    "change": "-3.02%"
                 },
                 {
-                    "symbol": "055550",
-                    "name": "신한지주",
-                    "change": "+0.11%"
+                    "symbol": "004020",
+                    "name": "현대제철",
+                    "change": "-2.25%"
                 },
                 {
-                    "symbol": "086790",
-                    "name": "하나금융지주",
-                    "change": "-2.04%"
+                    "symbol": "010130",
+                    "name": "고려아연",
+                    "change": "-2.75%"
                 }
             ]
         },
         {
             "sector": "자동차",
-            "change": -1.4449999999999998,
-            "change_str": "-1.44%",
+            "change": -1.815,
+            "change_str": "-1.81%",
             "stocks": [
                 {
                     "symbol": "005380",
                     "name": "현대차",
-                    "change": "+0.00%"
+                    "change": "-0.77%"
                 },
                 {
                     "symbol": "000270",
                     "name": "기아",
-                    "change": "-1.50%"
+                    "change": "-1.62%"
                 },
                 {
                     "symbol": "012330",
                     "name": "현대모비스",
-                    "change": "-2.17%"
+                    "change": "-2.53%"
                 }
             ]
         },
         {
             "sector": "반도체",
-            "change": -2.448,
-            "change_str": "-2.45%",
+            "change": -1.8539999999999999,
+            "change_str": "-1.85%",
             "stocks": [
                 {
                     "symbol": "005930",
                     "name": "삼성전자",
-                    "change": "-1.81%"
+                    "change": "-2.34%"
                 },
                 {
                     "symbol": "000660",
                     "name": "SK하이닉스",
-                    "change": "-1.40%"
+                    "change": "-2.15%"
                 },
                 {
                     "symbol": "042700",
                     "name": "한미반도체",
-                    "change": "-2.21%"
+                    "change": "-3.63%"
+                }
+            ]
+        },
+        {
+            "sector": "금융/지주",
+            "change": -1.8920000000000001,
+            "change_str": "-1.89%",
+            "stocks": [
+                {
+                    "symbol": "105560",
+                    "name": "KB금융",
+                    "change": "-0.20%"
+                },
+                {
+                    "symbol": "055550",
+                    "name": "신한지주",
+                    "change": "-1.20%"
+                },
+                {
+                    "symbol": "086790",
+                    "name": "하나금융지주",
+                    "change": "-3.20%"
                 }
             ]
         },
         {
             "sector": "2차전지",
-            "change": -3.4050000000000002,
-            "change_str": "-3.41%",
+            "change": -3.6550000000000002,
+            "change_str": "-3.66%",
             "stocks": [
                 {
                     "symbol": "373220",
                     "name": "LG에너지솔루션",
-                    "change": "-4.17%"
+                    "change": "-3.91%"
                 },
                 {
                     "symbol": "006400",
                     "name": "삼성SDI",
-                    "change": "-2.25%"
+                    "change": "-3.00%"
                 },
                 {
                     "symbol": "247540",
                     "name": "에코프로비엠",
-                    "change": "-3.89%"
+                    "change": "-3.24%"
                 }
             ]
         },
         {
             "sector": "화학/에너지",
-            "change": -4.7425,
-            "change_str": "-4.74%",
+            "change": -5.452500000000001,
+            "change_str": "-5.45%",
             "stocks": [
                 {
                     "symbol": "051910",
                     "name": "LG화학",
-                    "change": "-2.53%"
+                    "change": "-2.78%"
                 },
                 {
                     "symbol": "096770",
                     "name": "SK이노베이션",
-                    "change": "-6.49%"
+                    "change": "-7.48%"
                 },
                 {
                     "symbol": "010950",
                     "name": "S-Oil",
-                    "change": "-7.20%"
+                    "change": "-8.47%"
                 }
             ]
         }
@@ -270,10 +270,10 @@
     ],
     "market_news": [
         {
-            "title": "“32만전자·170만닉스 간다”…유가 쇼크에도 삼전·하닉 목표가 줄상향 [종목Pick]",
-            "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9Cd0NpSEw1ZHl3WjFoa05nWnFqX2Z0T1lJNURSVXR3UlpTYml5SnI1TjhVZjY1Z1NJZ3BrYVZtd2RRMUdnSFluNk1EZjExd1U?oc=5",
+            "title": "‘거래대금 반토막’에 증권株 이젠 끝인가요…“아직 주주환원 남았다”",
+            "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1Wb2VzNWtjZkhxblgyYzEzWmo1SFZ3TTNqVHhzZndRNGJjS1h4QjZDU1J2TG01UEdFS1ZPd2ZiT2UwdDV0TmFyWWpmWVpLdUE?oc=5",
             "source": "v.daum.net",
-            "date": "Fri, 13 Mar 2026 01:08:59 GMT"
+            "date": "Fri, 13 Mar 2026 07:07:26 GMT"
         },
         {
             "title": "[오늘의 투자전략] 유가·환율 리스크…\"국내 증시 장 초반 하락 출발 전망\"",
@@ -288,16 +288,16 @@
             "date": "Thu, 12 Mar 2026 22:19:56 GMT"
         },
         {
+            "title": "파란불 번진 국내 증시…국제유가 급등에 투심 위축",
+            "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBubEdQZndEbXdHN2RRdDFyamJJd0gyZEFNZndyYXdqam90d1pwWmw1Y0w1OXhLa2gzMkFPVF9VVFk2UVgxMzZpYncyWTdiZTloU3BkZ3didXkyTXBKaXVCd1FlcFQ?oc=5",
+            "source": "서울경제TV",
+            "date": "Fri, 13 Mar 2026 00:32:33 GMT"
+        },
+        {
             "title": "국내증시, ‘네 마녀의 날’에 하락 마감…향후 변수도 증가",
             "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE03X0lIVlV2dkJ2M3JTNUNHVTI0aDZ5YnRhclpvQ2FMRjUyNDVtSU9DUkxBYzh0MGdpcnBEUDBKUUJ0MVUteF95aThMV1BkUnNRUUZ6THZTaGdqY29IQUlMc0UzS2c?oc=5",
             "source": "매일일보",
             "date": "Thu, 12 Mar 2026 06:56:31 GMT"
-        },
-        {
-            "title": "韓 증시 급등락에도… 美 상장된 ‘한국 ETF’에는 자금 유입 - 조선비즈",
-            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNZmo5b2VpXzY1c0RNQjVHZzVpVC1yZGxSQ0x3RGJGSE5Dczh0bWYzSy1DNUo3SXFDNlB3eUFGRGlibUdEanhCM0hzRkMyTTFEbm1sYlAxaEVHSmlmV0ttNEpZSjFETUw1UWxkRF9idWZja1V2eDhGQW1NaHg1dE1sbW1uYnh6ekg10gGcAUFVX3lxTE5oSHFNM2JqcXFaUlMxT2RmYy1CM01XcUVTWFMyOXpMRkxGNEE0QmRBSHBqdndHZjUxdUR3X0hoNl9sTnlSMU5EOXlLQTR5YlJwaGoxX2t0dVFvY1Z2S25YdEtKXzdWLU9NTzdlSUd5LVpNR0RYNl9Gai1aN2FJbmhndlZJZFpRRDVTdFl0anhCb2lDLWhHWk5VdFRTeQ?oc=5",
-            "source": "Chosunbiz",
-            "date": "Tue, 10 Mar 2026 23:33:00 GMT"
         },
         {
             "title": "급락·급등...오늘은 보합? '헬난이도' 국내 증시 곧 방향 잡나?",
@@ -312,16 +312,16 @@
             "date": "Thu, 12 Mar 2026 06:23:00 GMT"
         },
         {
+            "title": "韓 증시 급등락에도… 美 상장된 ‘한국 ETF’에는 자금 유입 - 조선비즈",
+            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNZmo5b2VpXzY1c0RNQjVHZzVpVC1yZGxSQ0x3RGJGSE5Dczh0bWYzSy1DNUo3SXFDNlB3eUFGRGlibUdEanhCM0hzRkMyTTFEbm1sYlAxaEVHSmlmV0ttNEpZSjFETUw1UWxkRF9idWZja1V2eDhGQW1NaHg1dE1sbW1uYnh6ekg10gGcAUFVX3lxTE5oSHFNM2JqcXFaUlMxT2RmYy1CM01XcUVTWFMyOXpMRkxGNEE0QmRBSHBqdndHZjUxdUR3X0hoNl9sTnlSMU5EOXlLQTR5YlJwaGoxX2t0dVFvY1Z2S25YdEtKXzdWLU9NTzdlSUd5LVpNR0RYNl9Gai1aN2FJbmhndlZJZFpRRDVTdFl0anhCb2lDLWhHWk5VdFRTeQ?oc=5",
+            "source": "Chosunbiz",
+            "date": "Tue, 10 Mar 2026 23:33:00 GMT"
+        },
+        {
             "title": "고유가 우려에 국내 증시 변동성 확대… 코스피 10%대 급등락",
             "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE91Q0k3VDJudzdJOUhIWnpSUlVmOWlmcWtyWkdkU0ZkdG81dWxtWVlGNi1CckpQekdVTHpxbzA5QjcyWU9BRzBJSVNOQjBBSWZqQmUtWEhQZXMtaFk5VzVOUXVOVTRWZEQ3Z0E?oc=5",
             "source": "천지일보",
             "date": "Thu, 12 Mar 2026 00:45:53 GMT"
-        },
-        {
-            "title": "'정부 안정책' vs '중동 리스크'…코스피 향배는 [오늘장 미리보기]",
-            "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1kRmVxbzlBVm5Dd05qZWNWYnlzNFJrZFp0Wm9tOWtKWEZyejNlM1JrX0Y4S214bDE2RExmLWdJNHg3SmQ0NjdaOS1UOTg0VlU?oc=5",
-            "source": "v.daum.net",
-            "date": "Thu, 12 Mar 2026 23:12:56 GMT"
         },
         {
             "title": "美 IB \"한국증시는 '극단적 버블'…개인투자자들이 뒷받침\"",
@@ -334,34 +334,34 @@
         "KOSPI": [
             {
                 "label": "개인",
-                "value": "+20818억",
+                "value": "+24540억",
                 "status": "매수"
             },
             {
                 "label": "외국인",
-                "value": "-13053억",
+                "value": "-14626억",
                 "status": "매도"
             },
             {
                 "label": "기관",
-                "value": "-8074억",
+                "value": "-10314억",
                 "status": "매도"
             }
         ],
         "KOSDAQ": [
             {
                 "label": "개인",
-                "value": "-634억",
+                "value": "-1316억",
                 "status": "매도"
             },
             {
                 "label": "외국인",
-                "value": "-1194억",
+                "value": "-1079억",
                 "status": "매도"
             },
             {
                 "label": "기관",
-                "value": "+2152억",
+                "value": "+2757억",
                 "status": "매수"
             }
         ]
@@ -369,92 +369,92 @@
     "top_stocks": [
         {
             "rank": 1,
-            "symbol": "377220",
-            "name": "프롬바이오",
-            "price": "1,560",
+            "symbol": "041910",
+            "name": "폴라리스AI파마",
+            "price": "8,190",
             "change": "+30.00",
-            "volume": "1,423,375",
+            "volume": "11,109,158",
             "market": "KOSDAQ"
         },
         {
             "rank": 2,
-            "symbol": "041020",
-            "name": "폴라리스오피스",
-            "price": "5,100",
-            "change": "+29.94",
-            "volume": "7,792,604",
+            "symbol": "195990",
+            "name": "에이비프로바이오",
+            "price": "1,430",
+            "change": "+30.00",
+            "volume": "3,541,854",
             "market": "KOSDAQ"
         },
         {
             "rank": 3,
-            "symbol": "101680",
-            "name": "한국정밀기계",
-            "price": "3,085",
-            "change": "+29.89",
-            "volume": "351,754",
+            "symbol": "377220",
+            "name": "프롬바이오",
+            "price": "1,560",
+            "change": "+30.00",
+            "volume": "1,443,095",
             "market": "KOSDAQ"
         },
         {
             "rank": 1,
             "symbol": "003280",
             "name": "흥아해운",
-            "price": "2,505",
-            "change": "+18.72",
-            "volume": "106,379,093",
+            "price": "2,335",
+            "change": "+10.66",
+            "volume": "132,521,142",
             "market": "KOSPI"
         },
         {
             "rank": 2,
-            "symbol": "039980",
-            "name": "폴라리스AI",
-            "price": "1,981",
-            "change": "+12.88",
-            "volume": "66,096,272",
-            "market": "KOSDAQ"
+            "symbol": "008350",
+            "name": "남선알미늄",
+            "price": "1,506",
+            "change": "+14.35",
+            "volume": "103,717,533",
+            "market": "KOSPI"
         },
         {
             "rank": 3,
-            "symbol": "047040",
-            "name": "대우건설",
-            "price": "12,990",
-            "change": "+24.19",
-            "volume": "64,911,851",
-            "market": "KOSPI"
+            "symbol": "039980",
+            "name": "폴라리스AI",
+            "price": "2,045",
+            "change": "+16.52",
+            "volume": "100,963,402",
+            "market": "KOSDAQ"
         },
         {
             "rank": 1,
             "symbol": "005930",
             "name": "삼성전자",
-            "price": "184,500",
-            "change": "-1.81",
-            "volume": "12,239,762",
+            "price": "183,500",
+            "change": "-2.34",
+            "volume": "19,566,331",
             "market": "KOSPI"
         },
         {
             "rank": 2,
             "symbol": "000660",
             "name": "SK하이닉스",
-            "price": "917,000",
-            "change": "-1.40",
-            "volume": "2,012,201",
+            "price": "910,000",
+            "change": "-2.15",
+            "volume": "3,645,102",
             "market": "KOSPI"
         },
         {
             "rank": 1,
             "symbol": "086520",
             "name": "에코프로",
-            "price": "152,200",
-            "change": "-3.67",
-            "volume": "983,315",
+            "price": "150,500",
+            "change": "-4.75",
+            "volume": "1,443,712",
             "market": "KOSDAQ GLOBAL"
         },
         {
             "rank": 2,
             "symbol": "196170",
             "name": "알테오젠",
-            "price": "364,000",
-            "change": "-2.28",
-            "volume": "152,001",
+            "price": "361,500",
+            "change": "-2.95",
+            "volume": "215,480",
             "market": "KOSDAQ GLOBAL"
         }
     ],
@@ -463,90 +463,90 @@
             "rank": 1,
             "symbol": "005930",
             "name": "삼성전자",
-            "price": "184,500",
-            "change": "-1.81",
-            "volume": "12,239,762",
+            "price": "183,500",
+            "change": "-2.34",
+            "volume": "19,566,331",
             "market": "KOSPI"
         },
         {
             "rank": 2,
             "symbol": "000660",
             "name": "SK하이닉스",
-            "price": "917,000",
-            "change": "-1.40",
-            "volume": "2,012,201",
+            "price": "910,000",
+            "change": "-2.15",
+            "volume": "3,645,102",
             "market": "KOSPI"
         },
         {
             "rank": 3,
             "symbol": "005935",
             "name": "삼성전자우",
-            "price": "133,500",
-            "change": "-0.37",
-            "volume": "1,934,996",
+            "price": "133,900",
+            "change": "-0.07",
+            "volume": "3,034,851",
             "market": "KOSPI"
         },
         {
             "rank": 4,
             "symbol": "005380",
             "name": "현대차",
-            "price": "521,000",
-            "change": "+0.00",
-            "volume": "605,562",
+            "price": "517,000",
+            "change": "-0.77",
+            "volume": "950,437",
             "market": "KOSPI"
         },
         {
             "rank": 5,
             "symbol": "373220",
             "name": "LG에너지솔루션",
-            "price": "368,000",
-            "change": "-4.17",
-            "volume": "208,894",
+            "price": "369,000",
+            "change": "-3.91",
+            "volume": "370,087",
             "market": "KOSPI"
         },
         {
             "rank": 6,
             "symbol": "012450",
             "name": "한화에어로스페이스",
-            "price": "1,480,000",
-            "change": "+1.02",
-            "volume": "162,330",
+            "price": "1,488,000",
+            "change": "+1.57",
+            "volume": "324,291",
             "market": "KOSPI"
         },
         {
             "rank": 7,
             "symbol": "207940",
             "name": "삼성바이오로직스",
-            "price": "1,590,000",
-            "change": "-2.15",
-            "volume": "23,403",
+            "price": "1,592,000",
+            "change": "-2.03",
+            "volume": "42,424",
             "market": "KOSPI"
         },
         {
             "rank": 8,
             "symbol": "402340",
             "name": "SK스퀘어",
-            "price": "535,000",
-            "change": "-3.43",
-            "volume": "248,087",
+            "price": "534,000",
+            "change": "-3.61",
+            "volume": "420,495",
             "market": "KOSPI"
         },
         {
             "rank": 9,
             "symbol": "034020",
             "name": "두산에너빌리티",
-            "price": "107,100",
-            "change": "+3.48",
-            "volume": "6,144,065",
+            "price": "106,500",
+            "change": "+2.90",
+            "volume": "9,435,079",
             "market": "KOSPI"
         },
         {
             "rank": 10,
             "symbol": "000270",
             "name": "기아",
-            "price": "164,500",
-            "change": "-1.50",
-            "volume": "794,965",
+            "price": "164,300",
+            "change": "-1.62",
+            "volume": "1,614,149",
             "market": "KOSPI"
         }
     ],
@@ -555,54 +555,54 @@
             "rank": 1,
             "symbol": "086520",
             "name": "에코프로",
-            "price": "152,200",
-            "change": "-3.67",
-            "volume": "983,315",
+            "price": "150,500",
+            "change": "-4.75",
+            "volume": "1,443,712",
             "market": "KOSDAQ GLOBAL"
         },
         {
             "rank": 2,
             "symbol": "196170",
             "name": "알테오젠",
-            "price": "364,000",
-            "change": "-2.28",
-            "volume": "152,001",
+            "price": "361,500",
+            "change": "-2.95",
+            "volume": "215,480",
             "market": "KOSDAQ GLOBAL"
         },
         {
             "rank": 3,
             "symbol": "247540",
             "name": "에코프로비엠",
-            "price": "190,000",
-            "change": "-3.89",
-            "volume": "492,817",
+            "price": "191,300",
+            "change": "-3.24",
+            "volume": "747,253",
             "market": "KOSDAQ GLOBAL"
         },
         {
             "rank": 4,
             "symbol": "000250",
             "name": "삼천당제약",
-            "price": "775,000",
-            "change": "-1.52",
-            "volume": "90,511",
+            "price": "772,000",
+            "change": "-1.91",
+            "volume": "126,090",
             "market": "KOSDAQ"
         },
         {
             "rank": 5,
             "symbol": "277810",
             "name": "레인보우로보틱스",
-            "price": "757,000",
-            "change": "-0.39",
-            "volume": "131,136",
+            "price": "751,000",
+            "change": "-1.18",
+            "volume": "259,875",
             "market": "KOSDAQ"
         },
         {
             "rank": 6,
             "symbol": "298380",
             "name": "에이비엘바이오",
-            "price": "188,800",
-            "change": "+4.19",
-            "volume": "528,486",
+            "price": "188,000",
+            "change": "+3.75",
+            "volume": "667,425",
             "market": "KOSDAQ"
         },
         {
@@ -611,126 +611,126 @@
             "name": "리노공업",
             "price": "113,500",
             "change": "-3.65",
-            "volume": "436,460",
+            "volume": "676,107",
             "market": "KOSDAQ GLOBAL"
         },
         {
             "rank": 8,
             "symbol": "950160",
             "name": "코오롱티슈진",
-            "price": "102,500",
-            "change": "+1.49",
-            "volume": "208,081",
+            "price": "103,200",
+            "change": "+2.18",
+            "volume": "315,000",
             "market": "KOSDAQ"
         },
         {
             "rank": 9,
             "symbol": "141080",
             "name": "리가켐바이오",
-            "price": "201,500",
-            "change": "+9.69",
-            "volume": "801,112",
+            "price": "201,000",
+            "change": "+9.42",
+            "volume": "959,827",
             "market": "KOSDAQ GLOBAL"
         },
         {
             "rank": 10,
             "symbol": "087010",
             "name": "펩트론",
-            "price": "298,500",
-            "change": "+3.11",
-            "volume": "120,921",
+            "price": "298,000",
+            "change": "+2.94",
+            "volume": "162,106",
             "market": "KOSDAQ"
         }
     ],
     "gainers": [
         {
             "rank": 1,
-            "symbol": "377220",
-            "name": "프롬바이오",
-            "price": "1,560",
+            "symbol": "041910",
+            "name": "폴라리스AI파마",
+            "price": "8,190",
             "change": "+30.00",
-            "volume": "1,423,375",
+            "volume": "11,109,158",
             "market": "KOSDAQ"
         },
         {
             "rank": 2,
-            "symbol": "041020",
-            "name": "폴라리스오피스",
-            "price": "5,100",
-            "change": "+29.94",
-            "volume": "7,792,604",
+            "symbol": "195990",
+            "name": "에이비프로바이오",
+            "price": "1,430",
+            "change": "+30.00",
+            "volume": "3,541,854",
             "market": "KOSDAQ"
         },
         {
             "rank": 3,
-            "symbol": "101680",
-            "name": "한국정밀기계",
-            "price": "3,085",
-            "change": "+29.89",
-            "volume": "351,754",
+            "symbol": "377220",
+            "name": "프롬바이오",
+            "price": "1,560",
+            "change": "+30.00",
+            "volume": "1,443,095",
             "market": "KOSDAQ"
         },
         {
             "rank": 4,
-            "symbol": "900120",
-            "name": "씨엑스아이",
-            "price": "531",
-            "change": "+29.83",
-            "volume": "3,511,052",
+            "symbol": "258610",
+            "name": "케일럼",
+            "price": "1,497",
+            "change": "+29.95",
+            "volume": "1,519,903",
             "market": "KOSDAQ"
         },
         {
             "rank": 5,
-            "symbol": "089230",
-            "name": "THE E&M",
-            "price": "2,230",
-            "change": "+29.73",
-            "volume": "3,945,798",
+            "symbol": "041020",
+            "name": "폴라리스오피스",
+            "price": "5,100",
+            "change": "+29.94",
+            "volume": "7,974,353",
             "market": "KOSDAQ"
         },
         {
             "rank": 6,
-            "symbol": "417200",
-            "name": "LS머트리얼즈",
-            "price": "24,250",
-            "change": "+29.61",
-            "volume": "28,773,703",
+            "symbol": "196450",
+            "name": "코아시아씨엠",
+            "price": "1,840",
+            "change": "+29.94",
+            "volume": "6,724,098",
             "market": "KOSDAQ"
         },
         {
             "rank": 7,
-            "symbol": "196450",
-            "name": "코아시아씨엠",
-            "price": "1,782",
-            "change": "+25.85",
-            "volume": "4,478,096",
+            "symbol": "101680",
+            "name": "한국정밀기계",
+            "price": "3,085",
+            "change": "+29.89",
+            "volume": "396,534",
             "market": "KOSDAQ"
         },
         {
             "rank": 8,
-            "symbol": "047040",
-            "name": "대우건설",
-            "price": "12,990",
-            "change": "+24.19",
-            "volume": "64,911,851",
-            "market": "KOSPI"
+            "symbol": "900120",
+            "name": "씨엑스아이",
+            "price": "531",
+            "change": "+29.83",
+            "volume": "3,532,673",
+            "market": "KOSDAQ"
         },
         {
             "rank": 9,
-            "symbol": "123010",
-            "name": "알엔티엑스",
-            "price": "1,178",
-            "change": "+24.13",
-            "volume": "5,762,115",
+            "symbol": "089230",
+            "name": "THE E&M",
+            "price": "2,230",
+            "change": "+29.73",
+            "volume": "4,090,770",
             "market": "KOSDAQ"
         },
         {
             "rank": 10,
-            "symbol": "322510",
-            "name": "제이엘케이",
-            "price": "8,770",
-            "change": "+23.70",
-            "volume": "2,386,904",
+            "symbol": "357880",
+            "name": "SKAI",
+            "price": "4,800",
+            "change": "+29.38",
+            "volume": "21,293,162",
             "market": "KOSDAQ"
         }
     ],
@@ -739,663 +739,693 @@
             "rank": 1,
             "symbol": "003280",
             "name": "흥아해운",
-            "price": "2,505",
-            "change": "+18.72",
-            "volume": "106,379,093",
+            "price": "2,335",
+            "change": "+10.66",
+            "volume": "132,521,142",
             "market": "KOSPI"
         },
         {
             "rank": 2,
-            "symbol": "039980",
-            "name": "폴라리스AI",
-            "price": "1,981",
-            "change": "+12.88",
-            "volume": "66,096,272",
-            "market": "KOSDAQ"
-        },
-        {
-            "rank": 3,
-            "symbol": "047040",
-            "name": "대우건설",
-            "price": "12,990",
-            "change": "+24.19",
-            "volume": "64,911,851",
+            "symbol": "008350",
+            "name": "남선알미늄",
+            "price": "1,506",
+            "change": "+14.35",
+            "volume": "103,717,533",
             "market": "KOSPI"
         },
         {
+            "rank": 3,
+            "symbol": "039980",
+            "name": "폴라리스AI",
+            "price": "2,045",
+            "change": "+16.52",
+            "volume": "100,963,402",
+            "market": "KOSDAQ"
+        },
+        {
             "rank": 4,
-            "symbol": "004410",
-            "name": "서울식품",
-            "price": "207",
-            "change": "-1.43",
-            "volume": "52,670,106",
+            "symbol": "047040",
+            "name": "대우건설",
+            "price": "12,320",
+            "change": "+17.78",
+            "volume": "85,677,595",
             "market": "KOSPI"
         },
         {
             "rank": 5,
-            "symbol": "008350",
-            "name": "남선알미늄",
-            "price": "1,581",
-            "change": "+20.05",
-            "volume": "48,629,460",
-            "market": "KOSPI"
+            "symbol": "032820",
+            "name": "우리기술",
+            "price": "24,450",
+            "change": "+11.64",
+            "volume": "60,795,284",
+            "market": "KOSDAQ"
         },
         {
             "rank": 6,
-            "symbol": "032820",
-            "name": "우리기술",
-            "price": "24,300",
-            "change": "+10.96",
-            "volume": "48,480,924",
-            "market": "KOSDAQ"
+            "symbol": "004410",
+            "name": "서울식품",
+            "price": "206",
+            "change": "-1.90",
+            "volume": "59,629,775",
+            "market": "KOSPI"
         },
         {
             "rank": 7,
             "symbol": "152550",
             "name": "한국ANKOR유전",
-            "price": "373",
-            "change": "+2.75",
-            "volume": "38,128,247",
+            "price": "344",
+            "change": "-5.23",
+            "volume": "50,323,352",
             "market": "KOSPI"
         },
         {
             "rank": 8,
             "symbol": "010170",
             "name": "대한광통신",
-            "price": "7,530",
-            "change": "-1.83",
-            "volume": "35,673,900",
+            "price": "7,400",
+            "change": "-3.52",
+            "volume": "42,519,137",
             "market": "KOSDAQ"
         },
         {
             "rank": 9,
             "symbol": "417200",
             "name": "LS머트리얼즈",
-            "price": "24,250",
-            "change": "+29.61",
-            "volume": "28,773,703",
+            "price": "22,850",
+            "change": "+22.13",
+            "volume": "38,185,185",
             "market": "KOSDAQ"
         },
         {
             "rank": 10,
             "symbol": "005860",
             "name": "한일사료",
-            "price": "4,355",
-            "change": "+11.95",
-            "volume": "27,434,806",
+            "price": "4,285",
+            "change": "+10.15",
+            "volume": "29,623,571",
             "market": "KOSDAQ"
         }
     ],
     "ai_analysis": {
         "005930": {
-            "insight": "글로벌 메모리 반도체 시장 회복에 따른 실적 개선 및 AI향 수요 증가가 기대됩니다.",
-            "risk": "글로벌 경기 침체 심화 및 경쟁 심화로 인한 수익성 악화 가능성이 존재합니다.",
+            "insight": "반도체 업황 회복 및 AI 수요 증가로 인한 실적 개선 기대",
+            "risk": "글로벌 경기 침체 지속 및 경쟁 심화 가능성",
             "mkt_cap": "450조원",
             "vol_ratio": "0.9x",
             "rsi": "62",
-            "swot_s": "브랜드 가치, 기술 리더십, 글로벌 생산 능력, 다양한 제품 포트폴리오",
-            "swot_w": "반도체 경기 변동성, 높은 자본 투자 필요성, 경쟁 심화, 지배구조 이슈",
-            "swot_o": "AI 반도체 시장 성장, 전장 사업 확대, 폴더블폰 등 혁신 제품 출시, 정부 지원 정책",
-            "swot_t": "글로벌 경기 침체, 미중 무역 갈등, 환율 변동, 경쟁사 기술 추격",
+            "swot_s": "압도적인 시장 점유율, 브랜드 인지도, 기술 리더십",
+            "swot_w": "경기 변동에 민감, 복잡한 지배구조, 높은 자본 지출",
+            "swot_o": "AI, 5G 등 신기술 시장 성장, 정부 정책 지원",
+            "swot_t": "미중 무역 갈등, 경쟁 심화, 환율 변동",
             "upside": "+20%",
             "dcf_target": "90000",
             "dcf_bear": "75000",
-            "dcf_bull": "105000"
+            "dcf_bull": "110000"
         },
         "000660": {
-            "insight": "DRAM 시장 회복 및 HBM 수요 증가로 인한 실적 개선이 예상됩니다.",
-            "risk": "반도체 업황 변동성 및 공급 과잉 우려가 존재합니다.",
-            "mkt_cap": "120조원",
+            "insight": "DRAM 시장 회복 및 고대역폭 메모리(HBM) 시장 선점 효과 기대",
+            "risk": "메모리 반도체 가격 하락 및 경쟁 심화 우려",
+            "mkt_cap": "100조원",
             "vol_ratio": "1.1x",
             "rsi": "68",
-            "swot_s": "DRAM 시장 경쟁력, 기술력, HBM 시장 선점 노력, SK그룹 지원",
-            "swot_w": "높은 DRAM 의존도, 경쟁 심화, 자본 투자 부담, 환경 규제",
-            "swot_o": "AI 반도체 시장 성장, 데이터센터 투자 확대, 정부 지원 정책, 신규 메모리 기술 개발",
-            "swot_t": "글로벌 경기 침체, 반도체 공급 과잉, 미중 무역 갈등, 경쟁사 기술 혁신",
+            "swot_s": "높은 기술력, HBM 시장 선점, 안정적인 생산 능력",
+            "swot_w": "삼성전자 대비 낮은 브랜드 인지도, 높은 투자 부담",
+            "swot_o": "AI 시장 확대, 데이터 센터 투자 증가, 정부 지원 정책",
+            "swot_t": "반도체 경기 변동성, 경쟁 심화, 공급망 리스크",
             "upside": "+25%",
-            "dcf_target": "200000",
-            "dcf_bear": "160000",
-            "dcf_bull": "240000"
+            "dcf_target": "180000",
+            "dcf_bear": "150000",
+            "dcf_bull": "220000"
         },
         "005935": {
-            "insight": "삼성전자 보통주 대비 저렴한 가격으로 삼성전자 주식 투자 효과를 누릴 수 있습니다.",
-            "risk": "보통주 대비 낮은 유동성 및 의결권 부재로 인한 투자 매력 감소 가능성이 있습니다.",
-            "mkt_cap": "40조원",
-            "vol_ratio": "0.5x",
-            "rsi": "62",
-            "swot_s": "삼성전자 주식 보유 효과, 상대적으로 저렴한 가격, 안정적인 배당",
-            "swot_w": "낮은 유동성, 의결권 부재, 보통주 대비 낮은 투자 매력",
-            "swot_o": "삼성전자 주가 상승, 배당 확대 정책, 투자자 관심 증가",
-            "swot_t": "보통주 대비 낮은 상승률, 시장 변동성 확대, 투자 심리 위축",
+            "insight": "삼성전자 보통주 대비 낮은 가격 매력과 동일한 배당 혜택",
+            "risk": "보통주 대비 낮은 유동성 및 의결권 제한",
+            "mkt_cap": "37조원",
+            "vol_ratio": "0.3x",
+            "rsi": "61",
+            "swot_s": "저렴한 가격, 삼성전자 배당 수익",
+            "swot_w": "낮은 유동성, 의결권 없음",
+            "swot_o": "높은 배당 수익률 추구 투자자 선호",
+            "swot_t": "보통주 대비 낮은 주가 상승률",
             "upside": "+18%",
             "dcf_target": "75000",
-            "dcf_bear": "65000",
-            "dcf_bull": "85000"
+            "dcf_bear": "60000",
+            "dcf_bull": "90000"
         },
         "005380": {
-            "insight": "친환경차 판매 증가 및 수익성 개선을 통한 성장 기대감이 높습니다.",
-            "risk": "글로벌 자동차 시장 경쟁 심화 및 전기차 전환 지연 우려가 존재합니다.",
+            "insight": "전기차 판매 증가 및 수익성 개선 기대",
+            "risk": "글로벌 경기 침체 및 경쟁 심화 우려",
             "mkt_cap": "50조원",
             "vol_ratio": "0.8x",
-            "rsi": "58",
-            "swot_s": "글로벌 브랜드 인지도, 다양한 차종 라인업, 친환경차 기술력, 안정적인 판매 네트워크",
-            "swot_w": "노조 문제, 높은 생산 비용, 중국 시장 점유율 하락, 전기차 전환 속도",
-            "swot_o": "전기차 시장 성장, 자율주행 기술 발전, 정부 지원 정책, 신흥 시장 성장",
-            "swot_t": "글로벌 경기 침체, 자동차 시장 경쟁 심화, 원자재 가격 상승, 환율 변동",
+            "rsi": "55",
+            "swot_s": "글로벌 시장 점유율 확대, 전기차 기술력, 강력한 브랜드",
+            "swot_w": "내연기관차 의존도, 노조 리스크, 경쟁 심화",
+            "swot_o": "친환경차 시장 성장, 정부 지원 정책, 자율주행 기술 발전",
+            "swot_t": "글로벌 경기 침체, 부품 공급망 불안, 환율 변동",
             "upside": "+15%",
             "dcf_target": "250000",
             "dcf_bear": "200000",
-            "dcf_bull": "280000"
+            "dcf_bull": "300000"
         },
         "373220": {
-            "insight": "글로벌 전기차 배터리 시장 성장 수혜 및 기술 경쟁력 강화가 기대됩니다.",
-            "risk": "배터리 소재 가격 변동성 및 경쟁 심화 우려가 존재합니다.",
-            "mkt_cap": "90조원",
+            "insight": "글로벌 전기차 배터리 시장 성장 수혜 및 기술 경쟁력 강화",
+            "risk": "원자재 가격 상승 및 경쟁 심화 우려",
+            "mkt_cap": "100조원",
             "vol_ratio": "1.3x",
             "rsi": "70",
-            "swot_s": "글로벌 배터리 시장 점유율, 기술력, 주요 자동차 업체 공급 계약, 안정적인 생산 능력",
-            "swot_w": "높은 CAPEX 투자, 배터리 소재 가격 변동성, 경쟁 심화, 화재 위험",
-            "swot_o": "전기차 시장 성장, ESS 시장 확대, 정부 지원 정책, 차세대 배터리 기술 개발",
-            "swot_t": "글로벌 경기 침체, 배터리 소재 가격 급등, 경쟁사 기술 혁신, 환경 규제 강화",
+            "swot_s": "높은 기술력, 글로벌 생산 기지 확보, 안정적인 공급망",
+            "swot_w": "높은 투자 비용, 특정 고객 의존도, 경쟁 심화",
+            "swot_o": "전기차 시장 성장, 에너지 저장 시스템(ESS) 시장 확대, 정부 지원 정책",
+            "swot_t": "원자재 가격 변동성, 경쟁 심화, 정책 변화",
             "upside": "+30%",
             "dcf_target": "650000",
             "dcf_bear": "500000",
-            "dcf_bull": "750000"
+            "dcf_bull": "800000"
         },
         "012450": {
-            "insight": "글로벌 방산 시장 성장 및 정부 지원 확대에 따른 수혜가 예상됩니다.",
-            "risk": "글로벌 정치적 리스크 및 방산 산업 특성상 수주 변동성 확대 우려가 존재합니다.",
-            "mkt_cap": "10조원",
+            "insight": "글로벌 안보 환경 악화에 따른 방산 수요 증가 및 우주항공 사업 성장 기대",
+            "risk": "정부 정책 변화 및 수주 불확실성 존재",
+            "mkt_cap": "7조원",
             "vol_ratio": "1.5x",
             "rsi": "75",
-            "swot_s": "항공 엔진 기술력, 방산 포트폴리오, 정부 지원, 글로벌 네트워크",
-            "swot_w": "높은 개발 비용, 수주 변동성, 정치적 리스크, 기술 유출 위험",
-            "swot_o": "글로벌 방산 시장 성장, 우주항공 산업 발전, 신규 엔진 개발, 정부 투자 확대",
-            "swot_t": "글로벌 경기 침체, 지정학적 리스크, 경쟁 심화, 기술 변화",
+            "swot_s": "국내 대표 방산업체, 우주항공 기술력, 정부 지원",
+            "swot_w": "수주 의존도, 정부 정책 변화에 민감",
+            "swot_o": "글로벌 안보 환경 악화, 우주항공 시장 성장, 정부 투자 확대",
+            "swot_t": "정치적 리스크, 경쟁 심화, 기술 변화",
             "upside": "+40%",
-            "dcf_target": "70000",
-            "dcf_bear": "50000",
-            "dcf_bull": "80000"
+            "dcf_target": "120000",
+            "dcf_bear": "80000",
+            "dcf_bull": "150000"
         },
         "207940": {
-            "insight": "글로벌 바이오 의약품 시장 성장 및 위탁생산(CMO) 수요 증가 수혜가 기대됩니다.",
-            "risk": "경쟁 심화 및 생산 설비 투자 부담 증가 우려가 존재합니다.",
+            "insight": "바이오의약품 CDMO 시장 성장 및 생산능력 확대 효과 기대",
+            "risk": "경쟁 심화 및 생산 차질 발생 가능성",
             "mkt_cap": "60조원",
             "vol_ratio": "0.7x",
-            "rsi": "55",
-            "swot_s": "글로벌 CMO 시장 점유율, 생산 능력, 품질 관리, 기술력",
-            "swot_w": "높은 CAPEX 투자, 경쟁 심화, 품질 이슈, 규제 리스크",
-            "swot_o": "바이오 의약품 시장 성장, CMO 수요 증가, 신규 생산 설비 투자, 기술 혁신",
-            "swot_t": "글로벌 경기 침체, 경쟁사 생산 능력 확대, 기술 변화, 규제 강화",
+            "rsi": "48",
+            "swot_s": "글로벌 CDMO 시장 선두, 대규모 생산 시설, 높은 기술력",
+            "swot_w": "높은 투자 비용, 경쟁 심화, 품질 관리 리스크",
+            "swot_o": "바이오의약품 시장 성장, 아웃소싱 증가, 정부 지원 정책",
+            "swot_t": "경쟁 심화, 규제 강화, 생산 차질",
             "upside": "+10%",
-            "dcf_target": "900000",
-            "dcf_bear": "750000",
+            "dcf_target": "850000",
+            "dcf_bear": "700000",
             "dcf_bull": "950000"
         },
         "402340": {
-            "insight": "SK텔레콤 지분 가치 및 투자 포트폴리오 성장에 따른 수혜가 예상됩니다.",
-            "risk": "투자 포트폴리오 성과 변동성 및 지주회사 할인율 적용 우려가 존재합니다.",
+            "insight": "SK텔레콤 지분 가치 및 투자 포트폴리오 성장 잠재력",
+            "risk": "투자 성과 불확실성 및 시장 변동성 확대",
             "mkt_cap": "10조원",
             "vol_ratio": "0.6x",
-            "rsi": "48",
-            "swot_s": "SK텔레콤 지분 가치, 다양한 투자 포트폴리오, SK그룹 지원, 배당 매력",
-            "swot_w": "지주회사 할인율, 투자 성과 변동성, 그룹 의존도, 신규 투자 실패 위험",
-            "swot_o": "투자 포트폴리오 성장, 신규 투자 기회, 배당 확대 정책, 주주 친화 정책",
-            "swot_t": "글로벌 경기 침체, 투자 시장 변동성, 그룹 리스크, 규제 강화",
+            "rsi": "45",
+            "swot_s": "SK텔레콤 지분 보유, 다양한 투자 포트폴리오, 그룹 시너지",
+            "swot_w": "투자 성과 불확실성, 시장 변동성에 민감",
+            "swot_o": "신기술 투자 확대, 성장 잠재력 높은 기업 투자 기회",
+            "swot_t": "시장 변동성 확대, 투자 실패 리스크",
             "upside": "+12%",
             "dcf_target": "90000",
             "dcf_bear": "75000",
-            "dcf_bull": "95000"
+            "dcf_bull": "100000"
         },
         "034020": {
-            "insight": "글로벌 에너지 시장 성장 및 신재생에너지 사업 확대 수혜가 기대됩니다.",
-            "risk": "에너지 정책 변화 및 원자재 가격 변동성 확대 우려가 존재합니다.",
+            "insight": "원자력 발전 재개 및 신재생에너지 사업 확장 기대",
+            "risk": "정부 정책 변화 및 환경 규제 강화 우려",
             "mkt_cap": "7조원",
-            "vol_ratio": "1.4x",
-            "rsi": "65",
-            "swot_s": "원자력 발전 기술력, 신재생에너지 포트폴리오, 정부 지원, 글로벌 네트워크",
-            "swot_w": "높은 부채 비율, 환경 규제, 에너지 정책 변동성, 원자재 가격 변동성",
-            "swot_o": "글로벌 에너지 시장 성장, 신재생에너지 투자 확대, 정부 지원 정책, 기술 혁신",
-            "swot_t": "글로벌 경기 침체, 에너지 가격 하락, 경쟁 심화, 환경 규제 강화",
-            "upside": "+28%",
-            "dcf_target": "30000",
-            "dcf_bear": "22000",
-            "dcf_bull": "35000"
+            "vol_ratio": "1.2x",
+            "rsi": "58",
+            "swot_s": "원자력 발전 기술력, 신재생에너지 사업 경험, 정부 정책 수혜",
+            "swot_w": "원자력 안전 문제, 환경 규제 강화, 높은 부채 비율",
+            "swot_o": "에너지 전환 정책, 신재생에너지 시장 성장, 해외 시장 진출 기회",
+            "swot_t": "정부 정책 변화, 환경 규제 강화, 경쟁 심화",
+            "upside": "+20%",
+            "dcf_target": "25000",
+            "dcf_bear": "20000",
+            "dcf_bull": "30000"
         },
         "000270": {
-            "insight": "친환경차 판매 증가 및 수익성 개선을 통한 성장 기대감이 높습니다.",
-            "risk": "글로벌 자동차 시장 경쟁 심화 및 전기차 전환 지연 우려가 존재합니다.",
+            "insight": "전기차 판매 증가 및 브랜드 이미지 개선 효과 기대",
+            "risk": "글로벌 경기 침체 및 경쟁 심화 우려",
             "mkt_cap": "40조원",
             "vol_ratio": "0.9x",
-            "rsi": "60",
-            "swot_s": "글로벌 브랜드 인지도, 다양한 차종 라인업, 친환경차 기술력, 현대차 그룹 시너지",
-            "swot_w": "노조 문제, 높은 생산 비용, 중국 시장 점유율 하락, 전기차 전환 속도",
-            "swot_o": "전기차 시장 성장, 자율주행 기술 발전, 정부 지원 정책, 신흥 시장 성장",
-            "swot_t": "글로벌 경기 침체, 자동차 시장 경쟁 심화, 원자재 가격 상승, 환율 변동",
-            "upside": "+17%",
+            "rsi": "52",
+            "swot_s": "글로벌 시장 점유율 확대, 전기차 기술력, 브랜드 인지도 상승",
+            "swot_w": "내연기관차 의존도, 노조 리스크, 경쟁 심화",
+            "swot_o": "친환경차 시장 성장, 정부 지원 정책, 자율주행 기술 발전",
+            "swot_t": "글로벌 경기 침체, 부품 공급망 불안, 환율 변동",
+            "upside": "+18%",
             "dcf_target": "95000",
             "dcf_bear": "80000",
             "dcf_bull": "110000"
         },
         "086520": {
-            "insight": "양극재 시장 성장 및 기술 경쟁력 강화를 통한 성장 잠재력이 높습니다.",
-            "risk": "리튬 가격 변동성 및 경쟁 심화 우려가 존재합니다.",
+            "insight": "양극재 시장 성장 및 수직계열화 효과 기대",
+            "risk": "원자재 가격 변동성 및 경쟁 심화 우려",
             "mkt_cap": "25조원",
-            "vol_ratio": "2.0x",
+            "vol_ratio": "1.8x",
             "rsi": "80",
-            "swot_s": "양극재 기술력, 생산 능력 확대, 글로벌 고객 확보, 정부 지원",
-            "swot_w": "높은 리튬 의존도, 경쟁 심화, 환경 규제, 화재 위험",
-            "swot_o": "전기차 시장 성장, ESS 시장 확대, 정부 지원 정책, 리튬 확보 노력",
-            "swot_t": "글로벌 경기 침체, 리튬 가격 하락, 경쟁사 기술 혁신, 환경 규제 강화",
+            "swot_s": "양극재 시장 선두, 수직계열화 구축, 높은 기술력",
+            "swot_w": "높은 변동성, 특정 고객 의존도, 환경 규제 강화",
+            "swot_o": "전기차 시장 성장, 배터리 수요 증가, 정부 지원 정책",
+            "swot_t": "원자재 가격 변동성, 경쟁 심화, 환경 규제 강화",
             "upside": "+35%",
-            "dcf_target": "1200000",
-            "dcf_bear": "900000",
-            "dcf_bull": "1500000"
+            "dcf_target": "1500000",
+            "dcf_bear": "1000000",
+            "dcf_bull": "2000000"
         },
         "196170": {
-            "insight": "SC 제형 플랫폼 기술 경쟁력 기반으로 글로벌 제약사와의 협력 확대 기대됩니다.",
-            "risk": "임상 실패 위험 및 경쟁 심화 우려가 존재합니다.",
+            "insight": "피하주사 플랫폼 기술 기반 성장 잠재력",
+            "risk": "임상 개발 실패 및 경쟁 심화 리스크",
             "mkt_cap": "5조원",
-            "vol_ratio": "1.8x",
-            "rsi": "78",
-            "swot_s": "SC 제형 플랫폼 기술, 글로벌 제약사 협력, 특허 확보, 정부 지원",
-            "swot_w": "임상 실패 위험, 경쟁 심화, 기술 의존도, 자금 조달 부담",
-            "swot_o": "바이오 의약품 시장 성장, SC 제형 수요 증가, 신규 플랫폼 개발, 기술 수출",
-            "swot_t": "글로벌 경기 침체, 임상 실패, 경쟁사 기술 혁신, 규제 강화",
-            "upside": "+45%",
-            "dcf_target": "180000",
-            "dcf_bear": "120000",
-            "dcf_bull": "200000"
+            "vol_ratio": "2.0x",
+            "rsi": "72",
+            "swot_s": "피하주사 플랫폼 기술, 글로벌 제약사 협력, 높은 성장 잠재력",
+            "swot_w": "임상 개발 리스크, 경쟁 심화, 매출 다변화 필요",
+            "swot_o": "바이오의약품 시장 성장, 기술 수출 확대 기회",
+            "swot_t": "임상 실패, 경쟁 심화, 규제 강화",
+            "upside": "+50%",
+            "dcf_target": "120000",
+            "dcf_bear": "80000",
+            "dcf_bull": "150000"
         },
         "247540": {
-            "insight": "전기차 배터리용 양극재 시장 성장 수혜 및 생산 능력 확대가 기대됩니다.",
-            "risk": "원재료 가격 변동성 및 경쟁 심화 우려가 존재합니다.",
+            "insight": "전기차 시장 성장 및 양극재 수요 증가 수혜",
+            "risk": "원자재 가격 변동성 및 경쟁 심화 우려",
             "mkt_cap": "20조원",
-            "vol_ratio": "1.7x",
-            "rsi": "72",
-            "swot_s": "양극재 생산 능력, 기술력, 주요 배터리 업체 공급 계약, 안정적인 성장",
-            "swot_w": "높은 원재료 의존도, 경쟁 심화, 환경 규제, 판가 인하 압력",
-            "swot_o": "전기차 시장 성장, ESS 시장 확대, 정부 지원 정책, 차세대 양극재 개발",
-            "swot_t": "글로벌 경기 침체, 원재료 가격 급등, 경쟁사 생산 능력 확대, 환경 규제 강화",
+            "vol_ratio": "1.6x",
+            "rsi": "78",
+            "swot_s": "양극재 시장 경쟁력, 생산능력 확대, 기술 개발",
+            "swot_w": "원자재 가격 변동성, 특정 고객 의존도, 환경 규제",
+            "swot_o": "전기차 시장 성장, ESS 시장 확대, 정부 정책 지원",
+            "swot_t": "원자재 가격 변동성, 경쟁 심화, 기술 변화",
             "upside": "+32%",
-            "dcf_target": "350000",
-            "dcf_bear": "280000",
-            "dcf_bull": "400000"
+            "dcf_target": "500000",
+            "dcf_bear": "350000",
+            "dcf_bull": "650000"
         },
         "000250": {
-            "insight": "아일리아 바이오시밀러 임상 성공 및 상업화 기대감이 높습니다.",
-            "risk": "임상 결과 불확실성 및 경쟁 심화 우려가 존재합니다.",
-            "mkt_cap": "2조원",
+            "insight": "황반변성 치료제 바이오시밀러 임상 성공 및 상업화 기대",
+            "risk": "바이오시밀러 경쟁 심화 및 오리지널 의약품 특허 만료 지연 가능성",
+            "mkt_cap": "1조원",
             "vol_ratio": "2.5x",
             "rsi": "85",
-            "swot_s": "바이오시밀러 개발 기술력, 임상 진행, 파이프라인 확장, 파트너십",
-            "swot_w": "높은 개발 비용, 임상 실패 위험, 경쟁 심화, 자금 조달 부담",
-            "swot_o": "바이오시밀러 시장 성장, 정부 지원 정책, 기술 수출 가능성, 파트너십 확대",
-            "swot_t": "글로벌 경기 침체, 임상 실패, 경쟁사 바이오시밀러 출시, 규제 강화",
-            "upside": "+50%",
-            "dcf_target": "100000",
-            "dcf_bear": "60000",
-            "dcf_bull": "120000"
+            "swot_s": "바이오시밀러 개발 기술력, 유럽 EMA 승인, 파트너사 협력",
+            "swot_w": "매출 규모 작음, 임상 결과 의존적, 경쟁 심화",
+            "swot_o": "고령화 사회 진입, 바이오시밀러 시장 성장, 해외 시장 확대",
+            "swot_t": "바이오시밀러 경쟁 심화, 임상 실패, 규제 강화",
+            "upside": "+60%",
+            "dcf_target": "80000",
+            "dcf_bear": "50000",
+            "dcf_bull": "100000"
         },
         "277810": {
-            "insight": "협동 로봇 시장 성장 및 기술 경쟁력 확보를 통한 성장 잠재력이 높습니다.",
-            "risk": "높은 밸류에이션 및 경쟁 심화 우려가 존재합니다.",
+            "insight": "협동 로봇 시장 성장 및 기술 경쟁력 강화 기대",
+            "risk": "높은 밸류에이션 및 경쟁 심화 우려",
             "mkt_cap": "3조원",
-            "vol_ratio": "2.2x",
-            "rsi": "76",
-            "swot_s": "협동 로봇 기술력, 다양한 라인업, 고객사 확대, 정부 지원",
-            "swot_w": "높은 밸류에이션, 경쟁 심화, 기술 의존도, 초기 시장 단계",
-            "swot_o": "자동화 시장 성장, 스마트 팩토리 투자 확대, 신규 로봇 개발, 정부 지원 정책",
-            "swot_t": "글로벌 경기 침체, 자동화 투자 감소, 경쟁사 기술 혁신, 안전 규제 강화",
-            "upside": "+42%",
+            "vol_ratio": "3.0x",
+            "rsi": "90",
+            "swot_s": "협동 로봇 기술력, 성장 잠재력 높은 시장, 정부 지원",
+            "swot_w": "높은 밸류에이션, 경쟁 심화, 제한적인 생산 능력",
+            "swot_o": "자동화 수요 증가, 스마트 팩토리 확대, 해외 시장 진출",
+            "swot_t": "경쟁 심화, 기술 변화, 경기 침체",
+            "upside": "+45%",
             "dcf_target": "250000",
-            "dcf_bear": "180000",
+            "dcf_bear": "150000",
             "dcf_bull": "300000"
         },
         "298380": {
-            "insight": "ABL바이오는 이중항체 플랫폼 기술을 바탕으로 한 파이프라인 확장 및 기술 이전 가능성이 핵심 투자 포인트입니다.",
-            "risk": "임상 개발 실패 및 경쟁 심화는 핵심 리스크입니다.",
+            "insight": "이중항체 플랫폼 기술을 기반으로 한 파이프라인 확장 및 기술 이전 가능성이 핵심 투자 포인트입니다.",
+            "risk": "임상 개발 실패 및 경쟁 심화가 핵심 리스크입니다.",
             "mkt_cap": "1조원",
             "vol_ratio": "1.5x",
             "rsi": "60",
-            "swot_s": "이중항체 플랫폼 기술력, 다양한 파이프라인, 기술 이전 경험",
-            "swot_w": "임상 개발 성공 불확실성, 자금 조달 필요성, 경쟁 심화",
-            "swot_o": "글로벌 제약사와의 협력 확대, 면역항암제 시장 성장, 플랫폼 기술 가치 상승",
-            "swot_t": "경쟁사 기술 발전, 임상 실패, 규제 강화",
-            "upside": "+25%",
-            "dcf_target": "35000",
-            "dcf_bear": "20000",
-            "dcf_bull": "45000"
+            "swot_s": "이중항체 플랫폼 기술, 다양한 파이프라인, 글로벌 제약사 협력",
+            "swot_w": "임상 개발 단계, 자금 조달 필요성, 경쟁 심화",
+            "swot_o": "기술 이전 계약 확대, 신규 파이프라인 개발, 면역항암제 시장 성장",
+            "swot_t": "임상 실패, 경쟁 심화, 금리 인상",
+            "upside": "+20%",
+            "dcf_target": "25000",
+            "dcf_bear": "15000",
+            "dcf_bull": "35000"
         },
         "058470": {
-            "insight": "리노공업은 반도체 테스트 소켓 분야의 높은 시장 점유율과 안정적인 실적 성장이 매력적인 투자 포인트입니다.",
-            "risk": "반도체 업황 변동에 따른 실적 감소 가능성이 핵심 리스크입니다.",
-            "mkt_cap": "6조원",
+            "insight": "반도체 테스트 소켓 시장의 높은 점유율과 안정적인 실적이 핵심 투자 포인트입니다.",
+            "risk": "반도체 경기 변동에 따른 실적 악화가 핵심 리스크입니다.",
+            "mkt_cap": "4조원",
             "vol_ratio": "0.8x",
             "rsi": "45",
-            "swot_s": "높은 시장 점유율, 우수한 기술력, 안정적인 고객 기반",
-            "swot_w": "특정 고객 의존도, 반도체 업황 변동 민감도, 높은 진입 장벽으로 인한 성장 제한",
-            "swot_o": "AI 반도체 시장 성장, 고성능 반도체 수요 증가, 신규 시장 진출",
-            "swot_t": "경쟁 심화, 기술 변화, 글로벌 경기 침체",
+            "swot_s": "높은 시장 점유율, 안정적인 고객 기반, 우수한 기술력",
+            "swot_w": "반도체 경기 의존도, 제한적인 성장성, 경쟁 심화",
+            "swot_o": "반도체 시장 성장, 신규 제품 개발, 해외 시장 확대",
+            "swot_t": "반도체 경기 침체, 경쟁 심화, 기술 변화",
             "upside": "+10%",
-            "dcf_target": "250000",
-            "dcf_bear": "180000",
-            "dcf_bull": "300000"
+            "dcf_target": "200000",
+            "dcf_bear": "150000",
+            "dcf_bull": "250000"
         },
         "950160": {
-            "insight": "코오롱티슈진은 퇴행성 관절염 치료제 '인보사'의 미국 임상 재개 및 상업화 기대감이 투자 포인트입니다.",
-            "risk": "임상 결과 불확실성 및 소송 관련 리스크가 핵심입니다.",
+            "insight": "퇴행성관절염 세포유전자 치료제 '인보사'의 재판매 기대감이 핵심 투자 포인트입니다.",
+            "risk": "임상 결과 불확실성 및 소송 관련 리스크가 핵심 리스크입니다.",
             "mkt_cap": "5000억원",
             "vol_ratio": "2.0x",
             "rsi": "70",
-            "swot_s": "혁신적인 세포 유전자 치료제, 잠재적 시장 규모, 미국 임상 재개",
-            "swot_w": "임상 결과 불확실성, 소송 리스크, 자금 조달 부담",
-            "swot_o": "고령화 사회 진입, 퇴행성 관절염 환자 증가, 글로벌 제약사와의 협력 가능성",
-            "swot_t": "경쟁 치료제 등장, 규제 강화, 임상 실패",
-            "upside": "+50%",
-            "dcf_target": "15000",
-            "dcf_bear": "5000",
-            "dcf_bull": "20000"
+            "swot_s": "인보사 기술력, 브랜드 인지도, 잠재적 시장 규모",
+            "swot_w": "과거 판매 중단, 소송 리스크, 낮은 신뢰도",
+            "swot_o": "인보사 재판매 성공, 신규 파이프라인 개발, 퇴행성관절염 시장 성장",
+            "swot_t": "임상 실패, 소송 패소, 경쟁 심화",
+            "upside": "+30%",
+            "dcf_target": "30000",
+            "dcf_bear": "10000",
+            "dcf_bull": "40000"
         },
         "141080": {
-            "insight": "레고켐바이오는 ADC 플랫폼 기술을 기반으로 한 기술 이전 및 신약 개발 가능성이 투자 포인트입니다.",
-            "risk": "임상 개발 성공 여부 불확실성 및 경쟁 심화가 리스크입니다.",
-            "mkt_cap": "1조 5천억원",
+            "insight": "ADC(항체-약물 접합체) 기술 플랫폼을 기반으로 한 파이프라인 확장 가능성이 핵심 투자 포인트입니다.",
+            "risk": "임상 개발 실패 및 경쟁 심화가 핵심 리스크입니다.",
+            "mkt_cap": "1조원",
             "vol_ratio": "1.3x",
             "rsi": "55",
-            "swot_s": "ADC 플랫폼 기술, 다양한 파이프라인, 기술 이전 경험",
-            "swot_w": "임상 개발 성공 불확실성, 자금 조달 필요성, 경쟁 심화",
-            "swot_o": "ADC 치료제 시장 성장, 글로벌 제약사와의 협력 확대, 플랫폼 기술 가치 상승",
-            "swot_t": "경쟁사 기술 발전, 임상 실패, 규제 강화",
-            "upside": "+20%",
-            "dcf_target": "60000",
-            "dcf_bear": "40000",
-            "dcf_bull": "75000"
-        },
-        "087010": {
-            "insight": "펩트론은 약효 지속형 플랫폼 기술을 기반으로 한 파이프라인 확장 및 기술 이전 가능성이 투자 포인트입니다.",
-            "risk": "임상 개발 성공 여부 불확실성 및 경쟁 심화가 리스크입니다.",
-            "mkt_cap": "3000억원",
-            "vol_ratio": "1.1x",
-            "rsi": "50",
-            "swot_s": "약효 지속형 플랫폼 기술, 다양한 파이프라인, 기술 이전 경험",
-            "swot_w": "임상 개발 성공 불확실성, 자금 조달 필요성, 경쟁 심화",
-            "swot_o": "만성 질환 치료제 시장 성장, 글로벌 제약사와의 협력 확대, 플랫폼 기술 가치 상승",
-            "swot_t": "경쟁사 기술 발전, 임상 실패, 규제 강화",
-            "upside": "+18%",
-            "dcf_target": "25000",
-            "dcf_bear": "15000",
-            "dcf_bull": "30000"
-        },
-        "377220": {
-            "insight": "프롬바이오는 건강기능식품 시장 성장 및 신제품 출시를 통한 매출 확대 가능성이 투자 포인트입니다.",
-            "risk": "경쟁 심화 및 규제 강화가 리스크입니다.",
-            "mkt_cap": "2000억원",
-            "vol_ratio": "0.9x",
-            "rsi": "40",
-            "swot_s": "다양한 제품 포트폴리오, 브랜드 인지도, 온라인 판매 채널 강화",
-            "swot_w": "경쟁 심화, 높은 광고선전비, 특정 원료 의존도",
-            "swot_o": "건강기능식품 시장 성장, 고령화 사회 진입, 신규 제품 출시",
-            "swot_t": "규제 강화, 소비자 트렌드 변화, 경쟁사 공격적인 마케팅",
-            "upside": "+12%",
-            "dcf_target": "18000",
-            "dcf_bear": "12000",
-            "dcf_bull": "22000"
-        },
-        "041020": {
-            "insight": "폴라리스오피스는 클라우드 오피스 시장 성장 및 AI 기술 접목을 통한 경쟁력 강화가 투자 포인트입니다.",
-            "risk": "MS오피스와 같은 경쟁사 대비 낮은 인지도가 리스크입니다.",
-            "mkt_cap": "1500억원",
-            "vol_ratio": "1.0x",
-            "rsi": "52",
-            "swot_s": "클라우드 오피스 기술력, AI 기술 접목, 합리적인 가격",
-            "swot_w": "낮은 브랜드 인지도, MS오피스 의존도, 보안 문제",
-            "swot_o": "클라우드 오피스 시장 성장, 원격 근무 확산, AI 기술 발전",
-            "swot_t": "경쟁 심화, 해킹 위협, 규제 강화",
-            "upside": "+15%",
-            "dcf_target": "6500",
-            "dcf_bear": "4500",
-            "dcf_bull": "8000"
-        },
-        "101680": {
-            "insight": "한국정밀기계는 건설기계 부품 시장 성장 및 신규 사업 확대를 통한 실적 개선 가능성이 투자 포인트입니다.",
-            "risk": "건설 경기 변동에 따른 실적 영향이 리스크입니다.",
-            "mkt_cap": "800억원",
-            "vol_ratio": "0.7x",
-            "rsi": "38",
-            "swot_s": "건설기계 부품 기술력, 안정적인 고객 기반, 신규 사업 추진",
-            "swot_w": "건설 경기 변동 민감도, 특정 고객 의존도, 높은 경쟁 강도",
-            "swot_o": "건설 경기 회복, 인프라 투자 확대, 신규 시장 진출",
-            "swot_t": "글로벌 경기 침체, 원자재 가격 상승, 경쟁 심화",
-            "upside": "+10%",
-            "dcf_target": "4000",
-            "dcf_bear": "3000",
-            "dcf_bull": "4500"
-        },
-        "900120": {
-            "insight": "씨엑스아이는 중국 소비 회복 및 화장품 용기 수요 증가에 따른 실적 개선 가능성이 투자 포인트입니다.",
-            "risk": "중국 경기 둔화 및 경쟁 심화가 리스크입니다.",
-            "mkt_cap": "500억원",
-            "vol_ratio": "1.2x",
-            "rsi": "65",
-            "swot_s": "화장품 용기 기술력, 중국 시장 진출, 가격 경쟁력",
-            "swot_w": "중국 경기 변동 민감도, 낮은 브랜드 인지도, 높은 경쟁 강도",
-            "swot_o": "중국 소비 회복, 화장품 시장 성장, 신규 고객 확보",
-            "swot_t": "중국 경기 둔화, 규제 강화, 경쟁 심화",
-            "upside": "+20%",
-            "dcf_target": "3000",
-            "dcf_bear": "2000",
-            "dcf_bull": "3500"
-        },
-        "089230": {
-            "insight": "THE E&M은 엔터테인먼트 사업 확장 및 신규 콘텐츠 제작을 통한 성장 가능성이 투자 포인트입니다.",
-            "risk": "콘텐츠 흥행 실패 및 경쟁 심화가 리스크입니다.",
-            "mkt_cap": "300억원",
-            "vol_ratio": "1.5x",
-            "rsi": "58",
-            "swot_s": "다양한 콘텐츠 제작 능력, 엔터테인먼트 사업 확장, 신규 아티스트 발굴",
-            "swot_w": "콘텐츠 흥행 의존도, 자금 조달 필요성, 경쟁 심화",
-            "swot_o": "OTT 플랫폼 성장, 글로벌 시장 진출, 팬덤 문화 확산",
-            "swot_t": "콘텐츠 흥행 실패, 저작권 침해, 경쟁 심화",
+            "swot_s": "ADC 기술 플랫폼, 다양한 파이프라인, 기술 이전 가능성",
+            "swot_w": "임상 개발 단계, 자금 조달 필요성, 경쟁 심화",
+            "swot_o": "기술 이전 계약 확대, 신규 파이프라인 개발, ADC 치료제 시장 성장",
+            "swot_t": "임상 실패, 경쟁 심화, 금리 인상",
             "upside": "+25%",
-            "dcf_target": "1500",
-            "dcf_bear": "800",
-            "dcf_bull": "2000"
-        },
-        "417200": {
-            "insight": "LS머트리얼즈는 2차전지 소재 사업 성장 및 친환경 에너지 시장 확대 수혜가 기대되는 투자 포인트입니다.",
-            "risk": "2차전지 시장 경쟁 심화 및 기술 변화에 대한 대응이 리스크입니다.",
-            "mkt_cap": "3조원",
-            "vol_ratio": "1.8x",
-            "rsi": "75",
-            "swot_s": "2차전지 소재 기술력, LS그룹 시너지, 친환경 에너지 시장 성장",
-            "swot_w": "경쟁 심화, 기술 변화 속도, 특정 고객 의존도",
-            "swot_o": "전기차 시장 성장, 에너지 저장 시스템(ESS) 수요 증가, 정부 정책 지원",
-            "swot_t": "원자재 가격 상승, 기술 경쟁 심화, 글로벌 경기 침체",
-            "upside": "+30%",
-            "dcf_target": "55000",
-            "dcf_bear": "35000",
+            "dcf_target": "50000",
+            "dcf_bear": "30000",
             "dcf_bull": "70000"
         },
-        "196450": {
-            "insight": "코아시아씨엠은 파운드리 에코 시스템 성장 및 팹리스 고객 확보를 통한 실적 개선 가능성이 투자 포인트입니다.",
-            "risk": "반도체 업황 변동에 따른 실적 영향이 리스크입니다.",
-            "mkt_cap": "4000억원",
-            "vol_ratio": "1.1x",
-            "rsi": "48",
-            "swot_s": "파운드리 에코 시스템, 팹리스 고객 확보, 디자인 하우스 역량",
-            "swot_w": "반도체 업황 변동 민감도, 특정 고객 의존도, 높은 경쟁 강도",
-            "swot_o": "AI 반도체 시장 성장, 고성능 반도체 수요 증가, 신규 시장 진출",
-            "swot_t": "글로벌 경기 침체, 기술 변화, 경쟁 심화",
-            "upside": "+15%",
-            "dcf_target": "18000",
-            "dcf_bear": "12000",
-            "dcf_bull": "22000"
-        },
-        "047040": {
-            "insight": "대우건설은 국내외 건설 경기 회복 및 해외 수주 확대를 통한 실적 개선 가능성이 투자 포인트입니다.",
-            "risk": "건설 경기 변동 및 원가 상승이 리스크입니다.",
-            "mkt_cap": "2조원",
-            "vol_ratio": "0.9x",
-            "rsi": "42",
-            "swot_s": "풍부한 시공 경험, 브랜드 인지도, 해외 수주 경쟁력",
-            "swot_w": "건설 경기 변동 민감도, 원가 상승 압박, 재무 구조 개선 필요",
-            "swot_o": "국내 건설 경기 회복, 해외 인프라 투자 확대, 정부 정책 지원",
-            "swot_t": "글로벌 경기 침체, 금리 인상, 경쟁 심화",
-            "upside": "+10%",
-            "dcf_target": "6000",
-            "dcf_bear": "4500",
-            "dcf_bull": "7000"
-        },
-        "123010": {
-            "insight": "알엔티엑스는 통신 장비 시장 성장 및 신규 제품 출시를 통한 실적 확대 가능성이 투자 포인트입니다.",
-            "risk": "통신 기술 변화에 대한 대응 및 경쟁 심화가 리스크입니다.",
-            "mkt_cap": "1000억원",
-            "vol_ratio": "1.3x",
-            "rsi": "55",
-            "swot_s": "통신 장비 기술력, 5G 투자 확대 수혜, 신규 제품 출시",
-            "swot_w": "통신 기술 변화 민감도, 특정 고객 의존도, 경쟁 심화",
-            "swot_o": "5G 시장 성장, 통신 인프라 투자 확대, 스마트 팩토리 시장 성장",
-            "swot_t": "기술 변화, 경쟁 심화, 규제 강화",
-            "upside": "+15%",
-            "dcf_target": "12000",
-            "dcf_bear": "8000",
-            "dcf_bull": "15000"
-        },
-        "322510": {
-            "insight": "제이엘케이는 AI 의료 솔루션 시장 성장 및 FDA 승인을 통한 글로벌 시장 진출 가능성이 투자 포인트입니다.",
-            "risk": "경쟁 심화 및 규제 강화가 리스크입니다.",
-            "mkt_cap": "3500억원",
-            "vol_ratio": "1.6x",
-            "rsi": "62",
-            "swot_s": "AI 의료 솔루션 기술력, 다양한 의료 분야 적용, FDA 승인",
-            "swot_w": "경쟁 심화, 낮은 브랜드 인지도, 의료 데이터 확보 어려움",
-            "swot_o": "AI 의료 시장 성장, 고령화 사회 진입, 정부 정책 지원",
-            "swot_t": "규제 강화, 개인 정보 보호 문제, 경쟁 심화",
-            "upside": "+20%",
-            "dcf_target": "30000",
-            "dcf_bear": "20000",
-            "dcf_bull": "35000"
-        },
-        "003280": {
-            "insight": "해운 운임 상승 및 컨테이너 물동량 증가에 따른 실적 개선 기대.",
-            "risk": "해운 업황 변동성 및 경쟁 심화 가능성 존재.",
-            "mkt_cap": "1000억원",
-            "vol_ratio": "1.5x",
-            "rsi": "62",
-            "swot_s": "아시아 역내 항로 경쟁력, 안정적인 화주 네트워크",
-            "swot_w": "높은 부채 비율, 제한적인 사업 확장",
-            "swot_o": "글로벌 교역량 증가, 신규 항로 개척 가능성",
-            "swot_t": "유가 변동성, 글로벌 경기 침체 가능성",
-            "upside": "+20%",
-            "dcf_target": "2500",
-            "dcf_bear": "1800",
-            "dcf_bull": "3200"
-        },
-        "039980": {
-            "insight": "AI 기술 발전 및 적용 확대로 인한 솔루션 수요 증가 수혜.",
-            "risk": "AI 기술 경쟁 심화 및 기술 변화에 대한 대응력 부족 우려.",
-            "mkt_cap": "800억원",
-            "vol_ratio": "0.8x",
-            "rsi": "48",
-            "swot_s": "특정 분야 AI 기술력, 정부 지원 정책 활용",
-            "swot_w": "자금 조달의 어려움, 전문 인력 부족",
-            "swot_o": "디지털 전환 가속화, 새로운 AI 시장 창출",
-            "swot_t": "규제 강화 가능성, 데이터 보안 문제 발생",
-            "upside": "+10%",
-            "dcf_target": "3000",
-            "dcf_bear": "2200",
-            "dcf_bull": "3800"
-        },
-        "004410": {
-            "insight": "밀가루 가격 하락 및 신제품 출시를 통한 수익성 개선 기대.",
-            "risk": "곡물 가격 변동성 및 경쟁 심화로 인한 수익성 악화 가능성.",
-            "mkt_cap": "500억원",
-            "vol_ratio": "0.6x",
-            "rsi": "40",
-            "swot_s": "오랜 업력 및 브랜드 인지도, 안정적인 유통망",
-            "swot_w": "노후화된 설비, 제한적인 제품 포트폴리오",
-            "swot_o": "간편식 시장 성장, 해외 시장 진출 기회",
-            "swot_t": "원자재 가격 상승, 경쟁 심화",
-            "upside": "+8%",
-            "dcf_target": "700",
-            "dcf_bear": "500",
-            "dcf_bull": "900"
-        },
-        "008350": {
-            "insight": "알루미늄 가격 상승 및 전기차 관련 수요 증가로 인한 실적 개선 기대.",
-            "risk": "알루미늄 가격 변동성 및 글로벌 경기 침체 가능성 존재.",
+        "087010": {
+            "insight": "약효 지속형 펩타이드 의약품 개발 기술을 기반으로 한 성장 가능성이 핵심 투자 포인트입니다.",
+            "risk": "임상 개발 실패 및 경쟁 심화가 핵심 리스크입니다.",
             "mkt_cap": "3000억원",
             "vol_ratio": "1.2x",
-            "rsi": "55",
-            "swot_s": "알루미늄 압연 기술력, 전기차 배터리 부품 사업 확장",
-            "swot_w": "원자재 가격 변동에 민감, 중국 경쟁 심화",
-            "swot_o": "친환경차 시장 성장, 경량화 소재 수요 증가",
-            "swot_t": "글로벌 경기 둔화, 보호무역주의 강화",
+            "rsi": "40",
+            "swot_s": "약효 지속형 펩타이드 기술, 파이프라인 확장 가능성, 성장 잠재력",
+            "swot_w": "임상 개발 단계, 자금 조달 필요성, 경쟁 심화",
+            "swot_o": "기술 이전 계약 확대, 신규 파이프라인 개발, 펩타이드 의약품 시장 성장",
+            "swot_t": "임상 실패, 경쟁 심화, 금리 인상",
+            "upside": "+15%",
+            "dcf_target": "15000",
+            "dcf_bear": "10000",
+            "dcf_bull": "20000"
+        },
+        "041910": {
+            "insight": "폴라리스AI파마와 합병으로 인한 시너지 효과 및 신약 개발 기대감이 핵심 투자 포인트입니다.",
+            "risk": "합병 후 통합 과정의 어려움 및 임상 개발 실패가 핵심 리스크입니다.",
+            "mkt_cap": "1000억원",
+            "vol_ratio": "1.8x",
+            "rsi": "65",
+            "swot_s": "합병 시너지, 신약 개발 잠재력, 인공지능 활용",
+            "swot_w": "낮은 재무 안정성, 합병 후 통합 리스크, 임상 개발 단계",
+            "swot_o": "신약 개발 성공, 인공지능 기반 의약품 시장 성장, 기술 이전 가능성",
+            "swot_t": "임상 실패, 합병 실패, 경쟁 심화",
+            "upside": "+20%",
+            "dcf_target": "5000",
+            "dcf_bear": "3000",
+            "dcf_bull": "7000"
+        },
+        "195990": {
+            "insight": "관계사 에이비프로의 항암제 개발 성공 가능성에 따른 수혜 기대감이 핵심 투자 포인트입니다.",
+            "risk": "관계사 의존도가 높고, 실질적인 자체 사업 부재가 핵심 리스크입니다.",
+            "mkt_cap": "500억원",
+            "vol_ratio": "2.5x",
+            "rsi": "75",
+            "swot_s": "관계사 항암제 개발 성공 시 수혜, 높은 주가 변동성",
+            "swot_w": "관계사 의존도, 자체 사업 부재, 낮은 재무 안정성",
+            "swot_o": "관계사 기술 이전, 바이오 투자 심리 개선, M&A 가능성",
+            "swot_t": "관계사 임상 실패, 투자 심리 악화, 유동성 부족",
+            "upside": "+40%",
+            "dcf_target": "2000",
+            "dcf_bear": "500",
+            "dcf_bull": "3000"
+        },
+        "377220": {
+            "insight": "건강기능식품 ODM 사업의 성장 및 신규 시장 진출 가능성이 핵심 투자 포인트입니다.",
+            "risk": "경쟁 심화 및 원재료 가격 상승이 핵심 리스크입니다.",
+            "mkt_cap": "2000억원",
+            "vol_ratio": "0.7x",
+            "rsi": "35",
+            "swot_s": "ODM 사업 성장, 다양한 제품 라인업, 해외 시장 진출",
+            "swot_w": "경쟁 심화, 낮은 브랜드 인지도, 원재료 가격 변동",
+            "swot_o": "건강기능식품 시장 성장, 신규 채널 확장, 규제 완화",
+            "swot_t": "경기 침체, 경쟁 심화, 원재료 가격 상승",
+            "upside": "+10%",
+            "dcf_target": "10000",
+            "dcf_bear": "8000",
+            "dcf_bull": "12000"
+        },
+        "258610": {
+            "insight": "특화된 마이크로바이옴 기반 치료제 개발 기술을 기반으로 성장 가능성이 높습니다.",
+            "risk": "임상 개발 실패 가능성 및 경쟁 심화가 주요 리스크입니다.",
+            "mkt_cap": "800억원",
+            "vol_ratio": "1.4x",
+            "rsi": "58",
+            "swot_s": "마이크로바이옴 기반 기술, 차별화된 파이프라인, 잠재적 성장성",
+            "swot_w": "임상 개발 초기 단계, 자금 조달 필요성, 높은 변동성",
+            "swot_o": "마이크로바이옴 시장 성장, 기술 이전 가능성, 정부 지원 확대",
+            "swot_t": "임상 실패, 경쟁 심화, 규제 강화",
+            "upside": "+25%",
+            "dcf_target": "8000",
+            "dcf_bear": "5000",
+            "dcf_bull": "10000"
+        },
+        "041020": {
+            "insight": "AI 기술을 접목한 오피스 솔루션 경쟁력 강화 및 신규 사업 확장이 기대됩니다.",
+            "risk": "오피스 소프트웨어 시장 경쟁 심화 및 기술 변화에 대한 대응이 중요합니다.",
+            "mkt_cap": "1500억원",
+            "vol_ratio": "0.9x",
+            "rsi": "42",
+            "swot_s": "AI 기술 접목, 다양한 오피스 솔루션, 클라우드 기반 서비스",
+            "swot_w": "경쟁 심화, 낮은 브랜드 인지도, 기술 변화 대응 필요",
+            "swot_o": "AI 기반 오피스 시장 성장, 신규 사업 확장, 정부 지원",
+            "swot_t": "경기 침체, 경쟁 심화, 보안 위협",
+            "upside": "+15%",
+            "dcf_target": "6000",
+            "dcf_bear": "4500",
+            "dcf_bull": "7500"
+        },
+        "196450": {
+            "insight": "팹리스(반도체 설계 전문) 기업으로서의 성장 잠재력과 삼성전자와의 협력 관계가 핵심 투자 포인트입니다.",
+            "risk": "반도체 경기 변동에 민감하며, 설계 기술 경쟁 심화가 핵심 리스크입니다.",
+            "mkt_cap": "2500억원",
+            "vol_ratio": "1.1x",
+            "rsi": "50",
+            "swot_s": "삼성전자 협력, 기술력, 성장 잠재력",
+            "swot_w": "반도체 경기 의존도, 설계 기술 경쟁 심화, 제한적인 자원",
+            "swot_o": "반도체 시장 성장, 신규 고객 확보, 기술 혁신",
+            "swot_t": "반도체 경기 침체, 경쟁 심화, 기술 유출 위험",
+            "upside": "+18%",
+            "dcf_target": "12000",
+            "dcf_bear": "9000",
+            "dcf_bull": "15000"
+        },
+        "101680": {
+            "insight": "산업용 특수 밸브 시장에서의 안정적인 점유율과 꾸준한 실적 개선이 기대됩니다.",
+            "risk": "경기 변동에 민감하며, 경쟁 심화로 인한 수익성 악화 가능성이 존재합니다.",
+            "mkt_cap": "800억원",
+            "vol_ratio": "0.6x",
+            "rsi": "38",
+            "swot_s": "산업용 밸브 시장 점유율, 안정적인 실적, 기술력",
+            "swot_w": "경기 변동 민감도, 경쟁 심화, 해외 시장 경쟁력",
+            "swot_o": "산업 설비 투자 확대, 해외 시장 진출, 친환경 밸브 수요 증가",
+            "swot_t": "경기 침체, 경쟁 심화, 원자재 가격 상승",
+            "upside": "+8%",
+            "dcf_target": "4500",
+            "dcf_bear": "3500",
+            "dcf_bull": "5500"
+        },
+        "900120": {
+            "insight": "중국 소비 회복에 따른 실적 개선 기대감이 핵심 투자 포인트입니다.",
+            "risk": "중국 경기 둔화 및 경쟁 심화가 핵심 리스크입니다.",
+            "mkt_cap": "1000억원",
+            "vol_ratio": "1.6x",
+            "rsi": "62",
+            "swot_s": "중국 시장 기반, 가격 경쟁력, 브랜드 인지도",
+            "swot_w": "중국 경기 의존도, 낮은 수익성, 품질 이슈",
+            "swot_o": "중국 소비 회복, 신규 시장 진출, 온라인 채널 강화",
+            "swot_t": "중국 경기 둔화, 경쟁 심화, 정치적 리스크",
+            "upside": "+15%",
+            "dcf_target": "3000",
+            "dcf_bear": "2000",
+            "dcf_bull": "4000"
+        },
+        "089230": {
+            "insight": "미디어 콘텐츠 제작 능력과 플랫폼 확장을 통한 성장 가능성이 핵심 투자 포인트입니다.",
+            "risk": "콘텐츠 흥행 실패 및 경쟁 심화가 핵심 리스크입니다.",
+            "mkt_cap": "500억원",
+            "vol_ratio": "1.3x",
+            "rsi": "53",
+            "swot_s": "콘텐츠 제작 능력, 플랫폼 확장, IP 확보",
+            "swot_w": "콘텐츠 흥행 의존도, 낮은 수익성, 자금 부족",
+            "swot_o": "OTT 시장 성장, 신규 콘텐츠 개발, 글로벌 시장 진출",
+            "swot_t": "콘텐츠 흥행 실패, 경쟁 심화, 규제 강화",
+            "upside": "+20%",
+            "dcf_target": "2500",
+            "dcf_bear": "1500",
+            "dcf_bull": "3500"
+        },
+        "357880": {
+            "insight": "AI 기반 컨택센터 솔루션 시장 성장과 함께 SK그룹과의 협력 시너지가 기대됩니다.",
+            "risk": "AI 기술 경쟁 심화와 컨택센터 시장의 변화에 대한 적응이 중요합니다.",
+            "mkt_cap": "3000억원",
+            "vol_ratio": "1.0x",
+            "rsi": "48",
+            "swot_s": "AI 기술력, SK그룹 협력, 클라우드 기반 솔루션",
+            "swot_w": "경쟁 심화, 높은 연구개발 비용, 시장 변화 대응 필요",
+            "swot_o": "AI 컨택센터 시장 성장, 신규 고객 확보, 정부 지원 정책",
+            "swot_t": "기술 경쟁 심화, 보안 위협, 경기 침체",
             "upside": "+12%",
-            "dcf_target": "5500",
+            "dcf_target": "18000",
+            "dcf_bear": "14000",
+            "dcf_bull": "22000"
+        },
+        "003280": {
+            "insight": "해운 운임 상승 시 수익성 개선 기대, 컨테이너 시황 변동성 주의.",
+            "risk": "글로벌 경기 침체 심화 시 해운 물동량 감소 우려.",
+            "mkt_cap": "1000억원",
+            "vol_ratio": "0.8x",
+            "rsi": "48",
+            "swot_s": "아시아 역내 네트워크, 안정적인 화주 확보",
+            "swot_w": "높은 부채비율, 해운 시황 변동에 취약",
+            "swot_o": "신규 항로 개척, 친환경 선박 투자",
+            "swot_t": "글로벌 해운 경쟁 심화, 유가 상승",
+            "upside": "+20%",
+            "dcf_target": "1200",
+            "dcf_bear": "800",
+            "dcf_bull": "1500"
+        },
+        "008350": {
+            "insight": "2차전지 관련주 편입 가능성 존재, 알루미늄 가격 변동에 민감.",
+            "risk": "2차전지 사업 실질적 성과 미흡 시 투자심리 악화.",
+            "mkt_cap": "3000억원",
+            "vol_ratio": "1.5x",
+            "rsi": "62",
+            "swot_s": "알루미늄 압연 기술력, 2차전지 소재 사업 확장",
+            "swot_w": "실적 변동성, 알루미늄 가격 의존도 높음",
+            "swot_o": "전기차 시장 성장, 경량화 소재 수요 증가",
+            "swot_t": "글로벌 알루미늄 공급 과잉, 경쟁 심화",
+            "upside": "+10%",
+            "dcf_target": "4500",
+            "dcf_bear": "3000",
+            "dcf_bull": "5500"
+        },
+        "039980": {
+            "insight": "AI 관련 기술 성장 잠재력 보유, 재무 안정성 확보가 중요.",
+            "risk": "AI 시장 경쟁 심화 및 기술 상용화 지연 가능성.",
+            "mkt_cap": "500억원",
+            "vol_ratio": "2.0x",
+            "rsi": "70",
+            "swot_s": "AI 기술력, 정부 정책 수혜 가능성",
+            "swot_w": "낮은 브랜드 인지도, 제한적인 자금력",
+            "swot_o": "AI 시장 성장, 정부 투자 확대",
+            "swot_t": "글로벌 AI 기업 경쟁 심화, 기술 변화 속도",
+            "upside": "+30%",
+            "dcf_target": "3000",
+            "dcf_bear": "1500",
+            "dcf_bull": "4000"
+        },
+        "047040": {
+            "insight": "국내외 건설 수주 증가 기대, 부동산 경기 침체 지속 시 수익성 악화 우려.",
+            "risk": "원자재 가격 상승 및 건설 경기 둔화.",
+            "mkt_cap": "2조원",
+            "vol_ratio": "0.9x",
+            "rsi": "53",
+            "swot_s": "브랜드 인지도, 해외 건설 경험",
+            "swot_w": "높은 부채비율, 부동산 경기 민감도",
+            "swot_o": "정부 SOC 투자 확대, 해외 건설 시장 성장",
+            "swot_t": "건설 경기 침체, 금리 인상",
+            "upside": "+15%",
+            "dcf_target": "6000",
             "dcf_bear": "4000",
             "dcf_bull": "7000"
         },
         "032820": {
-            "insight": "스마트 팩토리 및 원자력 발전 관련 사업 성장 가능성.",
-            "risk": "수주 변동성 및 정부 정책 변화에 따른 불확실성 존재.",
+            "insight": "원자력 발전 관련 기술 보유, 정책 변화에 따른 변동성 확대 가능성.",
+            "risk": "원자력 발전 정책 불확실성 및 경쟁 심화.",
+            "mkt_cap": "2000억원",
+            "vol_ratio": "1.1x",
+            "rsi": "58",
+            "swot_s": "원자력 발전 기술력, 정부 정책 수혜 가능성",
+            "swot_w": "수주 변동성, 정책 의존도 높음",
+            "swot_o": "글로벌 원자력 발전 시장 성장, 신규 원전 건설",
+            "swot_t": "탈원전 정책, 안전 문제",
+            "upside": "+25%",
+            "dcf_target": "8000",
+            "dcf_bear": "5000",
+            "dcf_bull": "9000"
+        },
+        "004410": {
+            "insight": "밀가루 가격 하락 시 수익성 개선 기대, 식품 안전 이슈 발생 시 타격.",
+            "risk": "곡물 가격 변동성 및 경쟁 심화.",
+            "mkt_cap": "800억원",
+            "vol_ratio": "0.7x",
+            "rsi": "45",
+            "swot_s": "인지도 높은 브랜드, 안정적인 내수 시장",
+            "swot_w": "높은 원가율, 경쟁 심화",
+            "swot_o": "간편식 시장 성장, 해외 시장 진출",
+            "swot_t": "곡물 가격 상승, 식품 안전 이슈",
+            "upside": "+10%",
+            "dcf_target": "2500",
+            "dcf_bear": "1800",
+            "dcf_bull": "3000"
+        },
+        "152550": {
+            "insight": "유가 상승 시 수익성 개선 기대, 국제 유가 변동에 매우 민감.",
+            "risk": "유가 하락 및 생산량 감소.",
             "mkt_cap": "700억원",
-            "vol_ratio": "0.9x",
-            "rsi": "50",
-            "swot_s": "원자력 발전 제어 기술, 스마트 팩토리 솔루션",
-            "swot_w": "수주 의존도 높음, 재무 안정성 취약",
-            "swot_o": "정부의 스마트 팩토리 육성 정책, 노후 원전 해체 시장 성장",
-            "swot_t": "원자력 발전 정책 변화, 경쟁 심화",
-            "upside": "+18%",
-            "dcf_target": "3800",
+            "vol_ratio": "1.3x",
+            "rsi": "65",
+            "swot_s": "유전 개발 기술력, 유가 상승 수혜",
+            "swot_w": "높은 유가 의존도, 생산량 변동성",
+            "swot_o": "글로벌 에너지 수요 증가, 신규 유전 개발",
+            "swot_t": "유가 하락, 환경 규제 강화",
+            "upside": "+20%",
+            "dcf_target": "1800",
+            "dcf_bear": "1200",
+            "dcf_bull": "2200"
+        },
+        "010170": {
+            "insight": "5G 투자 확대 시 수혜 기대, 통신사 투자 축소 시 실적 악화.",
+            "risk": "통신 투자 감소 및 경쟁 심화.",
+            "mkt_cap": "1500억원",
+            "vol_ratio": "0.8x",
+            "rsi": "49",
+            "swot_s": "광통신 기술력, 5G 시장 성장",
+            "swot_w": "높은 통신사 의존도, 경쟁 심화",
+            "swot_o": "5G 투자 확대, 데이터 센터 수요 증가",
+            "swot_t": "통신 투자 감소, 기술 변화 속도",
+            "upside": "+15%",
+            "dcf_target": "4000",
             "dcf_bear": "2800",
             "dcf_bull": "4800"
         },
-        "152550": {
-            "insight": "국제 유가 상승에 따른 수익성 개선 및 자원 개발 기대.",
-            "risk": "유가 변동성 및 자원 개발 실패 가능성 존재.",
-            "mkt_cap": "2000억원",
-            "vol_ratio": "1.1x",
-            "rsi": "60",
-            "swot_s": "해외 유전 개발 경험, 안정적인 생산량",
-            "swot_w": "유가 변동에 민감, 높은 투자 비용",
-            "swot_o": "에너지 안보 중요성 부각, 신규 유전 개발 기회",
-            "swot_t": "유가 하락, 환경 규제 강화",
+        "417200": {
+            "insight": "전기차 배터리 소재 성장 잠재력 보유, 신규 사업 투자 리스크 존재.",
+            "risk": "배터리 소재 시장 경쟁 심화 및 기술 변화.",
+            "mkt_cap": "1조원",
+            "vol_ratio": "1.8x",
+            "rsi": "68",
+            "swot_s": "배터리 소재 기술력, LS그룹 시너지",
+            "swot_w": "높은 투자 비용, 시장 경쟁 심화",
+            "swot_o": "전기차 시장 성장, 배터리 소재 수요 증가",
+            "swot_t": "원자재 가격 변동, 기술 변화 속도",
             "upside": "+25%",
-            "dcf_target": "800",
-            "dcf_bear": "600",
-            "dcf_bull": "1000"
-        },
-        "010170": {
-            "insight": "5G 통신망 투자 확대 및 광케이블 수요 증가로 인한 성장 기대.",
-            "risk": "통신 투자 축소 및 경쟁 심화 가능성 존재.",
-            "mkt_cap": "1500억원",
-            "vol_ratio": "0.7x",
-            "rsi": "45",
-            "swot_s": "광케이블 제조 기술력, 국내 통신사와의 협력 관계",
-            "swot_w": "통신 투자에 의존적, 해외 시장 경쟁력 부족",
-            "swot_o": "5G 상용화 확대, 데이터 센터 투자 증가",
-            "swot_t": "통신 투자 감소, 기술 변화에 대한 대응 지연",
-            "upside": "+15%",
-            "dcf_target": "4200",
-            "dcf_bear": "3200",
-            "dcf_bull": "5200"
+            "dcf_target": "35000",
+            "dcf_bear": "25000",
+            "dcf_bull": "45000"
         },
         "005860": {
-            "insight": "곡물 가격 하락 및 사료 수요 증가에 따른 실적 개선 기대.",
-            "risk": "가축 질병 발생 및 경쟁 심화 가능성 존재.",
-            "mkt_cap": "900억원",
-            "vol_ratio": "1.0x",
-            "rsi": "52",
-            "swot_s": "오랜 업력 및 브랜드 인지도, 안정적인 판매망",
-            "swot_w": "곡물 가격 변동에 민감, 경쟁 심화",
-            "swot_o": "반려동물 시장 성장, 친환경 사료 수요 증가",
-            "swot_t": "가축 질병 발생, 수입 사료 증가",
+            "insight": "곡물 가격 하락 시 수익성 개선 기대, 가축 질병 발생 시 실적 악화.",
+            "risk": "곡물 가격 변동성 및 경쟁 심화.",
+            "mkt_cap": "1200억원",
+            "vol_ratio": "0.9x",
+            "rsi": "51",
+            "swot_s": "사료 제조 기술력, 안정적인 거래처 확보",
+            "swot_w": "높은 원가율, 곡물 가격 의존도 높음",
+            "swot_o": "반려동물 시장 성장, 해외 시장 진출",
+            "swot_t": "곡물 가격 상승, 가축 질병 발생",
             "upside": "+10%",
-            "dcf_target": "2800",
-            "dcf_bear": "2000",
-            "dcf_bull": "3600"
+            "dcf_target": "7000",
+            "dcf_bear": "5000",
+            "dcf_bull": "8000"
         }
     }
 }
