@@ -1,18 +1,17 @@
 {
-  "market_mood": "공포",
-  "mood_score": 35,
+  "market_mood": "중립",
+  "mood_score": 50,
   "key_takeaways": [
-    "SoFi CEO's share purchase amidst Muddy Waters' short attack suggests internal confidence, but the market's reaction remains uncertain, potentially impacting fintech sentiment.",
-    "The meatpacking strike threatens beef supply, potentially driving up beef prices and impacting inflation expectations, which could pressure the Fed.",
-    "CEOs freezing hiring while investing heavily in AI presents a mixed signal: potential productivity gains versus immediate labor market weakness."
+    "[03월 20일] AI 데이터 수집 실패로 기본 데이터가 노출됩니다.",
+    "Gemini API 통신 지연 혹은 응답 형식 오류가 발생했습니다.",
+    "시장 데이터(지수 자체)는 정상적으로 수집중입니다."
   ],
-  "sector_outlook": "The meatpacking strike will likely benefit companies with existing beef inventories in the short term, but sustained disruption could hurt consumer staples and restaurant sectors. The uncertainty around AI investments impacts the tech sector; potential for long-term gains, but near-term hiring freezes could dampen growth expectations.",
-  "risk_factors": [
-    "Inflationary pressure from the meatpacking strike could force the Fed to maintain a hawkish stance longer than anticipated.",
-    "The mismatch between CEO investment in AI and hiring freezes might signal a broader economic slowdown despite technological advancements.",
-    "Negative sentiment surrounding SoFi could spread to other fintech companies, impacting investor confidence in the sector."
-  ],
-  "strategy": "Consider a defensive portfolio allocation with increased exposure to sectors less sensitive to labor disputes and inflation, such as healthcare or utilities. Short-term trading opportunities may arise from beef price volatility. Monitor SoFi and the broader fintech sector closely for signs of contagion. A small allocation to companies poised to benefit from automation might be warranted, but with caution.",
-  "timestamp": "2026-03-19T22:56:31.937406",
+  "sector_outlook": "임시 대응 모드 가동 중",
+  "risk_factors": "API 연동 에러",
+  "strategy": {
+    "단기": "API 복구 대기",
+    "중장기": "정상화 후 리포트 확인"
+  },
+  "timestamp": "2026-03-20T22:56:15.996164",
   "model": "gemini"
 }
