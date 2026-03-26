@@ -156,10 +156,21 @@ def generate_portfolio():
 @common_bp.route('/api/market-pulse', strict_slashes=False)
 def market_pulse():
     # Helper to fetch current prices for indices and BTC
-    tickers = ["^KS11", "^GSPC", "BTC-USD", "USDKRW=X"]
+    tickers = ["^KS11", "^GSPC", "BTC-USD", "KRW=X"]
     try:
-        from utils import fetch_realtime_data
+        try:
+            from utils import fetch_realtime_data
+        except ImportError:
+            from ..utils import fetch_realtime_data
+
         data = fetch_realtime_data(tickers)
+
+        # Backward-compatible alias for existing frontend keys.
+        if "KRW=X" in data and "USDKRW=X" not in data:
+            data["USDKRW=X"] = data["KRW=X"]
+        if "KRW=X" in data and "USDKRW" not in data:
+            data["USDKRW"] = data["KRW=X"]
+
         return jsonify(data)
     except Exception as e:
         logger.error(f"Market Pulse Error: {e}")
