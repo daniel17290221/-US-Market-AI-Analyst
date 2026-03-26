@@ -11,6 +11,7 @@ import tweepy
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import requests
+import sys
 
 # Load environment variables
 load_dotenv()
@@ -25,13 +26,16 @@ class XMarketAgent:
         self.access_secret = os.getenv("X_ACCESS_SECRET", "").strip()
         self.bearer_token = os.getenv("X_BEARER_TOKEN", "").strip()
         
-        # Google Gemini setup (REST API, no SDK)
-        self.gemini_key = os.getenv("GOOGLE_API_KEY", "").strip()
-        self.gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.gemini_key}" if self.gemini_key else None
+        # AI generation setup (KIE first, Google fallback)
+        self.kie_key = os.getenv("KIE_API_KEY", "").strip()
+        self.google_key = os.getenv("GOOGLE_API_KEY", "").strip()
+        self.kie_base_url = os.getenv("KIE_API_BASE_URL", "https://api.kie.ai").rstrip("/")
+        self.kie_model = os.getenv("KIE_MODEL", "gemini-2.5-flash")
+        self.gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.google_key}" if self.google_key else None
         
         # Twitter Client (v2)
         try:
-            if self.api_key:
+            if self.api_key and self.api_secret and self.access_token and self.access_secret:
                 # Masked logging for debugging (only first 4 chars)
                 k_mask = f"{self.api_key[:4]}..." if self.api_key else "None"
                 s_mask = f"{self.api_secret[:4]}..." if self.api_secret else "None"
@@ -50,9 +54,10 @@ class XMarketAgent:
                 print(f"[{datetime.now()}] Successfully initialized X Client (v2)", flush=True)
             else:
                 self.client = None
-                print(f"[{datetime.now()}] X API Credentials missing. Running in Simulation mode.", flush=True)
+                print(f"[{datetime.now()}] X API credentials missing. Posting disabled.", flush=True)
         except Exception as e:
             print(f"[{datetime.now()}] Error initializing X Client: {e}", flush=True)
+            self.client = None
 
     def _fetch_yahoo_data(self, symbol):
         """Helper to fetch price data from Yahoo API without yfinance"""
@@ -200,33 +205,60 @@ class XMarketAgent:
     def _request_gemini(self, prompt):
         """Internal helper for Gemini REST API with AI-Markdown cleanup"""
         try:
-            if not self.gemini_url:
-                print(f"[{datetime.now()}] Gemini URL missing (Check API Key)", flush=True)
-                return None
-            
             # Explicitly tell AI not to use bold/italic Markdown
             clean_prompt = prompt + "\nCRITICAL: DO NOT use any Markdown formatting like **bold** or *italic*. Use plain text only."
-            
-            resp = requests.post(
-                self.gemini_url,
-                json={"contents": [{"parts": [{"text": clean_prompt}]}]},
-                timeout=15
-            )
-            if resp.status_code == 200:
-                result = resp.json()
-                if 'candidates' in result and result['candidates']:
-                    content = result['candidates'][0]['content']['parts'][0]['text'].strip()
-                    
-                    # AI-Formatting Cleanup: Remove all '*' and '**' commonly used by LLMs
+
+            if self.kie_key:
+                url = f"{self.kie_base_url}/gemini-2.5-flash/v1/chat/completions"
+                headers = {
+                    "Authorization": f"Bearer {self.kie_key}",
+                    "Content-Type": "application/json"
+                }
+                payload = {
+                    "model": self.kie_model,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [{"type": "text", "text": clean_prompt}]
+                        }
+                    ],
+                    "stream": False,
+                    "include_thoughts": False,
+                    "temperature": 0.9,
+                    "top_p": 0.95,
+                    "max_tokens": 300
+                }
+                resp = requests.post(url, json=payload, headers=headers, timeout=20)
+                if resp.status_code == 200:
+                    result = resp.json()
+                    content = result["choices"][0]["message"]["content"].strip()
                     content = content.replace("**", "").replace("*", "")
-                    
                     if content.startswith('"') and content.endswith('"'):
                         content = content[1:-1]
                     return content
-                else:
+                print(f"[{datetime.now()}] KIE API Error {resp.status_code}: {resp.text}", flush=True)
+                return None
+
+            if self.gemini_url:
+                resp = requests.post(
+                    self.gemini_url,
+                    json={"contents": [{"parts": [{"text": clean_prompt}]}]},
+                    timeout=15
+                )
+                if resp.status_code == 200:
+                    result = resp.json()
+                    if 'candidates' in result and result['candidates']:
+                        content = result['candidates'][0]['content']['parts'][0]['text'].strip()
+                        content = content.replace("**", "").replace("*", "")
+                        if content.startswith('"') and content.endswith('"'):
+                            content = content[1:-1]
+                        return content
                     print(f"[{datetime.now()}] Gemini Empty Result: {result}", flush=True)
-            else:
-                print(f"[{datetime.now()}] Gemini API Error {resp.status_code}: {resp.text}", flush=True)
+                else:
+                    print(f"[{datetime.now()}] Gemini API Error {resp.status_code}: {resp.text}", flush=True)
+                return None
+
+            print(f"[{datetime.now()}] AI API key missing (KIE_API_KEY/GOOGLE_API_KEY)", flush=True)
             return None
         except Exception as e:
             print(f"[{datetime.now()}] Gemini REST error: {e}", flush=True)
@@ -280,6 +312,9 @@ class XMarketAgent:
         print(f"[{datetime.now()}] Dispatching custom Omni broadcast...", flush=True)
         if not text:
             return False
+        if not self.client:
+            print(f"[{datetime.now()}] Dispatch FAILED: X credentials are missing or invalid.", flush=True)
+            return False
             
         try:
             # Weighted length clipping for X
@@ -299,21 +334,16 @@ class XMarketAgent:
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write(f"[{datetime.now()}] MODE: custom | CONTENT: {text}\n")
 
-            if self.client:
-                # Test connectivity
-                try:
-                    me = self.client.get_me()
-                    if me and me.data:
-                        print(f"[{datetime.now()}] Authenticated as: @{me.data.username}", flush=True)
-                except Exception as auth_err:
-                    print(f"[{datetime.now()}] Auth Check Warning (Permissions?): {auth_err}", flush=True)
+            # Test connectivity; fail hard if auth is invalid.
+            me = self.client.get_me()
+            if not (me and me.data and me.data.username):
+                print(f"[{datetime.now()}] Dispatch FAILED: unable to verify authenticated account.", flush=True)
+                return False
+            print(f"[{datetime.now()}] Authenticated as: @{me.data.username}", flush=True)
 
-                response = self.client.create_tweet(text=text)
-                print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
-                return True
-            else:
-                print(f"[{datetime.now()}] SIMULATION (Custom) SUCCESS: {text}", flush=True)
-                return True
+            response = self.client.create_tweet(text=text)
+            print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
+            return True
         except Exception as e:
             err_msg = str(e)
             # Tweepy v2 errors often hide details in response object
@@ -327,7 +357,7 @@ class XMarketAgent:
                 except:
                     pass
             print(f"[{datetime.now()}] Dispatch FAILED: {err_msg}", flush=True)
-            return False, err_msg
+            return False
 
     def post_tweet(self, mode="standard"):
         """Executes the automated briefing based on mode"""
@@ -362,21 +392,20 @@ class XMarketAgent:
                 with open(log_path, "a", encoding="utf-8") as f:
                     f.write(f"[{datetime.now()}] MODE: {mode} | CONTENT: {tweet_text}\n")
 
-                if self.client:
-                    # Test connectivity
-                    try:
-                        me = self.client.get_me()
-                        if me and me.data:
-                            print(f"[{datetime.now()}] Authenticated as: @{me.data.username}", flush=True)
-                    except Exception as auth_err:
-                        print(f"[{datetime.now()}] Auth Check Warning (Permissions?): {auth_err}", flush=True)
+                if not self.client:
+                    print(f"[{datetime.now()}] Dispatch FAILED: X credentials are missing or invalid.", flush=True)
+                    return False
 
-                    response = self.client.create_tweet(text=tweet_text)
-                    print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
-                    return True
-                else:
-                    print(f"[{datetime.now()}] SIMULATION SUCCESS: {tweet_text}", flush=True)
-                    return True
+                # Auth check must pass before posting.
+                me = self.client.get_me()
+                if not (me and me.data and me.data.username):
+                    print(f"[{datetime.now()}] Dispatch FAILED: unable to verify authenticated account.", flush=True)
+                    return False
+                print(f"[{datetime.now()}] Authenticated as: @{me.data.username}", flush=True)
+
+                response = self.client.create_tweet(text=tweet_text)
+                print(f"[{datetime.now()}] BROADCAST SUCCESS! ID: {response.data['id']}", flush=True)
+                return True
             except Exception as e:
                   print(f"[{datetime.now()}] Dispatch FAILED: {e}", flush=True)
                   if hasattr(e, 'response') and e.response is not None:
@@ -390,4 +419,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     agent = XMarketAgent()
-    agent.post_tweet(mode=args.mode)
+    ok = agent.post_tweet(mode=args.mode)
+    if not ok:
+        print(f"[{datetime.now()}] X auto-post failed. Exiting with code 1.", flush=True)
+        sys.exit(1)

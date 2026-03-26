@@ -17,9 +17,14 @@ on:
 jobs:
   broadcast:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,12 +37,22 @@ jobs:
           
       - name: Determine Mode and Post
         env:
+          KIE_API_KEY: ${{ secrets.KIE_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
         run: |
+          if [ -z "$X_API_KEY" ] || [ -z "$X_API_SECRET" ] || [ -z "$X_ACCESS_TOKEN" ] || [ -z "$X_ACCESS_SECRET" ]; then
+            echo "❌ [CRITICAL] X API secrets are missing."
+            exit 1
+          fi
+          if [ -z "$KIE_API_KEY" ] && [ -z "$GOOGLE_API_KEY" ]; then
+            echo "❌ [CRITICAL] KIE_API_KEY or GOOGLE_API_KEY must be set for tweet generation."
+            exit 1
+          fi
+
           # Use current hour (UTC) to decide mode
           HOUR=$(date -u +%H)
           MINUTE=$(date -u +%M)
@@ -58,9 +73,8 @@ jobs:
 
       - name: Commit and Push History
         run: |
-          git config --global user.name "daniel"
-          git config --global user.email "1729021@naver.com"
+          git config --local user.name "daniel"
+          git config --local user.email "1729021@naver.com"
           git add logs/tweet_history.log || true
           git commit -m "chore: update tweet history log" || echo "No changes to commit"
-          git pull --rebase origin main
-          git push origin main
+          git push origin HEAD:main
