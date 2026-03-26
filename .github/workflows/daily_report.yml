@@ -37,14 +37,19 @@ jobs:
 
       - name: Generate US Market Report (Fast Mode)
         env:
+          KIE_API_KEY: ${{ secrets.KIE_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           echo "🚀 Starting US Market Report generation (fast mode)..."
-          if [ -z "$GOOGLE_API_KEY" ]; then
-            echo "❌ [CRITICAL] GOOGLE_API_KEY is NOT set!"
+          if [ -z "$KIE_API_KEY" ] && [ -z "$GOOGLE_API_KEY" ]; then
+            echo "❌ [CRITICAL] KIE_API_KEY or GOOGLE_API_KEY must be set!"
             exit 1
           fi
-          echo "✅ GOOGLE_API_KEY is set (length: ${#GOOGLE_API_KEY} chars)"
+          if [ -n "$KIE_API_KEY" ]; then
+            echo "✅ KIE_API_KEY is set (length: ${#KIE_API_KEY} chars)"
+          else
+            echo "✅ GOOGLE_API_KEY fallback is set (length: ${#GOOGLE_API_KEY} chars)"
+          fi
           cd $GITHUB_WORKSPACE
 
           # --fast: runs macro_analyzer.py + daily_report_generator.py only (~2 min)

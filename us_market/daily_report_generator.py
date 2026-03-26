@@ -26,12 +26,18 @@ class USDailyReportGenerator:
         self.data_dir = data_dir
         self.output_file = os.path.join(data_dir, 'report_us.html')
         
-        # Configure Gemini
-        self.api_key = os.getenv('GOOGLE_API_KEY') or os.getenv("google_api_key")
+        # Configure KIE Gemini (OpenAI-compatible API)
+        self.api_key = (
+            os.getenv("KIE_API_KEY")
+            or os.getenv("GOOGLE_API_KEY")
+            or os.getenv("google_api_key")
+        )
+        self.kie_base_url = os.getenv("KIE_API_BASE_URL", "https://api.kie.ai").rstrip("/")
+        self.kie_model = os.getenv("KIE_MODEL", "gemini-2.5-flash")
         if self.api_key:
-            logger.info("[SUCCESS] Gemini AI (REST) Backend Initialized")
+            logger.info("[SUCCESS] KIE Gemini OpenAI-compatible backend initialized")
         else:
-            logger.warning("[WARNING] GOOGLE_API_KEY not found or default. Using mock data.")
+            logger.warning("[WARNING] KIE_API_KEY/GOOGLE_API_KEY not found. Using mock data.")
 
     def fetch_live_indices(self):
         """Fetch live index data using yfinance"""
@@ -159,9 +165,9 @@ class USDailyReportGenerator:
         return data
 
     def generate_ai_content(self, raw_data):
-        """Synthesize article content via Gemini REST API"""
+        """Synthesize article content via KIE Gemini OpenAI-compatible API"""
         if not self.api_key:
-            logger.error("❌ [CRITICAL] GOOGLE_API_KEY is missing! Returning MOCK content. Report will NOT be updated with real AI analysis.")
+            logger.error("❌ [CRITICAL] API key is missing! Returning MOCK content. Report will NOT be updated with real AI analysis.")
             return self.get_mock_ai_content(raw_data)
             
         prompt = f"""
@@ -194,22 +200,87 @@ class USDailyReportGenerator:
         """
         
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.api_key}"
+            url = f"{self.kie_base_url}/gemini-2.5-flash/v1/chat/completions"
             payload = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {
-                    "response_mime_type": "application/json",
-                    "temperature": 0.9,
-                    "top_p": 0.95,
-                    "max_output_tokens": 2048
-                }
+                "model": self.kie_model,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": prompt
+                            }
+                        ]
+                    }
+                ],
+                "stream": False,
+                "include_thoughts": False,
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "structured_output",
+                        "strict": True,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "catchy_title": {"type": "string"},
+                                "summary_title": {"type": "string"},
+                                "core_summary": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "minItems": 1
+                                },
+                                "briefing_title": {"type": "string"},
+                                "sections": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "emoji_tag": {"type": "string"},
+                                            "title": {"type": "string"},
+                                            "content": {"type": "string"}
+                                        },
+                                        "required": ["emoji_tag", "title", "content"],
+                                        "additionalProperties": False
+                                    },
+                                    "minItems": 3
+                                },
+                                "hashtags": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "minItems": 5
+                                },
+                                "market_mood_narrative": {"type": "string"}
+                            },
+                            "required": [
+                                "catchy_title",
+                                "summary_title",
+                                "core_summary",
+                                "briefing_title",
+                                "sections",
+                                "hashtags",
+                                "market_mood_narrative"
+                            ],
+                            "additionalProperties": False
+                        }
+                    }
+                },
+                "temperature": 0.9,
+                "top_p": 0.95,
+                "max_tokens": 2048
             }
-            
-            resp = requests.post(url, json=payload, timeout=120)
+
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+
+            resp = requests.post(url, json=payload, headers=headers, timeout=120)
             if resp.status_code == 200:
                 res_json = resp.json()
-                text = res_json['candidates'][0]['content']['parts'][0]['text'].strip()
-                logger.info("✅ [SUCCESS] Gemini AI content generated successfully.")
+                text = res_json["choices"][0]["message"]["content"].strip()
+                logger.info("✅ [SUCCESS] KIE Gemini AI content generated successfully.")
                 return json.loads(text)
             else:
                 logger.error(f"❌ [CRITICAL] AI API Error: {resp.status_code} - {resp.text[:500]}")
@@ -232,7 +303,7 @@ class USDailyReportGenerator:
             "core_summary": [
                 f"현재 시각({now_time}) 기준, 실시간 데이터가 정상적으로 수집되었습니다.",
                 f"특히 {top_symbol}를 필두로 한 주요 기술주들의 데이터 연동이 성공했습니다.",
-                "Gemini API 키가 설정되거나 모델을 2.0으로 변경하면 이 영역이 AI 분석 내용으로 채워집니다."
+                "KIE API 키가 설정되면 이 영역이 AI 분석 내용으로 채워집니다."
             ],
             "sections": [
                 {
