@@ -39,13 +39,16 @@ jobs:
         env:
           KIE_API_KEY: ${{ secrets.KIE_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_SECRET: ${{ secrets.X_API_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          X_API_KEY: ${{ secrets.X_API_KEY != '' && secrets.X_API_KEY || secrets.TWITTER_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET != '' && secrets.X_API_SECRET || secrets.TWITTER_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN != '' && secrets.X_ACCESS_TOKEN || secrets.TWITTER_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET != '' && secrets.X_ACCESS_SECRET || secrets.TWITTER_ACCESS_SECRET }}
         run: |
+          echo "X key lengths => API:${#X_API_KEY} SECRET:${#X_API_SECRET} ACCESS:${#X_ACCESS_TOKEN} ACCESS_SECRET:${#X_ACCESS_SECRET}"
           if [ -z "$X_API_KEY" ] || [ -z "$X_API_SECRET" ] || [ -z "$X_ACCESS_TOKEN" ] || [ -z "$X_ACCESS_SECRET" ]; then
             echo "❌ [CRITICAL] X API secrets are missing."
+            echo "Required secret names: X_API_KEY/X_API_SECRET/X_ACCESS_TOKEN/X_ACCESS_SECRET"
+            echo "or fallback names: TWITTER_API_KEY/TWITTER_API_SECRET/TWITTER_ACCESS_TOKEN/TWITTER_ACCESS_SECRET"
             exit 1
           fi
           if [ -z "$KIE_API_KEY" ] && [ -z "$GOOGLE_API_KEY" ]; then
