@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omni Swarm AI | Intelligence Terminal</title>
+    <title>옴니 스웜 AI | 인텔리전스 터미널</title>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4995156883730033"
         crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap"
@@ -340,27 +340,27 @@
             <img src="/assets/logo.jpg" alt="Logo" class="logo-img">
             <div class="logo-text">
                 <span class="logo-main">Omni<span class="highlight">Swarm</span></span>
-                <span class="logo-sub">Investment Prophecy</span>
+                <span class="logo-sub">투자 인사이트 터미널</span>
             </div>
         </a>
 
         <div class="menu-item active">
             <i class="fas fa-terminal"></i>
-            <span>Command Center</span>
+            <span>지휘 센터</span>
         </div>
         <div class="menu-item" onclick="window.open('https://x.com/richideabank')">
             <i class="fab fa-twitter"></i>
-            <span>𝕏 Intelligence Feed</span>
+            <span>𝕏 인텔리전스 피드</span>
         </div>
         <div class="menu-item" onclick="window.open('/daily-report')">
             <i class="fas fa-file-invoice-dollar"></i>
-            <span>US Market Matrix</span>
+            <span>미국 시장 매트릭스</span>
         </div>
 
         <div class="wallet-container">
-            <div style="font-size: 0.6rem; color: #6e7681; margin-bottom: 5px;">ACP WALLET (BASE)</div>
+            <div style="font-size: 0.6rem; color: #6e7681; margin-bottom: 5px;">ACP 지갑 (BASE)</div>
             <div class="wallet-value">0x0dD...56EB</div>
-            <div style="margin-top: 5px; color: var(--success-color); font-size: 0.65rem;">● Swarm Connected</div>
+            <div style="margin-top: 5px; color: var(--success-color); font-size: 0.65rem;">● 스웜 연결됨</div>
         </div>
     </div>
 
@@ -391,11 +391,11 @@
         <div class="content-grid">
             <div class="left-col">
                 <div class="card">
-                    <h3><i class="fab fa-twitter" style="color:#1DA1F2"></i> Automated Broadcast History</h3>
+                    <h3><i class="fab fa-twitter" style="color:#1DA1F2"></i> 자동 브로드캐스트 기록</h3>
                     <div id="xHistory" class="x-history-box">
                         <div style="text-align: center; margin-top: 100px; color: #8b949e;">
                             <i class="fas fa-spinner fa-spin fa-2x"></i>
-                            <p>Syncing with the Matrix...</p>
+                            <p>매트릭스 동기화 중...</p>
                         </div>
                     </div>
                 </div>
@@ -403,30 +403,30 @@
 
             <div class="right-col">
                 <div class="card">
-                    <h3><i class="fas fa-magic"></i> AI-Assisted Intelligence Draft</h3>
+                    <h3><i class="fas fa-magic"></i> AI 보조 인텔리전스 초안</h3>
                     <div class="terminal-container">
                         <textarea id="tweetContent"
-                            placeholder="Enter raw market intel or news. Omni Alpha AI will rewrite this into a sarcastic, high-conviction post before broadcasting."></textarea>
+                            placeholder="시장 인텔 또는 뉴스를 입력하세요. Omni Alpha AI가 게시 전, 고신뢰 문장으로 재작성합니다."></textarea>
                         <div class="btn-row">
                             <button class="btn-post secondary" onclick="postTweet('direct')" id="btnDirect">
-                                <i class="fas fa-bolt"></i> Direct Post
+                                <i class="fas fa-bolt"></i> 바로 게시
                             </button>
                             <button class="btn-post" onclick="postTweet('draft')" id="btnDraft">
-                                <i class="fas fa-wand-magic-sparkles"></i> AI Draft & Post
+                                <i class="fas fa-wand-magic-sparkles"></i> AI 작성 후 게시
                             </button>
                         </div>
                     </div>
 
                     <div style="margin-top: 20px;">
                         <h4 style="font-size: 0.8rem; color: #8b949e; margin-bottom: 10px; text-transform: uppercase;">
-                            Matrix Quick Scan</h4>
+                            매트릭스 퀵 스캔</h4>
                         <div id="quickScanResults"
                             style="font-size: 0.75rem; color: #8b949e; line-height: 1.6; background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); height: 100px; overflow-y: auto;">
-                            Select 'Run Rapid Scan' to analyze current momentum.
+                            '빠른 시장 스캔 실행'을 눌러 현재 모멘텀을 분석하세요.
                         </div>
                         <button onclick="runRapidAnalysis()"
                             style="margin-top: 10px; font-size: 0.8rem; background: rgba(88,166,255,0.1); color: var(--accent-color); border: 1px solid var(--accent-color); width: 100%; border-radius: 8px; padding: 10px; cursor: pointer;">
-                            <i class="fas fa-bolt"></i> Run Rapid Market Scan
+                            <i class="fas fa-bolt"></i> 빠른 시장 스캔 실행
                         </button>
                     </div>
                 </div>
@@ -442,7 +442,7 @@
                 const container = document.getElementById('xHistory');
 
                 if (tweets.length === 0) {
-                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No history found.</div>';
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">기록이 없습니다.</div>';
                     return;
                 }
 
@@ -504,17 +504,17 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    alert("Omni Alpha Broadcasted:\n\n" + (result.tweet || content));
+                    alert("Omni Alpha 게시 완료:\n\n" + (result.tweet || content));
                     document.getElementById('tweetContent').value = '';
                     fetchHistory();
                 } else {
-                    const errorMsg = result.message || "Unknown error";
+                    const errorMsg = result.message || "알 수 없는 오류";
                     const trace = result.trace ? `\n\nTrace:\n${result.trace}` : "";
-                    alert("Broadcast Error: " + errorMsg + trace);
+                    alert("게시 오류: " + errorMsg + trace);
                     console.error("Server Error Detail:", result);
                 }
             } catch (e) {
-                alert("Matrix Link Error: " + e.message);
+                alert("매트릭스 연결 오류: " + e.message);
                 console.error("Fetch Error:", e);
             } finally {
                 btn.disabled = false;
@@ -524,7 +524,7 @@
 
         async function runRapidAnalysis() {
             const scanBox = document.getElementById('quickScanResults');
-            scanBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing global matrix...';
+            scanBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 글로벌 매트릭스 분석 중...';
 
             try {
                 const resp = await fetch(`/api/market-pulse`);
@@ -533,13 +533,13 @@
                 const sp = data["^GSPC"] ? data["^GSPC"].change : 0;
 
                 let insight = "";
-                if (sp > 0.5) insight = "US Market leading the charge. Bullish continuation likely.";
-                else if (sp < -0.5) insight = "Macro fear peaking. Matrix rebalancing into safe havens.";
-                else insight = "Sideways chop. Optimal time for AI accumulation.";
+                if (sp > 0.5) insight = "미국 시장 주도 흐름. 상승 추세 연장 가능성이 높습니다.";
+                else if (sp < -0.5) insight = "거시 공포 심리 확대. 안전자산 중심 리밸런싱 구간입니다.";
+                else insight = "박스권 흐름. AI 기반 분할 접근에 유리한 구간입니다.";
 
-                scanBox.innerHTML = `[PULSE SCAN COMPLETE]<br>KOSPI: ${ks}% | S&P500: ${sp}%<br><br>INSIGHT: ${insight}`;
+                scanBox.innerHTML = `[스캔 완료]<br>코스피: ${ks}% | S&P500: ${sp}%<br><br>인사이트: ${insight}`;
             } catch (e) {
-                scanBox.innerHTML = "Scan failed. Check Matrix connection.";
+                scanBox.innerHTML = "스캔 실패. 매트릭스 연결 상태를 확인하세요.";
             }
         }
 
