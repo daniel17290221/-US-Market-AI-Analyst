@@ -166,8 +166,8 @@ class XMarketAgent:
         return self._request_gemini(prompt)
 
     def generate_korean_market_insight(self, market_data):
-        """Generates professional Korean market analysis/insights involving latest news"""
-        print(f"[{datetime.now()}] Computing Korean Matrix Insight (News+Market)...", flush=True)
+        """Generates Korean real-time news summary tweet for investors"""
+        print(f"[{datetime.now()}] Generating Korean real-time news summary...", flush=True)
         
         # Aggregate news from multiple sectors for breadth
         queries = [
@@ -183,8 +183,8 @@ class XMarketAgent:
         top_news = list(set(all_news))[:7] # Deduplicate and take 7
 
         prompt = f"""
-        Role: Omni Alpha ($OMNI) - 한국 시장 전략가
-        데이터와 뉴스 사이의 '숨겨진 맥락'을 짚어내는 날카롭고 직설적인 한국어 트윗을 작성하세요.
+        Role: 한국 투자자 대상 실시간 뉴스 브리핑 에디터
+        아래 데이터와 뉴스를 바탕으로, 투자자가 한눈에 파악할 수 있는 '실시간 뉴스 요약형' 한국어 트윗 1개를 작성하세요.
 
         [실시간 마켓 데이터]
         {json.dumps(market_data, indent=2, ensure_ascii=False)}
@@ -193,14 +193,14 @@ class XMarketAgent:
         - {chr(10).join(top_news)}
 
         [지침]
-        1. 톤앤매너: 전문적이면서도 단호함. 모호한 표현 지양.
-        2. 핵심 목표: "데이터+뉴스=인사이트" 인과 관계 제시.
-        3. 영역: 주식, 가상화폐, 거시경제, 금, 채권 등 종합 커버.
-        4. 구조: [마켓 인사이트] -> [상황 분석] -> [대응 전략] -> [해시태그]
-        5. 하단 고정: "더 자세한 분석은 Omni Analyst를 확인하세요."
-        6. 제한: 공백 포함 130자 이내 (X 한국어 가중치 제한 준수). 전문 용어 사용 가능.
-        7. 사실성: 확인되지 않은 수익률/성과를 단정적으로 주장하지 말고, 투자 손익 보장 표현 금지.
-        8. 컴플라이언스: "확정 수익", "무조건 오른다" 같은 과장 문구 금지. 정보 제공 목적임을 유지.
+        1. 최우선: 뉴스 2~3개를 핵심만 압축 요약하고, 시장 영향 포인트를 1문장으로 정리.
+        2. 문체: 담백하고 신뢰감 있는 브리핑 톤(과장, 도발, 조롱 금지).
+        3. 형식: [실시간 요약] + [시장 영향] + [체크포인트] + [해시태그].
+        4. 체크포인트는 "오늘 볼 지표/이슈 1개"만 제시.
+        5. 제한: 공백 포함 180자 이내.
+        6. 사실성: 확인되지 않은 수익률/성과 단정 금지, 투자 손익 보장 표현 금지.
+        7. 컴플라이언스: "확정 수익", "무조건 오른다" 같은 문구 금지. 정보 제공 목적 유지.
+        8. 출력: 트윗 본문 텍스트만 출력(따옴표/코드블록/설명문 금지).
         """
         return self._request_gemini(prompt)
 
