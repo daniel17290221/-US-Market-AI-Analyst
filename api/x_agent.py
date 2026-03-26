@@ -181,6 +181,15 @@ class XMarketAgent:
         # Select high relevance news
         random.shuffle(all_news)
         top_news = list(set(all_news))[:7] # Deduplicate and take 7
+        slot = os.getenv("KR_TWEET_SLOT", "1").strip() or "1"
+
+        slot_templates = {
+            "1": "[실시간 요약] 핵심 뉴스 2~3개를 압축하고, [시장 영향]은 거시/수급 관점으로 작성.",
+            "2": "[시황 요약] 섹터/테마 흐름 중심으로 쓰고, [시장 영향]은 로테이션 관점으로 작성.",
+            "3": "[대응 전략] 변동성 대응 포인트를 강조하고, [체크포인트]는 거래대금/수급 기반으로 작성.",
+            "4": "[실시간 체크포인트] 금리/환율/선물 등 동조화 관점으로 쓰고, 당일 확인 포인트 1개 제시."
+        }
+        slot_guide = slot_templates.get(slot, slot_templates["1"])
 
         prompt = f"""
         Role: 한국 투자자 대상 실시간 뉴스 브리핑 에디터
@@ -191,6 +200,10 @@ class XMarketAgent:
 
         [최신 뉴스 헤드라인]
         - {chr(10).join(top_news)}
+
+        [슬롯 정보]
+        현재 슬롯: {slot} (하루 4회 중 {slot}번째)
+        슬롯 작성 가이드: {slot_guide}
 
         [지침]
         1. 최우선: 뉴스 2~3개를 핵심만 압축 요약하고, 시장 영향 포인트를 1문장으로 정리.

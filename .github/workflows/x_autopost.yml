@@ -55,6 +55,18 @@ jobs:
           HOUR=$(date -u +%H)
           MINUTE=$(date -u +%M)
           echo "Current UTC Time: $HOUR:$MINUTE"
+          KR_TWEET_SLOT="1"
+          if [[ "$HOUR" == "00" ]]; then
+            KR_TWEET_SLOT="1"
+          elif [[ "$HOUR" == "04" ]]; then
+            KR_TWEET_SLOT="2"
+          elif [[ "$HOUR" == "07" ]]; then
+            KR_TWEET_SLOT="3"
+          elif [[ "$HOUR" == "13" ]]; then
+            KR_TWEET_SLOT="4"
+          fi
+          export KR_TWEET_SLOT
+          echo "KR_TWEET_SLOT: $KR_TWEET_SLOT"
           echo "Mode: kr_insight (Korean-only policy)"
           python api/x_agent.py --mode kr_insight
 
