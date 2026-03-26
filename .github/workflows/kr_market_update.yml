@@ -33,14 +33,19 @@ jobs:
 
       - name: Run KR Market Analysis
         env:
+          KIE_API_KEY: ${{ secrets.KIE_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           # Verify API key is available
-          if [ -z "$GOOGLE_API_KEY" ]; then
-            echo "❌ [CRITICAL] GOOGLE_API_KEY secret is NOT set! KR Report will use fallback content!"
+          if [ -z "$KIE_API_KEY" ] && [ -z "$GOOGLE_API_KEY" ]; then
+            echo "❌ [CRITICAL] KIE_API_KEY or GOOGLE_API_KEY secret must be set! KR Report will not run."
             exit 1
           fi
-          echo "✅ GOOGLE_API_KEY is set (length: ${#GOOGLE_API_KEY} chars)"
+          if [ -n "$KIE_API_KEY" ]; then
+            echo "✅ KIE_API_KEY is set (length: ${#KIE_API_KEY} chars)"
+          else
+            echo "✅ GOOGLE_API_KEY fallback is set (length: ${#GOOGLE_API_KEY} chars)"
+          fi
           # Use the orchestrator script to update both data and AI report
           python KR_Market_Analyst/update_kr.py 2>&1
           

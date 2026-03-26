@@ -12,9 +12,15 @@ logger = logging.getLogger(__name__)
 class KRDailyReportGenerator:
     def __init__(self, data_dir=None, output_file='report_kr.html'):
         load_dotenv()
-        self.api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("google_api_key")
+        self.api_key = (
+            os.getenv("KIE_API_KEY")
+            or os.getenv("GOOGLE_API_KEY")
+            or os.getenv("google_api_key")
+        )
+        self.kie_base_url = os.getenv("KIE_API_BASE_URL", "https://api.kie.ai").rstrip("/")
+        self.kie_model = os.getenv("KIE_MODEL", "gemini-2.5-flash")
         if not self.api_key:
-            logger.error("❌ GOOGLE_API_KEY not found in environment variables.")
+            logger.error("❌ KIE_API_KEY/GOOGLE_API_KEY not found in environment variables.")
         
         # Use absolute path based on script location
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -34,10 +40,10 @@ class KRDailyReportGenerator:
             return None
 
     def generate_ai_content(self, raw_data):
-        logger.info("🤖 Generating KR AI Content with Gemini REST API...")
+        logger.info("🤖 Generating KR AI Content with KIE Gemini API...")
         
         if not self.api_key:
-            logger.error("❌ [CRITICAL] GOOGLE_API_KEY is missing! Returning FALLBACK content. Report will NOT be updated with new AI analysis.")
+            logger.error("❌ [CRITICAL] API key is missing! Returning FALLBACK content. Report will NOT be updated with new AI analysis.")
             return self.get_fallback_content()
 
         # Prepare stock data context for AI
@@ -88,22 +94,76 @@ class KRDailyReportGenerator:
         """
 
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={self.api_key}"
+            url = f"{self.kie_base_url}/gemini-2.5-flash/v1/chat/completions"
             payload = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {
-                    "response_mime_type": "application/json",
-                    "temperature": 0.9,
-                    "top_p": 0.95,
-                    "max_output_tokens": 2048
-                }
+                "model": self.kie_model,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": prompt
+                            }
+                        ]
+                    }
+                ],
+                "stream": False,
+                "include_thoughts": False,
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "structured_output",
+                        "strict": True,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "catchy_title": {"type": "string"},
+                                "core_summary": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "minItems": 3
+                                },
+                                "sections": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "title": {"type": "string"},
+                                            "emoji_tag": {"type": "string"},
+                                            "content": {"type": "string"}
+                                        },
+                                        "required": ["title", "emoji_tag", "content"],
+                                        "additionalProperties": False
+                                    },
+                                    "minItems": 3
+                                },
+                                "hashtags": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "minItems": 3
+                                }
+                            },
+                            "required": ["catchy_title", "core_summary", "sections", "hashtags"],
+                            "additionalProperties": False
+                        }
+                    }
+                },
+                "temperature": 0.9,
+                "top_p": 0.95,
+                "max_tokens": 2048
             }
-            
-            resp = requests.post(url, json=payload, timeout=120)
+
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+
+            resp = requests.post(url, json=payload, headers=headers, timeout=120)
             if resp.status_code == 200:
                 res_json = resp.json()
-                content_text = res_json['candidates'][0]['content']['parts'][0]['text'].strip()
-                logger.info("✅ Gemini AI content generated successfully.")
+                content_text = res_json["choices"][0]["message"]["content"].strip()
+                logger.info("✅ KIE Gemini AI content generated successfully.")
                 return json.loads(content_text)
             else:
                 logger.error(f"❌ [CRITICAL] AI API Error: {resp.status_code} - {resp.text[:500]}")
