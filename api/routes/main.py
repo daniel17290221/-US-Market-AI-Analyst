@@ -38,6 +38,7 @@ def dashboard():
     return resp
 
 @main_bp.route('/omni', strict_slashes=False)
+@main_bp.route('/omni-dashboard', strict_slashes=False)
 def omni_dashboard():
     resp = make_response(render_template('omni_dashboard.html'))
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
