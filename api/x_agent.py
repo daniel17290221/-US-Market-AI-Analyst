@@ -228,16 +228,21 @@ class XMarketAgent:
                     "top_p": 0.95,
                     "max_tokens": 300
                 }
-                resp = requests.post(url, json=payload, headers=headers, timeout=20)
-                if resp.status_code == 200:
-                    result = resp.json()
-                    content = result["choices"][0]["message"]["content"].strip()
-                    content = content.replace("**", "").replace("*", "")
-                    if content.startswith('"') and content.endswith('"'):
-                        content = content[1:-1]
-                    return content
-                print(f"[{datetime.now()}] KIE API Error {resp.status_code}: {resp.text}", flush=True)
-                return None
+                for attempt in range(2):
+                    try:
+                        resp = requests.post(url, json=payload, headers=headers, timeout=30)
+                        if resp.status_code == 200:
+                            result = resp.json()
+                            content = result["choices"][0]["message"]["content"].strip()
+                            content = content.replace("**", "").replace("*", "")
+                            if content.startswith('"') and content.endswith('"'):
+                                content = content[1:-1]
+                            return content
+                        print(f"[{datetime.now()}] KIE API Error {resp.status_code}: {resp.text}", flush=True)
+                    except Exception as kie_err:
+                        print(f"[{datetime.now()}] KIE request failed (attempt {attempt+1}/2): {kie_err}", flush=True)
+                        time.sleep(1)
+                print(f"[{datetime.now()}] KIE unavailable. Trying Google fallback...", flush=True)
 
             if self.gemini_url:
                 resp = requests.post(
