@@ -1,5 +1,5 @@
 {
-    "date": "2026-04-01 08:44:09 KST",
+    "date": "2026-04-01 23:54:41 KST",
     "market_indices": {
         "KOSPI": {
             "symbol": "KS11",
@@ -23,18 +23,18 @@
     "commodities": [
         {
             "name": "원/달러 환율",
-            "price": "1,501.69",
+            "price": "nan",
             "change": "+nan%"
         },
         {
             "name": "WTI 원유",
-            "price": "98.80",
-            "change": "-2.54%"
+            "price": "98.92",
+            "change": "-2.43%"
         },
         {
             "name": "국제 금",
-            "price": "4,760.00",
-            "change": "+2.42%"
+            "price": "4,815.10",
+            "change": "+3.60%"
         }
     ],
     "sector_heatmap": [
@@ -261,20 +261,25 @@
     ],
     "ipo_news": [
         {
-            "name": "IPO/증자 정보 업데이트 중",
-            "status": "알림",
-            "manager": "-",
+            "name": "'IPO 최대어' 스페이스X, 상장 신청서 제...",
+            "status": "뉴스",
+            "manager": "네이버금융",
             "price": "-",
-            "date": "-"
+            "date": "04.01",
+            "full_title": "'IPO 최대어' 스페이스X, 상장 신청서 제출…\"6월 상장 목표\"",
+            "url": "https://finance.naver.com/news/news_read.naver?article_id=0015997012&office_id=001&mode=LSS3D&type=0§ion_id=101§ion_id2=258§ion_id3=406&date=20260402&page=1"
+        },
+        {
+            "name": "거래소 \"상상인제4호스팩, 상장폐지 우려 예고...",
+            "status": "뉴스",
+            "manager": "네이버금융",
+            "price": "-",
+            "date": "04.01",
+            "full_title": "거래소 \"상상인제4호스팩, 상장폐지 우려 예고\"",
+            "url": "https://finance.naver.com/news/news_read.naver?article_id=0006247686&office_id=018&mode=LSS3D&type=0§ion_id=101§ion_id2=258§ion_id3=406&date=20260402&page=1"
         }
     ],
     "market_news": [
-        {
-            "title": "잘 나가던 코스피 왜 가장 크게 무너졌나…중동전 한 달, 한국 증시 낙폭 최대 이유는?",
-            "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPTEl4elVrc2FfT0t2N0FkcW5pdktxbklLSnZVZkROYU5zYkl5Y1lGYXFwNmtwM0VxRkdURU5UOWRsODNxa2V4cGU0NktQVDFBVDhQMklSRGNqWTJlRXh6Z2JwMGQzNTBTMjVFbjdYOG1aQ19FSlF0M21QWlJUNmsyatIBlAFBVV95cUxQX1dyTEFSVzFwZ0FvU0YwNlp5SUd1SWRkWFNPcXdybGRLM0FkTEhpYzBzT2paczZHZ0tWUTcwc01vN3NmbzZ4UTVRLS13aHN5LVpES2FVbjdaWHEyS1JHV2ZTQXZ0eU8wMjd1TkVPNmFDUmE5LXVYWngxaGpDMnAyTHlLVjctYl83RU56Qnhkc2RCQW1L?oc=5",
-            "source": "조선일보",
-            "date": "Wed, 01 Apr 2026 00:04:29 GMT"
-        },
         {
             "title": "[증시 인사이트] 국내증시 상승…코스피·코스닥 장중 매수 사이드카",
             "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE00NWxpX1liMV9tTm0zWXM4Tm0ycG9Od1hTZEZJV3NxS2tSMl9yNWF5ZHR1ZlI2am00TW5uY01XVWtxWXV1cUIwWXRMZVMxeTg?oc=5",
@@ -282,86 +287,92 @@
             "date": "Wed, 01 Apr 2026 07:39:13 GMT"
         },
         {
-            "title": "[증시-마감] 코스피, '종전 기대·WGBI 편입' 겹호재에 8.4% 폭등",
-            "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9QemY2M0lDUkhZM0dVWUN0NGVKQVRBSGEzTldsQnN1R2VscVlpUEdfU0pJcG00NTA2Z295NVFzMzZJZ0RRY3ZRTXByenNRNkRsTkpSc3Zzcno0UG1jVU5tdW5pdWVuWVdkQ2RQMnd4UHc?oc=5",
-            "source": "연합인포맥스",
-            "date": "Wed, 01 Apr 2026 07:16:22 GMT"
+            "title": "[증시 포인트] 상승 출발 전망...10시 트럼프 연설 주목해야",
+            "url": "https://news.google.com/rss/articles/CBMickFVX3lxTFBveldKMnlZeEdZZFRqeHM5VEJJTzdlT2dydW9mam5MLVE5Y1NOcFFoT3lWRWVzcVZLcjc1NUM1NUt2UFNsbU1VYzJCY05Rbm1acVVWVTJQWWlnWDM3LUNVcS1BemM5cEVyTVpvZWxQblpyUQ?oc=5",
+            "source": "opinionnews.co.kr",
+            "date": "Wed, 01 Apr 2026 23:24:16 GMT"
+        },
+        {
+            "title": "[마켓뷰] 뉴욕증시 이틀째 강세…코스피도 낙폭 회복 이어가나",
+            "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9DWl9GN0JRcWZ2QUJlbklnLWRNSUhXX3d4TXZYVUYyU05DOHc2ZzZKZi1VeTZIREpfOUItTjZya190UEZweUVXVlVQVzlHOEQ2ZUlfazN6MVdBRmPSAWBBVV95cUxQWWVmZi1LcjRkY1k1cWVaM2hoNXNXNWZDNF84YXBwdXNaX21rZExaVnlDSkNJbE9CNUVQN0hOLTh4U1hxa2dvbFctY19vX0NGU2hBZGxMYnZGLUVvbjYyTDc?oc=5",
+            "source": "연합뉴스",
+            "date": "Wed, 01 Apr 2026 23:00:47 GMT"
+        },
+        {
+            "title": "4% 급락한 다음 날 8% 폭등… 전망도 무용지물 된 韓 증시 - 조선비즈",
+            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNcGFTQ0ljVUZCRUE0dnNpR0dVd2REYVFPVnJVUUlTeFQ0ZmpMUXRmc1h2Y0dmcm9HRGE1TkVqZDU5cHA0M2hPa05qVmxCZlJKb1dzUGlRVU1XZ2RJaG5jTTVKRG9LblN0Ykpac0tkOXRrdkd0QjhZMnZ1UVd3cE13S3N1MjhET3ZX0gGcAUFVX3lxTE5XVkxOR1pZVzRxNWxCM1ZPelBYejlicUQwVEtSR0hSVVVPcndOVGoyRkZpbGNPWnZ2Wm8yLVMweTQtdkN0ajJQTmhiZG1idjlvOWF0LXJDTTE5MW41bTkyRWVud3BlZVNyQUtMNmVVblA5R0ZRdkk1Vk5ZNjFCNmhpV080YTZaSEFsZk9iNll6UHM2QlNZazZqVnl1bw?oc=5",
+            "source": "Chosunbiz",
+            "date": "Wed, 01 Apr 2026 21:00:00 GMT"
+        },
+        {
+            "title": "종전 기대감 유지, 나스닥 +1.16% ↑",
+            "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1UZUhyVmdqTDBYWF9lcVZ6YjVwdmZCTm9raXEtX3NaR0xwaUl2WlNBSHJPSUdnSzFTNUluR1UwS3dYbWR2RUg2c210MEZzR1J4VmhKMy03WjRWVXZMSVFSX1NIaUU2dw?oc=5",
+            "source": "KB Think",
+            "date": "Wed, 01 Apr 2026 22:41:32 GMT"
+        },
+        {
+            "title": "'국내시장 복귀계좌' 6만개 육박…자금유입은 아직",
+            "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5vNTBJT3FMUFljTHRlYWpOODB1MTBQWmVxUkM4aEluYzJJRmpEZG1BcVZEZGJTSFplbndKbTdfLVV1SW0ycFpfbG9KbjNmYkhvZGg2QnpOMVdhT3V2ZDl3TXpCSEppdVE?oc=5",
+            "source": "yonhapnewstv.co.kr",
+            "date": "Wed, 01 Apr 2026 20:21:40 GMT"
+        },
+        {
+            "title": "[오늘의 투자전략] 국내 증시 상승 출발 기대…오전 10시 트럼프 연설 관건",
+            "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE1QNGotV2c2cmMzU3NUTDNYbGI3LXFuc1VzZDVfaWhYcnBVT1VkVzliVUJWT0cxcUxkd1l0djdQZmMtVkFmTnEybktSeXhFTEJ2WkwzdA?oc=5",
+            "source": "etoday.co.kr",
+            "date": "Wed, 01 Apr 2026 23:04:00 GMT"
+        },
+        {
+            "title": "[오늘의 증시]코스피, 이틀 연속 '종전 랠리' 기대…트럼프 연설 주목",
+            "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE90eG9tY05JcWk2dXlobmI1ZWhZNS1fdGpDVlBFWE9ENUtCck9XZDBhNmkxeUNVenFudlQtMHEwM3FBRVJNWHRmWExNNGtvUGlZNUpjNnZyazNzRFdfckFuZ9IBeEFVX3lxTE5xRm9DWmlDcmdyWVdUamFxU0RfUnFIbzJ2U3QxWG81WjlkT0hOMWZlclFzR0Q4blh2RlA3eFRBa1d5T0t4NE5BcHFHTVdqVEtzZW1OcG0zVVFfWmEyWnY0V1JrdFpwVG1XSVNGeU9UOHVBb0ZqLVZscw?oc=5",
+            "source": "newsis.com",
+            "date": "Wed, 01 Apr 2026 23:24:06 GMT"
         },
         {
             "title": "석달새 ‘사이드카’만 11번…역대급 변동성 증시에 손바뀜 5년새 최고",
             "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5Sb3lRMURjZ0pNZF9WNUNpVXc0OWZiM0FPLUVjak1XVkQwVXZISFNvdlBvZ1djQkhXQm5hNS0zZjVfTjRqeG1ndGc4R1VGcGxBdElhdXhKVW9XdG9uekFkZmVaZzdYSlk?oc=5",
-            "source": "hani.co.kr",
-            "date": "Wed, 01 Apr 2026 08:29:00 GMT"
+            "source": "한겨레",
+            "date": "Wed, 01 Apr 2026 10:00:00 GMT"
         },
         {
-            "title": "지금 사야 하나, 더 기다려야 하나…출렁이는 코스피에 증권가도 갈렸다",
-            "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE04S0hQUkVWQjlpMlpSR0J1WHVHMnNmdlNkXzh2WVBsa29Teks3cFJXaUxsdmFlT3FBNzloRXJkdWRqLWNTZHlmV3N3S2lUQW9jbHQwOVpvSGlYdlR6T2pXQkEwSzBDLXBXbzFjcWVhcnVCUkk?oc=5",
-            "source": "마켓인",
-            "date": "Wed, 01 Apr 2026 07:54:38 GMT"
-        },
-        {
-            "title": "전우종·정준호 SK증권 대표, 소비자 중심 경영 선포",
-            "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBmNUtsZDhVeU16LUZYNmVVOEJtMnZRcl85NDFERXNpeWZTNG92Qy02VUR3ZUFoMnViZURhdDdHajJJaGV6cEQ2Z1VNQV9nckl6NllyQjB5MTBjZWFtTVlQRkpPMHNGcXlHS1JFal9QOA?oc=5",
-            "source": "뉴스톱",
-            "date": "Wed, 01 Apr 2026 06:27:05 GMT"
-        },
-        {
-            "title": "해외주식투자 국내 복귀 ‘양도세 100% 공제’…조특법개정안 국회 통과",
-            "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9hZ0JPMTFlcmg2TzFwclhDSm4yTnB0ZGZ4ZF9nVVUxb2JVTVpqQkpIX1BXYUhWS3VxMWNCVlBKNGRtVmFjTU1ZOU5DR21mV1JmS182Q2JpaVJpQm1oWG43Sy03b2JKa0JaZHc?oc=5",
-            "source": "intn.co.kr",
-            "date": "Tue, 31 Mar 2026 22:48:00 GMT"
-        },
-        {
-            "title": "\"종전 기대에 환호\"…코스피·코스닥, 동반 매수 사이드카 (종합2보)",
-            "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE4teE9LZ0xXbXZpWW1ITHVVc0plRjNpZVZXdnl4clJqWThkbUtWSE1lNkNjcFRtSldzMEZzS0pPd1Eta0lyTC1aYXdCd0dEeHJlZGZWbndBMGxtZUhPdUxZ?oc=5",
-            "source": "뉴스1",
-            "date": "Wed, 01 Apr 2026 07:56:48 GMT"
-        },
-        {
-            "title": "[증시 포인트] 상승 출발 전망...장중 환율 및 외국인 수급 주목",
-            "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5rb25FalVEeEVVZ3BKTElpOHpGOHlPeEdBV3ZNX0U3SHI2bHhZTXMtSmxJR0VkUXg4d1Rrazl2UXNmOHM0VUVHTzduWUdFTlo0SWZuVUluS0pSWmNBblhVS0hXcm5nRGJZYUhGdWJUR2s?oc=5",
-            "source": "오피니언뉴스",
-            "date": "Tue, 31 Mar 2026 23:31:36 GMT"
-        },
-        {
-            "title": "국내시장 복귀 계좌, 6만개 육박",
-            "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE8zYk03NVZ4eFhsQktKdnhDZ0h1NkJBX1hPYllXXzZ0NEcwNldVWk56X19UY25zR3ZsVE1ibmV1YkhnYXlpeHJwWndodnozdzA2WXY5SG9vcExmZWVxWGxzRDAzSmkyejg?oc=5",
-            "source": "연합뉴스TV",
-            "date": "Tue, 31 Mar 2026 22:12:22 GMT"
+            "title": "[증시-마감] 코스피, '종전 기대·WGBI 편입' 겹호재에 8.4% 폭등",
+            "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9QemY2M0lDUkhZM0dVWUN0NGVKQVRBSGEzTldsQnN1R2VscVlpUEdfU0pJcG00NTA2Z295NVFzMzZJZ0RRY3ZRTXByenNRNkRsTkpSc3Zzcno0UG1jVU5tdW5pdWVuWVdkQ2RQMnd4UHc?oc=5",
+            "source": "연합인포맥스",
+            "date": "Wed, 01 Apr 2026 07:16:22 GMT"
         }
     ],
     "investor_flows": {
         "KOSPI": [
             {
                 "label": "개인",
-                "value": "-37627억",
+                "value": "-37628억",
                 "status": "매도"
             },
             {
                 "label": "외국인",
-                "value": "-6259억",
+                "value": "-6411억",
                 "status": "매도"
             },
             {
                 "label": "기관",
-                "value": "+40268억",
+                "value": "+40419억",
                 "status": "매수"
             }
         ],
         "KOSDAQ": [
             {
                 "label": "개인",
-                "value": "-9010억",
+                "value": "-9011억",
                 "status": "매도"
             },
             {
                 "label": "외국인",
-                "value": "+4391억",
+                "value": "+4385억",
                 "status": "매수"
             },
             {
                 "label": "기관",
-                "value": "+4603억",
+                "value": "+4609억",
                 "status": "매수"
             }
         ]
@@ -373,7 +384,7 @@
             "name": "이루온",
             "price": "2,730",
             "change": "+30.00",
-            "volume": "9,455,706",
+            "volume": "9,456,211",
             "market": "KOSDAQ"
         },
         {
@@ -382,7 +393,7 @@
             "name": "이노인스트루먼트",
             "price": "932",
             "change": "+29.99",
-            "volume": "7,858,802",
+            "volume": "7,858,832",
             "market": "KOSDAQ"
         },
         {
@@ -391,7 +402,7 @@
             "name": "기가레인",
             "price": "1,574",
             "change": "+29.98",
-            "volume": "7,695,950",
+            "volume": "7,697,175",
             "market": "KOSDAQ"
         },
         {
@@ -400,7 +411,7 @@
             "name": "흥아해운",
             "price": "3,710",
             "change": "-6.78",
-            "volume": "143,102,751",
+            "volume": "143,895,721",
             "market": "KOSPI"
         },
         {
@@ -409,7 +420,7 @@
             "name": "SK증권",
             "price": "2,145",
             "change": "+16.58",
-            "volume": "123,044,249",
+            "volume": "123,202,286",
             "market": "KOSPI"
         },
         {
@@ -418,7 +429,7 @@
             "name": "남선알미늄",
             "price": "1,632",
             "change": "-9.33",
-            "volume": "83,675,999",
+            "volume": "84,268,006",
             "market": "KOSPI"
         },
         {
@@ -483,7 +494,7 @@
             "name": "삼성전자우",
             "price": "127,500",
             "change": "+11.84",
-            "volume": "3,427,922",
+            "volume": "3,433,587",
             "market": "KOSPI"
         },
         {
@@ -537,7 +548,7 @@
             "name": "두산에너빌리티",
             "price": "99,600",
             "change": "+8.50",
-            "volume": "3,404,519",
+            "volume": "3,416,180",
             "market": "KOSPI"
         },
         {
@@ -611,7 +622,7 @@
             "name": "코오롱티슈진",
             "price": "108,500",
             "change": "+1.69",
-            "volume": "501,567",
+            "volume": "502,601",
             "market": "KOSDAQ"
         },
         {
@@ -649,7 +660,7 @@
             "name": "이루온",
             "price": "2,730",
             "change": "+30.00",
-            "volume": "9,455,706",
+            "volume": "9,456,211",
             "market": "KOSDAQ"
         },
         {
@@ -658,7 +669,7 @@
             "name": "이노인스트루먼트",
             "price": "932",
             "change": "+29.99",
-            "volume": "7,858,802",
+            "volume": "7,858,832",
             "market": "KOSDAQ"
         },
         {
@@ -667,7 +678,7 @@
             "name": "기가레인",
             "price": "1,574",
             "change": "+29.98",
-            "volume": "7,695,950",
+            "volume": "7,697,175",
             "market": "KOSDAQ"
         },
         {
@@ -676,7 +687,7 @@
             "name": "대한광통신",
             "price": "9,410",
             "change": "+29.97",
-            "volume": "35,185,124",
+            "volume": "35,200,765",
             "market": "KOSDAQ"
         },
         {
@@ -694,7 +705,7 @@
             "name": "한국첨단소재",
             "price": "2,995",
             "change": "+29.93",
-            "volume": "8,467,238",
+            "volume": "8,481,377",
             "market": "KOSDAQ"
         },
         {
@@ -703,7 +714,7 @@
             "name": "계양전기우",
             "price": "6,950",
             "change": "+29.91",
-            "volume": "309,171",
+            "volume": "309,172",
             "market": "KOSPI"
         },
         {
@@ -712,7 +723,7 @@
             "name": "알엔투테크놀로지",
             "price": "4,240",
             "change": "+29.86",
-            "volume": "1,186,695",
+            "volume": "1,186,795",
             "market": "KOSDAQ"
         },
         {
@@ -721,7 +732,7 @@
             "name": "인스코비",
             "price": "335",
             "change": "+29.84",
-            "volume": "2,536,656",
+            "volume": "2,536,809",
             "market": "KOSPI"
         },
         {
@@ -730,7 +741,7 @@
             "name": "리센스메디컬",
             "price": "23,950",
             "change": "+29.81",
-            "volume": "9,656,854",
+            "volume": "9,657,025",
             "market": "KOSDAQ"
         }
     ],
@@ -741,7 +752,7 @@
             "name": "흥아해운",
             "price": "3,710",
             "change": "-6.78",
-            "volume": "143,102,751",
+            "volume": "143,895,721",
             "market": "KOSPI"
         },
         {
@@ -750,7 +761,7 @@
             "name": "SK증권",
             "price": "2,145",
             "change": "+16.58",
-            "volume": "123,044,249",
+            "volume": "123,202,286",
             "market": "KOSPI"
         },
         {
@@ -759,7 +770,7 @@
             "name": "남선알미늄",
             "price": "1,632",
             "change": "-9.33",
-            "volume": "83,675,999",
+            "volume": "84,268,006",
             "market": "KOSPI"
         },
         {
@@ -768,7 +779,7 @@
             "name": "대우건설",
             "price": "19,430",
             "change": "+24.95",
-            "volume": "79,386,214",
+            "volume": "79,658,119",
             "market": "KOSPI"
         },
         {
@@ -777,7 +788,7 @@
             "name": "신한제17호스팩",
             "price": "2,045",
             "change": "+2.25",
-            "volume": "65,388,307",
+            "volume": "65,487,635",
             "market": "KOSDAQ"
         },
         {
@@ -786,7 +797,7 @@
             "name": "한국ANKOR유전",
             "price": "234",
             "change": "-22.52",
-            "volume": "44,999,412",
+            "volume": "45,429,544",
             "market": "KOSPI"
         },
         {
@@ -795,7 +806,7 @@
             "name": "우리로",
             "price": "8,580",
             "change": "+2.75",
-            "volume": "38,174,254",
+            "volume": "38,245,519",
             "market": "KOSDAQ"
         },
         {
@@ -804,7 +815,7 @@
             "name": "케이엠제약",
             "price": "909",
             "change": "+10.85",
-            "volume": "37,147,928",
+            "volume": "37,256,016",
             "market": "KOSDAQ"
         },
         {
@@ -813,7 +824,7 @@
             "name": "대한광통신",
             "price": "9,410",
             "change": "+29.97",
-            "volume": "35,185,124",
+            "volume": "35,200,765",
             "market": "KOSDAQ"
         },
         {
@@ -822,7 +833,7 @@
             "name": "에이전트AI",
             "price": "467",
             "change": "+3.55",
-            "volume": "33,764,972",
+            "volume": "33,792,547",
             "market": "KOSDAQ"
         }
     ],
