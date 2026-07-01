@@ -1,332 +1,250 @@
 {
-    "date": "2026-06-30 10:42:05 KST",
+    "date": "2026-07-01 01:37:14 KST",
     "market_indices": {
         "KOSPI": {
             "symbol": "KS11",
             "name": "코스피",
-            "price": "8,476.48",
-            "change": "+0.97%"
+            "price": "8,290.78",
+            "change": "-2.19%"
         },
         "KOSDAQ": {
             "symbol": "KQ11",
             "name": "코스닥",
-            "price": "916.18",
-            "change": "-0.48%"
+            "price": "936.41",
+            "change": "+2.21%"
         },
         "KOSPI200": {
             "symbol": "KS200",
             "name": "코스피 200",
-            "price": "1,370.73",
-            "change": "+1.34%"
+            "price": "1,335.05",
+            "change": "-2.60%"
         }
     },
     "commodities": [
         {
             "name": "원/달러 환율",
-            "price": "1,551.00",
+            "price": "1,558.75",
             "change": "+nan%"
         },
         {
             "name": "WTI 원유",
-            "price": "70.85",
-            "change": "+0.14%"
+            "price": "69.93",
+            "change": "+nan%"
         },
         {
             "name": "국제 금",
-            "price": "4,039.70",
-            "change": "+0.43%"
+            "price": "3,995.60",
+            "change": "+nan%"
         }
     ],
     "sector_heatmap": [
         {
-            "sector": "반도체",
-            "change": 1.27,
-            "change_str": "+1.27%",
-            "stocks": [
-                {
-                    "symbol": "005930",
-                    "name": "삼성전자",
-                    "change": "+3.41%"
-                },
-                {
-                    "symbol": "000660",
-                    "name": "SK하이닉스",
-                    "change": "+0.84%"
-                },
-                {
-                    "symbol": "042700",
-                    "name": "한미반도체",
-                    "change": "-0.58%"
-                }
-            ]
-        },
-        {
-            "sector": "금융/지주",
-            "change": -0.696,
-            "change_str": "-0.70%",
-            "stocks": [
-                {
-                    "symbol": "105560",
-                    "name": "KB금융",
-                    "change": "+3.45%"
-                },
-                {
-                    "symbol": "055550",
-                    "name": "신한지주",
-                    "change": "-0.62%"
-                },
-                {
-                    "symbol": "086790",
-                    "name": "하나금융지주",
-                    "change": "-0.17%"
-                }
-            ]
-        },
-        {
-            "sector": "게임/엔터",
-            "change": -0.9480000000000001,
-            "change_str": "-0.95%",
-            "stocks": [
-                {
-                    "symbol": "036570",
-                    "name": "NC",
-                    "change": "-0.58%"
-                },
-                {
-                    "symbol": "259960",
-                    "name": "크래프톤",
-                    "change": "+5.59%"
-                },
-                {
-                    "symbol": "352820",
-                    "name": "하이브",
-                    "change": "-1.64%"
-                }
-            ]
-        },
-        {
-            "sector": "자동차",
-            "change": -1.385,
-            "change_str": "-1.39%",
-            "stocks": [
-                {
-                    "symbol": "005380",
-                    "name": "현대차",
-                    "change": "-0.40%"
-                },
-                {
-                    "symbol": "000270",
-                    "name": "기아",
-                    "change": "-1.85%"
-                },
-                {
-                    "symbol": "012330",
-                    "name": "현대모비스",
-                    "change": "-0.40%"
-                }
-            ]
-        },
-        {
             "sector": "조선/중공업",
-            "change": -2.8033333333333332,
-            "change_str": "-2.80%",
+            "change": 2.1933333333333334,
+            "change_str": "+2.19%",
             "stocks": [
                 {
                     "symbol": "329180",
                     "name": "HD현대중공업",
-                    "change": "+0.00%"
+                    "change": "+1.86%"
                 },
                 {
                     "symbol": "010140",
                     "name": "삼성중공업",
-                    "change": "-4.70%"
+                    "change": "+2.15%"
                 },
                 {
                     "symbol": "009540",
                     "name": "HD한국조선해양",
-                    "change": "-3.71%"
+                    "change": "+2.57%"
                 }
             ]
         },
         {
             "sector": "철강/금속",
-            "change": -2.975,
-            "change_str": "-2.98%",
+            "change": -0.115,
+            "change_str": "-0.12%",
             "stocks": [
                 {
                     "symbol": "005490",
                     "name": "POSCO홀딩스",
-                    "change": "-4.80%"
-                },
-                {
-                    "symbol": "004020",
-                    "name": "현대제철",
-                    "change": "-3.44%"
+                    "change": "-0.32%"
                 },
                 {
                     "symbol": "010130",
                     "name": "고려아연",
-                    "change": "-4.00%"
-                }
-            ]
-        },
-        {
-            "sector": "IT/플랫폼",
-            "change": -3.145,
-            "change_str": "-3.15%",
-            "stocks": [
-                {
-                    "symbol": "035420",
-                    "name": "NAVER",
-                    "change": "-2.45%"
-                },
-                {
-                    "symbol": "035720",
-                    "name": "카카오",
-                    "change": "-3.63%"
-                },
-                {
-                    "symbol": "035810",
-                    "name": "이지홀딩스",
-                    "change": "-1.41%"
+                    "change": "+0.09%"
                 }
             ]
         },
         {
             "sector": "화학/에너지",
-            "change": -3.9074999999999998,
-            "change_str": "-3.91%",
+            "change": -0.125,
+            "change_str": "-0.12%",
             "stocks": [
                 {
                     "symbol": "051910",
                     "name": "LG화학",
-                    "change": "-9.09%"
+                    "change": "-0.36%"
                 },
                 {
                     "symbol": "096770",
                     "name": "SK이노베이션",
-                    "change": "-3.56%"
+                    "change": "+0.11%"
+                }
+            ]
+        },
+        {
+            "sector": "금융/지주",
+            "change": -0.235,
+            "change_str": "-0.23%",
+            "stocks": [
+                {
+                    "symbol": "105560",
+                    "name": "KB금융",
+                    "change": "-1.51%"
                 },
                 {
-                    "symbol": "010950",
-                    "name": "S-Oil",
-                    "change": "+2.60%"
+                    "symbol": "055550",
+                    "name": "신한지주",
+                    "change": "+0.10%"
+                },
+                {
+                    "symbol": "086790",
+                    "name": "하나금융지주",
+                    "change": "+0.79%"
+                }
+            ]
+        },
+        {
+            "sector": "자동차",
+            "change": -0.25,
+            "change_str": "-0.25%",
+            "stocks": [
+                {
+                    "symbol": "005380",
+                    "name": "현대차",
+                    "change": "-1.41%"
+                },
+                {
+                    "symbol": "000270",
+                    "name": "기아",
+                    "change": "+1.96%"
+                },
+                {
+                    "symbol": "012330",
+                    "name": "현대모비스",
+                    "change": "-1.30%"
+                }
+            ]
+        },
+        {
+            "sector": "IT/플랫폼",
+            "change": -0.6,
+            "change_str": "-0.60%",
+            "stocks": [
+                {
+                    "symbol": "035420",
+                    "name": "NAVER",
+                    "change": "-0.60%"
                 }
             ]
         },
         {
             "sector": "바이오",
-            "change": -4.7225,
-            "change_str": "-4.72%",
+            "change": -0.87,
+            "change_str": "-0.87%",
             "stocks": [
                 {
                     "symbol": "207940",
                     "name": "삼성바이오로직스",
-                    "change": "-3.94%"
+                    "change": "-1.80%"
                 },
                 {
                     "symbol": "068270",
                     "name": "셀트리온",
-                    "change": "-3.29%"
+                    "change": "+0.06%"
+                }
+            ]
+        },
+        {
+            "sector": "반도체",
+            "change": -1.6766666666666667,
+            "change_str": "-1.68%",
+            "stocks": [
+                {
+                    "symbol": "005930",
+                    "name": "삼성전자",
+                    "change": "-3.97%"
                 },
                 {
-                    "symbol": "000100",
-                    "name": "유한양행",
-                    "change": "-4.88%"
+                    "symbol": "000660",
+                    "name": "SK하이닉스",
+                    "change": "-2.23%"
+                },
+                {
+                    "symbol": "042700",
+                    "name": "한미반도체",
+                    "change": "+1.17%"
                 }
             ]
         },
         {
             "sector": "2차전지",
-            "change": -6.72,
-            "change_str": "-6.72%",
+            "change": -2.9,
+            "change_str": "-2.90%",
             "stocks": [
                 {
                     "symbol": "373220",
                     "name": "LG에너지솔루션",
-                    "change": "-9.61%"
+                    "change": "-2.62%"
                 },
                 {
                     "symbol": "006400",
                     "name": "삼성SDI",
-                    "change": "-4.88%"
+                    "change": "+0.31%"
                 },
                 {
                     "symbol": "247540",
                     "name": "에코프로비엠",
-                    "change": "-7.77%"
+                    "change": "-6.39%"
                 }
             ]
         }
     ],
     "ipo_news": [
         {
-            "name": "에코프로비엠, 1.2조 주주배정 후 실권주 일...",
-            "status": "뉴스",
-            "manager": "네이버금융",
+            "name": "IPO/증자 정보 업데이트 중",
+            "status": "알림",
+            "manager": "-",
             "price": "-",
-            "date": "06.30",
-            "full_title": "에코프로비엠, 1.2조 주주배정 후 실권주 일반공모 유상증자 결정",
-            "url": "https://finance.naver.com/news/news_read.naver?article_id=0006319138&office_id=018&mode=LSS3D&type=0§ion_id=101§ion_id2=258§ion_id3=406&date=20260630&page=1"
-        },
-        {
-            "name": "형지글로벌, 10억원 규모 제3자배정 유상증자...",
-            "status": "뉴스",
-            "manager": "네이버금융",
-            "price": "-",
-            "date": "06.30",
-            "full_title": "형지글로벌, 10억원 규모 제3자배정 유상증자 결정",
-            "url": "https://finance.naver.com/news/news_read.naver?article_id=0006318779&office_id=018&mode=LSS3D&type=0§ion_id=101§ion_id2=258§ion_id3=406&date=20260630&page=1"
+            "date": "-"
         }
     ],
     "market_news": [
         {
-            "title": "한국 증시 떠난 외국인 자금… 왜 일본으로 향했나",
-            "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE95MlRWcHh4Si1qSi1LOG52M1ZFR2xOYnh1enFKWTNiM1ZWYzNxNE1BZkxrX1JsZjYtVGhVMlpvd0s1VTFqWmN5b05nSDJfdGl3ZjdZc2FlbktHV2tOZklxVTFnd1I3NnZyTGNEdGJn?oc=5",
-            "source": "더스쿠프",
-            "date": "Tue, 30 Jun 2026 08:58:48 GMT"
-        },
-        {
-            "title": "국민연금 리밸런싱 D-1…증시 흔들 변수 될까 - 조선비즈",
-            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOVElKb3hTY0NsSlg5X1hUMzBHX1gtcnUwd0VGWE9ob01mSWk0NHNaMjRsTW16bWtfTXJvd3VLcFNUM1pFTVJtRXhLQmpJZElQY1RyRGhOcmp4RDh0RmlZeHBrVVZxaUlOeUM1bk41ck1USThYUnFHQWtmWm1TWmVhcHlCUzdaVmtO0gGcAUFVX3lxTE9BRGRtRHBNSllJTV9OV0xfdVdNYVd3WThUTVYzTG9PQWkwNDZFWk5fSUJ5cjhIV0hQd2drNWt5Z3BWQ3VvejhJQlhyZUw4UE5Tdk93a05YLUJ0d1ZmV1dNV1dGbmE0LXJpQUxtbTBWcC1PU0E2ejYyT1ltTXExNXpaS3ZBdTBhYTYtNUkxdnBBUUxvZTlQcC1wcDZ1Vg?oc=5",
-            "source": "Chosunbiz",
-            "date": "Tue, 30 Jun 2026 10:14:00 GMT"
-        },
-        {
-            "title": "국민연금 내일부터 리밸런싱…50조원 ‘매도 폭탄’ 덮친다",
-            "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE8wcmhPeEt1LVRtbmM4ZFh6Qk04NnFsMnEwVW5nVjBtbDRUNGhjQWZmSTdrc3FOejNFRmF0UmI5ZklJalc3SG1weDdjcktsUkk?oc=5",
+            "title": "7월 국내 증시 갈림길 선다⋯‘삼전닉스’ 사상 최고 실적 vs 금리 인상 공포",
+            "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1SSVdnLUc5WHA3RFZUUlkxSE5wekNWNGoxV1pwMDVkZnMzZmhINjF4UzN3eFNxTEV6eFgxd3BOVkZKbTVQZi1WRlNpRmk5SWM?oc=5",
             "source": "v.daum.net",
-            "date": "Tue, 30 Jun 2026 07:04:00 GMT"
+            "date": "Tue, 30 Jun 2026 21:01:11 GMT"
         },
         {
-            "title": "\"한국 증시, 괜찮은데\"…뉴욕상장사, 국내 증시 상장 추진",
-            "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE4wRlhEVm0wSGZTWHBxc3I2MkNyNmxXd0d6SVRGT2tRV2xtc04tXzN6bXFPejk5TU5wa01ndl94eXI0Z0kteHJKTE5nWVQ4a1hXSFVmbVdIbTl0UQ?oc=5",
-            "source": "파이낸셜뉴스",
-            "date": "Tue, 30 Jun 2026 10:13:19 GMT"
+            "title": "1∼5월 국내증시 개인 순매수 97조…투자금 어디서 나왔나 보니",
+            "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBNMTJCUWFMRWcwUjZvZEc4NDVScTZvZHlWdFREaThLUFZacGlVcmdUSmdxa1dwSjBITjdaYnpnclgxT1pjVUtnejBpNVFDMklsenlDSnNBdXhDOE3SAWBBVV95cUxPOE1zNXFYRzNhOVJoWEZQM2c5Vk5QSjZ2akN6UWxhZTFPalNyM0tmTDlLXzNleDNEZmpmUy1HSmN1X2VTY2p4R3VKNFY4OWVpbE5kX08xVzV5OUVhTGV4dUQ?oc=5",
+            "source": "연합뉴스",
+            "date": "Tue, 30 Jun 2026 23:00:05 GMT"
         },
         {
-            "title": "[단독] “여기가 핫하다는 국장입니까?”…뉴욕상장사, 코스닥 두드린다는데",
-            "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9IZHV4ekhiQkEzVlc5dmxrWF9kUjVnaG9yU1o5X01ueC1ST0owUTZhUjlINXdvYWE3RTVjRmlxb0dMUkdZbG9GOF9TbjhSTWxXLUE?oc=5",
-            "source": "매일경제",
-            "date": "Tue, 30 Jun 2026 08:31:17 GMT"
+            "title": "美 상장사 사상 첫 국내 증시 '노크'",
+            "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBfNzNhX0FSanJCZ0VjR21yOWR2dmt1cWFranhLb2JOZEJuRHFQOEVCenhxY0JwanJyaktRMGxIQWVWUW5zbWJHaGpweHd1cF9kdGc?oc=5",
+            "source": "매일경제 마켓",
+            "date": "Tue, 30 Jun 2026 09:09:11 GMT"
         },
         {
-            "title": "[기자수첩] 스타플레이어 의존 한국 축구, 반도체주만 바라보는 증시",
-            "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFAyTUprYXF6elFzcW9pMlVycVNUQjFRRURFanhRMmREd3N1Mi1Wd004ZmxPWnduSjhjRUx5R1YxaFNBdzZSdXVLeTloWE5mR2VVYWNRcVdLc3ZUV096bHJOdXgzRHJrZ0JMTEtvYTdvcTQxVW_SAXdBVV95cUxPT2VEMWpTTWFRMDN6YmpsaTdDMjJtYWE0U1dUU2RCc29KQ2t2b2swb09uR1ljaHlFTi1KSE1odnhINGR2OUt4cVJLODMtNmlnZ2N6eTdIaUtiTzAtTDU2NE5FSnptNDgwcGNiRDV3Q05ybWZCX1RMNA?oc=5",
-            "source": "스트레이트뉴스",
-            "date": "Tue, 30 Jun 2026 06:16:20 GMT"
-        },
-        {
-            "title": "국민연금 '증시 버팀목' 오늘 끝…'구천피' 땐 74조 매도 압박",
-            "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9jdDhEeWJQODdjemotQkRFNF9laE9KUzdpTG9FV0d1UGFrTHMxT29Fa2d3VjlLUy1EVEplNmVZR1lJT2FNSGxFM2J3bWZGbUZzYmVMVTRXbDU1TWJJVy1n?oc=5",
-            "source": "뉴스1",
-            "date": "Tue, 30 Jun 2026 07:02:52 GMT"
-        },
-        {
-            "title": "반도체 투자↑ 코스피 8,500 재근접",
-            "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE4zV0xMN09KTmxCTzJDczllQmE1RXdBaWRSMDFzcEQtZDFMcmVRWlllR3FWbDlLQ0RzODZ0d0RvaG1vZjlGeXRiZ0Z2dzQxbklsT01ibWlLZnBUTHFvVGlZZUVSaDJ6NWxSMkJnZw?oc=5",
-            "source": "KB Think",
-            "date": "Tue, 30 Jun 2026 07:05:27 GMT"
+            "title": "바이낸스發 초위험 레버리지, 국내 증시 공습…규제는 무방비",
+            "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBXdW45WHpvTWxER0ZtN29rcGJxb2FuSVZLQ2dhZFozbzRoX3loRFE1SnRiWkNvREY4M2xOclJtNm84YWVzVi1iRFBCa0hIVWFZQWt5RE1iaXpiUdIBVEFVX3lxTE5XYXN5TWcxYy1oWVRmaXhkdUMycmhES1BvTlJ3aGNkbWRFTmtpX25xa3ZWRzhJMEtwNEhEYnB2aGFnOENMYmpZZ0p0bGhiSnluOTJzSg?oc=5",
+            "source": "더팩트",
+            "date": "Tue, 30 Jun 2026 15:00:03 GMT"
         },
         {
             "title": "국민연금 리밸런싱, 국내증시 '폭탄'되나",
@@ -335,138 +253,162 @@
             "date": "Tue, 30 Jun 2026 01:55:00 GMT"
         },
         {
-            "title": "미래에셋증권, '대한민국 100대 브랜드' 12위",
-            "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE90Z1AwdHR4RzNFRFFPWkp6d3dXV2pkRUJqWXdXQWduS1BhODNYbUVheGllRWd4Y21Dc0NQVHhkVDNTTGp3ZGZTcVgxOUVwbXdNSjVOT19PdERfMUZwVzl3RjlUX1Ayd0JkUFltRjFOTQ?oc=5",
-            "source": "뉴스톱",
-            "date": "Tue, 30 Jun 2026 04:47:29 GMT"
+            "title": "\"한국 증시, 괜찮은데\"…뉴욕상장사, 국내 증시 상장 추진",
+            "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE4wRlhEVm0wSGZTWHBxc3I2MkNyNmxXd0d6SVRGT2tRV2xtc04tXzN6bXFPejk5TU5wa01ndl94eXI0Z0kteHJKTE5nWVQ4a1hXSFVmbVdIbTl0UQ?oc=5",
+            "source": "파이낸셜뉴스",
+            "date": "Tue, 30 Jun 2026 10:13:19 GMT"
+        },
+        {
+            "title": "코스닥 집어삼킨 'ETF 500조 시대' … 국내 증시 흔드는 괴물이 됐다",
+            "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFB0YTJQeGZtSS0xZlVCVG9VcDdfczRqRGNIeFNDd2EtdWVtUXdTbDBYVEYxeTlza19YWGJNS2hHOHhOYjZhTDI5Q2dpUGJkSzNoOWRlZElPbHdfUXZ2STRVVU9WUjVfZGVuR18yUUR5Um8tbzBfLU9DakxMWdIBgAFBVV95cUxPdGxpMWpCRWVEUUZ0aDlkMGI2eDYwdjYzNW01LVN0ZnRIMVNRaXlrRjJHT3FndUVOZUo4c3lUNXR3VXdyTnVYN2RId3VVQVgwcTQ0YkYzbXBlMGlIVEJYYzlWTGJDbFZfMjlOTHIyUUFDY1NPS29CS0FCQUhpQTE3dw?oc=5",
+            "source": "뉴데일리",
+            "date": "Sun, 28 Jun 2026 01:04:41 GMT"
+        },
+        {
+            "title": "美 NYSE 상장사 KDR 상장 추진…국내 증시 입성 시동",
+            "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9xYS01aXhRRktoaEkya2tqRGNJbmFQWVAwZkdGRTJwY1pfTEhyaTBMZVpjRGx2T0ZrcGxDOHBfSXNQU2pqbElubnlnQnlkZ3lLVVIwdTJjaGoyd9IBWEFVX3lxTE40RVV2M1V5N0M2TG42Z3JsUTRKLWl0dENXUmdtbHNMX0NzWU1PTnBNenU5eExJVTB3aW92bjIxSF84T2M1RDhVdXJ1ZDJORTg3YzFxM1lWb2s?oc=5",
+            "source": "아주경제",
+            "date": "Tue, 30 Jun 2026 09:14:24 GMT"
+        },
+        {
+            "title": "삼전·SK하닉, 美반도체 훈풍에 프리마켓서 강세",
+            "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1KS01ockRFcGpkQjJaVEtGZ3N2UzJaX0owWTBwR2ZUOXRUMVZ3MmVhbEpIbGFsVTJEZ3hMMWJ3TUpSY1JENkppVzZ0MGdPV1E?oc=5",
+            "source": "v.daum.net",
+            "date": "Tue, 30 Jun 2026 23:20:16 GMT"
+        },
+        {
+            "title": "코스피 7월엔 상승궤도...키움 \"여름 중 1만 돌파도 현실성 있어\"",
+            "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5mMV9oMVdPdGFhLTBGNHpDYnZvZXFjZTAzYVRxZFF0eEhBMVU1LWZHcGdydFpsTm4ya2RHbzdLUDMwRlRHSmNUTTl0V056SzQ?oc=5",
+            "source": "v.daum.net",
+            "date": "Wed, 01 Jul 2026 00:20:31 GMT"
         }
     ],
     "investor_flows": {
         "KOSPI": [
             {
                 "label": "개인",
-                "value": "+8401억",
+                "value": "+9643억",
                 "status": "매수"
             },
             {
                 "label": "외국인",
-                "value": "-37992억",
+                "value": "-10294억",
                 "status": "매도"
             },
             {
                 "label": "기관",
-                "value": "+29332억",
+                "value": "+853억",
                 "status": "매수"
             }
         ],
         "KOSDAQ": [
             {
                 "label": "개인",
-                "value": "+3909억",
-                "status": "매수"
+                "value": "-1773억",
+                "status": "매도"
             },
             {
                 "label": "외국인",
-                "value": "-2464억",
-                "status": "매도"
+                "value": "+147억",
+                "status": "매수"
             },
             {
                 "label": "기관",
-                "value": "-1428억",
-                "status": "매도"
+                "value": "+1883억",
+                "status": "매수"
             }
         ]
     },
     "top_stocks": [
         {
             "rank": 1,
-            "symbol": "301300",
-            "name": "바이브컴퍼니",
-            "price": "1,300",
-            "change": "+30.00",
-            "volume": "170,822",
+            "symbol": "084370",
+            "name": "유진테크",
+            "price": "221,000",
+            "change": "+19.01",
+            "volume": "364,565",
             "market": "KOSDAQ"
         },
         {
             "rank": 2,
-            "symbol": "050760",
-            "name": "에스폴리텍",
-            "price": "1,326",
-            "change": "+30.00",
-            "volume": "997,526",
+            "symbol": "036930",
+            "name": "주성엔지니어링",
+            "price": "232,000",
+            "change": "+15.42",
+            "volume": "1,936,916",
             "market": "KOSDAQ"
         },
         {
             "rank": 3,
-            "symbol": "002995",
-            "name": "금호건설우",
-            "price": "33,800",
-            "change": "+30.00",
-            "volume": "85,794",
-            "market": "KOSPI"
+            "symbol": "226950",
+            "name": "올릭스",
+            "price": "173,800",
+            "change": "+11.70",
+            "volume": "298,499",
+            "market": "KOSDAQ"
         },
         {
             "rank": 1,
-            "symbol": "001210",
-            "name": "금호전기",
-            "price": "1,174",
-            "change": "+6.92",
-            "volume": "116,598,269",
+            "symbol": "005930",
+            "name": "삼성전자",
+            "price": "320,750",
+            "change": "-3.97",
+            "volume": "8,274,035",
             "market": "KOSPI"
         },
         {
             "rank": 2,
-            "symbol": "0164H0",
-            "name": "한국제16호스팩",
-            "price": "1,941",
-            "change": "-2.95",
-            "volume": "109,937,112",
-            "market": "KOSDAQ"
+            "symbol": "360750",
+            "name": "TIGER 미국S&P500",
+            "price": "28,970",
+            "change": "+1.15",
+            "volume": "6,001,987",
+            "market": "KOSPI"
         },
         {
             "rank": 3,
-            "symbol": "002990",
-            "name": "금호건설",
-            "price": "11,190",
-            "change": "+29.97",
-            "volume": "31,996,450",
+            "symbol": "069500",
+            "name": "KODEX 200",
+            "price": "134,810",
+            "change": "-2.72",
+            "volume": "5,750,081",
             "market": "KOSPI"
         },
         {
             "rank": 1,
             "symbol": "005930",
             "name": "삼성전자",
-            "price": "334,000",
-            "change": "+3.41",
-            "volume": "29,237,216",
+            "price": "320,750",
+            "change": "-3.97",
+            "volume": "8,274,035",
             "market": "KOSPI"
         },
         {
             "rank": 2,
             "symbol": "000660",
             "name": "SK하이닉스",
-            "price": "2,650,000",
-            "change": "+0.84",
-            "volume": "5,109,213",
+            "price": "2,586,000",
+            "change": "-2.42",
+            "volume": "1,563,076",
             "market": "KOSPI"
         },
         {
             "rank": 1,
             "symbol": "196170",
             "name": "알테오젠",
-            "price": "361,000",
-            "change": "-3.22",
-            "volume": "432,302",
-            "market": "KOSDAQ GLOBAL"
+            "price": "368,500",
+            "change": "+2.08",
+            "volume": "243,684",
+            "market": "KOSDAQ"
         },
         {
             "rank": 2,
             "symbol": "086520",
             "name": "에코프로",
-            "price": "106,600",
-            "change": "-9.66",
-            "volume": "2,370,046",
-            "market": "KOSDAQ GLOBAL"
+            "price": "97,600",
+            "change": "-8.44",
+            "volume": "1,530,793",
+            "market": "KOSDAQ"
         }
     ],
     "leaders_kospi": [
@@ -474,90 +416,90 @@
             "rank": 1,
             "symbol": "005930",
             "name": "삼성전자",
-            "price": "334,000",
-            "change": "+3.41",
-            "volume": "29,237,216",
+            "price": "320,750",
+            "change": "-3.97",
+            "volume": "8,274,035",
             "market": "KOSPI"
         },
         {
             "rank": 2,
             "symbol": "000660",
             "name": "SK하이닉스",
-            "price": "2,650,000",
-            "change": "+0.84",
-            "volume": "5,109,213",
+            "price": "2,586,000",
+            "change": "-2.42",
+            "volume": "1,563,076",
             "market": "KOSPI"
         },
         {
             "rank": 3,
             "symbol": "402340",
             "name": "SK스퀘어",
-            "price": "1,697,000",
-            "change": "+3.48",
-            "volume": "1,515,394",
+            "price": "1,646,000",
+            "change": "-3.01",
+            "volume": "426,339",
             "market": "KOSPI"
         },
         {
             "rank": 4,
             "symbol": "005935",
             "name": "삼성전자우",
-            "price": "212,000",
-            "change": "+0.71",
-            "volume": "4,357,953",
+            "price": "206,000",
+            "change": "-2.83",
+            "volume": "1,161,270",
             "market": "KOSPI"
         },
         {
             "rank": 5,
             "symbol": "009150",
             "name": "삼성전기",
-            "price": "2,184,000",
-            "change": "+7.16",
-            "volume": "1,322,616",
+            "price": "2,189,000",
+            "change": "+0.23",
+            "volume": "538,433",
             "market": "KOSPI"
         },
         {
             "rank": 6,
             "symbol": "005380",
             "name": "현대차",
-            "price": "495,000",
-            "change": "-0.40",
-            "volume": "786,003",
+            "price": "488,500",
+            "change": "-1.31",
+            "volume": "351,510",
             "market": "KOSPI"
         },
         {
             "rank": 7,
             "symbol": "373220",
             "name": "LG에너지솔루션",
-            "price": "362,000",
-            "change": "-9.61",
-            "volume": "672,385",
+            "price": "352,500",
+            "change": "-2.62",
+            "volume": "139,811",
             "market": "KOSPI"
         },
         {
             "rank": 8,
             "symbol": "032830",
             "name": "삼성생명",
-            "price": "401,000",
-            "change": "-1.84",
-            "volume": "514,927",
+            "price": "384,000",
+            "change": "-4.24",
+            "volume": "167,545",
             "market": "KOSPI"
         },
         {
             "rank": 9,
             "symbol": "028260",
             "name": "삼성물산",
-            "price": "468,500",
-            "change": "-0.53",
-            "volume": "734,101",
+            "price": "429,500",
+            "change": "-8.32",
+            "volume": "372,735",
             "market": "KOSPI"
         },
         {
             "rank": 10,
-            "symbol": "207940",
-            "name": "삼성바이오로직스",
-            "price": "1,391,000",
-            "change": "-3.94",
-            "volume": "74,245",
+            "symbol": "329180",
+            "name": "HD현대중공업",
+            "price": "603,000",
+            "change": "+1.86",
+            "volume": "96,227",
             "market": "KOSPI"
         }
     ],
@@ -566,274 +508,274 @@
             "rank": 1,
             "symbol": "196170",
             "name": "알테오젠",
-            "price": "361,000",
-            "change": "-3.22",
-            "volume": "432,302",
-            "market": "KOSDAQ GLOBAL"
+            "price": "368,500",
+            "change": "+2.08",
+            "volume": "243,684",
+            "market": "KOSDAQ"
         },
         {
             "rank": 2,
             "symbol": "086520",
             "name": "에코프로",
-            "price": "106,600",
-            "change": "-9.66",
-            "volume": "2,370,046",
-            "market": "KOSDAQ GLOBAL"
+            "price": "97,600",
+            "change": "-8.44",
+            "volume": "1,530,793",
+            "market": "KOSDAQ"
         },
         {
             "rank": 3,
             "symbol": "247540",
             "name": "에코프로비엠",
-            "price": "142,500",
-            "change": "-7.77",
-            "volume": "984,155",
-            "market": "KOSDAQ GLOBAL"
+            "price": "133,800",
+            "change": "-6.11",
+            "volume": "831,059",
+            "market": "KOSDAQ"
         },
         {
             "rank": 4,
-            "symbol": "277810",
-            "name": "레인보우로보틱스",
-            "price": "519,000",
-            "change": "+0.58",
-            "volume": "73,209",
+            "symbol": "036930",
+            "name": "주성엔지니어링",
+            "price": "232,000",
+            "change": "+15.42",
+            "volume": "1,936,916",
             "market": "KOSDAQ"
         },
         {
             "rank": 5,
-            "symbol": "036930",
-            "name": "주성엔지니어링",
-            "price": "201,000",
-            "change": "+13.82",
-            "volume": "3,312,537",
-            "market": "KOSDAQ GLOBAL"
+            "symbol": "277810",
+            "name": "레인보우로보틱스",
+            "price": "536,000",
+            "change": "+3.28",
+            "volume": "48,265",
+            "market": "KOSDAQ"
         },
         {
             "rank": 6,
             "symbol": "240810",
             "name": "원익IPS",
-            "price": "168,100",
-            "change": "+5.72",
-            "volume": "3,030,011",
-            "market": "KOSDAQ GLOBAL"
+            "price": "170,000",
+            "change": "+1.13",
+            "volume": "2,982,297",
+            "market": "KOSDAQ"
         },
         {
             "rank": 7,
             "symbol": "950160",
             "name": "코오롱티슈진",
-            "price": "93,600",
-            "change": "-3.90",
-            "volume": "305,448",
+            "price": "93,900",
+            "change": "+0.32",
+            "volume": "145,063",
             "market": "KOSDAQ"
         },
         {
             "rank": 8,
             "symbol": "028300",
             "name": "HLB",
-            "price": "52,000",
-            "change": "+1.96",
-            "volume": "565,441",
+            "price": "51,000",
+            "change": "-1.92",
+            "volume": "228,485",
             "market": "KOSDAQ"
         },
         {
             "rank": 9,
             "symbol": "058470",
             "name": "리노공업",
-            "price": "84,000",
-            "change": "-1.52",
-            "volume": "1,505,648",
-            "market": "KOSDAQ GLOBAL"
+            "price": "84,400",
+            "change": "+0.48",
+            "volume": "646,252",
+            "market": "KOSDAQ"
         },
         {
             "rank": 10,
-            "symbol": "039030",
-            "name": "이오테크닉스",
-            "price": "476,000",
-            "change": "+4.27",
-            "volume": "437,415",
+            "symbol": "319660",
+            "name": "피에스케이",
+            "price": "213,500",
+            "change": "+8.87",
+            "volume": "393,011",
             "market": "KOSDAQ"
         }
     ],
     "gainers": [
         {
             "rank": 1,
-            "symbol": "301300",
-            "name": "바이브컴퍼니",
-            "price": "1,300",
-            "change": "+30.00",
-            "volume": "170,822",
+            "symbol": "084370",
+            "name": "유진테크",
+            "price": "221,000",
+            "change": "+19.01",
+            "volume": "364,565",
             "market": "KOSDAQ"
         },
         {
             "rank": 2,
-            "symbol": "050760",
-            "name": "에스폴리텍",
-            "price": "1,326",
-            "change": "+30.00",
-            "volume": "997,526",
+            "symbol": "036930",
+            "name": "주성엔지니어링",
+            "price": "232,000",
+            "change": "+15.42",
+            "volume": "1,936,916",
             "market": "KOSDAQ"
         },
         {
             "rank": 3,
-            "symbol": "002995",
-            "name": "금호건설우",
-            "price": "33,800",
-            "change": "+30.00",
-            "volume": "85,794",
-            "market": "KOSPI"
+            "symbol": "226950",
+            "name": "올릭스",
+            "price": "173,800",
+            "change": "+11.70",
+            "volume": "298,499",
+            "market": "KOSDAQ"
         },
         {
             "rank": 4,
-            "symbol": "270660",
-            "name": "에브리봇",
-            "price": "14,520",
-            "change": "+29.99",
-            "volume": "681,322",
+            "symbol": "131290",
+            "name": "티에스이",
+            "price": "272,500",
+            "change": "+11.45",
+            "volume": "67,792",
             "market": "KOSDAQ"
         },
         {
             "rank": 5,
-            "symbol": "002990",
-            "name": "금호건설",
-            "price": "11,190",
-            "change": "+29.97",
-            "volume": "31,996,450",
-            "market": "KOSPI"
-        },
-        {
-            "rank": 6,
-            "symbol": "025560",
-            "name": "미래산업",
-            "price": "60,300",
-            "change": "+29.96",
-            "volume": "600,056",
-            "market": "KOSPI"
-        },
-        {
-            "rank": 7,
-            "symbol": "312610",
-            "name": "에이에프더블류",
-            "price": "642",
-            "change": "+29.96",
-            "volume": "213,290",
+            "symbol": "089030",
+            "name": "테크윙",
+            "price": "59,500",
+            "change": "+11.01",
+            "volume": "2,301,765",
             "market": "KOSDAQ"
         },
         {
+            "rank": 6,
+            "symbol": "089970",
+            "name": "브이엠",
+            "price": "120,600",
+            "change": "+10.34",
+            "volume": "366,116",
+            "market": "KOSDAQ"
+        },
+        {
+            "rank": 7,
+            "symbol": "010120",
+            "name": "LS ELECTRIC",
+            "price": "262,000",
+            "change": "+10.08",
+            "volume": "1,254,576",
+            "market": "KOSPI"
+        },
+        {
             "rank": 8,
-            "symbol": "090410",
-            "name": "덕신이피씨",
-            "price": "924",
-            "change": "+29.96",
-            "volume": "5,964,532",
+            "symbol": "257720",
+            "name": "실리콘투",
+            "price": "34,550",
+            "change": "+9.16",
+            "volume": "213,897",
             "market": "KOSDAQ"
         },
         {
             "rank": 9,
-            "symbol": "308100",
-            "name": "형지글로벌",
-            "price": "651",
-            "change": "+29.94",
-            "volume": "1,888,300",
+            "symbol": "319660",
+            "name": "피에스케이",
+            "price": "213,500",
+            "change": "+8.87",
+            "volume": "393,011",
             "market": "KOSDAQ"
         },
         {
             "rank": 10,
-            "symbol": "228340",
-            "name": "동양파일",
-            "price": "4,800",
-            "change": "+29.91",
-            "volume": "3,680,125",
+            "symbol": "098460",
+            "name": "고영",
+            "price": "34,600",
+            "change": "+8.29",
+            "volume": "1,100,753",
             "market": "KOSDAQ"
         }
     ],
     "volume": [
         {
             "rank": 1,
-            "symbol": "001210",
-            "name": "금호전기",
-            "price": "1,174",
-            "change": "+6.92",
-            "volume": "116,598,269",
+            "symbol": "005930",
+            "name": "삼성전자",
+            "price": "320,750",
+            "change": "-3.97",
+            "volume": "8,274,035",
             "market": "KOSPI"
         },
         {
             "rank": 2,
-            "symbol": "0164H0",
-            "name": "한국제16호스팩",
-            "price": "1,941",
-            "change": "-2.95",
-            "volume": "109,937,112",
-            "market": "KOSDAQ"
+            "symbol": "360750",
+            "name": "TIGER 미국S&P500",
+            "price": "28,970",
+            "change": "+1.15",
+            "volume": "6,001,987",
+            "market": "KOSPI"
         },
         {
             "rank": 3,
-            "symbol": "002990",
-            "name": "금호건설",
-            "price": "11,190",
-            "change": "+29.97",
-            "volume": "31,996,450",
+            "symbol": "069500",
+            "name": "KODEX 200",
+            "price": "134,810",
+            "change": "-2.72",
+            "volume": "5,750,081",
             "market": "KOSPI"
         },
         {
             "rank": 4,
-            "symbol": "005930",
-            "name": "삼성전자",
-            "price": "334,000",
-            "change": "+3.41",
-            "volume": "29,237,216",
-            "market": "KOSPI"
+            "symbol": "010170",
+            "name": "대한광통신",
+            "price": "13,850",
+            "change": "+4.92",
+            "volume": "5,345,232",
+            "market": "KOSDAQ"
         },
         {
             "rank": 5,
-            "symbol": "475040",
-            "name": "스트라드비젼",
-            "price": "7,200",
-            "change": "-40.00",
-            "volume": "21,745,171",
+            "symbol": "403870",
+            "name": "HPSP",
+            "price": "54,200",
+            "change": "+0.37",
+            "volume": "4,251,259",
             "market": "KOSDAQ"
         },
         {
             "rank": 6,
-            "symbol": "099220",
-            "name": "SDN",
-            "price": "990",
-            "change": "+5.66",
-            "volume": "20,433,012",
+            "symbol": "240810",
+            "name": "원익IPS",
+            "price": "170,000",
+            "change": "+1.13",
+            "volume": "2,982,297",
             "market": "KOSDAQ"
         },
         {
             "rank": 7,
-            "symbol": "058730",
-            "name": "다스코",
-            "price": "4,205",
-            "change": "-5.82",
-            "volume": "19,338,211",
-            "market": "KOSPI"
+            "symbol": "089030",
+            "name": "테크윙",
+            "price": "59,500",
+            "change": "+11.01",
+            "volume": "2,301,765",
+            "market": "KOSDAQ"
         },
         {
             "rank": 8,
-            "symbol": "018000",
-            "name": "유니슨",
-            "price": "1,137",
-            "change": "+13.25",
-            "volume": "16,756,309",
+            "symbol": "043260",
+            "name": "성호전자",
+            "price": "32,000",
+            "change": "+7.93",
+            "volume": "2,215,509",
             "market": "KOSDAQ"
         },
         {
             "rank": 9,
-            "symbol": "032980",
-            "name": "바이온",
-            "price": "2",
-            "change": "-33.33",
-            "volume": "14,939,431",
+            "symbol": "036930",
+            "name": "주성엔지니어링",
+            "price": "232,000",
+            "change": "+15.42",
+            "volume": "1,936,916",
             "market": "KOSDAQ"
         },
         {
             "rank": 10,
-            "symbol": "079650",
-            "name": "서산",
-            "price": "4,265",
-            "change": "+0.24",
-            "volume": "14,808,112",
+            "symbol": "067310",
+            "name": "하나마이크론",
+            "price": "52,900",
+            "change": "+6.12",
+            "volume": "1,916,785",
             "market": "KOSDAQ"
         }
     ],
