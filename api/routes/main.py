@@ -1,7 +1,31 @@
-from flask import Blueprint, render_template, make_response, request
+from flask import (
+    Blueprint,
+    current_app,
+    make_response,
+    render_template,
+    request,
+    send_from_directory,
+)
 import os
 
 main_bp = Blueprint('main', __name__)
+
+@main_bp.route('/assets/<path:filename>', strict_slashes=False)
+def static_assets(filename):
+    return send_from_directory(current_app.static_folder, filename)
+
+@main_bp.route('/sw.js', strict_slashes=False)
+def service_worker():
+    resp = make_response(
+        send_from_directory(
+            current_app.static_folder,
+            'sw.js',
+            mimetype='application/javascript'
+        )
+    )
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    resp.headers['Service-Worker-Allowed'] = '/'
+    return resp
 
 @main_bp.route('/', methods=['GET', 'POST'], strict_slashes=False)
 def index():

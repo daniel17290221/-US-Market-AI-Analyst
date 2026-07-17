@@ -1,0 +1,30 @@
+{
+  "name": "investment-vibecodinglab",
+  "version": "1.0.0",
+  "description": "VibeCodingLab dividend portfolio PWA and Capacitor app",
+  "scripts": {
+    "test": "python -m unittest test_tax_engine.py test_portfolio_ledger.py test_kiwoom.py test_mobile_pwa.py",
+    "cap:configure": "node scripts/configure-capacitor.mjs",
+    "cap:sync": "npm run cap:configure && cap sync",
+    "cap:android": "cap open android",
+    "cap:ios": "cap open ios"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniel17290221/-US-Market-AI-Analyst.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/daniel17290221/-US-Market-AI-Analyst/issues"
+  },
+  "homepage": "https://github.com/daniel17290221/-US-Market-AI-Analyst#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
+    "@capacitor/ios": "^8.4.2"
+  }
+}

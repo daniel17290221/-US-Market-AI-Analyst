@@ -3,8 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#050505">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="배당 투자">
     <title>배당 포트폴리오 도우미 (Beta)</title>
+    <link rel="manifest" href="/assets/manifest.webmanifest">
+    <link rel="icon" href="/assets/logo.jpg">
+    <link rel="apple-touch-icon" href="/assets/logo.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link
@@ -178,10 +186,13 @@
         @media (max-width: 1200px) {
             .mobile-ad-banner {
                 display: block;
+                position: static;
+                margin-top: 24px;
+                padding-bottom: env(safe-area-inset-bottom);
             }
 
             body {
-                padding-bottom: 120px !important;
+                padding-bottom: 0 !important;
             }
         }
 
@@ -189,6 +200,259 @@
         .lg\:col-span-4::before,
         .lg\:col-span-4::after {
             display: none !important;
+        }
+
+        button,
+        a,
+        input {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 2px solid #00F0FF;
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 767px) {
+            body {
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+                overscroll-behavior-y: contain;
+            }
+
+            nav {
+                margin: 0 !important;
+                border-radius: 0 0 16px 16px !important;
+                padding-top: max(12px, env(safe-area-inset-top)) !important;
+                gap: 10px !important;
+            }
+
+            nav > div:nth-child(2) {
+                flex-wrap: nowrap !important;
+                justify-content: flex-start !important;
+                overflow-x: auto;
+                scrollbar-width: none;
+                padding-bottom: 8px !important;
+            }
+
+            nav > div:nth-child(2)::-webkit-scrollbar {
+                display: none;
+            }
+
+            nav > div:nth-child(2) a {
+                flex: 0 0 auto;
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .page-wrapper {
+                padding: 16px 12px 0 !important;
+            }
+
+            main > div > div:first-child {
+                margin-bottom: 16px !important;
+                padding-bottom: 16px !important;
+            }
+
+            main > div > div:first-child h1 {
+                font-size: 1.75rem !important;
+                line-height: 1.2 !important;
+            }
+
+            .glass-card {
+                border-radius: 16px;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+
+            .control-section,
+            .lg\:col-span-4 > .glass-card {
+                padding: 20px 16px !important;
+            }
+
+            .theme-card {
+                height: 100px !important;
+                padding: 12px 8px !important;
+                gap: 8px !important;
+            }
+
+            .theme-card i {
+                font-size: 1.5rem !important;
+            }
+
+            .theme-card span {
+                font-size: 0.75rem !important;
+                line-height: 1.2;
+            }
+
+            .risk-card {
+                min-height: 44px;
+                padding: 16px !important;
+            }
+
+            .market-btn,
+            .strategy-btn,
+            .kiwoom-sync-button,
+            #generate-btn {
+                min-height: 52px;
+            }
+
+            .lg\:col-span-4 > .glass-card {
+                position: static !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+
+            .settings-panel > h2,
+            .settings-panel .mb-10,
+            .settings-panel .mb-12 {
+                margin-bottom: 24px !important;
+            }
+
+            .portfolio-section > div:first-child {
+                padding: 20px 16px !important;
+            }
+
+            .insight-card {
+                margin-left: -16px !important;
+                margin-right: -16px !important;
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+            }
+
+            #portfolio-tbody,
+            #portfolio-tbody tr {
+                display: block;
+            }
+
+            #portfolio-tbody .portfolio-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px 16px;
+                padding: 16px;
+                border-bottom: 0;
+                background: rgba(255, 255, 255, 0.025);
+            }
+
+            #portfolio-tbody .portfolio-row td {
+                padding: 0 !important;
+                text-align: left !important;
+                min-width: 0;
+            }
+
+            #portfolio-tbody .portfolio-row td:first-child {
+                grid-column: 1 / -1;
+                padding-bottom: 8px !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            #portfolio-tbody .portfolio-row td:not(:first-child)::before {
+                content: attr(data-label);
+                display: block;
+                margin-bottom: 4px;
+                color: #6b7280;
+                font-family: 'Pretendard', sans-serif;
+                font-size: 0.625rem;
+                font-weight: 700;
+            }
+
+            #portfolio-tbody .rationale-row {
+                margin-bottom: 12px;
+                border-radius: 0 0 12px 12px;
+            }
+
+            #portfolio-tbody .rationale-row td {
+                display: block;
+                padding: 12px 16px !important;
+            }
+
+            #portfolio-tbody .empty-row td {
+                display: block;
+                padding: 28px 16px !important;
+                font-size: 0.875rem !important;
+            }
+
+            footer {
+                padding-bottom: calc(120px + env(safe-area-inset-bottom)) !important;
+            }
+        }
+
+        @media (display-mode: standalone) {
+            .mobile-ad-banner {
+                display: none !important;
+            }
+
+            body {
+                padding-bottom: env(safe-area-inset-bottom) !important;
+            }
+
+            footer {
+                padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
+            }
+        }
+
+        #allocation-print-document {
+            display: none;
+        }
+
+        @media print {
+            body.printing-allocation-report > *:not(#allocation-print-document) {
+                display: none !important;
+            }
+
+            #allocation-print-document {
+                display: block !important;
+                color: #111;
+                background: #fff;
+                max-width: 100%;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                line-height: 1.5;
+            }
+
+            #allocation-print-document h1 {
+                font-size: 24px;
+            }
+
+            #allocation-print-document h2 {
+                margin-top: 28px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid #ddd;
+                font-size: 17px;
+            }
+
+            #allocation-print-document table {
+                width: 100%;
+                margin-top: 12px;
+                border-collapse: collapse;
+                font-size: 11px;
+            }
+
+            #allocation-print-document th,
+            #allocation-print-document td {
+                padding: 8px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            #allocation-print-document th {
+                background: #f5f5f5;
+            }
+
+            #allocation-print-document li,
+            #allocation-print-document p {
+                font-size: 12px;
+            }
+
+            #allocation-print-document .notice {
+                padding: 10px;
+                border-radius: 6px;
+                background: #fff8db;
+            }
         }
     </style>
     <script>
@@ -231,8 +495,11 @@
                 </div>
             </a>
 
-            <!-- Mobile Hidden Spacer -->
-            <div class="flex lg:hidden w-[60px]"></div>
+            <button id="install-app-btn" type="button"
+                class="hidden lg:hidden min-h-[44px] px-3 rounded-lg border border-brand-cyan/30 bg-brand-cyan/10 text-brand-cyan text-xs font-bold"
+                aria-label="앱 설치">
+                <i class="fas fa-download mr-1"></i> 설치
+            </button>
         </div>
 
         <div
@@ -280,13 +547,478 @@
                     </div>
                 </div>
 
+                <section id="kiwoom-account-panel"
+                    class="glass-card rounded-xl p-5 md:p-8 mb-8 border-l-2 border-l-brand-cyan">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center">
+                                <i class="fas fa-wallet text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="font-bold text-white">내 키움 계좌</h2>
+                                    <span id="kiwoom-status-badge"
+                                        class="text-[10px] px-2 py-1 rounded-full bg-white/5 text-gray-400 border border-white/10">
+                                        확인 중
+                                    </span>
+                                </div>
+                                <p id="kiwoom-account-caption" class="text-xs text-gray-500 mt-1">
+                                    조회 전용으로 예수금과 국내 보유종목을 불러옵니다.
+                                </p>
+                            </div>
+                        </div>
+                        <span id="kiwoom-account-number"
+                            class="hidden font-mono text-xs text-gray-400 bg-black/30 px-3 py-2 rounded-lg"></span>
+                    </div>
+
+                    <form id="kiwoom-sync-form"
+                        class="mt-5 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_auto] gap-3">
+                        <label for="kiwoom-sync-key" class="sr-only">키움 계좌 연동 PIN</label>
+                        <input id="kiwoom-sync-key" type="password" autocomplete="off" inputmode="text"
+                            placeholder="계좌 조회용 연동 PIN 입력"
+                            class="min-h-[52px] w-full bg-black/40 border border-white/10 rounded-xl px-4 text-sm text-white focus:border-brand-cyan focus:outline-none">
+                        <label for="kiwoom-history-months" class="sr-only">거래내역 조회기간</label>
+                        <select id="kiwoom-history-months"
+                            class="min-h-[52px] bg-black/40 border border-white/10 rounded-xl px-4 text-sm text-gray-300 focus:border-brand-cyan focus:outline-none">
+                            <option value="12">최근 1년</option>
+                            <option value="36">최근 3년</option>
+                            <option value="60">최근 5년</option>
+                        </select>
+                        <button id="kiwoom-sync-button" type="submit"
+                            class="kiwoom-sync-button min-h-[52px] px-5 rounded-xl bg-brand-cyan text-black font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                            <i class="fas fa-rotate mr-2"></i>계좌 불러오기
+                        </button>
+                    </form>
+                    <p id="kiwoom-sync-message" class="mt-3 text-xs text-gray-500" role="status" aria-live="polite">
+                        연동 PIN은 서버의 KIWOOM_SYNC_SECRET 값이며 브라우저에 저장하지 않습니다.
+                    </p>
+
+                    <details class="mt-4 rounded-xl border border-white/5 bg-black/20">
+                        <summary
+                            class="min-h-[48px] px-4 flex items-center justify-between cursor-pointer text-xs font-bold text-gray-300">
+                            <span><i class="fas fa-pen-to-square text-brand-cyan mr-2"></i>과거 매수내역 직접 보완</span>
+                            <span id="local-lot-count" class="text-gray-500">0건</span>
+                        </summary>
+                        <div class="p-4 border-t border-white/5">
+                            <p class="text-[11px] text-gray-500 mb-4">
+                                키움 조회기간보다 오래된 매수분만 추가하세요. 입력값은 이 기기의 브라우저에만 저장됩니다.
+                            </p>
+                            <form id="local-lot-form" class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+                                <input id="local-lot-symbol" required maxlength="12" placeholder="종목코드"
+                                    class="min-h-[44px] bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                <input id="local-lot-name" maxlength="40" placeholder="종목명"
+                                    class="min-h-[44px] bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                <input id="local-lot-date" required type="date" aria-label="매수일"
+                                    class="min-h-[44px] bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-gray-300">
+                                <input id="local-lot-quantity" required type="number" min="0.000001" step="any"
+                                    inputmode="decimal" placeholder="수량"
+                                    class="min-h-[44px] bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                <input id="local-lot-price" required type="number" min="0" step="any"
+                                    inputmode="decimal" placeholder="매수가"
+                                    class="min-h-[44px] bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                <button type="submit"
+                                    class="min-h-[44px] rounded-lg bg-white/10 hover:bg-white/15 text-xs text-white font-bold">
+                                    매수내역 추가
+                                </button>
+                            </form>
+                            <div id="local-lot-list" class="mt-4 space-y-2"></div>
+                            <button id="clear-local-lots" type="button"
+                                class="hidden mt-3 text-[11px] text-red-400 hover:text-red-300">
+                                로컬 매수내역 전체 삭제
+                            </button>
+                        </div>
+                    </details>
+
+                    <div id="kiwoom-account-summary" class="hidden mt-6">
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">예수금</div>
+                                <div id="kiwoom-cash" class="font-mono text-sm md:text-base text-white font-bold">-</div>
+                            </div>
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">D+2 예상 예수금</div>
+                                <div id="kiwoom-cash-d2" class="font-mono text-sm md:text-base text-white font-bold">-</div>
+                            </div>
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">총 평가금액</div>
+                                <div id="kiwoom-evaluation"
+                                    class="font-mono text-sm md:text-base text-white font-bold">-</div>
+                            </div>
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">평가손익</div>
+                                <div id="kiwoom-profit-loss"
+                                    class="font-mono text-sm md:text-base text-white font-bold">-</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex items-center justify-between gap-3">
+                            <h3 class="text-sm font-bold text-gray-300">보유종목</h3>
+                            <span id="kiwoom-position-count" class="text-xs text-gray-500"></span>
+                        </div>
+                        <div id="kiwoom-positions" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+                        <div id="kiwoom-performance" class="hidden mt-8 pt-6 border-t border-white/5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-300">매수일 기준 총수익</h3>
+                                    <p id="kiwoom-performance-period" class="text-[10px] text-gray-500 mt-1"></p>
+                                </div>
+                                <span id="kiwoom-performance-coverage"
+                                    class="text-[10px] text-gray-500"></span>
+                            </div>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+                                <div class="rounded-xl bg-white/[0.03] p-4">
+                                    <div class="text-[10px] text-gray-500 font-bold mb-2">실현손익</div>
+                                    <div id="performance-realized" class="font-mono text-sm font-bold text-white">-</div>
+                                </div>
+                                <div class="rounded-xl bg-white/[0.03] p-4">
+                                    <div class="text-[10px] text-gray-500 font-bold mb-2">미실현손익</div>
+                                    <div id="performance-unrealized" class="font-mono text-sm font-bold text-white">-</div>
+                                </div>
+                                <div class="rounded-xl bg-white/[0.03] p-4">
+                                    <div class="text-[10px] text-gray-500 font-bold mb-2">세후 배당</div>
+                                    <div id="performance-dividends" class="font-mono text-sm font-bold text-white">-</div>
+                                </div>
+                                <div class="rounded-xl bg-white/[0.03] p-4">
+                                    <div class="text-[10px] text-gray-500 font-bold mb-2">총수익률</div>
+                                    <div id="performance-total-rate" class="font-mono text-sm font-bold text-white">-</div>
+                                </div>
+                            </div>
+                            <div id="kiwoom-performance-symbols"
+                                class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="family-tax-panel"
+                    class="glass-card rounded-xl p-5 md:p-8 mb-8 border-l-2 border-l-brand-purple">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-brand-purple/10 text-brand-purple flex items-center justify-center">
+                                <i class="fas fa-people-roof text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-white">가족 분산 절세 진단</h2>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    구성원별 금융소득·건강보험·증여·연금계좌 여유를 함께 분석합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <span id="family-profile-count"
+                            class="font-mono text-xs text-gray-400 bg-black/30 px-3 py-2 rounded-lg">0명</span>
+                    </div>
+
+                    <details id="family-profile-details"
+                        class="mt-5 rounded-xl border border-white/5 bg-black/20">
+                        <summary
+                            class="min-h-[52px] px-4 flex items-center justify-between cursor-pointer text-sm font-bold text-gray-300">
+                            <span><i class="fas fa-user-plus text-brand-purple mr-2"></i>가족 프로필 추가</span>
+                            <span class="text-[10px] text-gray-500">이 기기에만 저장</span>
+                        </summary>
+                        <div class="p-4 border-t border-white/5">
+                            <form id="family-profile-form" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                                <input id="family-edit-id" type="hidden">
+                                <label class="text-[10px] text-gray-500">
+                                    이름·별칭
+                                    <input id="family-name" required maxlength="40" placeholder="예: 본인"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    관계
+                                    <select id="family-relationship"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-gray-300">
+                                        <option value="self">본인</option>
+                                        <option value="spouse">배우자</option>
+                                        <option value="adult_child">성인 자녀</option>
+                                        <option value="minor_child">미성년 자녀</option>
+                                        <option value="parent">부모</option>
+                                        <option value="other_relative">기타 친족</option>
+                                    </select>
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    나이
+                                    <input id="family-age" type="number" min="0" max="120" value="40"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    건강보험
+                                    <select id="family-health-insurance"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-gray-300">
+                                        <option value="employee">직장가입자</option>
+                                        <option value="dependent">피부양자</option>
+                                        <option value="local">지역가입자</option>
+                                    </select>
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    총급여
+                                    <input id="family-gross-salary" type="number" min="0" step="10000" placeholder="원"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    기타 연간 소득금액
+                                    <input id="family-other-income" type="number" min="0" step="10000" placeholder="원"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    종합소득 과세표준(추정)
+                                    <input id="family-taxable-base" type="number" min="0" step="10000"
+                                        placeholder="공제 후 과세표준"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    연간 이자소득
+                                    <input id="family-interest-income" type="number" min="0" step="10000" placeholder="원"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    국내 배당
+                                    <input id="family-domestic-dividends" type="number" min="0" step="10000" placeholder="원"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    해외 배당
+                                    <input id="family-foreign-dividends" type="number" min="0" step="10000" placeholder="원"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    10년 내 증여받은 금액
+                                    <input id="family-gifts-used" type="number" min="0" step="10000" placeholder="원"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    추가 증여 계획
+                                    <input id="family-planned-gift" type="number" min="0" step="10000" placeholder="원"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    연금계좌 납입액
+                                    <input id="family-pension-contribution" type="number" min="0" step="10000"
+                                        placeholder="연금저축+IRP"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    ISA 추가 투자 가능액
+                                    <input id="family-isa-available" type="number" min="0" step="10000"
+                                        placeholder="현재 남은 투자 가능액"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <label class="text-[10px] text-gray-500">
+                                    연금계좌 추가 투자 가능액
+                                    <input id="family-pension-asset-room" type="number" min="0" step="10000"
+                                        placeholder="배당자산 배치 가능액"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <div class="col-span-2 lg:col-span-4 flex flex-col sm:flex-row gap-3 pt-2">
+                                    <button id="family-save-button" type="submit"
+                                        class="min-h-[48px] px-5 rounded-xl bg-brand-purple text-white text-sm font-bold">
+                                        프로필 저장
+                                    </button>
+                                    <button id="family-cancel-edit" type="button"
+                                        class="hidden min-h-[48px] px-5 rounded-xl bg-white/5 text-gray-300 text-sm font-bold">
+                                        수정 취소
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </details>
+
+                    <details id="family-vault-details"
+                        class="mt-4 rounded-xl border border-brand-purple/15 bg-brand-purple/5">
+                        <summary
+                            class="min-h-[52px] px-4 flex items-center justify-between cursor-pointer text-sm font-bold text-gray-300">
+                            <span><i class="fas fa-shield-halved text-brand-purple mr-2"></i>암호화 보관함</span>
+                            <span id="family-vault-badge" class="text-[10px] text-gray-500">선택 기능</span>
+                        </summary>
+                        <div class="p-4 border-t border-brand-purple/10">
+                            <p class="text-[10px] leading-relaxed text-gray-500">
+                                비밀번호는 서버로 전송하거나 저장하지 않습니다. 분실하면 암호화된 프로필을 복구할 수 없습니다.
+                            </p>
+                            <form id="family-vault-form" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="text-[10px] text-gray-500">
+                                    보관함 비밀번호
+                                    <input id="family-vault-password" type="password" minlength="8"
+                                        autocomplete="new-password" placeholder="8자 이상"
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                                </label>
+                                <div class="grid grid-cols-2 gap-2 sm:self-end">
+                                    <button id="family-vault-save" type="submit"
+                                        class="min-h-[44px] rounded-lg bg-brand-purple text-white text-xs font-bold">
+                                        암호화 저장
+                                    </button>
+                                    <button id="family-vault-unlock" type="button"
+                                        class="min-h-[44px] rounded-lg bg-white/5 text-gray-300 text-xs font-bold">
+                                        잠금 해제
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <button id="family-vault-export" type="button"
+                                    class="min-h-[44px] rounded-lg border border-white/10 text-xs text-gray-300">
+                                    <i class="fas fa-download mr-2"></i>암호화 백업
+                                </button>
+                                <label
+                                    class="min-h-[44px] rounded-lg border border-white/10 text-xs text-gray-300 flex items-center justify-center cursor-pointer">
+                                    <i class="fas fa-upload mr-2"></i>백업 복원
+                                    <input id="family-vault-import" type="file" accept="application/json,.json"
+                                        class="hidden">
+                                </label>
+                                <button id="family-vault-clear" type="button"
+                                    class="min-h-[44px] rounded-lg border border-red-500/20 text-xs text-red-400">
+                                    <i class="fas fa-lock-open mr-2"></i>보관함 해제
+                                </button>
+                            </div>
+                            <p id="family-vault-message" class="mt-3 text-[10px] text-gray-500" role="status"
+                                aria-live="polite"></p>
+                        </div>
+                    </details>
+
+                    <div id="family-profile-list" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                    <button id="analyze-family-button" type="button" disabled
+                        class="mt-5 w-full min-h-[52px] rounded-xl bg-white text-black font-black disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fas fa-calculator mr-2"></i>가족 절세 분석하기
+                    </button>
+                    <p id="family-analysis-message" class="mt-3 text-xs text-gray-500" role="status"
+                        aria-live="polite">
+                        주민등록번호와 계좌번호는 입력하지 않습니다. 프로필은 서버에 저장되지 않습니다.
+                    </p>
+
+                    <div id="family-analysis-results" class="hidden mt-7 pt-6 border-t border-white/5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <h3 class="text-sm font-bold text-gray-300">가족 절세 진단 결과</h3>
+                            <span id="family-rules-date" class="text-[10px] text-gray-500"></span>
+                        </div>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">가족 금융소득</div>
+                                <div id="family-total-financial" class="font-mono text-sm font-bold text-white">-</div>
+                            </div>
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">예상 추가 소득세</div>
+                                <div id="family-additional-tax" class="font-mono text-sm font-bold text-white">-</div>
+                            </div>
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">예상 증여세</div>
+                                <div id="family-gift-tax" class="font-mono text-sm font-bold text-white">-</div>
+                            </div>
+                            <div class="rounded-xl bg-white/[0.03] p-4">
+                                <div class="text-[10px] text-gray-500 font-bold mb-2">추가 연금 세액공제</div>
+                                <div id="family-pension-credit" class="font-mono text-sm font-bold text-white">-</div>
+                            </div>
+                        </div>
+                        <div id="family-member-results" class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3"></div>
+                        <div id="family-allocation-order"
+                            class="hidden mt-4 rounded-xl border border-brand-purple/20 bg-brand-purple/5 p-4"></div>
+                        <p id="family-disclaimer" class="mt-4 text-[10px] leading-relaxed text-gray-600"></p>
+                    </div>
+
+                    <div id="family-allocation-optimizer" class="mt-7 pt-6 border-t border-white/5">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-10 h-10 shrink-0 rounded-xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center">
+                                <i class="fas fa-route"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">5단계 · 가족 자산 배치 최적화</h3>
+                                <p class="mt-1 text-[11px] leading-relaxed text-gray-500">
+                                    새 투자금을 일반·ISA·연금계좌에 나눠 예상 배당세와 건강보험 위험을 비교합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <form id="family-allocation-form" class="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-3">
+                            <label class="col-span-2 lg:col-span-1 text-[10px] text-gray-500">
+                                추가 투자금
+                                <input id="allocation-investment" type="number" min="1" max="100000000000"
+                                    step="1" value="100000000" required
+                                    class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 text-xs text-white">
+                            </label>
+                            <label class="text-[10px] text-gray-500">
+                                예상 연 배당률
+                                <div class="relative">
+                                    <input id="allocation-yield" type="number" min="0.1" max="30" step="0.1"
+                                        value="4.5" required
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 pr-8 text-xs text-white">
+                                    <span class="absolute right-3 top-4 text-xs text-gray-500">%</span>
+                                </div>
+                            </label>
+                            <label class="text-[10px] text-gray-500">
+                                해외자산 비중
+                                <div class="relative">
+                                    <input id="allocation-foreign-ratio" type="number" min="0" max="100" step="1"
+                                        value="20" required
+                                        class="mt-1 min-h-[44px] w-full bg-black/40 border border-white/10 rounded-lg px-3 pr-8 text-xs text-white">
+                                    <span class="absolute right-3 top-4 text-xs text-gray-500">%</span>
+                                </div>
+                            </label>
+                            <button id="optimize-allocation-button" type="submit" disabled
+                                class="col-span-2 lg:col-span-3 min-h-[52px] rounded-xl bg-brand-cyan text-black font-black disabled:opacity-40 disabled:cursor-not-allowed">
+                                <i class="fas fa-wand-magic-sparkles mr-2"></i>최적 배치 계산하기
+                            </button>
+                        </form>
+                        <p id="allocation-message" class="mt-3 text-xs text-gray-500" role="status"
+                            aria-live="polite">
+                            가족 프로필에 실제 ISA·연금계좌 투자 가능액을 입력하면 더 정확해집니다.
+                        </p>
+
+                        <div id="family-allocation-results" class="hidden mt-5">
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div class="rounded-xl bg-white/[0.03] p-4">
+                                    <div class="text-[10px] text-gray-500 font-bold mb-2">현재 방식 예상세금</div>
+                                    <div id="allocation-baseline-tax" class="font-mono text-sm font-bold text-white">-</div>
+                                </div>
+                                <div class="rounded-xl bg-white/[0.03] p-4">
+                                    <div class="text-[10px] text-gray-500 font-bold mb-2">최적안 예상세금</div>
+                                    <div id="allocation-optimized-tax" class="font-mono text-sm font-bold text-white">-</div>
+                                </div>
+                                <div class="rounded-xl bg-green-500/5 p-4 border border-green-500/10">
+                                    <div class="text-[10px] text-green-500 font-bold mb-2">연간 예상 절감액</div>
+                                    <div id="allocation-tax-savings" class="font-mono text-sm font-bold text-green-400">-</div>
+                                </div>
+                                <div class="rounded-xl bg-brand-cyan/5 p-4 border border-brand-cyan/10">
+                                    <div class="text-[10px] text-brand-cyan font-bold mb-2">절세계좌 배치액</div>
+                                    <div id="allocation-sheltered" class="font-mono text-sm font-bold text-brand-cyan">-</div>
+                                </div>
+                            </div>
+                            <div id="allocation-impact"
+                                class="mt-3 rounded-xl border border-white/5 bg-black/25 p-4 text-[11px] text-gray-400">
+                            </div>
+                            <div id="allocation-plan-list" class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3"></div>
+                            <div id="allocation-account-comparison"
+                                class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+                            <div id="allocation-warnings" class="mt-4 space-y-2"></div>
+                            <details id="allocation-calculation-evidence"
+                                class="mt-4 rounded-xl border border-white/5 bg-black/25">
+                                <summary
+                                    class="min-h-[48px] px-4 flex items-center justify-between cursor-pointer text-xs font-bold text-gray-300">
+                                    <span><i class="fas fa-file-invoice-dollar text-brand-cyan mr-2"></i>세무 검증용 계산 근거</span>
+                                    <span class="text-[10px] text-gray-600">수식·가정·출처</span>
+                                </summary>
+                                <div class="p-4 border-t border-white/5">
+                                    <div id="allocation-formulas" class="space-y-2"></div>
+                                    <div id="allocation-tax-components"
+                                        class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                                    <div id="allocation-member-boundaries"
+                                        class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3"></div>
+                                    <div id="allocation-sources" class="mt-4 space-y-2"></div>
+                                </div>
+                            </details>
+                            <button id="allocation-print-report" type="button"
+                                class="mt-4 w-full min-h-[48px] rounded-xl border border-brand-cyan/20 bg-brand-cyan/5 text-brand-cyan text-sm font-bold">
+                                <i class="fas fa-file-pdf mr-2"></i>계산 근거 리포트 인쇄·PDF 저장
+                            </button>
+                            <p id="allocation-disclaimer" class="mt-4 text-[10px] leading-relaxed text-gray-600"></p>
+                        </div>
+                    </div>
+                </section>
+
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
                     <!-- Left Column: Controls (Span 8) -->
                     <div class="lg:col-span-8 space-y-8">
 
                         <!-- 1. Investment Theme -->
-                        <section class="glass-card rounded-xl p-8 relative overflow-hidden group">
+                        <section class="control-section glass-card rounded-xl p-8 relative overflow-hidden group">
                             <div
                                 class="absolute top-0 right-0 w-32 h-32 bg-brand-cyan/5 rounded-full blur-3xl -z-10 transition-all duration-500 group-hover:bg-brand-cyan/10">
                             </div>
@@ -348,7 +1080,7 @@
                         </section>
 
                         <!-- 2. Risk Tier Selection -->
-                        <section class="glass-card rounded-xl p-8">
+                        <section class="control-section glass-card rounded-xl p-8">
                             <h2
                                 class="text-base font-bold text-gray-300 uppercase tracking-widest mb-6 flex items-center gap-2">
                                 <i class="fas fa-tachometer-alt text-brand-purple"></i> 위험 성향 (리스크)
@@ -398,7 +1130,7 @@
                         </section>
 
                         <!-- 3. Portfolio Table -->
-                        <section class="glass-card rounded-xl overflow-hidden">
+                        <section class="portfolio-section glass-card rounded-xl overflow-hidden">
                             <div class="p-8 border-b border-white/5 flex justify-between items-center">
                                 <h2
                                     class="text-base font-bold text-gray-300 uppercase tracking-widest flex items-center gap-2">
@@ -408,7 +1140,7 @@
                             <div class="overflow-x-auto">
                                 <table class="w-full text-base text-center">
                                     <thead class="text-sm uppercase bg-white/5 text-gray-400 font-mono tracking-wider">
-                                        <tr>
+                                        <tr class="empty-row">
                                             <th class="px-6 py-5 text-left">종목명 (티커)</th>
                                             <th class="px-6 py-5">유형</th>
                                             <th class="px-6 py-5">비중</th>
@@ -439,7 +1171,7 @@
 
                         <!-- Combined Panel -->
                         <div
-                            class="glass-card rounded-xl p-8 sticky top-24 border-t-2 border-t-brand-cyan max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar">
+                            class="settings-panel glass-card rounded-xl p-8 sticky top-24 border-t-2 border-t-brand-cyan max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar">
                             <h2
                                 class="text-base font-bold text-white uppercase tracking-widest mb-10 flex items-center justify-between">
                                 <span>상세 설정</span>
@@ -563,7 +1295,7 @@
 
                             <!-- Merged Info Card -->
                             <div
-                                class="mt-8 pt-6 border-t border-white/5 bg-brand-purple/5 -mx-8 px-8 pb-8 -mb-8 rounded-b-xl border-b border-white/5">
+                                class="insight-card mt-8 pt-6 border-t border-white/5 bg-brand-purple/5 -mx-8 px-8 pb-8 -mb-8 rounded-b-xl border-b border-white/5">
                                 <h3
                                     class="text-brand-purple font-bold mb-4 flex items-center gap-2 text-sm uppercase tracking-widest">
                                     <i class="fas fa-robot text-lg"></i> AI 분석 인사이트
@@ -613,6 +1345,1190 @@
         let selectedStrategy = '배당 수익 극대화 (Yield Max)';
         let selectedMarket = 'US';
         let etfMode = false;
+
+        const kiwoomStatusBadge = document.getElementById('kiwoom-status-badge');
+        const kiwoomSyncForm = document.getElementById('kiwoom-sync-form');
+        const kiwoomSyncKey = document.getElementById('kiwoom-sync-key');
+        const kiwoomSyncButton = document.getElementById('kiwoom-sync-button');
+        const kiwoomSyncMessage = document.getElementById('kiwoom-sync-message');
+        const localLotForm = document.getElementById('local-lot-form');
+        const localLotStorageKey = 'vibecodinglab-local-lots-v1';
+        let localLots = loadLocalLots();
+
+        function formatWon(value) {
+            return `${new Intl.NumberFormat('ko-KR').format(Number(value) || 0)}원`;
+        }
+
+        function loadLocalLots() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(localLotStorageKey) || '[]');
+                return Array.isArray(stored) ? stored.slice(0, 500) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveLocalLots() {
+            try {
+                localStorage.setItem(localLotStorageKey, JSON.stringify(localLots));
+            } catch (error) {
+                kiwoomSyncMessage.textContent = '이 브라우저에서는 로컬 매수내역을 저장할 수 없습니다.';
+            }
+            renderLocalLots();
+        }
+
+        function renderLocalLots() {
+            const container = document.getElementById('local-lot-list');
+            const clearButton = document.getElementById('clear-local-lots');
+            document.getElementById('local-lot-count').textContent = `${localLots.length}건`;
+            clearButton.classList.toggle('hidden', localLots.length === 0);
+            container.replaceChildren();
+
+            localLots.forEach(lot => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between gap-3 rounded-lg bg-white/[0.03] px-3 py-2';
+
+                const content = document.createElement('div');
+                content.className = 'min-w-0 text-[11px] text-gray-300';
+                content.textContent = `${lot.date} · ${lot.name || lot.symbol} · ${new Intl.NumberFormat('ko-KR').format(lot.quantity)}주 × ${formatWon(lot.unit_price)}`;
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'min-w-[44px] min-h-[44px] text-gray-500 hover:text-red-400';
+                removeButton.setAttribute('aria-label', '매수내역 삭제');
+                removeButton.innerHTML = '<i class="fas fa-trash"></i>';
+                removeButton.addEventListener('click', () => {
+                    localLots = localLots.filter(item => item.id !== lot.id);
+                    saveLocalLots();
+                });
+
+                row.append(content, removeButton);
+                container.appendChild(row);
+            });
+        }
+
+        localLotForm.addEventListener('submit', event => {
+            event.preventDefault();
+            const symbol = document.getElementById('local-lot-symbol').value.trim().toUpperCase();
+            const date = document.getElementById('local-lot-date').value;
+            const quantity = Number(document.getElementById('local-lot-quantity').value);
+            const unitPrice = Number(document.getElementById('local-lot-price').value);
+            if (!symbol || !date || quantity <= 0 || unitPrice < 0) return;
+
+            localLots.push({
+                id: globalThis.crypto?.randomUUID?.() || `local-${Date.now()}`,
+                side: 'BUY',
+                symbol,
+                name: document.getElementById('local-lot-name').value.trim(),
+                date,
+                quantity,
+                unit_price: unitPrice,
+                fees: 0,
+                taxes: 0
+            });
+            localLots = localLots.slice(-500);
+            saveLocalLots();
+            localLotForm.reset();
+            kiwoomSyncMessage.textContent = '과거 매수내역을 이 기기에 저장했습니다. 계좌를 다시 불러오면 반영됩니다.';
+        });
+
+        document.getElementById('clear-local-lots').addEventListener('click', () => {
+            localLots = [];
+            saveLocalLots();
+            kiwoomSyncMessage.textContent = '로컬 매수내역을 모두 삭제했습니다.';
+        });
+
+        const familyStorageKey = 'vibecodinglab-family-profiles-v1';
+        const familyVaultStorageKey = 'vibecodinglab-family-vault-v1';
+        const familyVaultIterations = 250000;
+        const familyProfileForm = document.getElementById('family-profile-form');
+        const analyzeFamilyButton = document.getElementById('analyze-family-button');
+        const familyAnalysisMessage = document.getElementById('family-analysis-message');
+        const familyAllocationForm = document.getElementById('family-allocation-form');
+        const optimizeAllocationButton = document.getElementById('optimize-allocation-button');
+        const allocationMessage = document.getElementById('allocation-message');
+        let familyVaultPassword = null;
+        let latestAllocationData = null;
+        let familyProfiles = loadFamilyProfiles();
+
+        const relationshipLabels = {
+            self: '본인',
+            spouse: '배우자',
+            adult_child: '성인 자녀',
+            minor_child: '미성년 자녀',
+            parent: '부모',
+            other_relative: '기타 친족'
+        };
+
+        const healthLabels = {
+            employee: '직장가입자',
+            dependent: '피부양자',
+            local: '지역가입자'
+        };
+
+        function loadFamilyProfiles() {
+            try {
+                if (localStorage.getItem(familyVaultStorageKey)) return [];
+                const stored = JSON.parse(localStorage.getItem(familyStorageKey) || '[]');
+                return Array.isArray(stored) ? stored.slice(0, 10) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveFamilyProfiles() {
+            try {
+                if (familyVaultPassword) {
+                    persistEncryptedFamilyProfiles().catch(() => {
+                        document.getElementById('family-vault-message').textContent =
+                            '암호화 저장에 실패했습니다. 다시 시도해 주세요.';
+                    });
+                } else {
+                    localStorage.setItem(familyStorageKey, JSON.stringify(familyProfiles));
+                }
+            } catch (error) {
+                familyAnalysisMessage.textContent = '이 브라우저에서는 가족 프로필을 저장할 수 없습니다.';
+            }
+            renderFamilyProfiles();
+        }
+
+        function bytesToBase64(bytes) {
+            let binary = '';
+            bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+            return btoa(binary);
+        }
+
+        function base64ToBytes(value) {
+            const binary = atob(value);
+            return Uint8Array.from(binary, character => character.charCodeAt(0));
+        }
+
+        async function deriveFamilyVaultKey(password, salt, usages) {
+            const material = await crypto.subtle.importKey(
+                'raw',
+                new TextEncoder().encode(password),
+                'PBKDF2',
+                false,
+                ['deriveKey']
+            );
+            return crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt,
+                    iterations: familyVaultIterations,
+                    hash: 'SHA-256'
+                },
+                material,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                usages
+            );
+        }
+
+        async function encryptFamilyProfilePayload(password, profiles) {
+            if (!crypto?.subtle) throw new Error('이 브라우저는 암호화 보관함을 지원하지 않습니다.');
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveFamilyVaultKey(password, salt, ['encrypt']);
+            const plaintext = new TextEncoder().encode(JSON.stringify(profiles));
+            const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plaintext);
+            return {
+                version: 1,
+                algorithm: 'AES-GCM',
+                kdf: 'PBKDF2-SHA256',
+                iterations: familyVaultIterations,
+                salt: bytesToBase64(salt),
+                iv: bytesToBase64(iv),
+                ciphertext: bytesToBase64(new Uint8Array(ciphertext)),
+                created_at: new Date().toISOString()
+            };
+        }
+
+        async function decryptFamilyProfilePayload(password, payload) {
+            if (!payload || payload.version !== 1 || !payload.salt || !payload.iv || !payload.ciphertext) {
+                throw new Error('지원하지 않는 백업 파일입니다.');
+            }
+            const salt = base64ToBytes(payload.salt);
+            const iv = base64ToBytes(payload.iv);
+            const key = await deriveFamilyVaultKey(password, salt, ['decrypt']);
+            const plaintext = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv },
+                key,
+                base64ToBytes(payload.ciphertext)
+            );
+            const profiles = JSON.parse(new TextDecoder().decode(plaintext));
+            if (!Array.isArray(profiles)) throw new Error('가족 프로필 형식이 올바르지 않습니다.');
+            return profiles.slice(0, 10);
+        }
+
+        async function persistEncryptedFamilyProfiles() {
+            const payload = await encryptFamilyProfilePayload(familyVaultPassword, familyProfiles);
+            localStorage.setItem(familyVaultStorageKey, JSON.stringify(payload));
+            localStorage.removeItem(familyStorageKey);
+            updateFamilyVaultStatus();
+            return payload;
+        }
+
+        function updateFamilyVaultStatus() {
+            const hasVault = Boolean(localStorage.getItem(familyVaultStorageKey));
+            const badge = document.getElementById('family-vault-badge');
+            const message = document.getElementById('family-vault-message');
+            if (familyVaultPassword && hasVault) {
+                badge.textContent = '잠금 해제됨';
+                badge.className = 'text-[10px] text-green-400';
+                if (!message.textContent) message.textContent = '변경사항이 AES-256-GCM으로 암호화 저장됩니다.';
+            } else if (hasVault) {
+                badge.textContent = '잠김';
+                badge.className = 'text-[10px] text-yellow-400';
+                if (!message.textContent) message.textContent = '비밀번호를 입력하고 잠금을 해제해 주세요.';
+            } else {
+                badge.textContent = '선택 기능';
+                badge.className = 'text-[10px] text-gray-500';
+            }
+        }
+
+        function familyNumber(id) {
+            return Math.max(0, Number(document.getElementById(id).value) || 0);
+        }
+
+        function readFamilyForm() {
+            const otherIncome = familyNumber('family-other-income');
+            const taxableBaseInput = document.getElementById('family-taxable-base').value;
+            return {
+                id: document.getElementById('family-edit-id').value ||
+                    (globalThis.crypto?.randomUUID?.() || `family-${Date.now()}`),
+                name: document.getElementById('family-name').value.trim(),
+                relationship: document.getElementById('family-relationship').value,
+                age: familyNumber('family-age'),
+                health_insurance: document.getElementById('family-health-insurance').value,
+                gross_salary: familyNumber('family-gross-salary'),
+                other_income: otherIncome,
+                taxable_base: taxableBaseInput === '' ? otherIncome : familyNumber('family-taxable-base'),
+                interest_income: familyNumber('family-interest-income'),
+                domestic_dividends: familyNumber('family-domestic-dividends'),
+                foreign_dividends: familyNumber('family-foreign-dividends'),
+                gift_received_10y: familyNumber('family-gifts-used'),
+                planned_gift: familyNumber('family-planned-gift'),
+                pension_contribution: familyNumber('family-pension-contribution'),
+                isa_available: familyNumber('family-isa-available'),
+                pension_asset_room: familyNumber('family-pension-asset-room')
+            };
+        }
+
+        function resetFamilyForm() {
+            familyProfileForm.reset();
+            document.getElementById('family-edit-id').value = '';
+            document.getElementById('family-age').value = '40';
+            document.getElementById('family-save-button').textContent = '프로필 저장';
+            document.getElementById('family-cancel-edit').classList.add('hidden');
+        }
+
+        function editFamilyProfile(profile) {
+            document.getElementById('family-edit-id').value = profile.id;
+            document.getElementById('family-name').value = profile.name;
+            document.getElementById('family-relationship').value = profile.relationship;
+            document.getElementById('family-age').value = profile.age;
+            document.getElementById('family-health-insurance').value = profile.health_insurance;
+            document.getElementById('family-gross-salary').value = profile.gross_salary || '';
+            document.getElementById('family-other-income').value = profile.other_income || '';
+            document.getElementById('family-taxable-base').value = profile.taxable_base || '';
+            document.getElementById('family-interest-income').value = profile.interest_income || '';
+            document.getElementById('family-domestic-dividends').value = profile.domestic_dividends || '';
+            document.getElementById('family-foreign-dividends').value = profile.foreign_dividends || '';
+            document.getElementById('family-gifts-used').value = profile.gift_received_10y || '';
+            document.getElementById('family-planned-gift').value = profile.planned_gift || '';
+            document.getElementById('family-pension-contribution').value = profile.pension_contribution || '';
+            document.getElementById('family-isa-available').value = profile.isa_available || '';
+            document.getElementById('family-pension-asset-room').value = profile.pension_asset_room || '';
+            document.getElementById('family-save-button').textContent = '프로필 수정';
+            document.getElementById('family-cancel-edit').classList.remove('hidden');
+            document.getElementById('family-profile-details').open = true;
+            document.getElementById('family-name').focus();
+        }
+
+        function renderFamilyProfiles() {
+            const container = document.getElementById('family-profile-list');
+            document.getElementById('family-profile-count').textContent = `${familyProfiles.length}명`;
+            analyzeFamilyButton.disabled = familyProfiles.length === 0;
+            optimizeAllocationButton.disabled = familyProfiles.length === 0;
+            container.replaceChildren();
+
+            familyProfiles.forEach(profile => {
+                const financialIncome =
+                    Number(profile.interest_income || 0) +
+                    Number(profile.domestic_dividends || 0) +
+                    Number(profile.foreign_dividends || 0);
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-black/25 p-4';
+
+                const header = document.createElement('div');
+                header.className = 'flex items-start justify-between gap-3';
+                const identity = document.createElement('div');
+                const name = document.createElement('div');
+                name.className = 'text-sm text-white font-bold';
+                name.textContent = profile.name;
+                const meta = document.createElement('div');
+                meta.className = 'mt-1 text-[10px] text-gray-500';
+                meta.textContent = `${relationshipLabels[profile.relationship] || '가족'} · ${profile.age}세 · ${healthLabels[profile.health_insurance] || ''}`;
+                identity.append(name, meta);
+
+                const actions = document.createElement('div');
+                actions.className = 'flex gap-1';
+                const editButton = document.createElement('button');
+                editButton.type = 'button';
+                editButton.className = 'min-w-[44px] min-h-[44px] text-gray-500 hover:text-brand-purple';
+                editButton.setAttribute('aria-label', '프로필 수정');
+                editButton.innerHTML = '<i class="fas fa-pen"></i>';
+                editButton.addEventListener('click', () => editFamilyProfile(profile));
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.className = 'min-w-[44px] min-h-[44px] text-gray-500 hover:text-red-400';
+                deleteButton.setAttribute('aria-label', '프로필 삭제');
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.addEventListener('click', () => {
+                    familyProfiles = familyProfiles.filter(item => item.id !== profile.id);
+                    saveFamilyProfiles();
+                });
+                actions.append(editButton, deleteButton);
+                header.append(identity, actions);
+
+                const metrics = document.createElement('div');
+                metrics.className = 'mt-3 grid grid-cols-2 gap-2 text-[11px]';
+                metrics.append(
+                    createPositionMetric('금융소득', formatWon(financialIncome)),
+                    createPositionMetric('증여계획', formatWon(profile.planned_gift)),
+                    createPositionMetric('ISA 여유', formatWon(profile.isa_available)),
+                    createPositionMetric('연금 투자여유', formatWon(profile.pension_asset_room))
+                );
+                article.append(header, metrics);
+                container.appendChild(article);
+            });
+        }
+
+        familyProfileForm.addEventListener('submit', event => {
+            event.preventDefault();
+            const profile = readFamilyForm();
+            if (!profile.name) return;
+            const existingIndex = familyProfiles.findIndex(item => item.id === profile.id);
+            if (existingIndex >= 0) {
+                familyProfiles[existingIndex] = profile;
+            } else if (familyProfiles.length < 10) {
+                familyProfiles.push(profile);
+            }
+            saveFamilyProfiles();
+            resetFamilyForm();
+            familyAnalysisMessage.textContent = '가족 프로필을 이 기기에 저장했습니다.';
+        });
+
+        document.getElementById('family-vault-form').addEventListener('submit', async event => {
+            event.preventDefault();
+            const password = document.getElementById('family-vault-password').value;
+            const message = document.getElementById('family-vault-message');
+            if (password.length < 8) {
+                message.textContent = '비밀번호를 8자 이상 입력해 주세요.';
+                return;
+            }
+            if (
+                localStorage.getItem(familyVaultStorageKey) &&
+                !familyVaultPassword &&
+                familyProfiles.length === 0
+            ) {
+                message.textContent = '기존 보관함을 먼저 잠금 해제해 주세요.';
+                return;
+            }
+            try {
+                familyVaultPassword = password;
+                await persistEncryptedFamilyProfiles();
+                message.textContent = '가족 프로필을 AES-256-GCM으로 암호화 저장했습니다.';
+                document.getElementById('family-vault-password').value = '';
+            } catch (error) {
+                familyVaultPassword = null;
+                message.textContent = error.message || '암호화 저장에 실패했습니다.';
+            }
+        });
+
+        document.getElementById('family-vault-unlock').addEventListener('click', async () => {
+            const passwordInput = document.getElementById('family-vault-password');
+            const message = document.getElementById('family-vault-message');
+            const stored = localStorage.getItem(familyVaultStorageKey);
+            if (!stored) {
+                message.textContent = '저장된 암호화 보관함이 없습니다.';
+                return;
+            }
+            if (passwordInput.value.length < 8) {
+                message.textContent = '보관함 비밀번호를 입력해 주세요.';
+                return;
+            }
+            try {
+                const profiles = await decryptFamilyProfilePayload(
+                    passwordInput.value,
+                    JSON.parse(stored)
+                );
+                familyVaultPassword = passwordInput.value;
+                familyProfiles = profiles;
+                passwordInput.value = '';
+                renderFamilyProfiles();
+                updateFamilyVaultStatus();
+                message.textContent = `${profiles.length}명의 가족 프로필 잠금을 해제했습니다.`;
+            } catch (error) {
+                familyVaultPassword = null;
+                message.textContent = '비밀번호가 다르거나 보관함 데이터가 손상되었습니다.';
+            }
+        });
+
+        function downloadFamilyVault(payload) {
+            const blob = new Blob(
+                [JSON.stringify(payload, null, 2)],
+                { type: 'application/json' }
+            );
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `family-tax-vault-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('family-vault-export').addEventListener('click', async () => {
+            const message = document.getElementById('family-vault-message');
+            try {
+                let payload;
+                const stored = localStorage.getItem(familyVaultStorageKey);
+                if (stored) {
+                    payload = JSON.parse(stored);
+                } else {
+                    const password = document.getElementById('family-vault-password').value;
+                    if (password.length < 8) {
+                        message.textContent = '백업을 암호화할 8자 이상의 비밀번호를 입력해 주세요.';
+                        return;
+                    }
+                    payload = await encryptFamilyProfilePayload(password, familyProfiles);
+                }
+                downloadFamilyVault(payload);
+                message.textContent = '암호화 백업 파일을 만들었습니다.';
+            } catch (error) {
+                message.textContent = error.message || '백업 파일 생성에 실패했습니다.';
+            }
+        });
+
+        document.getElementById('family-vault-import').addEventListener('change', async event => {
+            const file = event.target.files?.[0];
+            const password = document.getElementById('family-vault-password').value;
+            const message = document.getElementById('family-vault-message');
+            if (!file) return;
+            if (password.length < 8) {
+                message.textContent = '백업 비밀번호를 먼저 입력해 주세요.';
+                event.target.value = '';
+                return;
+            }
+            try {
+                const payload = JSON.parse(await file.text());
+                const profiles = await decryptFamilyProfilePayload(password, payload);
+                localStorage.setItem(familyVaultStorageKey, JSON.stringify(payload));
+                localStorage.removeItem(familyStorageKey);
+                familyVaultPassword = password;
+                familyProfiles = profiles;
+                document.getElementById('family-vault-password').value = '';
+                renderFamilyProfiles();
+                updateFamilyVaultStatus();
+                message.textContent = `암호화 백업에서 ${profiles.length}명의 프로필을 복원했습니다.`;
+            } catch (error) {
+                message.textContent = '백업 비밀번호가 다르거나 파일이 손상되었습니다.';
+            } finally {
+                event.target.value = '';
+            }
+        });
+
+        document.getElementById('family-vault-clear').addEventListener('click', () => {
+            const message = document.getElementById('family-vault-message');
+            if (localStorage.getItem(familyVaultStorageKey) && !familyVaultPassword) {
+                message.textContent = '데이터 손실을 막기 위해 보관함을 먼저 잠금 해제해 주세요.';
+                return;
+            }
+            if (!confirm('암호화를 해제하고 현재 프로필을 일반 브라우저 저장소로 옮길까요?')) return;
+            localStorage.removeItem(familyVaultStorageKey);
+            familyVaultPassword = null;
+            localStorage.setItem(familyStorageKey, JSON.stringify(familyProfiles));
+            message.textContent = '암호화 보관함을 해제했습니다.';
+            updateFamilyVaultStatus();
+        });
+
+        document.getElementById('family-cancel-edit').addEventListener('click', resetFamilyForm);
+
+        function recommendationTone(severity) {
+            if (severity === 'danger') return 'text-red-400 bg-red-500/10';
+            if (severity === 'warning') return 'text-yellow-400 bg-yellow-500/10';
+            return 'text-brand-cyan bg-brand-cyan/10';
+        }
+
+        function renderFamilyAnalysis(data) {
+            const summary = data.summary || {};
+            document.getElementById('family-total-financial').textContent = formatWon(summary.financial_income);
+            document.getElementById('family-additional-tax').textContent = formatWon(summary.estimated_additional_income_tax);
+            document.getElementById('family-gift-tax').textContent = formatWon(summary.estimated_gift_tax);
+            document.getElementById('family-pension-credit').textContent = formatWon(summary.estimated_pension_credit);
+            document.getElementById('family-rules-date').textContent = `세법 기준일 ${data.rules_as_of || '-'}`;
+            document.getElementById('family-disclaimer').textContent = data.disclaimer || '';
+
+            const container = document.getElementById('family-member-results');
+            container.replaceChildren();
+            (data.members || []).forEach(member => {
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-black/30 p-4';
+
+                const header = document.createElement('div');
+                header.className = 'flex items-start justify-between gap-3';
+                const identity = document.createElement('div');
+                const name = document.createElement('div');
+                name.className = 'text-sm text-white font-bold';
+                name.textContent = member.name;
+                const financial = document.createElement('div');
+                financial.className = 'mt-1 text-[10px] text-gray-500';
+                financial.textContent = `금융소득 ${formatWon(member.financial_income)}`;
+                identity.append(name, financial);
+                const badge = document.createElement('span');
+                badge.className = `text-[10px] px-2 py-1 rounded-full ${member.financial_income_excess > 0 ? 'text-red-400 bg-red-500/10' : 'text-green-400 bg-green-500/10'}`;
+                badge.textContent = member.financial_income_excess > 0 ? '종합과세 예상' : '기준 이내';
+                header.append(identity, badge);
+
+                const progressTrack = document.createElement('div');
+                progressTrack.className = 'mt-4 h-2 rounded-full bg-white/5 overflow-hidden';
+                const progress = document.createElement('div');
+                progress.className = `h-full rounded-full ${member.financial_income_excess > 0 ? 'bg-red-500' : 'bg-brand-cyan'}`;
+                progress.style.width = `${Math.min(100, (Number(member.financial_income) / 20000000) * 100)}%`;
+                progressTrack.appendChild(progress);
+
+                const metrics = document.createElement('div');
+                metrics.className = 'mt-4 space-y-2';
+                metrics.append(
+                    createPositionMetric('안전 추가 금융소득', formatWon(member.safe_additional_financial_income)),
+                    createPositionMetric('예상 추가 소득세', formatWon(member.tax?.estimated_additional_payment)),
+                    createPositionMetric('증여공제 잔여', formatWon(member.gift?.remaining_allowance_before_plan)),
+                    createPositionMetric('연금 납입 여유', formatWon(member.pension?.additional_contribution_room))
+                );
+
+                const recommendations = document.createElement('div');
+                recommendations.className = 'mt-4 space-y-2';
+                (member.recommendations || []).forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = `rounded-lg px-3 py-2 text-[10px] ${recommendationTone(item.severity)}`;
+                    row.textContent = `${item.title}: ${item.detail}`;
+                    recommendations.appendChild(row);
+                });
+
+                article.append(header, progressTrack, metrics, recommendations);
+                container.appendChild(article);
+            });
+
+            const allocation = document.getElementById('family-allocation-order');
+            const order = data.allocation_order || [];
+            allocation.replaceChildren();
+            if (order.length) {
+                const title = document.createElement('div');
+                title.className = 'text-xs text-brand-purple font-bold';
+                title.textContent = '금융소득 여유 순서';
+                const text = document.createElement('p');
+                text.className = 'mt-2 text-[11px] leading-relaxed text-gray-400';
+                text.textContent = order
+                    .map(item => `${item.name} ${formatWon(item.safe_additional_financial_income)}`)
+                    .join(' → ');
+                const caution = document.createElement('p');
+                caution.className = 'mt-2 text-[10px] text-yellow-500';
+                caution.textContent = '실제 소유권 이전과 증여 신고가 전제되며 단순 명의 분산은 허용되지 않습니다.';
+                allocation.append(title, text, caution);
+                allocation.classList.remove('hidden');
+            } else {
+                allocation.classList.add('hidden');
+            }
+
+            document.getElementById('family-analysis-results').classList.remove('hidden');
+        }
+
+        const allocationAccountLabels = {
+            pension: '연금계좌',
+            isa: 'ISA',
+            general: '일반계좌'
+        };
+
+        function renderAllocationPlan(data) {
+            latestAllocationData = data;
+            const summary = data.summary || {};
+            document.getElementById('allocation-baseline-tax').textContent =
+                formatWon(summary.baseline_estimated_tax);
+            document.getElementById('allocation-optimized-tax').textContent =
+                formatWon(summary.optimized_estimated_tax);
+            document.getElementById('allocation-tax-savings').textContent =
+                formatWon(summary.estimated_annual_tax_savings);
+            document.getElementById('allocation-sheltered').textContent =
+                formatWon(summary.sheltered_investment);
+            document.getElementById('allocation-impact').textContent =
+                `예상 증여 필요액 ${formatWon(summary.gift_required)} · ` +
+                `피부양자 위험 ${Number(summary.baseline_health_risk_count || 0)}명 → ` +
+                `${Number(summary.optimized_health_risk_count || 0)}명`;
+
+            const planList = document.getElementById('allocation-plan-list');
+            planList.replaceChildren();
+            (data.allocations || []).forEach((item, index) => {
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-black/30 p-4';
+                const header = document.createElement('div');
+                header.className = 'flex items-start justify-between gap-3';
+                const identity = document.createElement('div');
+                const step = document.createElement('div');
+                step.className = 'text-[10px] text-brand-cyan font-mono';
+                step.textContent = `STEP ${index + 1}`;
+                const name = document.createElement('div');
+                name.className = 'mt-1 text-sm font-bold text-white';
+                name.textContent = item.name;
+                identity.append(step, name);
+                const badge = document.createElement('span');
+                badge.className = 'shrink-0 rounded-full bg-brand-purple/10 px-2 py-1 text-[10px] text-brand-purple';
+                badge.textContent = allocationAccountLabels[item.account] || item.account;
+                header.append(identity, badge);
+
+                const metrics = document.createElement('div');
+                metrics.className = 'mt-3 space-y-2';
+                metrics.append(
+                    createPositionMetric('배치 투자금', formatWon(item.investment)),
+                    createPositionMetric('예상 연 배당', formatWon(item.expected_annual_dividend)),
+                    createPositionMetric(
+                        '계좌 예상세금',
+                        item.estimated_tax === null ? '종합 반영' : formatWon(item.estimated_tax)
+                    ),
+                    createPositionMetric('필요 증여액', formatWon(item.gift_required))
+                );
+                const reason = document.createElement('p');
+                reason.className = 'mt-3 text-[10px] leading-relaxed text-gray-500';
+                reason.textContent = item.reason || '';
+                const timing = document.createElement('p');
+                timing.className = 'mt-1 text-[10px] text-gray-600';
+                timing.textContent = item.tax_timing || '';
+                article.append(header, metrics, reason, timing);
+                planList.appendChild(article);
+            });
+
+            const comparison = document.getElementById('allocation-account-comparison');
+            comparison.replaceChildren();
+            (data.account_comparison || []).forEach(item => {
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-white/[0.02] p-4';
+                const title = document.createElement('div');
+                title.className = 'text-xs font-bold text-gray-300';
+                title.textContent = item.label;
+                const tax = document.createElement('div');
+                tax.className = 'mt-2 font-mono text-sm font-bold text-white';
+                tax.textContent = formatWon(item.tax);
+                const note = document.createElement('p');
+                note.className = 'mt-2 text-[10px] leading-relaxed text-gray-600';
+                note.textContent = item.note;
+                article.append(title, tax, note);
+                comparison.appendChild(article);
+            });
+
+            const warnings = document.getElementById('allocation-warnings');
+            warnings.replaceChildren();
+            (data.warnings || []).forEach(text => {
+                const warning = document.createElement('p');
+                warning.className = 'rounded-lg bg-yellow-500/10 px-3 py-2 text-[10px] text-yellow-500';
+                warning.textContent = text;
+                warnings.appendChild(warning);
+            });
+
+            const evidence = data.calculation_evidence || {};
+            const formulas = document.getElementById('allocation-formulas');
+            formulas.replaceChildren();
+            (evidence.formulas || []).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'rounded-lg bg-white/[0.03] px-3 py-2';
+                const label = document.createElement('div');
+                label.className = 'text-[10px] font-bold text-gray-300';
+                label.textContent = item.label;
+                const formula = document.createElement('code');
+                formula.className = 'mt-1 block text-[10px] leading-relaxed text-brand-cyan break-words';
+                formula.textContent = item.formula;
+                row.append(label, formula);
+                formulas.appendChild(row);
+            });
+
+            const components = document.getElementById('allocation-tax-components');
+            components.replaceChildren();
+            [
+                ['현재 방식 세금 구성', evidence.baseline_components || {}],
+                ['최적안 세금 구성', evidence.optimized_components || {}]
+            ].forEach(([titleText, values]) => {
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-white/[0.02] p-4';
+                const title = document.createElement('div');
+                title.className = 'text-xs font-bold text-gray-300';
+                title.textContent = titleText;
+                article.appendChild(title);
+                Object.entries(values).forEach(([key, value]) => {
+                    const labels = {
+                        withholding: '원천징수',
+                        additional_income_tax: '추가 종합소득세',
+                        general_withholding: '일반계좌 원천징수',
+                        general_additional_income_tax: '일반계좌 추가세',
+                        isa_tax: 'ISA 세금',
+                        pension_tax: '연금 수령세',
+                        total: '합계'
+                    };
+                    article.appendChild(createPositionMetric(labels[key] || key, formatWon(value)));
+                });
+                components.appendChild(article);
+            });
+
+            const boundaries = document.getElementById('allocation-member-boundaries');
+            boundaries.replaceChildren();
+            (evidence.member_boundaries || []).forEach(member => {
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-white/[0.02] p-4';
+                const title = document.createElement('div');
+                title.className = 'text-xs font-bold text-white';
+                title.textContent = `${member.name} 적용 경계`;
+                article.append(
+                    title,
+                    createPositionMetric('최적안 금융소득', formatWon(member.financial_income)),
+                    createPositionMetric('종합과세 기준 여유', formatWon(member.financial_income_remaining)),
+                    createPositionMetric('건보 포함 안전 여유', formatWon(member.safe_additional_financial_income)),
+                    createPositionMetric('증여공제 잔여', formatWon(member.gift_allowance_remaining))
+                );
+                const health = document.createElement('p');
+                health.className = `mt-2 text-[10px] ${member.health_dependent_status === 'risk' ? 'text-red-400' : 'text-gray-600'}`;
+                health.textContent = `피부양자 판정: ${member.health_dependent_status === 'risk' ? '위험' : '기준 이내 또는 해당 없음'}`;
+                article.appendChild(health);
+                boundaries.appendChild(article);
+            });
+
+            const sources = document.getElementById('allocation-sources');
+            sources.replaceChildren();
+            (evidence.sources || []).forEach(source => {
+                const link = document.createElement('a');
+                link.href = source.url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.className = 'block text-[10px] text-brand-cyan hover:underline break-words';
+                link.textContent = `공식 근거 · ${source.label}`;
+                sources.appendChild(link);
+            });
+            document.getElementById('allocation-disclaimer').textContent = data.disclaimer || '';
+            document.getElementById('family-allocation-results').classList.remove('hidden');
+        }
+
+        function appendReportText(documentRef, parent, tagName, text) {
+            const element = documentRef.createElement(tagName);
+            element.textContent = text;
+            parent.appendChild(element);
+            return element;
+        }
+
+        document.getElementById('allocation-print-report').addEventListener('click', () => {
+            if (!latestAllocationData) {
+                allocationMessage.textContent = '먼저 최적 배치를 계산해 주세요.';
+                return;
+            }
+            document.getElementById('allocation-print-document')?.remove();
+            const reportDocument = document;
+            const body = reportDocument.createElement('section');
+            body.id = 'allocation-print-document';
+            reportDocument.body.appendChild(body);
+            const data = latestAllocationData;
+            const summary = data.summary || {};
+            appendReportText(reportDocument, body, 'h1', '가족 자산 배치 최적화 계산 근거');
+            appendReportText(
+                reportDocument,
+                body,
+                'p',
+                `기준일 ${data.rules_as_of || '-'} · 현재 소유자 ${data.inputs?.owner_name || '-'} · ` +
+                `투자금 ${formatWon(data.inputs?.investment_amount)} · 예상 배당률 ${((data.inputs?.annual_yield_rate || 0) * 100).toFixed(2)}%`
+            );
+
+            appendReportText(reportDocument, body, 'h2', '비교 결과');
+            const summaryTable = reportDocument.createElement('table');
+            const summaryBody = reportDocument.createElement('tbody');
+            [
+                ['현재 방식 예상세금', formatWon(summary.baseline_estimated_tax)],
+                ['최적안 예상세금', formatWon(summary.optimized_estimated_tax)],
+                ['연간 예상 절감액', formatWon(summary.estimated_annual_tax_savings)],
+                ['절세계좌 배치액', formatWon(summary.sheltered_investment)],
+                ['예상 증여 필요액', formatWon(summary.gift_required)]
+            ].forEach(([label, value]) => {
+                const row = reportDocument.createElement('tr');
+                appendReportText(reportDocument, row, 'th', label);
+                appendReportText(reportDocument, row, 'td', value);
+                summaryBody.appendChild(row);
+            });
+            summaryTable.appendChild(summaryBody);
+            body.appendChild(summaryTable);
+
+            appendReportText(reportDocument, body, 'h2', '권장 배치');
+            const allocationTable = reportDocument.createElement('table');
+            const allocationHead = reportDocument.createElement('thead');
+            const headerRow = reportDocument.createElement('tr');
+            ['구성원', '계좌', '투자금', '예상 배당', '필요 증여액', '근거'].forEach(text => {
+                appendReportText(reportDocument, headerRow, 'th', text);
+            });
+            allocationHead.appendChild(headerRow);
+            allocationTable.appendChild(allocationHead);
+            const allocationBody = reportDocument.createElement('tbody');
+            (data.allocations || []).forEach(item => {
+                const row = reportDocument.createElement('tr');
+                [
+                    item.name,
+                    allocationAccountLabels[item.account] || item.account,
+                    formatWon(item.investment),
+                    formatWon(item.expected_annual_dividend),
+                    formatWon(item.gift_required),
+                    item.reason || ''
+                ].forEach(text => appendReportText(reportDocument, row, 'td', text));
+                allocationBody.appendChild(row);
+            });
+            allocationTable.appendChild(allocationBody);
+            body.appendChild(allocationTable);
+
+            appendReportText(reportDocument, body, 'h2', '계산식');
+            const formulaList = reportDocument.createElement('ul');
+            (data.calculation_evidence?.formulas || []).forEach(item => {
+                appendReportText(reportDocument, formulaList, 'li', `${item.label}: ${item.formula}`);
+            });
+            body.appendChild(formulaList);
+
+            (data.warnings || []).forEach(text => {
+                const warning = appendReportText(reportDocument, body, 'p', text);
+                warning.className = 'notice';
+            });
+            appendReportText(reportDocument, body, 'p', data.disclaimer || '');
+            const cleanup = () => {
+                reportDocument.body.classList.remove('printing-allocation-report');
+                body.remove();
+            };
+            window.addEventListener('afterprint', cleanup, { once: true });
+            reportDocument.body.classList.add('printing-allocation-report');
+            allocationMessage.textContent = '인쇄 창에서 PDF로 저장할 수 있습니다.';
+            window.print();
+        });
+
+        familyAllocationForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            if (!familyProfiles.length) return;
+            optimizeAllocationButton.disabled = true;
+            optimizeAllocationButton.innerHTML =
+                '<i class="fas fa-spinner fa-spin mr-2"></i>최적 배치 계산 중';
+            allocationMessage.textContent = '가족별 계좌 한도와 세금·건강보험 경계를 비교하고 있습니다.';
+            try {
+                const response = await fetch('/api/tax/allocation-optimization', {
+                    method: 'POST',
+                    cache: 'no-store',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profiles: familyProfiles,
+                        investment_amount: familyNumber('allocation-investment'),
+                        annual_yield_rate: Number(document.getElementById('allocation-yield').value),
+                        foreign_ratio: Number(document.getElementById('allocation-foreign-ratio').value)
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || '자산 배치 최적화에 실패했습니다.');
+                renderAllocationPlan(data);
+                allocationMessage.textContent =
+                    `${data.inputs?.owner_name || '본인'} 일반계좌 집중 배치와 최적안을 비교했습니다.`;
+            } catch (error) {
+                allocationMessage.textContent = error.message;
+            } finally {
+                optimizeAllocationButton.disabled = familyProfiles.length === 0;
+                optimizeAllocationButton.innerHTML =
+                    '<i class="fas fa-wand-magic-sparkles mr-2"></i>최적 배치 계산하기';
+            }
+        });
+
+        analyzeFamilyButton.addEventListener('click', async () => {
+            analyzeFamilyButton.disabled = true;
+            analyzeFamilyButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>분석 중';
+            familyAnalysisMessage.textContent = '가족 구성원별 세금과 건강보험 기준을 계산하고 있습니다.';
+            try {
+                const response = await fetch('/api/tax/family-analysis', {
+                    method: 'POST',
+                    cache: 'no-store',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ profiles: familyProfiles })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || '가족 절세 분석에 실패했습니다.');
+                renderFamilyAnalysis(data);
+                familyAnalysisMessage.textContent = '분석이 완료되었습니다. 결과는 참고용 추정치입니다.';
+            } catch (error) {
+                familyAnalysisMessage.textContent = error.message;
+            } finally {
+                analyzeFamilyButton.disabled = familyProfiles.length === 0;
+                analyzeFamilyButton.innerHTML = '<i class="fas fa-calculator mr-2"></i>가족 절세 분석하기';
+            }
+        });
+
+        function setKiwoomStatus(text, tone = 'neutral') {
+            const tones = {
+                neutral: 'text-[10px] px-2 py-1 rounded-full bg-white/5 text-gray-400 border border-white/10',
+                ready: 'text-[10px] px-2 py-1 rounded-full bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20',
+                success: 'text-[10px] px-2 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20',
+                error: 'text-[10px] px-2 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20'
+            };
+            kiwoomStatusBadge.className = tones[tone] || tones.neutral;
+            kiwoomStatusBadge.textContent = text;
+        }
+
+        async function loadKiwoomStatus() {
+            try {
+                const response = await fetch('/api/kiwoom/status', { cache: 'no-store' });
+                const status = await response.json();
+                const available = Boolean(status.snapshot_available);
+
+                kiwoomSyncKey.disabled = !available;
+                kiwoomSyncButton.disabled = !available;
+
+                if (available) {
+                    setKiwoomStatus(status.mode === 'production' ? '실계좌 준비' : '모의계좌 준비', 'ready');
+                    kiwoomSyncMessage.textContent = '연동 PIN을 입력하면 최신 잔고를 안전하게 조회합니다.';
+                } else {
+                    setKiwoomStatus('설정 필요', 'neutral');
+                    kiwoomSyncMessage.textContent = '서버에 키움 앱키와 연동 PIN을 먼저 설정해 주세요.';
+                }
+            } catch (error) {
+                setKiwoomStatus('상태 확인 실패', 'error');
+                kiwoomSyncMessage.textContent = '키움 연동 상태를 확인하지 못했습니다.';
+            }
+        }
+
+        function createPositionMetric(label, value, valueClass = 'text-gray-200') {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between gap-3 text-xs';
+
+            const labelElement = document.createElement('span');
+            labelElement.className = 'text-gray-500';
+            labelElement.textContent = label;
+
+            const valueElement = document.createElement('span');
+            valueElement.className = `font-mono font-bold ${valueClass}`;
+            valueElement.textContent = value;
+
+            row.append(labelElement, valueElement);
+            return row;
+        }
+
+        function returnColor(value) {
+            return Number(value) >= 0 ? 'text-red-400' : 'text-blue-400';
+        }
+
+        function setPerformanceMetric(id, value, isRate = false) {
+            const element = document.getElementById(id);
+            const number = Number(value) || 0;
+            element.textContent = isRate
+                ? `${number >= 0 ? '+' : ''}${number.toFixed(2)}%`
+                : formatWon(number);
+            element.className = `font-mono text-sm font-bold ${returnColor(number)}`;
+        }
+
+        function renderKiwoomPerformance(data) {
+            const panel = document.getElementById('kiwoom-performance');
+            const performance = data.performance;
+            if (!performance) {
+                panel.classList.add('hidden');
+                return;
+            }
+
+            const summary = performance.summary || {};
+            setPerformanceMetric('performance-realized', summary.realized_profit_loss);
+            setPerformanceMetric('performance-unrealized', summary.unrealized_profit_loss);
+            setPerformanceMetric('performance-dividends', summary.net_dividends);
+            setPerformanceMetric('performance-total-rate', summary.total_return_rate, true);
+
+            const history = data.history || {};
+            document.getElementById('kiwoom-performance-period').textContent =
+                `${history.start_date || '-'} ~ ${history.end_date || '-'} · FIFO 기준`;
+            document.getElementById('kiwoom-performance-coverage').textContent =
+                `완전 ${summary.complete_symbols || 0} · 추정 ${summary.partial_symbols || 0}`;
+
+            const container = document.getElementById('kiwoom-performance-symbols');
+            container.replaceChildren();
+            (performance.symbols || []).forEach(stock => {
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-black/30 p-4';
+
+                const header = document.createElement('div');
+                header.className = 'flex items-start justify-between gap-3';
+                const identity = document.createElement('div');
+                const name = document.createElement('div');
+                name.className = 'text-sm text-white font-bold';
+                name.textContent = stock.name || stock.symbol;
+                const meta = document.createElement('div');
+                meta.className = 'text-[10px] text-gray-500 mt-1';
+                meta.textContent = `${stock.symbol} · 최초 매수 ${stock.first_purchase_date || '확인 불가'}`;
+                identity.append(name, meta);
+
+                const rate = document.createElement('div');
+                rate.className = `font-mono text-sm font-bold ${returnColor(stock.total_return_rate)}`;
+                rate.textContent = `${Number(stock.total_return_rate) >= 0 ? '+' : ''}${Number(stock.total_return_rate || 0).toFixed(2)}%`;
+                header.append(identity, rate);
+
+                const metrics = document.createElement('div');
+                metrics.className = 'mt-4 space-y-2';
+                metrics.append(
+                    createPositionMetric('총손익', formatWon(stock.total_profit_loss), returnColor(stock.total_profit_loss)),
+                    createPositionMetric('실현손익', formatWon(stock.realized_profit_loss), returnColor(stock.realized_profit_loss)),
+                    createPositionMetric('미실현손익', formatWon(stock.unrealized_profit_loss), returnColor(stock.unrealized_profit_loss)),
+                    createPositionMetric('세후 배당', formatWon(stock.net_dividends), returnColor(stock.net_dividends))
+                );
+
+                const lots = document.createElement('div');
+                lots.className = 'mt-4 pt-3 border-t border-white/5 space-y-2';
+                (stock.lots || []).slice(0, 5).forEach(lot => {
+                    const lotRow = document.createElement('div');
+                    lotRow.className = 'flex items-center justify-between gap-3 text-[10px]';
+                    const lotLabel = document.createElement('span');
+                    lotLabel.className = 'text-gray-500';
+                    lotLabel.textContent = `${lot.purchase_date || '이전 보유분'} · ${new Intl.NumberFormat('ko-KR').format(lot.quantity)}주`;
+                    const lotRate = document.createElement('span');
+                    lotRate.className = `font-mono font-bold ${returnColor(lot.return_rate)}`;
+                    lotRate.textContent = `${Number(lot.return_rate) >= 0 ? '+' : ''}${Number(lot.return_rate || 0).toFixed(2)}%`;
+                    lotRow.append(lotLabel, lotRate);
+                    lots.appendChild(lotRow);
+                });
+                if ((stock.lots || []).length > 5) {
+                    const more = document.createElement('div');
+                    more.className = 'text-[10px] text-gray-600';
+                    more.textContent = `외 ${(stock.lots || []).length - 5}건`;
+                    lots.appendChild(more);
+                }
+
+                const coverage = document.createElement('div');
+                coverage.className = `mt-3 text-[10px] ${stock.coverage === 'complete' ? 'text-green-500' : 'text-yellow-500'}`;
+                coverage.textContent = stock.coverage === 'complete'
+                    ? '거래내역 완전 반영'
+                    : '일부 내역은 증권사 평균단가로 추정';
+
+                article.append(header, metrics, lots, coverage);
+                container.appendChild(article);
+            });
+            panel.classList.remove('hidden');
+        }
+
+        function renderKiwoomSnapshot(data) {
+            const summaryPanel = document.getElementById('kiwoom-account-summary');
+            const accountNumber = document.getElementById('kiwoom-account-number');
+            const profitElement = document.getElementById('kiwoom-profit-loss');
+            const positionsContainer = document.getElementById('kiwoom-positions');
+            const positions = Array.isArray(data.positions) ? data.positions : [];
+            const totalProfit = Number(data.summary?.total_profit_loss) || 0;
+            const totalRate = Number(data.summary?.total_return_rate) || 0;
+
+            accountNumber.textContent = `키움 ${data.account?.masked_number || ''}`;
+            accountNumber.classList.remove('hidden');
+            document.getElementById('kiwoom-cash').textContent = formatWon(data.cash?.deposit);
+            document.getElementById('kiwoom-cash-d2').textContent = formatWon(data.cash?.estimated_d2);
+            document.getElementById('kiwoom-evaluation').textContent = formatWon(data.summary?.total_evaluation);
+            profitElement.textContent = `${formatWon(totalProfit)} (${totalRate >= 0 ? '+' : ''}${totalRate.toFixed(2)}%)`;
+            profitElement.className = `font-mono text-sm md:text-base font-bold ${totalProfit >= 0 ? 'text-red-400' : 'text-blue-400'}`;
+            document.getElementById('kiwoom-position-count').textContent = `${positions.length}개 종목`;
+
+            positionsContainer.replaceChildren();
+            if (!positions.length) {
+                const empty = document.createElement('p');
+                empty.className = 'md:col-span-2 py-6 text-center text-sm text-gray-500';
+                empty.textContent = '현재 보유 중인 국내 종목이 없습니다.';
+                positionsContainer.appendChild(empty);
+            }
+
+            positions.forEach(position => {
+                const profit = Number(position.profit_loss) || 0;
+                const rate = Number(position.return_rate) || 0;
+                const article = document.createElement('article');
+                article.className = 'rounded-xl border border-white/5 bg-black/30 p-4';
+
+                const header = document.createElement('div');
+                header.className = 'flex items-start justify-between gap-3 mb-4';
+
+                const identity = document.createElement('div');
+                const name = document.createElement('div');
+                name.className = 'text-sm text-white font-bold';
+                name.textContent = position.name || position.symbol || '종목';
+                const symbol = document.createElement('div');
+                symbol.className = 'mt-1 text-[10px] text-gray-500 font-mono';
+                symbol.textContent = position.symbol || '-';
+                identity.append(name, symbol);
+
+                const returnRate = document.createElement('span');
+                returnRate.className = `font-mono text-sm font-bold ${profit >= 0 ? 'text-red-400' : 'text-blue-400'}`;
+                returnRate.textContent = `${rate >= 0 ? '+' : ''}${rate.toFixed(2)}%`;
+                header.append(identity, returnRate);
+
+                const metrics = document.createElement('div');
+                metrics.className = 'space-y-2';
+                metrics.append(
+                    createPositionMetric('보유수량', `${new Intl.NumberFormat('ko-KR').format(position.quantity || 0)}주`),
+                    createPositionMetric('평균단가', formatWon(position.average_price)),
+                    createPositionMetric('현재가', formatWon(position.current_price)),
+                    createPositionMetric(
+                        '평가손익',
+                        formatWon(profit),
+                        profit >= 0 ? 'text-red-400' : 'text-blue-400'
+                    )
+                );
+
+                article.append(header, metrics);
+                positionsContainer.appendChild(article);
+            });
+
+            renderKiwoomPerformance(data);
+            summaryPanel.classList.remove('hidden');
+            setKiwoomStatus(data.mode === 'production' ? '실계좌 연결' : '모의계좌 연결', 'success');
+        }
+
+        kiwoomSyncForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            const syncKey = kiwoomSyncKey.value;
+            if (!syncKey) {
+                kiwoomSyncMessage.textContent = '연동 PIN을 입력해 주세요.';
+                kiwoomSyncKey.focus();
+                return;
+            }
+
+            kiwoomSyncButton.disabled = true;
+            kiwoomSyncButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>조회 중';
+            kiwoomSyncMessage.textContent = '키움 계좌의 최신 잔고를 불러오고 있습니다.';
+
+            try {
+                const requestPromise = fetch('/api/kiwoom/snapshot', {
+                    method: 'POST',
+                    cache: 'no-store',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Kiwoom-Sync-Key': syncKey
+                    },
+                    body: JSON.stringify({
+                        include_performance: true,
+                        history_months: Number(document.getElementById('kiwoom-history-months').value),
+                        local_transactions: localLots
+                    })
+                });
+                kiwoomSyncKey.value = '';
+                const response = await requestPromise;
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || '계좌 조회에 실패했습니다.');
+
+                renderKiwoomSnapshot(data);
+                kiwoomSyncMessage.textContent = '최신 잔고를 불러왔습니다. 연동 PIN은 저장되지 않았습니다.';
+            } catch (error) {
+                setKiwoomStatus('연결 실패', 'error');
+                kiwoomSyncMessage.textContent = error.message;
+            } finally {
+                kiwoomSyncButton.disabled = false;
+                kiwoomSyncButton.innerHTML = '<i class="fas fa-rotate mr-2"></i>계좌 불러오기';
+            }
+        });
+
+        renderLocalLots();
+        renderFamilyProfiles();
+        updateFamilyVaultStatus();
+        loadKiwoomStatus();
 
         function selectTheme(el) {
             document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
@@ -729,18 +2645,18 @@
 
             data.portfolio.forEach(item => {
                 const row = `
-                <tr class="hover:bg-brand-cyan/5 transition-colors group">
+                <tr class="portfolio-row hover:bg-brand-cyan/5 transition-colors group">
                     <td class="px-6 py-5 text-left">
                         <div class="font-bold text-white text-base">${item.ticker}</div>
                         <div class="text-xs text-gray-400 truncate max-w-[150px] font-medium">${item.name}</div>
                     </td>
-                    <td class="px-6 py-5"><span class="bg-gray-800 text-gray-300 text-xs px-2.5 py-1.5 rounded border border-gray-600 font-bold">${item.type}</span></td>
-                    <td class="px-6 py-5 text-white font-bold">${item.weight}</td>
-                    <td class="px-6 py-5 text-gray-300 font-medium">${item.amount}</td>
-                    <td class="px-6 py-5 text-gray-300 font-medium">${item.yield}</td>
-                    <td class="px-6 py-5 text-brand-cyan font-bold shadow-[0_0_10px_rgba(0,240,255,0.1)] rounded-lg text-base">${item.expected_div}</td>
+                    <td data-label="유형" class="px-6 py-5"><span class="bg-gray-800 text-gray-300 text-xs px-2.5 py-1.5 rounded border border-gray-600 font-bold">${item.type}</span></td>
+                    <td data-label="비중" class="px-6 py-5 text-white font-bold">${item.weight}</td>
+                    <td data-label="투자금액" class="px-6 py-5 text-gray-300 font-medium">${item.amount}</td>
+                    <td data-label="배당률" class="px-6 py-5 text-gray-300 font-medium">${item.yield}</td>
+                    <td data-label="세후 월 배당" class="px-6 py-5 text-brand-cyan font-bold shadow-[0_0_10px_rgba(0,240,255,0.1)] rounded-lg text-base">${item.expected_div}</td>
                 </tr>
-                <tr class="border-b border-white/5 bg-white/[0.02]">
+                <tr class="rationale-row border-b border-white/5 bg-white/[0.02]">
                      <td colspan="6" class="px-6 py-3 text-left text-xs text-gray-400 italic font-medium">
                         💡 ${item.rationale}
                     </td>
@@ -791,6 +2707,37 @@
             setTimeout(removeRecommendedLabels, 100);
         });
         observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+    <script>
+        let deferredInstallPrompt = null;
+        const installButton = document.getElementById('install-app-btn');
+
+        window.addEventListener('beforeinstallprompt', event => {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            installButton.classList.remove('hidden');
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt = null;
+            installButton.classList.add('hidden');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+            installButton.classList.add('hidden');
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(error => {
+                    console.warn('Service worker registration failed:', error);
+                });
+            });
+        }
     </script>
 </body>
 

@@ -39,12 +39,16 @@ try:
     from routes.us_market import us_market_bp
     from routes.omni import omni_bp
     from routes.common import common_bp
+    from routes.kiwoom import kiwoom_bp
+    from routes.tax import tax_bp
     
     app.register_blueprint(main_bp)
     app.register_blueprint(kr_market_bp)
     app.register_blueprint(us_market_bp)
     app.register_blueprint(omni_bp, url_prefix='/api/acp')
     app.register_blueprint(common_bp)
+    app.register_blueprint(kiwoom_bp)
+    app.register_blueprint(tax_bp)
 
 except Exception as e:
     # Minimal logging for production safety

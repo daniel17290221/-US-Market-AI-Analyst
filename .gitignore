@@ -63,3 +63,14 @@ AI Senior Content/
 .env*.local
 .env.vercel
 .env*
+
+# Node / Capacitor
+node_modules/
+android/.gradle/
+android/local.properties
+android/**/build/
+ios/App/Pods/
+ios/App/App/public/
+!package.json
+!package-lock.json
+!capacitor.config.json
